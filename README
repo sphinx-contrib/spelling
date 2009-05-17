@@ -1,0 +1,51 @@
+.. -*- restructuredtext -*-
+
+=========================
+README for sphinx-contrib
+=========================
+
+This repository contains a collection of Sphinx_ extensions maintained by
+their respective authors.  It is not an official part of Sphinx.
+
+.. _Sphinx: http://bitbucket.org/birkenfeld/sphinx
+
+
+Installing
+==========
+
+Use ``setup.py``::
+
+   python setup.py build
+   sudo python setup.py install
+
+
+Contributing
+============
+
+If you want to add your own extension, please write an e-mail to
+georg@python.org and give your bitbucket user name; you will then
+get write access to the public repo at
+http://bitbucket.org/birkenfeld/sphinx-contrib.
+
+Send wishes, comments, patches, etc. for individual extensions
+to their author as given in the module.
+
+
+List of extensions
+==================
+
+
+For contributors
+================
+
+When adding or updating your extension, please adhere to these guidelines:
+
+* Each extension must be either a submodule or subpackage of the
+  ``sphinxcontrib`` package.
+* Each extension must be listed in this file under "List of extensions" above,
+  and in ``setup.py``'s ``long_desc`` string.
+* Each author should be listed in ``AUTHORS`` along with the extension name.
+* It would be good to have all extensions BSD licensed; otherwise make a note in
+  the ``LICENSE`` file.
+* Each extension can maintain a changelog; this file should be called
+  ``CHANGES.extensionname``.
