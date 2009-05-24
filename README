@@ -13,8 +13,9 @@ their respective authors.  It is not an official part of Sphinx.
 Installing
 ==========
 
-Use ``setup.py``::
+Use ``setup.py`` in the subdirectory for the individual extension::
 
+   cd dir
    python setup.py build
    sudo python setup.py install
 
@@ -40,12 +41,13 @@ For contributors
 
 When adding or updating your extension, please adhere to these guidelines:
 
+* Use ``make-ext.py`` to set up your extension subdirectory.
 * Each extension must be either a submodule or subpackage of the
-  ``sphinxcontrib`` package.
-* Each extension must be listed in this file under "List of extensions" above,
-  and in ``setup.py``'s ``long_desc`` string.
+  ``sphinxcontrib`` package.  The ``sphinxcontrib/__init__.py`` file in your
+  package must not be changed.
+* Each extension must be listed in this file under "List of extensions" above.
 * Each author should be listed in ``AUTHORS`` along with the extension name.
 * It would be good to have all extensions BSD licensed; otherwise make a note in
-  the ``LICENSE`` file.
-* Each extension can maintain a changelog; this file should be called
-  ``CHANGES.extensionname``.
+  an ``ext/LICENSE`` file.
+* Each extension can maintain a changelog and readme file; these files should
+  be called ``ext/CHANGES`` and ``ext/README``, respectively.

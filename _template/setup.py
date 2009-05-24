@@ -3,24 +3,22 @@
 from setuptools import setup, find_packages
 
 long_desc = '''
-This package contains contributed Sphinx extensions.  Currently these are:
+This package contains the ${name} Sphinx extension.
 
-.. Add your extension here...
-
-The development version can be found `here
-<http://bitbucket.org/birkenfeld/sphinx-contrib/get/tip.gz#egg=sphinx-contrib-dev>`_.
+.. add description here ..
 '''
 
 requires = ['Sphinx>=0.6']
 
 setup(
-    name='sphinx-contrib',
+    name='${name}',
     version='0.1',
-    url='http://sphinx.pocoo.org/',
-    download_url='http://pypi.python.org/pypi/sphinx-contrib',
+    url='http://bitbucket.org/birkenfeld/sphinx-contrib',
+    download_url='http://pypi.python.org/pypi/${name}',
     license='BSD',
-    author='Multiple authors',
-    description='Contributed extensions for Sphinx',
+    author='${author}',
+    author_email='${author_email}',
+    description='Sphinx extension ${name}',
     long_description=long_desc,
     zip_safe=False,
     classifiers=[
@@ -38,4 +36,5 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=requires,
+    namespace_packages=['sphinxcontrib'],
 )
