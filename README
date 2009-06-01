@@ -35,6 +35,8 @@ to their author as given in the module.
 List of extensions
 ==================
 
+- lilypond: an extension inserting music scripts from Lilypond in PNG format.
+
 
 For contributors
 ================
