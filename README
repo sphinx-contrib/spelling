@@ -36,6 +36,7 @@ List of extensions
 ==================
 
 - lilypond: an extension inserting music scripts from Lilypond in PNG format.
+- mscgen: embed mscgen-formatted :abbr:`MSC (Message Sequence Chart)`\ s.
 
 
 For contributors
@@ -53,3 +54,4 @@ When adding or updating your extension, please adhere to these guidelines:
   an ``ext/LICENSE`` file.
 * Each extension can maintain a changelog and readme file; these files should
   be called ``ext/CHANGES`` and ``ext/README``, respectively.
+

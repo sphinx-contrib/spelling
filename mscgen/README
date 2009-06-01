@@ -1,0 +1,102 @@
+.. -*- restructuredtext -*-
+
+=========================================================
+:abbr:`MSC (Message Sequence Chart)` extension for Sphinx
+=========================================================
+
+:copyright: Copyright 2009 by Leandro Lucarella.
+:license: BSD, see LICENSE for details.
+
+
+About
+=====
+
+This extension  allow Mscgen_\ -formatted :abbr:`MSC` diagrams to be included in
+Sphinx-generated documents inline.
+
+Mscgen_ is a small program (inspired by `Graphviz Dot`_) that parses
+:abbr:`MSC` descriptions and produces images as the output. :abbr:`MSC`\ s are
+a way of representing entities and interactions over some time period, very
+similar to UML sequence diagrams.
+
+.. _Mscgen: http://www.mcternan.me.uk/mscgen/
+.. _`Graphviz Dot`: http://www.graphviz.org/
+
+
+Usage
+=====
+
+The Mscgen_ program is used to render the :abbr:`MSC`, so you should refer
+to its documentation for details on how to specify the diagram. You should
+have the program installed for this extension to work. If you need LaTeX
+output, you'll need the epstopdf_ program too.
+
+.. _epstopdf: http://www.ctan.org/tex-archive/support/epstopdf/
+
+This extension adds the ``mscgen`` and ``msc`` directives. The former let
+you specify a full diagram, the later let you omit the ``msc { ... }``
+bits so you can jump right to the important stuff.
+
+
+Example
+-------
+
+The most common way to inline a :abbr:`MSC` diagram is to use the ``msc``
+directive::
+
+   .. msc::
+
+      hscale = "2";
+
+      a,b,c;
+
+      a->b [ label = "ab()" ] ;
+      b->c [ label = "bc(TRUE)"];
+      c=>c [ label = "process()" ];
+
+If you need full control over the :abbr:`MSC` diagram you can use the
+``mscgen`` directive::
+
+   .. mscgen::
+
+      msc {
+         hscale = "2";
+
+         a,b,c;
+
+         a->b [ label = "ab()" ] ;
+         b->c [ label = "bc(TRUE)"];
+         c=>c [ label = "process()" ];
+      }
+
+
+Configuration
+=============
+
+A few configuration options are added (all optional):
+
+``mscgen``:
+   location of the *mscgen* program. It's expected to be in the PATH by
+   default. The full path, including the binary, should be given if that's
+   not the case.
+
+``mscgen_args``:
+   extra command line arguments for *mscgen* (should be a list of
+   strings).
+
+``mscgen_epstopdf``:
+   location of the *epstopdf* program. It's expected to be in the PATH by
+   default. The full path, including the binary, should be given if that's
+   not the case.
+
+``mscgen_epstopdf_args``:
+   extra command line arguments for *epstopdf* (should be a list of
+   strings).
+
+
+Requirements
+============
+
+* mscgen_ (tested with 0.14).
+* epstopdf_ for LaTeX/PDF output.
+

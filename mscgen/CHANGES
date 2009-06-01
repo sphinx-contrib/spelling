@@ -1,0 +1,22 @@
+.. -*- restructuredtext -*-
+
+This file describes user-visible changes between the extension versions.
+
+Version 0.3
+-----------
+
+* Fix a bug when exposed when epstopdf fails.
+* Add ``[]`` to ``\includegraphics`` in LaTeX output so it can be centered in
+  figures using ``\centering``.
+* Improve documentation.
+
+Version 0.2
+-----------
+
+* Add image maps support for HTML output.
+
+Version 0.1
+-----------
+
+* Initial version.
+
