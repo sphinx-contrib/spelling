@@ -37,6 +37,9 @@ List of extensions
 
 - lilypond: an extension inserting music scripts from Lilypond in PNG format.
 - mscgen: embed mscgen-formatted :abbr:`MSC (Message Sequence Chart)`\ s.
+- aafig: render embeded ASCII art as nice images using aafigure_.
+
+.. _aafigure: http://docutils.sourceforge.net/sandbox/aafigure/
 
 
 For contributors

@@ -1,0 +1,67 @@
+.. -*- restructuredtext -*-
+
+==============================
+aafigure_ extension for Sphinx
+==============================
+
+:copyright: Copyright 2009 by Leandro Lucarella <llucax@gmail.com>.
+:license: BSD, see LICENSE for details.
+
+
+About
+=====
+
+This extension allows embeded ASCII art to be rendered as nice looking images
+using the **great** aafigure_ reStructuredText_ extension.
+
+.. _aafigure: http://docutils.sourceforge.net/sandbox/aafigure/
+.. _reStructuredText: http://docutils.sourceforge.net/rst.html
+
+
+Usage
+=====
+
+You can always use the original reStructuredText_ aafigure_ extension, but
+choosing a hardcoded format can be a bad idea when using Sphinx, because PDF
+might not be suitable for HTML and PNG can look ugly in a PDF document.
+
+This extension uses the same aafigure_ code to add a more *Sphinxy* directive
+called ``aafig``. This directive accepts the same options as the original
+aafigure_ directive (please, see aafigure_ documentation for more information),
+except for the ``:format:`` option, which is selected automatically depending
+on the Sphinx builder you are using.
+
+
+Configuration
+=============
+
+A few configuration options are added (all optional):
+
+``aafig_format``:
+   image format used for the different builders. Only ``latex`` and ``html``
+   are supported for now. You can specify the desired format for each builder
+   using a dictionary. For example::
+
+      aafigure = dict(latex='pdf', html='svg')
+
+   These are the actual defaults.
+
+
+Requirements
+============
+
+* aafigure_ (r5974 or later).
+* reportlab_ (for LaTeX/PDF output)
+* PIL_ (for any image format other than SVG or PDF)
+
+.. _reportlab: http://www.reportlab.org/
+.. _PIL: http://www.pythonware.com/products/pil/
+
+aafigure_ should be installed in the system for this extension to work.
+Alternatively you can download it to any folder and add that folder to the
+Python's path through the ``conf.py``, for example::
+
+    import sys, os
+
+    sys.path.extend(os.path.abspath('path/to/aafigure')])
+
