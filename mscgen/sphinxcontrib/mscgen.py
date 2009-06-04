@@ -8,8 +8,8 @@
 
     See the README file for details.
 
-    :copyright: Copyright 2009 by Leandro Lucarella (based on \
-        sphinx.ext.graphviz).
+    :copyright: Copyright 2009 by Leandro Lucarella <llucax@gmail.com> \
+        (based on sphinx.ext.graphviz).
     :license: BSD, see LICENSE for details.
 """
 
