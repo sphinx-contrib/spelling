@@ -18,7 +18,7 @@ setup(
     name='sphinxcontrib-mscgen',
     version='0.3',
     url='http://bitbucket.org/birkenfeld/sphinx-contrib',
-    download_url='http://pypi.python.org/pypi/mscgen',
+    download_url='http://pypi.python.org/pypi/sphinxcontrib-mscgen',
     license='BSD',
     author='Leandro Lucarella',
     author_email='llucax@gmail.com',
