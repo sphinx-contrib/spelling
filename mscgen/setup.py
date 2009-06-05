@@ -12,7 +12,7 @@ Sphinx-generated documents inline.
 requires = ['Sphinx>=0.6']
 
 setup(
-    name='mscgen',
+    name='sphinxcontrib-mscgen',
     version='0.3',
     url='http://bitbucket.org/birkenfeld/sphinx-contrib',
     download_url='http://pypi.python.org/pypi/mscgen',
