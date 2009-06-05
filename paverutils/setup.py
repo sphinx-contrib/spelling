@@ -17,9 +17,9 @@ VERSION='1.0'
 setup(
     name=NAME,
     version=VERSION,
-    url = 'http://www.doughellmann.com/projects/%s/' % PROJECT,
+    url = 'http://www.doughellmann.com/projects/%s/' % NAME,
     download_url = 'http://www.doughellmann.com/downloads/%s-%s.tar.gz' % \
-                    (PROJECT, VERSION),
+                    (NAME, VERSION),
     license='BSD',
     author='Doug Hellmann',
     author_email='doug.hellmann@gmail.com',
