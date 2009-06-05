@@ -3,9 +3,12 @@
 from setuptools import setup, find_packages
 
 long_desc = '''
-This package contains the mscgen Sphinx extension.
+This package contains the mscgen_ Sphinx_ extension.
 
-Allow mscgen-formatted Message Sequence Chart graphs to be included in
+.. _mscgen: http://www.mcternan.me.uk/mscgen/
+.. _Sphinx: http://sphinx.pocoo.org/
+
+Allow mscgen-formatted Message Sequence Chart (MSC) graphs to be included in
 Sphinx-generated documents inline.
 '''
 
@@ -19,7 +22,7 @@ setup(
     license='BSD',
     author='Leandro Lucarella',
     author_email='llucax@gmail.com',
-    description='Sphinx extension mscgen',
+    description='mscgen Sphinx extension',
     long_description=long_desc,
     zip_safe=False,
     classifiers=[
