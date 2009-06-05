@@ -3,9 +3,21 @@
 from setuptools import setup, find_packages
 
 long_desc = '''
-This package contains the aafigure Sphinx extension.
+This package contains the aafigure_ Sphinx_ extension.
 
-Allow embeded ASCII art figure to be rendered as nice images.
+.. _aafigure: http://docutils.sourceforge.net/sandbox/aafigure/
+.. _Sphinx: http://sphinx.pocoo.org/
+
+_aafigure is a program and a reStructuredText_ directive to allow embeded ASCII
+art figures to be rendered as nice images in various image formats. The
+aafigure_ directive needs a *hardcoded* image format, so it doesn't goes well
+with Sphinx_ multi-format support.
+
+.. _reStructuredText: http://docutils.sourceforge.net/rst.html
+
+This extension adds the ``aafig`` directive that automatically selects the
+image format to use acording to the Sphinx_ writer used to generate the
+documentation.
 '''
 
 requires = ['Sphinx>=0.6']
@@ -18,7 +30,7 @@ setup(
     license='BSD',
     author='Leandro Lucarella',
     author_email='llucax@gmail.com',
-    description='Sphinx extension aafig',
+    description='aafig Sphinx extension',
     long_description=long_desc,
     zip_safe=False,
     classifiers=[
