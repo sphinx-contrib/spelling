@@ -17,8 +17,9 @@ VERSION='1.0'
 setup(
     name=NAME,
     version=VERSION,
-    url='http://bitbucket.org/birkenfeld/sphinx-contrib',
-    download_url='http://pypi.python.org/pypi/' + NAME,
+    url = 'http://www.doughellmann.com/projects/%s/' % PROJECT,
+    download_url = 'http://www.doughellmann.com/downloads/%s-%s.tar.gz' % \
+                    (PROJECT, VERSION),
     license='BSD',
     author='Doug Hellmann',
     author_email='doug.hellmann@gmail.com',
