@@ -2,7 +2,7 @@
 """Alternative integration of Sphinx and Paver.
 
 To use this module, import it in your pavement.py file as 
-``from sphinxcontrib import docpaver``,  then define 
+``from sphinxcontrib import paverutils``,  then define 
 option Bundles for "html" and/or "pdf" output using the options
 described in the task help.
 

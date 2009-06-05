@@ -2,7 +2,10 @@
 
 from setuptools import setup, find_packages
 
-long_desc = '''
+try:
+    long_desc = open('README', 'r').read()
+except IOError:
+    long_desc = '''
 This package contains an alternative integration of Sphinx and Paver allowing for both HTML and PDF generation from the same pavement.py file.
 '''
 
