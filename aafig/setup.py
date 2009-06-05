@@ -11,10 +11,10 @@ Allow embeded ASCII art figure to be rendered as nice images.
 requires = ['Sphinx>=0.6']
 
 setup(
-    name='aafig',
+    name='sphinxcontrib-aafig',
     version='0.1',
     url='http://bitbucket.org/birkenfeld/sphinx-contrib',
-    download_url='http://pypi.python.org/pypi/aafig',
+    download_url='http://pypi.python.org/pypi/sphinxcontrib-aafig',
     license='BSD',
     author='Leandro Lucarella',
     author_email='llucax@gmail.com',
