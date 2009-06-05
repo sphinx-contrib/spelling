@@ -1,16 +1,19 @@
 This file lists all extensions in this package and their authors.
 
-mscgen:
-   Leandro Lucarella <llucax@gmail.com>
-
 aafig:
    Leandro Lucarella <llucax@gmail.com>
+
+context:
+   Wei-Wei Guo <wwguocn@gmail.com>
 
 lilypond:
    Wei-Wei Guo <wwguocn@gmail.com>
 
-context:
-   Wei-Wei Guo <wwguocn@gmail.com>
+mscgen:
+   Leandro Lucarella <llucax@gmail.com>
+
+paverutils:
+   Doug Hellmann <doug.hellmann@gmail.com>
 
 sword:
    Wei-Wei Guo <wwguocn@gmail.com>

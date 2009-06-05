@@ -35,13 +35,16 @@ to their author as given in the module.
 List of extensions
 ==================
 
-- lilypond: an extension inserting music scripts from Lilypond in PNG format.
-- mscgen: embed mscgen-formatted :abbr:`MSC (Message Sequence Chart)`\ s.
 - aafig: render embeded ASCII art as nice images using aafigure_.
 - context: an builder for ConTeXt.
+- lilypond: an extension inserting music scripts from Lilypond in PNG format.
+- mscgen: embed mscgen-formatted :abbr:`MSC (Message Sequence Chart)`\ s.
+- paverutils: an alternate integration of Sphinx with Paver_.
 - sword: an extension inserting Bible verses from Sword.
 
 .. _aafigure: http://docutils.sourceforge.net/sandbox/aafigure/
+
+.. _paver: http://www.blueskyonmars.com/projects/paver/
 
 For contributors
 ================

@@ -1,0 +1,40 @@
+# -*- coding: utf-8 -*-
+
+from setuptools import setup, find_packages
+
+long_desc = '''
+This package contains an alternative integration of Sphinx and Paver allowing for both HTML and PDF generation from the same pavement.py file.
+'''
+
+requires = ['Sphinx>=0.6', 'Paver>=1.0.1']
+
+NAME='sphinxcontrib-paverutils'
+VERSION='1.0'
+
+setup(
+    name=NAME,
+    version=VERSION,
+    url='http://bitbucket.org/birkenfeld/sphinx-contrib',
+    download_url='http://pypi.python.org/pypi/' + NAME,
+    license='BSD',
+    author='Doug Hellmann',
+    author_email='doug.hellmann@gmail.com',
+    description='Sphinx/Paver integration',
+    long_description=long_desc,
+    zip_safe=False,
+    classifiers=[
+        'Development Status :: 5 - Production/Stable',
+        'Environment :: Console',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: BSD License',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python',
+        'Topic :: Documentation',
+        'Topic :: Utilities',
+    ],
+    platforms='any',
+    packages=find_packages(),
+    include_package_data=True,
+    install_requires=requires,
+    namespace_packages=['sphinxcontrib'],
+)
