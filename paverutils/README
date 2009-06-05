@@ -66,6 +66,11 @@ For example::
 
     )
 
+Tasks
+=====
+
+After you have imported ``sphinxcontrib.paverutils`` in your ``pavement.py`` file, Paver will show two additional tasks.  ``html`` takes the place of the task defined in ``paver.doctools`` and can be used to build HTML output.  ``pdf`` uses the LaTeX builder and an external toolset such as TeXLive_ to create a PDF manual.
+
 Configuration Parameters
 ========================
 
@@ -153,3 +158,5 @@ virtualenvwrapper_
 .. _PyMOTW: http://www.doughellmann.com/PyMOTW/
 
 .. _virtualenvwrapper: http://www.doughellmann.com/projects/virtualenvwrapper/
+
+.. _TeXLive: http://tug.org/texlive/
