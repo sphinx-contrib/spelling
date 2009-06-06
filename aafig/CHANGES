@@ -6,6 +6,8 @@ This file describes user-visible changes between the extension versions.
 Version 0.2 (unreleased)
 ------------------------
 
+* Add ``aafig_default_options`` configuration option.
+
 
 Version 0.1 (2009-06-05)
 ------------------------

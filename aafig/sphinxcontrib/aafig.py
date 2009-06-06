@@ -88,6 +88,11 @@ def render_aafigure(self, text, options, prefix):
 
     ensuredir(path.dirname(outfn))
 
+    # merge default options
+    for (k, v) in self.builder.config.aafig_default_options.items():
+        if k not in options:
+            options[k] = v
+
     try:
         aafigure.render(text, outfn, options)
     except aafigure.UnsupportedFormatError, e:
@@ -141,4 +146,5 @@ def setup(app):
     app.add_node(aafig, html=(html_visit, None), latex=(latex_visit, None))
     app.add_directive('aafig', Aafig)
     app.add_config_value('aafig_format', dict(html='svg', latex='pdf'), 'html')
+    app.add_config_value('aafig_default_options', dict(), 'html')
 

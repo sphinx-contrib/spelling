@@ -57,6 +57,17 @@ A few configuration options are added (all optional):
 
    These are the actual defaults.
 
+``aafig_default_options`` <dict>:
+    default aafigure_ options. These options are used by default unless they
+    are overridden explicitly in the ``aafig`` directive. The default aafigure_
+    options are used if this is not specified. You can provide partial
+    defaults, for example::
+
+        aafig_default_options = dict(scale=1.5, aspect=0.5, proportional=True)
+
+    See aafigure_ documentation for a complete list of options and their
+    defaults.
+
 
 Requirements
 ============
