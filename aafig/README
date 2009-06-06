@@ -48,12 +48,12 @@ Configuration
 
 A few configuration options are added (all optional):
 
-``aafig_format``:
+``aafig_format`` <dict>:
    image format used for the different builders. Only ``latex`` and ``html``
    are supported for now. You can specify the desired format for each builder
    using a dictionary. For example::
 
-      aafigure = dict(latex='pdf', html='svg')
+      aafig_format = dict(latex='pdf', html='svg')
 
    These are the actual defaults.
 
