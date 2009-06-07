@@ -74,6 +74,7 @@ def render_aafigure(self, text, options, prefix):
     hashkey = text.encode('utf-8') + str(options)
     id = sha(hashkey).hexdigest()
     fname = '%s-%s.%s' % (prefix, id, options['format'])
+    metadata_fname = '%s.aafig' % fname
     if hasattr(self.builder, 'imgpath'):
         # HTML
         relfn = posixpath.join(self.builder.imgpath, fname)
@@ -84,7 +85,12 @@ def render_aafigure(self, text, options, prefix):
         outfn = path.join(self.builder.outdir, fname)
 
     if path.isfile(outfn):
-        return relfn, outfn, id
+        extra = None
+        if options['format'].lower() == 'svg':
+            f = file(metadata_fname, 'r')
+            extra = f.read()
+            f.close()
+        return relfn, outfn, id, extra
 
     ensuredir(path.dirname(outfn))
 
@@ -94,17 +100,25 @@ def render_aafigure(self, text, options, prefix):
             options[k] = v
 
     try:
-        aafigure.render(text, outfn, options)
+        (visitor, output) = aafigure.render(text, outfn, options)
+	output.close()
     except aafigure.UnsupportedFormatError, e:
         raise MscgenError(str(e))
 
-    return relfn, outfn, id
+    extra = None
+    if options['format'].lower() == 'svg':
+        extra = visitor.get_size_attrs()
+        f = file(metadata_fname, 'w')
+        f.write(extra)
+        f.close()
+
+    return relfn, outfn, id, extra
 
 
 def render_html(self, node, text, options, prefix=DEFAULT_PREFIX, imgcls=None):
     try:
         options['format'] = self.builder.config.aafig_format['html']
-        fname, outfn, id = render_aafigure(self, text, options, prefix)
+        fname, outfn, id, extra = render_aafigure(self, text, options, prefix)
     except AafigError, exc:
         self.builder.warn('aafigure error: ' + str(exc))
         raise nodes.SkipNode
@@ -114,9 +128,12 @@ def render_html(self, node, text, options, prefix=DEFAULT_PREFIX, imgcls=None):
         self.body.append(self.encode(text))
     else:
         imgcss = imgcls and 'class="%s"' % imgcls or ''
-        # nothing in image map
-        self.body.append('<img src="%s" alt="%s" %s/>\n' %
-                         (fname, self.encode(text).strip(), imgcss))
+        if options['format'].lower() == 'svg':
+            self.body.append('<object type="image/svg+xml" data="%s" %s %s />'
+                    (fname, extra, imgcss))
+        else:
+            self.body.append('<img src="%s" alt="%s" %s/>\n' %
+                    (fname, self.encode(text).strip(), imgcss))
     self.body.append('</p>\n')
     raise nodes.SkipNode
 
@@ -128,7 +145,7 @@ def html_visit(self, node):
 def render_latex(self, node, text, options, prefix=DEFAULT_PREFIX):
     try:
         options['format'] = self.builder.config.aafig_format['latex']
-        fname, outfn, id = render_aafigure(self, text, options, prefix)
+        fname, outfn, id, extra = render_aafigure(self, text, options, prefix)
     except AafigError, exc:
         self.builder.warn('aafigure error: ' + str(exc))
         raise nodes.SkipNode

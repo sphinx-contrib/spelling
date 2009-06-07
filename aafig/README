@@ -72,7 +72,7 @@ A few configuration options are added (all optional):
 Requirements
 ============
 
-* aafigure_ (r5974 or later).
+* aafigure_ (r5978 or later).
 * reportlab_ (for LaTeX/PDF output)
 * PIL_ (for any image format other than SVG or PDF)
 
