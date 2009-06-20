@@ -103,7 +103,7 @@ def render_aafigure(self, text, options, prefix):
         (visitor, output) = aafigure.render(text, outfn, options)
 	output.close()
     except aafigure.UnsupportedFormatError, e:
-        raise MscgenError(str(e))
+        raise AafigError(str(e))
 
     extra = None
     if options['format'].lower() == 'svg':
