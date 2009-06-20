@@ -8,7 +8,7 @@ This package contains the aafigure_ Sphinx_ extension.
 .. _aafigure: http://docutils.sourceforge.net/sandbox/aafigure/
 .. _Sphinx: http://sphinx.pocoo.org/
 
-_aafigure is a program and a reStructuredText_ directive to allow embeded ASCII
+aafigure_ is a program and a reStructuredText_ directive to allow embeded ASCII
 art figures to be rendered as nice images in various image formats. The
 aafigure_ directive needs a *hardcoded* image format, so it doesn't goes well
 with Sphinx_ multi-format support.
