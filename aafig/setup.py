@@ -20,7 +20,7 @@ image format to use acording to the Sphinx_ writer used to generate the
 documentation.
 '''
 
-requires = ['Sphinx>=0.6', 'docutils-aafigure>=0.2']
+requires = ['Sphinx>=0.6', 'aafigure>=0.3']
 
 setup(
     name='sphinxcontrib-aafig',
