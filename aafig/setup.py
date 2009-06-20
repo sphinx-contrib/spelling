@@ -18,6 +18,17 @@ with Sphinx_ multi-format support.
 This extension adds the ``aafig`` directive that automatically selects the
 image format to use acording to the Sphinx_ writer used to generate the
 documentation.
+
+Usage example::
+
+    .. aafig::
+        :scale: 1.5
+        :textual:
+
+        +-------+         +-----------+
+        | Hello +-------->+ aafigure! |
+        +-------+         +-----------+
+
 '''
 
 requires = ['Sphinx>=0.6', 'aafigure>=0.3']
