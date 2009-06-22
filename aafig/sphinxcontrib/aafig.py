@@ -74,7 +74,6 @@ def render_aafigure(self, text, options, prefix):
     hashkey = text.encode('utf-8') + str(options)
     id = sha(hashkey).hexdigest()
     fname = '%s-%s.%s' % (prefix, id, options['format'])
-    metadata_fname = '%s.aafig' % fname
     if hasattr(self.builder, 'imgpath'):
         # HTML
         relfn = posixpath.join(self.builder.imgpath, fname)
@@ -83,6 +82,7 @@ def render_aafigure(self, text, options, prefix):
         # LaTeX
         relfn = fname
         outfn = path.join(self.builder.outdir, fname)
+    metadata_fname = '%s.aafig' % outfn
 
     if path.isfile(outfn):
         extra = None
