@@ -84,13 +84,23 @@ def render_aafigure(self, text, options, prefix):
         outfn = path.join(self.builder.outdir, fname)
     metadata_fname = '%s.aafig' % outfn
 
-    if path.isfile(outfn):
-        extra = None
-        if options['format'].lower() == 'svg':
-            f = file(metadata_fname, 'r')
-            extra = f.read()
-            f.close()
-        return relfn, outfn, id, extra
+    try:
+        if path.isfile(outfn):
+            extra = None
+            if options['format'].lower() == 'svg':
+                f = None
+                try:
+                    try:
+                        f = file(metadata_fname, 'r')
+                        extra = f.read()
+                    except:
+                        raise AafigError()
+                finally:
+                    if f is not None:
+                        f.close()
+            return relfn, outfn, id, extra
+    except AafigError:
+        pass
 
     ensuredir(path.dirname(outfn))
 
