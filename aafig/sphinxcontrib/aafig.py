@@ -130,7 +130,7 @@ def render_html(self, node, text, options, prefix=DEFAULT_PREFIX, imgcls=None):
         imgcss = imgcls and 'class="%s"' % imgcls or ''
         if options['format'].lower() == 'svg':
             self.body.append('<object type="image/svg+xml" data="%s" %s %s />'
-                    (fname, extra, imgcss))
+                    % (fname, extra, imgcss))
         else:
             self.body.append('<img src="%s" alt="%s" %s/>\n' %
                     (fname, self.encode(text).strip(), imgcss))
