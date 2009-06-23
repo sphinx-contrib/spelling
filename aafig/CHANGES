@@ -7,7 +7,8 @@ Version 0.3 (unreleased)
 ------------------------
 
 * Add dependency against aafigure package to ease installation.
-* Fix an error reporting unsupported output formats.
+* Improve error handling.
+* Fix a couple of bugs.
 
 
 Version 0.2 (2009-06-07)
