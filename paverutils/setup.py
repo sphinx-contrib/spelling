@@ -12,7 +12,7 @@ This package contains an alternative integration of Sphinx and Paver allowing fo
 requires = ['Sphinx>=0.6', 'Paver>=1.0.1']
 
 NAME='sphinxcontrib-paverutils'
-VERSION='1.0'
+VERSION='1.1'
 
 setup(
     name=NAME,

@@ -191,3 +191,71 @@ def _get_paths(options):
     doctrees.mkdir()
 
     return Bunch(locals())
+
+
+def run_script(input_file, script_name, 
+                interpreter='python',
+                include_prefix=True, 
+                ignore_error=False, 
+                trailing_newlines=True,
+                ):
+    """Run a script in the context of the input_file's directory, 
+    return the text output formatted to be included as an rst
+    literal text block.
+    
+    Arguments:
+    
+     input_file
+       The name of the file being processed by cog.  Usually passed as cog.inFile.
+     
+     script_name
+       The name of the Python script living in the same directory as input_file to be run.
+       If not using an interpreter, this can be a complete command line.  If using an
+       alternate interpreter, it can be some other type of file.
+     
+     include_prefix=True
+       Boolean controlling whether the :: prefix is included.
+     
+     ignore_error=False
+       Boolean controlling whether errors are ignored.  If not ignored, the error
+       is printed to stdout and then the command is run *again* with errors ignored
+       so that the output ends up in the cogged file.
+     
+     trailing_newlines=True
+       Boolean controlling whether the trailing newlines are added to the output.
+       If False, the output is passed to rstrip() then one newline is added.  If
+       True, newlines are added to the output until it ends in 2.
+    """
+    rundir = path(input_file).dirname()
+    if interpreter:
+        cmd = '%(interpreter)s %(script_name)s' % vars()
+    else:
+        cmd = script_name
+    real_cmd = 'cd %(rundir)s; %(cmd)s 2>&1' % vars()
+    try:
+        output_text = sh(real_cmd, capture=True, ignore_error=ignore_error)
+    except Exception, err:
+        print '*' * 50
+        print 'ERROR run_script(%s) => %s' % (real_cmd, err)
+        print '*' * 50
+        output_text = sh(real_cmd, capture=True, ignore_error=True)
+        print output_text
+        print '*' * 50
+    if include_prefix:
+        response = '\n::\n\n'
+    else:
+        response = ''
+    response += '\t$ %(cmd)s\n\t' % vars()
+    response += '\n\t'.join(output_text.splitlines())
+    if trailing_newlines:
+        while not response.endswith('\n\n'):
+            response += '\n'
+    else:
+        response = response.rstrip()
+        response += '\n'
+    return response
+
+# Stuff commonly used symbols into the builtins so we don't have to
+# import them in all of the cog blocks where we want to use them.
+__builtins__['run_script'] = run_script
+#__builtins__['sh'] = sh
