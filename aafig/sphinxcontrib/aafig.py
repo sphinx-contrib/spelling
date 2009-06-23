@@ -79,7 +79,6 @@ def render_aafigure(self, text, options, prefix):
 
     hashkey = text.encode('utf-8') + str(options)
     id = sha(hashkey).hexdigest()
-    print id, str(options)
     fname = '%s-%s.%s' % (prefix, id, options['format'])
     if hasattr(self.builder, 'imgpath'):
         # HTML
