@@ -71,8 +71,15 @@ def render_aafigure(self, text, options, prefix):
     """
     Render an ASCII art figure into the requested format output file.
     """
+
+    # merge default options
+    for (k, v) in self.builder.config.aafig_default_options.items():
+        if k not in options:
+            options[k] = v
+
     hashkey = text.encode('utf-8') + str(options)
     id = sha(hashkey).hexdigest()
+    print id, str(options)
     fname = '%s-%s.%s' % (prefix, id, options['format'])
     if hasattr(self.builder, 'imgpath'):
         # HTML
@@ -103,11 +110,6 @@ def render_aafigure(self, text, options, prefix):
         pass
 
     ensuredir(path.dirname(outfn))
-
-    # merge default options
-    for (k, v) in self.builder.config.aafig_default_options.items():
-        if k not in options:
-            options[k] = v
 
     try:
         (visitor, output) = aafigure.render(text, outfn, options)
