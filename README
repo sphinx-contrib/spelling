@@ -36,15 +36,20 @@ List of extensions
 ==================
 
 - aafig: render embeded ASCII art as nice images using aafigure_.
-- context: an builder for ConTeXt.
-- lilypond: an extension inserting music scripts from Lilypond in PNG format.
+- context: a builder for ConTeXt.
+- lilypond: an extension inserting music scripts from Lilypond_ in PNG format.
 - mscgen: embed mscgen-formatted :abbr:`MSC (Message Sequence Chart)`\ s.
 - paverutils: an alternate integration of Sphinx with Paver_.
-- sword: an extension inserting Bible verses from Sword.
+- sword: an extension inserting Bible verses from Sword_.
 
 .. _aafigure: http://docutils.sourceforge.net/sandbox/aafigure/
 
 .. _paver: http://www.blueskyonmars.com/projects/paver/
+
+.. Sword: http://www.crosswire.org/sword/
+
+.. Lilypond: http://lilypond.org/web/
+
 
 For contributors
 ================
