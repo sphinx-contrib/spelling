@@ -64,7 +64,7 @@ class AafigDirective(directives.images.Image):
         background   = str,
         foreground   = str,
         fill         = str,
-        aspect       = float,
+        aspect       = directives.nonnegative_int,
         textual      = directives.flag,
         proportional = directives.flag,
     )
@@ -81,7 +81,7 @@ class AafigDirective(directives.images.Image):
                 if v is None:
                     v = True
                 # convert percentage to float
-                if k == 'scale':
+                if k == 'scale' or k == 'aspec':
                     v = float(v) / 100
                 aafig_options[k] = v
                 del self.options[k]
