@@ -36,12 +36,11 @@ except ImportError:
 DEFAULT_FORMATS = dict(html='svg', latex='pdf', text=None)
 
 
-def merge_defaults(options, config):
-    # merge default options
-    for (k, v) in config.aafig_default_options.items():
-        if k not in options:
-            options[k] = v
-    return options
+def merge_dict(dst, src):
+    for (k, v) in src.items():
+        if k not in dst:
+            dst[k] = v
+    return dst
 
 
 def get_basename(text, options, prefix='aafig'):
@@ -101,6 +100,8 @@ class AafigDirective(directives.images.Image):
 
 
 def render_aafig_images(app, doctree):
+    format_map = app.builder.config.aafig_format
+    merge_dict(format_map, DEFAULT_FORMATS)
     for img in doctree.traverse(nodes.image):
         if not hasattr(img, 'aafig'):
             continue
@@ -108,11 +109,11 @@ def render_aafig_images(app, doctree):
         options = img.aafig['options']
         text = img.aafig['text']
         format = app.builder.format
-        merge_defaults(options, app.builder.config)
+        merge_dict(options, app.builder.config.aafig_default_options)
         try:
-            try:
-                options['format'] = app.builder.config.aafig_format[format]
-            except:
+            if format in format_map:
+                options['format'] = format_map[format]
+            else:
                 app.builder.warn('unsupported builder format "%s", please '
                         'add a custom entry in aafig_format config option '
                         'for this builder' % format)

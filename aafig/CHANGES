@@ -6,6 +6,7 @@ This file describes user-visible changes between the extension versions.
 Version 0.3 (unreleased)
 ------------------------
 
+* Add partial format redefinition via the config option ``aafig_format``.
 * Add support for the text builder (using the ``None`` format).
 * Add a special format ``None`` meaning not to render the figure using aafigure
   at all (just include the raw ASCII art as a literal block).
