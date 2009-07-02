@@ -27,7 +27,10 @@ from sphinx.errors import SphinxError
 from sphinx.util import ensuredir
 from sphinx.util.compat import Directive
 
-import aafigure
+try:
+    import aafigure
+except ImportError:
+    aafigure = None
 
 
 def merge_defaults(options, config):
@@ -128,6 +131,9 @@ def render_aafigure(app, text, options):
     """
     Render an ASCII art figure into the requested format output file.
     """
+
+    if aafigure is None:
+        raise AafigError('aafigure module not installed')
 
     fname = get_basename(text, options)
     fname = '%s.%s' % (get_basename(text, options), options['format'])
