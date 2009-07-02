@@ -110,12 +110,13 @@ def render_aafig_images(app, doctree):
                 app.builder.warn('unsupported builder format "%s", please '
                         'add a custom entry in aafig_format config option '
                         'for this builder' % format)
+                img.replace_self(nodes.literal_block(text, text))
                 continue
             fname, outfn, id, extra = render_aafigure(app, text, options)
         except AafigError, exc:
             app.builder.warn('aafigure error: ' + str(exc))
-            current_node.replace_self([])
-            # TODO: replace with the ascii art itself
+            img.replace_self(nodes.literal_block(text, text))
+            continue
         img['uri'] = fname
         # FIXME: find some way to avoid this hack in aafigure
         if extra:
