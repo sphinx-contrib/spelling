@@ -6,8 +6,18 @@ This file describes user-visible changes between the extension versions.
 Version 0.3 (unreleased)
 ------------------------
 
+* Add support for the text builder (using the ``None`` format).
+* Add a special format ``None`` meaning not to render the figure using aafigure
+  at all (just include the raw ASCII art as a literal block).
+* Fix SVG support for HTML builders.
+* Make aspect and scale options take a percentage instead of a float (this is
+  more consistent with the image directive).
+* Add support for image directive options: alt, align, width, height, class,
+  target.
 * Add dependency against aafigure package to ease installation.
-* Improve error handling.
+* Improve error handling in many ways. For example, if the format is not
+  supported, or if aafigure is not installed, the raw ASCII art is inserted
+  into the document as a literal block.
 * Fix a couple of bugs.
 
 
