@@ -14,7 +14,7 @@ About
 This extension allows embeded ASCII art to be rendered as nice looking images
 using the **great** aafigure_ reStructuredText_ extension.
 
-.. _aafigure: http://docutils.sourceforge.net/sandbox/aafigure/
+.. _aafigure: http://launchpad.net/aafigure
 .. _reStructuredText: http://docutils.sourceforge.net/rst.html
 
 _aafigure is a program and a reStructuredText_ directive to allow embeded ASCII
@@ -81,7 +81,7 @@ A few configuration options are added (all optional):
 Requirements
 ============
 
-* aafigure_ (r5978 or later).
+* aafigure_ (0.3 or later).
 * reportlab_ (for LaTeX/PDF output)
 * PIL_ (for any image format other than SVG or PDF)
 

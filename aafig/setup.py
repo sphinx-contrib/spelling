@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 long_desc = '''
 This package contains the aafigure_ Sphinx_ extension.
 
-.. _aafigure: http://docutils.sourceforge.net/sandbox/aafigure/
+.. _aafigure: https://launchpad.net/aafigure
 .. _Sphinx: http://sphinx.pocoo.org/
 
 aafigure_ is a program and a reStructuredText_ directive to allow embeded ASCII
@@ -22,7 +22,7 @@ documentation.
 Usage example::
 
     .. aafig::
-        :scale: 1.5
+        :scale: 150
         :textual:
 
         +-------+         +-----------+
