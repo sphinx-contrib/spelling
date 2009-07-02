@@ -86,8 +86,8 @@ class AafigDirective(directives.images.Image):
                 if v is None:
                     v = True
                 # convert percentage to float
-                if k == 'scale' or k == 'aspec':
-                    v = float(v) / 100
+                if k == 'scale' or k == 'aspect':
+                    v = float(v) / 100.0
                 aafig_options[k] = v
                 del self.options[k]
         self.arguments = ['']
