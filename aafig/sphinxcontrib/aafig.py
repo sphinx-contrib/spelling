@@ -33,6 +33,9 @@ except ImportError:
     aafigure = None
 
 
+DEFAULT_FORMATS = dict(html='svg', latex='pdf', text=None)
+
+
 def merge_defaults(options, config):
     # merge default options
     for (k, v) in config.aafig_default_options.items():
@@ -115,6 +118,9 @@ def render_aafig_images(app, doctree):
                         'for this builder' % format)
                 img.replace_self(nodes.literal_block(text, text))
                 continue
+            if options['format'] is None:
+                img.replace_self(nodes.literal_block(text, text))
+                continue
             fname, outfn, id, extra = render_aafigure(app, text, options)
         except AafigError, exc:
             app.builder.warn('aafigure error: ' + str(exc))
@@ -186,6 +192,6 @@ def render_aafigure(app, text, options):
 def setup(app):
     app.add_directive('aafig', AafigDirective)
     app.connect('doctree-read', render_aafig_images)
-    app.add_config_value('aafig_format', dict(html='svg', latex='pdf'), 'html')
+    app.add_config_value('aafig_format', DEFAULT_FORMATS, 'html')
     app.add_config_value('aafig_default_options', dict(), 'html')
 

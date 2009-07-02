@@ -49,11 +49,20 @@ Configuration
 A few configuration options are added (all optional):
 
 ``aafig_format`` <dict>:
-   image format used for the different builders. Only ``latex`` and ``html``
-   are supported for now. You can specify the desired format for each builder
-   using a dictionary. For example::
+   image format used for the different builders. All ``latex``, ``html`` and
+   ``text`` builder are supported, and it should be trivial to add support for
+   other builders if they correclty handle images (and if aafigure_ can render
+   an image format suitable for that builder) by just adding the correct format
+   mapping here.
 
-      aafig_format = dict(latex='pdf', html='svg')
+   A special format ``None`` is supported, which means not to use aafigure to
+   render the image, just show the raw ASCII art as is in the resulting
+   document (using a literal block). This is almost only useful for the text
+   builder.
+
+   You can specify the format - builder mapping using a dict. For example::
+
+      aafig_format = dict(latex='pdf', html='svg', text=None)
 
    These are the actual defaults.
 
