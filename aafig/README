@@ -87,3 +87,11 @@ Python's path through the ``conf.py``, for example::
 
     sys.path.extend(os.path.abspath('path/to/aafigure')])
 
+
+TODO
+====
+
+* Add color validation for ``fill``, ``background`` and ``foreground`` options.
+* Add ``aa`` role for easily embed small images (like arrows).
+
+
