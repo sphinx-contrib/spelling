@@ -9,15 +9,26 @@ This package contains the mscgen_ Sphinx_ extension.
 .. _Sphinx: http://sphinx.pocoo.org/
 
 Allow mscgen-formatted Message Sequence Chart (MSC) graphs to be included in
-Sphinx-generated documents inline.
+Sphinx-generated documents inline. For example::
+
+    .. msc::
+
+        hscale = "0.5";
+
+        a,b,c;
+
+        a->b [ label = "ab()" ] ;
+        b->c [ label = "bc(TRUE)"];
+        c=>c [ label = "process()" ];
+
 '''
 
 requires = ['Sphinx>=0.6']
 
 setup(
     name='sphinxcontrib-mscgen',
-    version='0.3',
-    url='http://bitbucket.org/birkenfeld/sphinx-contrib',
+    version='0.4',
+    url='http://packages.python.org/sphinxcontrib-mscgen/',
     download_url='http://pypi.python.org/pypi/sphinxcontrib-mscgen',
     license='BSD',
     author='Leandro Lucarella',

@@ -2,21 +2,31 @@
 
 This file describes user-visible changes between the extension versions.
 
-Version 0.3
------------
+Version 0.4 (unreleased)
+------------------------
+
+* Add website__.
+
+__ http://packages.python.org/sphinxcontrib-mscgen/
+
+
+Version 0.3 (2009-06-05)
+------------------------
 
 * Fix a bug when exposed when epstopdf fails.
 * Add ``[]`` to ``\includegraphics`` in LaTeX output so it can be centered in
   figures using ``\centering``.
 * Improve documentation.
 
-Version 0.2
------------
+
+Version 0.2 (unreleased)
+------------------------
 
 * Add image maps support for HTML output.
 
-Version 0.1
------------
+
+Version 0.1 (unreleased)
+------------------------
 
 * Initial version.
 
