@@ -7,6 +7,7 @@ Version 0.3 (unreleased)
 ------------------------
 
 * Add website__.
+* Change license to BOLA__.
 * Add partial format redefinition via the config option ``aafig_format``.
 * Add support for the text builder (using the ``None`` format).
 * Add a special format ``None`` meaning not to render the figure using aafigure
@@ -23,6 +24,7 @@ Version 0.3 (unreleased)
 * Fix a couple of bugs.
 
 __ http://packages.python.org/sphinxcontrib-aafig/
+__ http://blitiri.com.ar/p/bola/
 
 
 Version 0.2 (2009-06-07)
