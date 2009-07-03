@@ -50,7 +50,6 @@ class Mscgen(Directive):
     def run(self):
         node = mscgen()
         node['code'] = '\n'.join(self.content)
-        node['options'] = []
         return [node]
 
 
@@ -67,7 +66,6 @@ class MscgenSimple(Directive):
     def run(self):
         node = mscgen()
         node['code'] = 'msc {\n%s\n}\n' % ('\n'.join(self.content))
-        node['options'] = []
         return [node]
 
 
@@ -111,12 +109,11 @@ def get_map_code(mapfn, id):
     return mapcode
 
 
-def render_msc(self, code, options, format, prefix='mscgen'):
+def render_msc(self, code, format, prefix='mscgen'):
     """
     Render mscgen code into a PNG or PDF output file.
     """
-    hashkey = code.encode('utf-8') + str(options) + \
-              str(self.builder.config.mscgen_args)
+    hashkey = code.encode('utf-8') + str(self.builder.config.mscgen_args)
     id = sha(hashkey).hexdigest()
     fname = '%s-%s.%s' % (prefix, id, format)
     if hasattr(self.builder, 'imgpath'):
@@ -147,7 +144,6 @@ def render_msc(self, code, options, format, prefix='mscgen'):
 
     mscgen_args = [self.builder.config.mscgen]
     mscgen_args.extend(self.builder.config.mscgen_args)
-    mscgen_args.extend(options)
     mscgen_args.extend(['-T', format, '-o', tmpfn])
     if not run_cmd(self.builder, mscgen_args, 'mscgen', 'mscgen', code):
         return None, None, None
@@ -163,9 +159,9 @@ def render_msc(self, code, options, format, prefix='mscgen'):
     return relfn, outfn, id
 
 
-def render_msc_html(self, node, code, options, prefix='mscgen', imgcls=None):
+def render_msc_html(self, node, code, prefix='mscgen', imgcls=None):
     try:
-        fname, outfn, id = render_msc(self, code, options, 'png', prefix)
+        fname, outfn, id = render_msc(self, code, 'png', prefix)
     except MscgenError, exc:
         self.builder.warn('mscgen code %r: ' % code + str(exc))
         raise nodes.SkipNode
@@ -190,12 +186,12 @@ def render_msc_html(self, node, code, options, prefix='mscgen', imgcls=None):
 
 
 def html_visit_mscgen(self, node):
-    render_msc_html(self, node, node['code'], node['options'])
+    render_msc_html(self, node, node['code'])
 
 
-def render_msc_latex(self, node, code, options, prefix='mscgen'):
+def render_msc_latex(self, node, code, prefix='mscgen'):
     try:
-        fname, outfn, id = render_msc(self, code, options, 'pdf', prefix)
+        fname, outfn, id = render_msc(self, code, 'pdf', prefix)
     except MscgenError, exc:
         self.builder.warn('mscgen code %r: ' % code + str(exc))
         raise nodes.SkipNode
@@ -206,7 +202,7 @@ def render_msc_latex(self, node, code, options, prefix='mscgen'):
 
 
 def latex_visit_mscgen(self, node):
-    render_msc_latex(self, node, node['code'], node['options'])
+    render_msc_latex(self, node, node['code'])
 
 def setup(app):
     app.add_node(mscgen,
