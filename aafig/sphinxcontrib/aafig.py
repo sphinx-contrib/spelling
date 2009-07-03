@@ -108,18 +108,18 @@ def render_aafig_images(app, doctree):
         text = img.aafig['text']
         format = app.builder.format
         merge_dict(options, app.builder.config.aafig_default_options)
+        if format in format_map:
+            options['format'] = format_map[format]
+        else:
+            app.builder.warn('unsupported builder format "%s", please '
+                    'add a custom entry in aafig_format config option '
+                    'for this builder' % format)
+            img.replace_self(nodes.literal_block(text, text))
+            continue
+        if options['format'] is None:
+            img.replace_self(nodes.literal_block(text, text))
+            continue
         try:
-            if format in format_map:
-                options['format'] = format_map[format]
-            else:
-                app.builder.warn('unsupported builder format "%s", please '
-                        'add a custom entry in aafig_format config option '
-                        'for this builder' % format)
-                img.replace_self(nodes.literal_block(text, text))
-                continue
-            if options['format'] is None:
-                img.replace_self(nodes.literal_block(text, text))
-                continue
             fname, outfn, id, extra = render_aafigure(app, text, options)
         except AafigError, exc:
             app.builder.warn('aafigure error: ' + str(exc))
