@@ -6,8 +6,10 @@ Version 0.4 (unreleased)
 ------------------------
 
 * Add website__.
+* Change license to BOLA__.
 
 __ http://packages.python.org/sphinxcontrib-mscgen/
+__ http://blitiri.com.ar/p/bola/
 
 
 Version 0.3 (2009-06-05)

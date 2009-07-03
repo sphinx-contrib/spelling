@@ -8,9 +8,8 @@
 
     See the README file for details.
 
-    :copyright: Copyright 2009 by Leandro Lucarella <llucax@gmail.com> \
-        (based on sphinx.ext.graphviz).
-    :license: BSD, see LICENSE for details.
+    :author: Leandro Lucarella <llucax@gmail.com>.
+    :license: BOLA, see LICENSE for details.
 """
 
 import sys
