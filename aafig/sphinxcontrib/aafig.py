@@ -62,8 +62,6 @@ class AafigDirective(directives.images.Image):
     """
     has_content = True
     required_arguments = 0
-    optional_arguments = 0
-    final_argument_whitespace = False
     own_option_spec = dict(
         line_width   = float,
         background   = str,
