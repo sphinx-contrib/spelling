@@ -6,6 +6,7 @@ This file describes user-visible changes between the extension versions.
 Version 0.3 (unreleased)
 ------------------------
 
+* Add website__.
 * Add partial format redefinition via the config option ``aafig_format``.
 * Add support for the text builder (using the ``None`` format).
 * Add a special format ``None`` meaning not to render the figure using aafigure
@@ -20,6 +21,8 @@ Version 0.3 (unreleased)
   supported, or if aafigure is not installed, the raw ASCII art is inserted
   into the document as a literal block.
 * Fix a couple of bugs.
+
+__ http://packages.python.org/sphinxcontrib-aafig/
 
 
 Version 0.2 (2009-06-07)
