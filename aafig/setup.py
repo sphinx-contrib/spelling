@@ -37,7 +37,7 @@ requires = ['Sphinx>=0.6', 'aafigure>=0.3']
 
 setup(
     name='sphinxcontrib-aafig',
-    version='0.3',
+    version='1.0',
     url='http://packages.python.org/sphinxcontrib-aafig/',
     download_url='http://pypi.python.org/pypi/sphinxcontrib-aafig',
     license='BOLA',
@@ -47,7 +47,7 @@ setup(
     long_description=long_desc,
     zip_safe=False,
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 4 - Production/Stable',
         'Environment :: Console',
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
