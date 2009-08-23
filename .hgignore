@@ -6,3 +6,4 @@ dist/
 sphinx-contrib.egg-info/
 TAGS
 \.ropeproject/
+,*~
