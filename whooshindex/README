@@ -6,7 +6,7 @@ Whoosh indexer extension for Sphinx
 
 :author: Pauli Virtanen <pav@iki.fi>
 
-.. module:: sphinxcontrib.whoosh
+.. module:: sphinxcontrib.whooshindex
    :synopsis: Index Sphinx documents with the Whoosh indexing engine
 
 This extension adds an additional builder, the :class:`WhooshBuilder`.
@@ -46,15 +46,15 @@ easy_install -U sphinxcontrib-whoosh
 Enabling the extension in Sphinx_
 ---------------------------------
 
-Just add ``sphinxcontrib.whoosh`` to the list of extensions in the ``conf.py``
-file. For example::
+Just add ``sphinxcontrib.whooshindex`` to the list of extensions in the
+``conf.py`` file. For example::
 
-    extensions = ['sphinxcontrib.whoosh']
+    extensions = ['sphinxcontrib.whooshindex']
 
 Usage
 =====
 
-Give a builder name "whoosh" to ``sphinxbuild``. The Whoosh index will
+Give a builder name ``whoosh`` to ``sphinxbuild``. The Whoosh index will
 be placed to the output directory.
 
 .. Links:

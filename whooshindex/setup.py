@@ -13,7 +13,7 @@ indexes a Sphinx document using it.
 
 """
 
-requires = ['Sphinx>=0.6', 'Whoosh>=0.3']
+requires = ['Sphinx>=0.6', 'Whoosh>=0.3.0b5']
 
 setup(
     name='sphinxcontrib-whoosh',
