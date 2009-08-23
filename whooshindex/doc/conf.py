@@ -173,7 +173,7 @@ htmlhelp_basename = 'sphinxcontrib-whooshdoc'
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
   ('index', 'sphinxcontrib-whoosh.tex', u'sphinxcontrib-whoosh Documentation',
-   u'Leandro Lucarella', 'howto'),
+   u'Pauli Virtanen', 'howto'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
