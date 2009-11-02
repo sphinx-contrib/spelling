@@ -99,10 +99,15 @@ class AafigDirective(directives.images.Image):
 def render_aafig_images(app, doctree):
     format_map = app.builder.config.aafig_format
     merge_dict(format_map, DEFAULT_FORMATS)
+    if aafigure is None:
+        app.builder.warn('aafigure module not installed, ASCII art images '
+                'will be redered as literal text')
     for img in doctree.traverse(nodes.image):
         if not hasattr(img, 'aafig'):
             continue
-
+        if aafigure is None:
+            img.replace_self(nodes.literal_block(text, text))
+            continue
         options = img.aafig['options']
         text = img.aafig['text']
         format = app.builder.format
