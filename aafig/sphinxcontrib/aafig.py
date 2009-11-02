@@ -23,7 +23,7 @@ from docutils import nodes
 from docutils.parsers.rst import directives
 
 from sphinx.errors import SphinxError
-from sphinx.util import ensuredir
+from sphinx.util import ensuredir, relative_uri
 from sphinx.util.compat import Directive
 
 try:
@@ -144,12 +144,18 @@ def render_aafigure(app, text, options):
 
     fname = get_basename(text, options)
     fname = '%s.%s' % (get_basename(text, options), options['format'])
-    if hasattr(app.builder, 'imgpath'):
+    if app.builder.format == 'html':
         # HTML
-        relfn = posixpath.join(app.builder.imgpath, fname)
+        imgpath = relative_uri(app.builder.env.docname, '_images')
+        relfn = posixpath.join(imgpath, fname)
         outfn = path.join(app.builder.outdir, '_images', fname)
     else:
-        # LaTeX
+        # Non-HTML
+        if app.builder.format != 'latex':
+            app.builder.warn('aafig: the builder format %s is not officially '
+                    'supported, aafigure images could not work. Please report '
+                    'problems and working builder to avoid this warning in '
+                    'the future' % app.builder.format)
         relfn = fname
         outfn = path.join(app.builder.outdir, fname)
     metadata_fname = '%s.aafig' % outfn
