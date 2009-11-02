@@ -202,3 +202,5 @@ def setup(app):
     app.add_config_value('aafig_format', DEFAULT_FORMATS, 'html')
     app.add_config_value('aafig_default_options', dict(), 'html')
 
+
+# vim: set expandtab shiftwidth=4 softtabstop=4 :
