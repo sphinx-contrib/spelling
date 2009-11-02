@@ -3,9 +3,11 @@
 This file describes user-visible changes between the extension versions.
 
 
-Version 1.0 (unreleased)
+Version 1.0 (2009-11-15)
 ------------------------
 
+* Fix HTML builder rendering.
+* Improve error reporting when aafigure package is missing.
 
 
 Version 0.3 (2009-07-13)
