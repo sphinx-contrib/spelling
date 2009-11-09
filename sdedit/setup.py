@@ -31,7 +31,7 @@ requires = ['Sphinx>=0.6', 'PIL']
 setup(
     name='sphinxcontrib-sdedit',
     version='0.3',
-    url='http://bitbucket.org/birkenfeld/sphinx-contrib',
+    url='http://www.shibu.jp/sdeditext/',
     download_url='http://pypi.python.org/pypi/sphinxcontrib-sdedit',
     license='BSD',
     author='SHIBUKAWA Yoshiki',
