@@ -1,0 +1,151 @@
+.. sdedit extension documentation master file, created by
+   sphinx-quickstart on Sat Oct 10 21:07:08 2009.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+Welcome to sdedit extension's
+=============================
+
+This is a sphinx extension which render sequence diagrams by using
+`Quick Sequence Diagram Editor <http://sdedit.sourceforge.net/>`_ (sdedit).
+
+rendered:
+
+.. sequence-diagram::
+   :maxwidth: 500
+   :linewrap: false
+   :threadnumber: true
+
+   actor:Actor
+   sphinx:Sphinx[a]
+   dot:Graphviz
+   sdedit:Quick Sequence Diagram Editor
+
+   actor:sphinx.make html
+   sphinx:dot.render_diagram()
+   sphinx:sdedit.render_diagram()
+
+source:
+
+.. code-block:: text
+
+   .. sequence-diagram::
+      :maxwidth: 500
+      :linewrap: false
+      :threadnumber: true
+
+      actor:Actor
+      sphinx:Sphinx[a]
+      dot:Graphviz
+      sdedit:Quick Sequence Diagram Editor
+
+      actor:sphinx.make html
+      sphinx:dot.render_diagram()
+      sphinx:sdedit.render_diagram()
+
+Setting
+=======
+
+.. You can see available package at `PyPI <http://pypi.python.org/pypi/sphinxcontrib-sdedit>`_.
+
+You can get archive file at http://bitbucket.org/shibu/sdeditext_for_sphinx/
+
+Require components
+------------------
+
+* `Quick Sequence Diagram Editor <http://sdedit.sourceforge.net/>`_
+
+  You can use .exe or .jar file (.sh, .bat is not tested yet).
+
+* `PIL <http://www.pythonware.com/products/pil/>`_ to create thumbnail
+
+Install
+-------
+
+. code-block:: bash
+
+      > easy_install sphinxcontrib-sdedit
+
+
+Copy :file:`sdedit.py` to your favarite place.
+
+.. note::
+
+   Now preparing egg file.
+
+Config Sphinx' setting
+----------------------
+
+If you enable this extension, add ``sdedit`` module to extensions option at :file:`conf.py` and sdedit path.
+
+.. code-block:: python
+
+   import os, sys
+
+   sys.path.append(os.path.abspath('/path/to/sdedit'))
+
+   extensions = ['sdedit']
+
+   sdedit_path = '/path/to/sdedit-3.0.5.exe'
+
+On Windows, you can use .exe version of sdedit. 
+You can use .jar version.
+
+It is minimum setting.
+
+Directive
+=========
+
+.. describe:: .. sequence-diagram::
+
+   This directive insert a sequence diagram into the generated document.
+   This code block has a source script of Quick Sequence Diagram Editor.
+  
+   * ``maxwidth``: This is a integer option. default value is 700:
+
+   * ``linewrap``: This is a boolean option.
+
+   * ``threadnumber``: This is a boolean option.
+ 
+   .. seealso::
+
+    `how to enter text <http://sdedit.sourceforge.net/enter_text/index.html>`_
+        This page describes sdedit's syntax. 
+
+Configuration File Options
+==========================
+
+.. confval:: sdedit_path
+
+   This is a path for sdedit program. You can use .exe, .jar, .sh and .bat
+   file path.
+
+.. confval:: sdedit_java_path
+
+   If you set .jar files at :confval:`sdedit_path`, use this option to run
+   .jar file. Default value is 'java'.
+
+.. confval:: sdedit_args
+
+   If you want to add options when sdedit is run, use this option.
+
+   This value is a list of parameters. Default value is [].
+
+.. confval:: sdedit_default_options
+
+   This option is a dictionary. In this version, it has following option:
+
+   * ``maxwidth``: If generated image's width is larger than this value, 
+     create thumbnail image. Default value is 700.
+
+     You can overwrite it if you use directive's option ``maxwidth``.
+
+   .. versionadded:: 0.2
+
+Repository
+==========
+
+This code is hosted by Bitbucket.
+
+  http://bitbucket.org/shibu/sdeditext_for_sphinx/
+

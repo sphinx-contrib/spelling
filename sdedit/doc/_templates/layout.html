@@ -1,0 +1,29 @@
+{% extends "!layout.html" %}
+
+{% block sidebarsearch %}
+{{ super() }}
+<script type="text/javascript"><!--
+google_ad_client = "pub-8499969180632615";
+/* 200x200, 作成済み 09/10/11 */
+google_ad_slot = "2339322276";
+google_ad_width = 200;
+google_ad_height = 200;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+{% endblock %}
+
+{% block footer %}
+{{ super() }}
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-11050419-4");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+{% endblock %}

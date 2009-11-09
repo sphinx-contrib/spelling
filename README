@@ -41,6 +41,8 @@ List of extensions
 - mscgen: embed mscgen-formatted :abbr:`MSC (Message Sequence Chart)`\ s.
 - paverutils: an alternate integration of Sphinx with Paver_.
 - sword: an extension inserting Bible verses from Sword_.
+- sdedit: an extension inserting sequence diagram by using Quick Sequence
+  Diagram Editor(sdedit_)
 
 .. _aafigure: http://docutils.sourceforge.net/sandbox/aafigure/
 
@@ -50,6 +52,7 @@ List of extensions
 
 .. Lilypond: http://lilypond.org/web/
 
+.. sdedit: http://sdedit.sourceforge.net/
 
 For contributors
 ================

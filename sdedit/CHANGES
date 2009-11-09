@@ -1,0 +1,22 @@
+.. -*- restructuredtext -*-
+
+This file describes user-visible changes between the extension versions.
+
+Version 0.3 (2009-11-09)
+------------------------
+
+* This module belongs to sphinx-contrib package.
+* Regist to PyPI.
+
+Version 0.2 (2009-10)
+---------------------
+
+* Create thumbnail when result image size is larger than ``max_width``.
+* Add ``default_format`` to ``sdedit_args``.
+* Add ``max_width`` to ``sdedit_args`` opt and ``sequence-diagram`` directive.
+
+Version 0.1 (2009-10-10)
+------------------------
+
+* Initial version.
+
