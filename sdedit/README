@@ -1,10 +1,5 @@
-.. sdedit extension documentation master file, created by
-   sphinx-quickstart on Sat Oct 10 21:07:08 2009.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
-Welcome to sdedit extension's
-=============================
+sdedit extension README
+=======================
 
 This is a sphinx extension which render sequence diagrams by using
 `Quick Sequence Diagram Editor <http://sdedit.sourceforge.net/>`_ (sdedit).
@@ -50,8 +45,8 @@ Setting
 
 You can get archive file at http://bitbucket.org/shibu/sdeditext_for_sphinx/
 
-Require components
-------------------
+Required components
+-------------------
 
 * `Quick Sequence Diagram Editor <http://sdedit.sourceforge.net/>`_
 
@@ -62,36 +57,37 @@ Require components
 Install
 -------
 
-. code-block:: bash
+.. code-block:: bash
 
-      > easy_install sphinxcontrib-sdedit
+   > easy_install sphinxcontrib-sdedit
 
 
-Copy :file:`sdedit.py` to your favarite place.
+Configure Sphinx
+----------------
 
-.. note::
-
-   Now preparing egg file.
-
-Config Sphinx' setting
-----------------------
-
-If you enable this extension, add ``sdedit`` module to extensions option at :file:`conf.py` and sdedit path.
+To enable this extension, add ``sphinxcontrib.sdedit`` module to extensions 
+option at :file:`conf.py`. 
 
 .. code-block:: python
 
    import os, sys
 
-   sys.path.append(os.path.abspath('/path/to/sdedit'))
+   # Path to the folder where sdedit.py is
+   # NOTE: not needed if the package is installed in traditional way
+   # using setup.py or easy_install
+   sys.path.append(os.path.abspath('/path/to/sphinxcontrib.sdedit'))
 
-   extensions = ['sdedit']
+   # Enabled extensions
+   extensions = ['sphinxcontrib.sdedit']
 
-   sdedit_path = '/path/to/sdedit-3.0.5.exe'
+   # Path to sedit -setup (http://sdedit.sourceforge.net/)
+   # you can use .jar, .exe, .bat, .sh
+   sdedit_path = '/path/to/sdedit-3.0.5.jar'
 
-On Windows, you can use .exe version of sdedit. 
-You can use .jar version.
 
-It is minimum setting.
+On Windows, you can also use the ``.exe`` version of sdedit. 
+The configuration key :confval:`sdedit_path` is required.
+See also the :ref:`complete list of the configuration keys <config>`.
 
 Directive
 =========
@@ -111,6 +107,11 @@ Directive
 
     `how to enter text <http://sdedit.sourceforge.net/enter_text/index.html>`_
         This page describes sdedit's syntax. 
+
+    `how to enter text(Japanese) <http://www.shibu.jp/sdedit-jp/>`_
+        This is Japanese translation of above document.
+
+.. _config:
 
 Configuration File Options
 ==========================
@@ -149,3 +150,4 @@ This code is hosted by Bitbucket.
 
   http://bitbucket.org/shibu/sdeditext_for_sphinx/
 
+  http://bitbucket.org/birkenfeld/sphinx-contrib/
