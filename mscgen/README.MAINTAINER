@@ -1,0 +1,31 @@
+
+========================
+Maintainer documentation
+========================
+
+This document contains notes for developers and packagers. End users probably
+want to read ``README`` and the files in the ``doc`` directory instead.
+
+
+PyPi Release
+============
+
+1. Make sure the repository is up-to date.
+2. Ensure the version is incremented:
+   - ``setup.py``  must be updated
+   - ``doc/config.py``  must be updated
+   - ``CHANGES.txt``  must contain a summary of the changes
+3. Make sure all changes are committed, including the version number changes.
+4. Tag the sources with ``hg tag -m 'Tag mscgen-X.Y'``.
+5. Don't forget to ``hg push``.
+6. Temporarily modify the ``setup.cfg`` file to comment out the variables
+   ``tag_build = dev`` and ``tag_date = true`` (do **not** commit this
+   changes).
+7. Register and upload the new release ``python setup.py register sdist
+   upload``.
+8. Generate the documentation with ``make -C doc zip``.
+9. Upload the new documentation (``doc/_build/sphinxcontrib-mscgen-doc.zip``) to
+   PyPi:
+   http://pypi.python.org/pypi?%3Aaction=pkg_edit&name=sphinxcontrib-mscgen
+
+.. vim: set filetype=rst :
