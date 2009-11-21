@@ -2,11 +2,12 @@
 
 This file describes user-visible changes between the extension versions.
 
-Version 0.4 (unreleased)
+Version 0.4 (2009-11-21)
 ------------------------
 
 * Add website__.
 * Change license to BOLA__.
+* Minor code cleanups.
 
 __ http://packages.python.org/sphinxcontrib-mscgen/
 __ http://blitiri.com.ar/p/bola/
