@@ -37,7 +37,7 @@ def create_feed_container(app):
 def create_feed_item(app, pagename, templatename, ctx, doctree):
     """
     Here we have access to nice HTML fragments to use in, say, an RSS feed.
-    """
+    """    
     import dateutil.parser
     date_parser = dateutil.parser.parser()
     env = app.builder.env
@@ -63,7 +63,6 @@ def create_feed_item(app, pagename, templatename, ctx, doctree):
     ctx['rss_link'] = app.config.feed_base_url + '/' + app.config.feed_filename
   
 def emit_feed(app, exc):
-    assert False
     import os.path
     ordered_items = app.builder.env.feed_items.values()
     feed = app.builder.env.feed_feed
@@ -72,10 +71,9 @@ def emit_feed(app, exc):
       reverse=True)
     for item in ordered_items:
         feed.add_item(**item)     
-    outfilename = os.path.join(app.builder.outdir, 'html',
+    outfilename = os.path.join(app.builder.outdir,
       app.config.feed_filename)
     fp = open(outfilename, 'w')
-    assert False
     feed.write(fp, 'utf-8')
     fp.close()
     

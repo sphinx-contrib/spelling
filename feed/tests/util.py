@@ -24,8 +24,6 @@ from sphinx.ext.autodoc import AutoDirective
 
 from path import path
 
-import nose.tools
-
 __all__ = [
     'test_root',
     'raises', 'raises_msg', 'Struct',
@@ -88,7 +86,6 @@ class ListOutput(object):
     def write(self, text):
         self.content.append(text)
 
-@nose.tools.nottest
 class TestApp(application.Sphinx):
     """
     A subclass of :class:`Sphinx` that runs on the test root, with some
