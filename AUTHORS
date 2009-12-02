@@ -6,6 +6,9 @@ aafig:
 context:
    Wei-Wei Guo <wwguocn@gmail.com>
 
+feed:
+   Dan MacKinlay <sphinx@email.possumpalace.org>
+
 lilypond:
    Wei-Wei Guo <wwguocn@gmail.com>
 
@@ -20,3 +23,4 @@ sword:
 
 sdedit:
    SHIBUKAWA Yoshiki <yoshiki@shibu.jp>
+

@@ -1,0 +1,16 @@
+.. -*- restructuredtext -*-
+
+======================
+README for sphinx-feed
+======================
+
+This Sphinx extension generates an RSS feed your site containing all articles that occur therein indexed by document "Publish Date". Publish Date is supplied as document metadata. (see test suite for examples)
+
+
+TODO
+====
+- inject rel="alternate" RSS links into document header pointing to the RSS feed
+- use actual `bibliographic fields` for publish date, once there is some for the `fields destruction` problem
+
+..bibliographic fields: http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#bibliographic-fields
+..  fields destruction: http://bitbucket.org/birkenfeld/sphinx/issue/284/accessing-date-from-the-docinfo-metadata

@@ -37,6 +37,7 @@ List of extensions
 
 - aafig: render embeded ASCII art as nice images using aafigure_.
 - context: a builder for ConTeXt.
+- feed: an extension for creating syndication feeds from your site content
 - lilypond: an extension inserting music scripts from Lilypond_ in PNG format.
 - mscgen: embed mscgen-formatted :abbr:`MSC (Message Sequence Chart)`\ s.
 - paverutils: an alternate integration of Sphinx with Paver_.
