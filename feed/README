@@ -6,6 +6,10 @@ README for sphinx-feed
 
 This Sphinx extension generates an RSS feed your site containing all articles that occur therein indexed by document "Publish Date". Publish Date is supplied as document metadata. (see test suite for examples)
 
+Licensing
+=========
+Incorporates feedgenerator.py from the Django project, licensed under the BSD license.
+Contributions by Dan MacKinlay are hereby also released under BSD license.
 
 TODO
 ====
