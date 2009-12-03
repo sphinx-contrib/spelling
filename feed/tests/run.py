@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-    FeedBuilder unit test driver
+    sphinxcontrib.feed unit test driver
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    This script runs the FeedBuilder unit test suite.
+    This script runs the sphinxcontrib.feed unit test suite.
 
-    :copyright: Copyright 2007-2009 by the FeedBuilder team, see AUTHORS.
+    :copyright: Copyright 2007-2009 by the sphinxcontrib.feed team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
@@ -14,19 +14,19 @@ import sys
 from os import path
 
 def run(bonus_args=[]):
-    # always test the FeedBuilder package from this directory
+    # always test the sphinxcontrib.feed package from this directory
     sys.path.insert(0, path.join(path.dirname(__file__), path.pardir))
 
     try:
         import nose
     except ImportError:
-        print "The nose package is needed to run the FeedBuilder test suite."
+        print "The nose package is needed to run the sphinxcontrib.feed test suite."
         sys.exit(1)
 
     try:
         import sphinx
     except ImportError:
-        print "The sphinx package is needed to run the FeedBuilder test suite."
+        print "The sphinx package is needed to run the sphinxcontrib.feed test suite."
 
     nose_argv = ['nosetests']
     
@@ -36,7 +36,7 @@ def run(bonus_args=[]):
         hyphen_pos = sys.argv.index('--')
         nose_argv.extend(bonus_args + sys.argv[hyphen_pos + 1:])
 
-    print "Running FeedBuilder test suite..."
+    print "Running sphinxcontrib.feed test suite..."
     nose.run(argv=nose_argv)
 
 if __name__ == '__main__':
