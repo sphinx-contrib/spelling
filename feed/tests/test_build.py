@@ -16,7 +16,6 @@ import sys
 import difflib
 import htmlentitydefs
 from StringIO import StringIO
-import assert_operators as ops
 from util import test_root, raises, raises_msg, Struct,\
   ListOutput, TestApp, with_app, gen_with_app, path, with_tempdir,\
   write_file, sprint

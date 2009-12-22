@@ -16,7 +16,11 @@ from os import path
 def run(bonus_args=[]):
     # always test the sphinxcontrib.feed package from this directory
     sys.path.insert(0, path.join(path.dirname(__file__), path.pardir))
-
+    sys.path.insert(1, path.abspath(
+      path.join(path.dirname(__file__),
+      path.pardir,
+      'sphinxcontrib', 'feed'))
+    )
     try:
         import nose
     except ImportError:
