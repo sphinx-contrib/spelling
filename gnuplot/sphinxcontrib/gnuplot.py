@@ -93,7 +93,7 @@ def render_gnuplot_images(app, doctree):
 
 def render_gnuplot(app, text, options):
     """
-    Render an ASCII art figure into the requested format output file.
+    Render gnuplot text into a image file.
     """
     format_map = DEFAULT_FORMATS.copy()
     format_map.update(app.builder.config.gnuplot_format)
