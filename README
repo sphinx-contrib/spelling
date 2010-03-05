@@ -36,6 +36,7 @@ List of extensions
 ==================
 
 - aafig: render embeded ASCII art as nice images using aafigure_.
+- autorun: Execute code in a runblock directive.
 - context: a builder for ConTeXt.
 - feed: an extension for creating syndication feeds from your site content
 - gnuplot: produces images using gnuplot_ language.
