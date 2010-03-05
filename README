@@ -38,6 +38,7 @@ List of extensions
 - aafig: render embeded ASCII art as nice images using aafigure_.
 - context: a builder for ConTeXt.
 - feed: an extension for creating syndication feeds from your site content
+- gnuplot: produces images using gnuplot_ language.
 - lilypond: an extension inserting music scripts from Lilypond_ in PNG format.
 - mscgen: embed mscgen-formatted :abbr:`MSC (Message Sequence Chart)`\ s.
 - paverutils: an alternate integration of Sphinx with Paver_.
@@ -46,6 +47,8 @@ List of extensions
   Diagram Editor(sdedit_)
 
 .. _aafigure: http://docutils.sourceforge.net/sandbox/aafigure/
+
+.. _gnuplot: http://www.gnuplot.info/
 
 .. _paver: http://www.blueskyonmars.com/projects/paver/
 
