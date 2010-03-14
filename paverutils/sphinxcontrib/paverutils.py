@@ -241,6 +241,8 @@ def run_script(input_file, script_name,
         output_text = sh(real_cmd, capture=True, ignore_error=True)
         print output_text
         print '*' * 50
+        if not ignore_error:
+            raise
     if include_prefix:
         response = '\n::\n\n'
     else:
