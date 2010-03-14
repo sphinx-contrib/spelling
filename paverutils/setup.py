@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 
+# Bootstrap installation of Distribute
+import distribute_setup
+distribute_setup.use_setuptools()
+
 from setuptools import setup, find_packages
 
 try:
@@ -41,4 +45,5 @@ setup(
     include_package_data=True,
     install_requires=requires,
     namespace_packages=['sphinxcontrib'],
+    py_modules = [ 'distribute_setup' ],
 )
