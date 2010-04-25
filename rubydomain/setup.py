@@ -3,22 +3,23 @@
 from setuptools import setup, find_packages
 
 long_desc = '''
-This package contains the osaka Sphinx extension.
+This package contains the sphinxcontrib-rubydomain Sphinx extension.
 
-This module converts standard Japanese sentence into Osaka dialect. Osaka is one of the most powerful area in Japan. So your formal Japanese sentence will become lively one.
+This extension adds Ruby Domain to Sphinx.
+It needs Sphinx 1.0 or newer.
 '''
 
-requires = ['Sphinx>=0.6']
+requires = ['Sphinx>=1.0']
 
 setup(
-    name='sphinxcontrib-osaka',
+    name='sphinxcontrib-rubydomain',
     version='0.1',
     url='http://bitbucket.org/birkenfeld/sphinx-contrib',
-    download_url='http://pypi.python.org/pypi/sphinxcontrib-osaka',
+    download_url='http://pypi.python.org/pypi/sphinxcontrib-rubydomain',
     license='BSD',
     author='SHIBUKAWA Yoshiki',
     author_email='yoshiki at shibu.jp',
-    description='Sphinx extension osaka',
+    description='Sphinx extension sphinxcontrib-rubydomain',
     long_description=long_desc,
     zip_safe=False,
     classifiers=[
@@ -27,13 +28,10 @@ setup(
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
-        'Natural Language :: Japanese',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Topic :: Documentation',
         'Topic :: Utilities',
-        'Topic :: Text Processing :: Filters',
-        'Topic :: Text Processing :: Linguistic',
     ],
     platforms='any',
     packages=find_packages(),
