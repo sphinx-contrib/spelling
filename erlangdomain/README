@@ -1,0 +1,25 @@
+=============
+Erlang Domain
+=============
+
+This is the Erlang domain for Sphinx 1.0.
+Sphinx 1.0 will deliver new feature -- Domain.
+It will enable other language support in addition to Python and C language.
+
+This extension provides directives and roles to write Erlang documents.
+Erlang Domain supports following directives:
+
+* ``erl:module``
+* ``erl:currentmodule``
+* ``erl:function``
+* ``erl:record``
+* ``erl:macro``
+
+And this domain supports following roles:
+
+* ``:erl:mod:``
+* ``:erl:func:``
+* ``:erl:record:``
+* ``:erl:macro:``
+
+See doc/reference for detail.
