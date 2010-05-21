@@ -18,6 +18,7 @@ different beasts than regular python classes, and as a result require
 customized access to documentation, signatures etc.
 
 .. seealso:: :mod:`sphinx.ext.autodoc`
+.. seealso:: http://www.zope.org/Products/ZopeInterface
 
 .. note:: This extension also serves as a simple example of using the
    new sphinx version 6.0 version :mod:`autodoc` refactoring.  Mostly
