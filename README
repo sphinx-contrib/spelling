@@ -48,6 +48,7 @@ List of extensions
   Diagram Editor(sdedit_)
 - osaka: convert standard Japanese doc to Osaka dialect(it is joke extension)
 - rubydomain: an extension for Ruby support(Sphinx 1.0 needed)
+- zopeext: provide an :dir:`autointerface` directive for using Zope interfaces.
 
 .. _aafigure: http://docutils.sourceforge.net/sandbox/aafigure/
 
