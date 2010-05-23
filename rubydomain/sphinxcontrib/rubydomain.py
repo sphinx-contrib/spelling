@@ -127,7 +127,7 @@ class RubyObject(ObjectDescription):
             else:
                 classname = ''
                 fullname = name
-        
+
         signode['module'] = modname
         signode['class'] = self.class_name = classname
         signode['fullname'] = fullname
@@ -188,10 +188,10 @@ class RubyObject(ObjectDescription):
         Return the text for the index entry of the object.
         """
         raise NotImplementedError('must be implemented in subclasses')
-    
+
     def _is_class_member(self):
         return self.objtype.endswith('method') or self.objtype.startswith('attr')
-    
+
     def add_target_and_index(self, name_cls, sig, signode):
         if self.objtype == 'global':
             modname = ''
@@ -386,7 +386,7 @@ class RubyModule(Directive):
         'noindex': directives.flag,
         'deprecated': directives.flag,
     }
-    
+
     def run(self):
         env = self.state.document.settings.env
         modname = self.arguments[0].strip()
@@ -639,7 +639,7 @@ class RubyDomain(Domain):
         if newname is None:
             return None, None
         return newname, objects[newname]
-    
+
     def resolve_xref(self, env, fromdocname, builder,
                      typ, target, node, contnode):
         if (typ == 'mod' or
@@ -665,12 +665,12 @@ class RubyDomain(Domain):
             else:
                 return make_refnode(builder, fromdocname, obj[0], name,
                                     contnode, name)
-    
+
     def get_objects(self):
         for modname, info in self.data['modules'].iteritems():
-            yield (modname, 'module', info[0], 'module-' + modname, 0)
+            yield (modname, modname, 'module', info[0], 'module-' + modname, 0)
         for refname, (docname, type) in self.data['objects'].iteritems():
-            yield (refname, type, docname, refname, 1)
+            yield (refname, refname, type, docname, refname, 1)
 
 
 def setup(app):
