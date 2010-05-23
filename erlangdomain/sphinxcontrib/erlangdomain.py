@@ -191,9 +191,9 @@ class ErlangObject(ObjectDescription):
                     if fname in finv and arity_index in finv[fname]:
                         self.env.warn(
                             self.env.docname,
-                            ('duplicate Erlang object description' 
+                            ('duplicate Erlang object description'
                              'of %s, ') % name +
-                            'other instance in ' + 
+                            'other instance in ' +
                             self.env.doc2path(oinv[name][0]),
                             self.lineno)
                     arities = finv.setdefault(fname, {})
@@ -369,10 +369,10 @@ class ErlangDomain(Domain):
     name = 'erl'
     label = 'Erlang'
     object_types = {
-        'function': ObjType(l_('Erlang function'), 'func'),
-        'macro':    ObjType(l_('Erlang macro'),    'macro'),
-        'record':   ObjType(l_('Erlang record'),   'record'),
-        'module':   ObjType(l_('Erlang module'),   'mod'),
+        'function': ObjType(l_('function'), 'func'),
+        'macro':    ObjType(l_('macro'),    'macro'),
+        'record':   ObjType(l_('record'),   'record'),
+        'module':   ObjType(l_('module'),   'mod'),
     }
 
     directives = {
@@ -426,7 +426,7 @@ class ErlangDomain(Domain):
             arity = -1
         if fname not in self.data['functions']:
             return None, None
-        
+
         arities = self.data['functions'][fname]
         if arity == -1:
             arity = min(arities)
@@ -460,7 +460,7 @@ class ErlangDomain(Domain):
 
     def get_objects(self):
         for refname, (docname, type) in self.data['objects'].iteritems():
-            yield (refname, type, docname, refname, 1)
+            yield (refname, refname, type, docname, refname, 1)
 
 
 def setup(app):
