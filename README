@@ -52,6 +52,7 @@ List of extensions
 - rubydomain: an extension for Ruby support (Sphinx 1.0 needed)
 - zopeext: provide an ``autointerface`` directive for using Zope interfaces.
 - googleanalytics: track html visitors statistics 
+- traclinks: create TracLinks_ to a Trac_ instance from within Sphinx
 
 .. _aafigure: http://docutils.sourceforge.net/sandbox/aafigure/
 
@@ -64,6 +65,10 @@ List of extensions
 .. _Lilypond: http://lilypond.org/web/
 
 .. _sdedit: http://sdedit.sourceforge.net/
+
+.. _Trac: http://trac.edgewall.org
+
+.. _TracLinks: http://trac.edgewall.org/wiki/TracLinks
 
 For contributors
 ================
