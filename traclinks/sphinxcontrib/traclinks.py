@@ -31,5 +31,7 @@ def make_trac_link(name, rawtext, text, lineno, inliner,
 # setup function to register the extension
 
 def setup(app):
-    app.add_config_value('traclinks_base_url', 'http://twistedmatrix.com/trac', 'env')
+    app.add_config_value('traclinks_base_url', 
+                         'http://trac.edgewall.com/trac', 
+                         'env')
     app.add_role('trac', make_trac_link)
