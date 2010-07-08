@@ -1,5 +1,5 @@
 :Author: Me
-:Publish Date: 1979-01-01
+:Date: 1979-01-01
 
 The oldest blog post
 ====================

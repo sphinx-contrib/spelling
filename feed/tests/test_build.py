@@ -42,7 +42,7 @@ def test_feed(app):
     yield assert_equals, app.builder.env.feed_items.keys(), ['older', 'most_aged', 'latest']
     # see http://www.feedparser.org/
     f = feedparser.parse(rss_path)
-    yield assert_equals, f.bozo, 0 #feedparser well-formedness detection
+    yield assert_equals, f.bozo, 0 #feedparser well-formedness detection. We want this.
     entries = f.entries
     yield assert_equals, entries[0].updated_parsed[0:3], (2001, 8, 11)
     yield assert_equals, entries[0].title, "The latest blog post"
@@ -50,4 +50,5 @@ def test_feed(app):
     yield assert_equals, entries[1].title, "An older blog post"
     yield assert_equals, entries[2].updated_parsed[0:3], (1979, 1, 1)
     yield assert_equals, entries[2].title, "The oldest blog post"
+    
 

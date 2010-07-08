@@ -43,7 +43,7 @@ def create_feed_item(app, pagename, templatename, ctx, doctree):
     env = app.builder.env
     metadata = app.builder.env.metadata.get(pagename, {})
     
-    if 'Publish Date' not in metadata:
+    if 'date' not in metadata:
         return #don't index dateless articles
     # title, link, description, author_email=None,
     #     author_name=None, author_link=None, pubdate=None, comments=None,
@@ -54,7 +54,7 @@ def create_feed_item(app, pagename, templatename, ctx, doctree):
       'title': ctx.get('title'),
       'link': app.config.feed_base_url + '/' + ctx['current_page_name'] + ctx['file_suffix'],
       'description': ctx.get('body'),
-      'pubdate': date_parser.parse(metadata['Publish Date'])
+      'pubdate': date_parser.parse(metadata['date'])
     }
     if 'author' in metadata:
         item['author'] = metadata['author']
