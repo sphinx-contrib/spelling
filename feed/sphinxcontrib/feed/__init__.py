@@ -1,5 +1,3 @@
-import nose.tools
-
 def setup(app):
     """
     see: http://sphinx.pocoo.org/ext/appapi.html
