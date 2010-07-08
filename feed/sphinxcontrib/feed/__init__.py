@@ -45,9 +45,9 @@ def create_feed_item(app, pagename, templatename, ctx, doctree):
         return #don't index dateless articles
     try:
         pub_date = date_parser.parse(metadata['date'])
-    except ValueError:
+    except ValueError, exc:
         #probably a nonsensical date
-        #TODO - do some kind of smart sphinxey error logging
+        app.builder.warn('date parse error: ' + str(exc) + ' in ' + pagename)
         return
         
     # title, link, description, author_email=None,
