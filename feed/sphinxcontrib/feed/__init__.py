@@ -43,6 +43,13 @@ def create_feed_item(app, pagename, templatename, ctx, doctree):
     
     if 'date' not in metadata:
         return #don't index dateless articles
+    try:
+        pub_date = date_parser.parse(metadata['date'])
+    except ValueError:
+        #probably a nonsensical date
+        #TODO - do some kind of smart sphinxey error logging
+        return
+        
     # title, link, description, author_email=None,
     #     author_name=None, author_link=None, pubdate=None, comments=None,
     #     unique_id=None, enclosure=None, categories=(), item_copyright=None,
@@ -52,7 +59,7 @@ def create_feed_item(app, pagename, templatename, ctx, doctree):
       'title': ctx.get('title'),
       'link': app.config.feed_base_url + '/' + ctx['current_page_name'] + ctx['file_suffix'],
       'description': ctx.get('body'),
-      'pubdate': date_parser.parse(metadata['date'])
+      'pubdate': pub_date
     }
     if 'author' in metadata:
         item['author'] = metadata['author']
