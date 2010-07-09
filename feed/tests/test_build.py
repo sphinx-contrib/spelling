@@ -39,7 +39,6 @@ def test_feed():
     yield assert_equals, feed_warnings, feed_warnings_exp
     rss_path = os.path.join(app.outdir, 'rss.xml')
     yield exists, rss_path
-    yield assert_equals, app.builder.env.feed_items.keys(), ['older', 'most_aged', 'latest']
     # see http://www.feedparser.org/
     f = feedparser.parse(rss_path)
     yield assert_equals, f.bozo, 0 #feedparser well-formedness detection. We want this.

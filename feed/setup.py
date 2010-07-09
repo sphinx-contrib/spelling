@@ -5,14 +5,14 @@ from setuptools import setup, find_packages
 long_desc = '''
 This package contains the feed Sphinx extension.
 
-It creates an RSS feed of recently updated sphinx action.
+It creates an RSS feed of recently updated sphinx pages.
 '''
 
-requires = ['Sphinx>=0.6']
+requires = ['Sphinx>=0.6', 'dateutil']
 
 setup(
     name='feed',
-    version='0.1',
+    version='0.2',
     url='http://bitbucket.org/birkenfeld/sphinx-contrib',
     # download_url='http://pypi.python.org/pypi/feed',
     license='BSD',
