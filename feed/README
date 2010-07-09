@@ -13,8 +13,4 @@ Contributions by Dan MacKinlay are hereby also released under BSD license.
 
 TODO
 ====
-- inject rel="alternate" RSS links into document header pointing to the RSS feed
-- use actual `bibliographic fields` for publish date, once there is some for the `fields destruction` problem
-
-..bibliographic fields: http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#bibliographic-fields
-..  fields destruction: http://bitbucket.org/birkenfeld/sphinx/issue/284/accessing-date-from-the-docinfo-metadata
+- inject rel="alternate" RSS links into document header pointing to the RSS feed. For now you roll your own in the template
