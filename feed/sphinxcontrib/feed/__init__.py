@@ -16,8 +16,8 @@ def setup(app):
     """
     from sphinx.application import Sphinx
     if not isinstance(app, Sphinx): return
-    app.add_config_value('feed_base_url', '', '')
-    app.add_config_value('feed_description', '', '')
+    app.add_config_value('feed_base_url', '', 'html')
+    app.add_config_value('feed_description', '', 'html')
     app.add_config_value('feed_filename', 'rss.xml', 'html')
     
     app.connect('html-page-context', create_feed_item)
@@ -34,7 +34,9 @@ def create_feed_container(app):
     global feed_entries
     rss_fragment_path = os.path.realpath(os.path.join(app.outdir, '..', 'rss_entry_fragments'))
     feed_entries = FSDict(work_dir=rss_fragment_path)
-
+    # app.builder.env.feed_url = app.config.feed_base_url + \
+    #    app.config.feed_filename
+    
 def create_feed_item(app, pagename, templatename, ctx, doctree):
     """
     Here we have access to nice HTML fragments to use in, say, an RSS feed.
