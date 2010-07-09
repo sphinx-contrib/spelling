@@ -10,10 +10,11 @@ from StringIO import StringIO
 from util import test_root, raises, raises_msg, Struct,\
   ListOutput, TestApp, with_app, gen_with_app, path, with_tempdir,\
   write_file, sprint
+from sphinxcontrib.feed.path import path
 
 import feedparser
 
-from nose.tools import assert_equals
+from nose.tools import assert_equals, assert_true, assert_false
 
 def setup_module():
     if not (test_root / '_static').exists():
@@ -30,6 +31,16 @@ ENV_WARNINGS = "" #none at the moment. if needed, they will look like:
 # """
 
 FEED_WARNINGS = ENV_WARNINGS + "" # nothing here either yet
+
+TEMP_DOC = """:Date: 2002-08-11
+:Author: Santa
+
+blog post of irrelevant age
+===========================
+
+Has some cruft.
+
+"""
 
 def test_feed():
     app = TestApp(buildername='html', warning=feed_warnfile, cleanenv=True)  
@@ -63,3 +74,37 @@ def test_feed():
     yield assert_equals, entries[2].title, "The oldest blog post"
     app.cleanup()
     app2.cleanup()
+
+# def test_feed_cleanup():
+#     """
+#     do it all again, but purge a file in between and see how we go
+#     """
+#     app0 = TestApp(buildername='html', warning=feed_warnfile, cleanenv=True)  
+#     srcdir = path(app0.srcdir)
+#     tmp_path = srcdir/'tmp.rst'
+#     rss_path = os.path.join(app0.outdir, 'rss.xml')
+#     app0.cleanup()
+#     del(app0)
+#     try:
+#         tmp_path_handle = tmp_path.open('w')
+#         tmp_path_handle.write(TEMP_DOC)
+#         tmp_path_handle.close()
+#         yield assert_true, tmp_path.exists()
+#         yield assert_equals, tmp_path.open().read(), TEMP_DOC
+#         # raise Exception
+#         app1 = TestApp(buildername='html', warning=feed_warnfile, cleanenv=True)  
+#         app1.build()
+#         f = feedparser.parse(rss_path)
+#         entries = f.entries
+#         yield assert_equals, entries[0].updated_parsed[0:3], (2002, 8, 11)
+#         yield assert_equals, entries[0].title, "blog post of irrelevant age"
+#         tmp_path.remove()
+#         yield assert_false, tmp_path.exists()
+#         app1 = TestApp(buildername='html', warning=feed_warnfile)  
+#         app1.build()
+#         f = feedparser.parse(rss_path)
+#         entries = f.entries
+#         yield assert_equals, entries[0].updated_parsed[0:3], (2001, 8, 11)
+#         yield assert_equals, entries[0].title, "The latest blog post"
+#     finally:
+#         pass #if tmp_path.exists(): tmp_path.remove()

@@ -3,8 +3,11 @@ import feedgenerator
 from urllib import quote_plus
 import os.path
 
-#globals
+#global
 feed_entries = None
+
+#constant unlikely to occur in a docname and legal as a filename
+MAGIC_SEPARATOR = '---###---'
 
 def setup(app):
     """
@@ -24,10 +27,12 @@ def setup(app):
     
 def create_feed_container(app):
     """
-    create lazy filesystem stash for keeping RSS entry fragments
+    create lazy filesystem stash for keeping RSS entry fragments, since we don't
+    want to store the entire site in the environment (in fact, even if we did,
+    it wasn't persisting for some reason.)
     """
     global feed_entries
-    rss_fragment_path = os.path.realpath(os.path.join(app.outdir, '..', 'html_fragments'))
+    rss_fragment_path = os.path.realpath(os.path.join(app.outdir, '..', 'rss_entry_fragments'))
     feed_entries = FSDict(work_dir=rss_fragment_path)
 
 def create_feed_item(app, pagename, templatename, ctx, doctree):
@@ -71,7 +76,12 @@ def remove_dead_feed_item(app, env, docname):
     TODO:
     purge unwanted crap
     """
-    pass
+    global feed_entries
+    munged_name = ''.join([MAGIC_SEPARATOR,quote_plus(docname)])
+    for name in feed_entries:
+        if name.endswith(munged_name):
+            del(feed_entries[name])
+        
 
 def emit_feed(app, exc):
     global feed_entries
@@ -98,10 +108,10 @@ def emit_feed(app, exc):
     feed.write(fp, 'utf-8')
     fp.close()
 
-def nice_name(guid, date):
+def nice_name(docname, date):
     """
     we need convenient filenames which incorporate dates for ease of sorting and
     guid for uniqueness, plus will work in the FS without inconvenient
     characters. NB, at the moment, hour of publication is ignored.
     """
-    return '--'.join([date.isoformat(), quote_plus(guid)])
+    return quote_plus(MAGIC_SEPARATOR.join([date.isoformat(), docname]))
