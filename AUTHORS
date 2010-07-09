@@ -3,11 +3,17 @@ This file lists all extensions in this package and their authors.
 aafig:
    Leandro Lucarella <llucax@gmail.com>
 
+autorun:
+   Vadim Gubergrits <vadim.gubergrits@gmail.com>
+
 context:
    Wei-Wei Guo <wwguocn@gmail.com>
 
 feed:
    Dan MacKinlay <sphinx@email.possumpalace.org>
+
+gnuplot:
+   Vadim Gubergrits <vadim.gubergrits@gmail.com>
 
 lilypond:
    Wei-Wei Guo <wwguocn@gmail.com>
@@ -24,3 +30,11 @@ sword:
 sdedit:
    SHIBUKAWA Yoshiki <yoshiki@shibu.jp>
 
+traclinks:
+   Kevin Horn <kevin.horn@gmail.com>
+
+zopeext:
+   Michael McNeil Forbes <mforbes@alum.mit.edu>
+
+googleanalytics:
+   Domen Kožar <domen@dev.si>

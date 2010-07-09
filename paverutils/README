@@ -226,6 +226,15 @@ virtualenvwrapper_
 History
 =======
 
+1.2
+---
+
+Modified ``run_script()`` so that if *ignore_error* is False any
+exception caused by the external application is re-raised.  This
+"breaks" a build if there is a problem generating the cog output in an
+rst file, and makes it easier to spot problems with the cog
+instructions.
+
 1.1
 ---
 

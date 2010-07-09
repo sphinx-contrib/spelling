@@ -7,3 +7,6 @@ sphinx-contrib.egg-info/
 TAGS
 \.ropeproject/
 ,*~
+
+syntax: glob
+*/distribute-*.tar.gz

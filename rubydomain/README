@@ -1,0 +1,39 @@
+===========
+Ruby Domain
+===========
+
+This is the Ruby domain for Sphinx 1.0.
+Sphinx 1.0 will deliver new feature -- Domain.
+It will enable other language support except Python and C language.
+
+This extension provides directives and roles to write Ruby documents.
+Ruby Domain supports following objects:
+
+* Global Variable
+* Constant
+* Module
+
+  * Function
+  * Method(for Mix-In)
+
+* Class
+
+  * Method
+  * Class Method
+  * Attribute
+
+.. note::
+
+   This domain expresses methods and attribute names like this::
+
+      Module#method_name
+      Class#method_name
+      Class#attribute_name
+
+   And other items(module function and class method) are expressed like this::
+
+      Module.function_name
+      Class.class_method_name
+
+   Take care separator charactors!
+

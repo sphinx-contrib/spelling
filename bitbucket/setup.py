@@ -9,14 +9,12 @@ from setuptools import setup, find_packages
 try:
     long_desc = open('README', 'r').read()
 except IOError:
-    long_desc = '''
-This package contains an alternative integration of Sphinx and Paver allowing for both HTML and PDF generation from the same pavement.py file.
-'''
+    long_desc = 'This package adds features to Sphinx to make it easier to link to resources on BitBucket.'
 
-requires = ['Sphinx>=0.6', 'Paver>=1.0.1']
+requires = ['Sphinx>=0.6', 'docutils>=0.6']
 
-NAME='sphinxcontrib-paverutils'
-VERSION='1.2'
+NAME='sphinxcontrib-bitbucket'
+VERSION='1.0'
 
 setup(
     name=NAME,
@@ -27,7 +25,7 @@ setup(
     license='BSD',
     author='Doug Hellmann',
     author_email='doug.hellmann@gmail.com',
-    description='Sphinx/Paver integration',
+    description='Sphinx/BitBucket integration',
     long_description=long_desc,
     zip_safe=False,
     classifiers=[

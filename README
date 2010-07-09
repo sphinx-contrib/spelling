@@ -34,26 +34,41 @@ to their author as given in the module.
 
 List of extensions
 ==================
+.. Note that this will be viewed using the bitbucket web interface ..
+.. which does not support the full sphinx markup like. ..
 
 - aafig: render embeded ASCII art as nice images using aafigure_.
+- autorun: Execute code in a runblock directive.
 - context: a builder for ConTeXt.
 - feed: an extension for creating syndication feeds from your site content
+- gnuplot: produces images using gnuplot_ language.
 - lilypond: an extension inserting music scripts from Lilypond_ in PNG format.
-- mscgen: embed mscgen-formatted :abbr:`MSC (Message Sequence Chart)`\ s.
+- mscgen: embed mscgen-formatted MSC (Message Sequence Chart)s.
 - paverutils: an alternate integration of Sphinx with Paver_.
 - sword: an extension inserting Bible verses from Sword_.
 - sdedit: an extension inserting sequence diagram by using Quick Sequence
-  Diagram Editor(sdedit_)
+  Diagram Editor (sdedit_)
+- osaka: convert standard Japanese doc to Osaka dialect (it is joke extension)
+- rubydomain: an extension for Ruby support (Sphinx 1.0 needed)
+- zopeext: provide an ``autointerface`` directive for using Zope interfaces.
+- googleanalytics: track html visitors statistics 
+- traclinks: create TracLinks_ to a Trac_ instance from within Sphinx
 
 .. _aafigure: http://docutils.sourceforge.net/sandbox/aafigure/
 
+.. _gnuplot: http://www.gnuplot.info/
+
 .. _paver: http://www.blueskyonmars.com/projects/paver/
 
-.. Sword: http://www.crosswire.org/sword/
+.. _Sword: http://www.crosswire.org/sword/
 
-.. Lilypond: http://lilypond.org/web/
+.. _Lilypond: http://lilypond.org/web/
 
-.. sdedit: http://sdedit.sourceforge.net/
+.. _sdedit: http://sdedit.sourceforge.net/
+
+.. _Trac: http://trac.edgewall.org
+
+.. _TracLinks: http://trac.edgewall.org/wiki/TracLinks
 
 For contributors
 ================

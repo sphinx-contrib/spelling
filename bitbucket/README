@@ -1,0 +1,53 @@
+########################
+sphinxcontrib.bitbucket
+########################
+
+This module adds custom roles for linking to resources on BitBucket
+projects.
+
+Basic Usage
+===========
+
+To use this extension, add it to the ``extensions`` list in your
+Sphinx configuration file and set the variable
+``bitbucket_project_url`` to the base URL for the project.  
+
+For example::
+
+    extensions = [ 'sphinxcontrib.bitbucket' ]
+
+    bitbucket_project_url = 'http://bitbucket.org/birkenfeld/sphinx-contrib'
+
+Then in your rst documents, use the roles ``bbissue`` and
+``bbchangeset`` to create links to tickets and changesets.
+
+This::
+
+    :bbissue:`3`
+
+is equivalent to::
+
+    `issue 3 <http://bitbucket.org/birkenfeld/sphinx-contrib/issue/3/>`__
+
+and::
+
+    :bbchangeset:`some-long-hash-value`
+
+is equivalent to::
+
+    `changeset some-long-hash-value <http://bitbucket.org/birkenfeld/sphinx-contrib/changeset/some-long-hash-value/>`__
+
+Configuration Parameters
+========================
+
+bitbucket_project_url
+  The base URL for the project on BitBucket.org.
+
+
+History
+=======
+
+1.0
+---
+
+First public release.
