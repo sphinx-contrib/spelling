@@ -55,6 +55,7 @@ List of extensions
 - traclinks: create TracLinks_ to a Trac_ instance from within Sphinx
 - issuetracker: link to different issue trackers
 - epydoc: cross-reference eypdoc generated documentation
+- pyqt4: markup for PyQt4 signals
 
 .. _aafigure: http://docutils.sourceforge.net/sandbox/aafigure/
 
