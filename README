@@ -51,8 +51,9 @@ List of extensions
 - osaka: convert standard Japanese doc to Osaka dialect (it is joke extension)
 - rubydomain: an extension for Ruby support (Sphinx 1.0 needed)
 - zopeext: provide an ``autointerface`` directive for using Zope interfaces.
-- googleanalytics: track html visitors statistics 
+- googleanalytics: track html visitors statistics
 - traclinks: create TracLinks_ to a Trac_ instance from within Sphinx
+- issuetracker: link to different issue trackers
 
 .. _aafigure: http://docutils.sourceforge.net/sandbox/aafigure/
 
