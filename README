@@ -54,6 +54,7 @@ List of extensions
 - googleanalytics: track html visitors statistics
 - traclinks: create TracLinks_ to a Trac_ instance from within Sphinx
 - issuetracker: link to different issue trackers
+- epydoc: Cross-reference eypdoc generated documentation
 
 .. _aafigure: http://docutils.sourceforge.net/sandbox/aafigure/
 
