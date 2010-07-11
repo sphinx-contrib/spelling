@@ -15,7 +15,7 @@ setup(
     license='BSD',
     author='Sebastian Wiesner',
     author_email='lunaryorn@googlemail.com',
-    description='Sphinx extension epydoc',
+    description='Epydoc cross-referencing for Sphinx',
     long_description=long_desc,
     zip_safe=False,
     classifiers=[
