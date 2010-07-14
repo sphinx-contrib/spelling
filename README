@@ -56,6 +56,7 @@ List of extensions
 - issuetracker: link to different issue trackers
 - epydoc: cross-reference eypdoc generated documentation
 - pyqt4: markup for PyQt4 signals
+- doxylink: Link to external Doxygen-generated HTML documentation
 
 .. _aafigure: http://docutils.sourceforge.net/sandbox/aafigure/
 
