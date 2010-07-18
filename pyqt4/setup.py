@@ -10,7 +10,7 @@ requires = ['Sphinx>=1.0b2']
 
 setup(
     name='sphinxcontrib-pyqt4',
-    version='0.4',
+    version='0.5',
     url='http://packages.python.org/sphinxcontrib-pyqt4',
     download_url='http://pypi.python.org/pypi/sphinxcontrib-pyqt4',
     license='BSD',
