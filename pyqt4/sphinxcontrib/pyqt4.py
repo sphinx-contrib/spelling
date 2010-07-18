@@ -45,7 +45,7 @@ class PyQt4Signal(PyClassmember):
         return True
 
     def get_signature_prefix(self, sig):
-        return 'signal '
+        return 'PyQt4 signal '
 
     def get_index_text(self, modname, name_cls):
         name, cls = name_cls
