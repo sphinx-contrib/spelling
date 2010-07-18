@@ -41,6 +41,12 @@ python domain with the new :dir:`pyqt4:signal` directive:
    :dir:`py:method` directive, except that the resulting markup marks the
    generated signature a signal.
 
+To reference such a signal, use the equally named role :role:`pyqt4:signal`:
+
+.. role:: pyqt4:signal
+
+   Reference a signal documented with :dir:`pyqt4:signal`
+
 Though the ``pyqt4`` domain is derived from the Python domain and can thus
 work as drop-in replacement for it, you should not use this directive as
 default domain, unless you are documenting a project consisting solely of
