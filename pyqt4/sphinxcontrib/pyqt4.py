@@ -72,9 +72,9 @@ class PyQt4Domain(PythonDomain):
     directives = PythonDomain.directives.copy()
     roles = PythonDomain.roles.copy()
 
-    object_types['signal'] = ObjType(l_('signal'), 'sig', 'obj')
+    object_types['signal'] = ObjType(l_('signal'), 'signal', 'obj')
     directives['signal'] = PyQt4Signal
-    roles['sig'] = PyXRefRole(fix_parens=True)
+    roles['signal'] = PyXRefRole(fix_parens=True)
 
 
 def setup(app):

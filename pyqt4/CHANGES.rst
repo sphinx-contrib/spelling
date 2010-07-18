@@ -1,6 +1,8 @@
 0.5 (in development)
 ====================
 
+- Renamed :rst:role:`:pyqt4:sig:` role to :rst:role:`:pyqt4:signal:` to
+  improve readability
 - Changed signature prefix to "PyQt4 signal"
 
 
