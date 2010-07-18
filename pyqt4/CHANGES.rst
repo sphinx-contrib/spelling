@@ -1,5 +1,5 @@
-0.5 (in development)
-====================
+0.5 (Jul 18, 2010)
+==================
 
 - Renamed :rst:role:`:pyqt4:sig:` role to :rst:role:`:pyqt4:signal:` to
   improve readability
