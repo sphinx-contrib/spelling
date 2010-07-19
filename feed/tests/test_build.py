@@ -50,16 +50,23 @@ def test_feed():
     yield assert_equals, feed_warnings, feed_warnings_exp
     rss_path = os.path.join(app.outdir, 'rss.xml')
     yield exists, rss_path
+    
+    base_path = unicode("file:/" + app.outdir)
+    
     # see http://www.feedparser.org/
     f = feedparser.parse(rss_path)
     yield assert_equals, f.bozo, 0 #feedparser well-formedness detection. We want this.
     entries = f.entries
     yield assert_equals, entries[0].updated_parsed[0:3], (2001, 8, 11)
     yield assert_equals, entries[0].title, "The latest blog post"
+    
+    yield assert_equals, entries[0].link, base_path + '/latest.html'
     yield assert_equals, entries[1].updated_parsed[0:3], (2001, 8, 1)
     yield assert_equals, entries[1].title, "An older blog post"
+    yield assert_equals, entries[1].link, base_path + '/older.html'
     yield assert_equals, entries[2].updated_parsed[0:3], (1979, 1, 1)
     yield assert_equals, entries[2].title, "The oldest blog post"
+    yield assert_equals, entries[2].link, base_path + '/most_aged.html'
     #Now we do it all again to make sure that things work when handling stale files
     app2 = TestApp(buildername='html', warning=feed_warnfile)  
     app2.build(force_all=False, filenames=['most_aged'])
