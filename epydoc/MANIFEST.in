@@ -1,5 +1,5 @@
 include README
 include LICENSE
 include CHANGES.*
-recursive-include doc/ *.rst *.py Makefile
-prune doc/_build/
+recursive-include doc *.rst *.py Makefile
+prune doc/_build
