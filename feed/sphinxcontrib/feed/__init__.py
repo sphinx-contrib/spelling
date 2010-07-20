@@ -64,7 +64,7 @@ def create_feed_item(app, pagename, templatename, ctx, doctree):
     item = {
       'title': ctx.get('title'),
       'link': link,
-      'guid': link,
+      'unique_id': link,
       'description': ctx.get('body'),
       'pubdate': pub_date
     }

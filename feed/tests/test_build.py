@@ -61,12 +61,15 @@ def test_feed():
     yield assert_equals, entries[0].title, "The latest blog post"
     
     yield assert_equals, entries[0].link, base_path + '/latest.html'
+    yield assert_equals, entries[0].guid, base_path + '/latest.html'
     yield assert_equals, entries[1].updated_parsed[0:3], (2001, 8, 1)
     yield assert_equals, entries[1].title, "An older blog post"
     yield assert_equals, entries[1].link, base_path + '/older.html'
+    yield assert_equals, entries[1].guid, base_path + '/older.html'
     yield assert_equals, entries[2].updated_parsed[0:3], (1979, 1, 1)
     yield assert_equals, entries[2].title, "The oldest blog post"
     yield assert_equals, entries[2].link, base_path + '/most_aged.html'
+    yield assert_equals, entries[2].guid, base_path + '/most_aged.html'
     #Now we do it all again to make sure that things work when handling stale files
     app2 = TestApp(buildername='html', warning=feed_warnfile)  
     app2.build(force_all=False, filenames=['most_aged'])
