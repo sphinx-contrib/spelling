@@ -1,0 +1,44 @@
+##########################
+sphinxcontrib-issuetracker
+##########################
+
+http://packages.python.org/sphinxcontrib-issuetracker
+
+This Sphinx_ 1.0 extension parses textual issue references like ``#10`` and
+turns these into references into an issue tracker.
+
+Currently the following issue trackers are supported:
+
+- `GitHub <http//github.com>`_
+- `BitBucket <http://bitbucket.org>`_
+- `Launchpad <http://launchpad.net>`_
+- `Google Code <http://code.google.com>`_
+
+Furthermore this extension provides a simple API to add other issue
+trackers.
+
+
+Installation
+------------
+
+This extension can be installed from the Python Package Index::
+
+   pip install sphinx-contrib.issuetracker
+
+Alternatively, you can clone the sphinx-contrib_ repository from BitBucket,
+and install the extension directly from the repository::
+
+   hg clone http://bitbucket.org/birkenfeld/sphinx-contrib
+   cd sphinx-contrib/issuetracker
+   python setup.py install
+
+
+Usage
+-----
+
+Please refer to the documentation_ for further information.
+
+
+.. _`Sphinx`: http://sphinx.pocoo.org/latest
+.. _`sphinx-contrib`: http://bitbucket.org/birkenfeld/sphinx-contrib
+.. _documentation: http://packages.python.org/sphinxcontrib-issuetracker
