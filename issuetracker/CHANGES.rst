@@ -1,6 +1,7 @@
 0.5 (in development)
 ====================
 
+- Closed issues are automatically struck trough in HTML output
 - Require Sphinx 1.0 now
 - Fixed #2:  Installation on windows
 
