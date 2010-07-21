@@ -1,6 +1,8 @@
 0.5 (in development)
 ====================
 
+- Require Sphinx 1.0 now
+
 
 0.4 (May 21, 2010)
 ==================

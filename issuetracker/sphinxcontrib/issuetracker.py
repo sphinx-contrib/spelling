@@ -255,6 +255,7 @@ def auto_connect_builtin_issue_resolvers(app):
 
 
 def setup(app):
+    app.require_sphinx('1.0')
     app.add_transform(IssuesReferences)
     app.connect('builder-inited', auto_connect_builtin_issue_resolvers)
     app.add_config_value('issuetracker_issue_pattern',
