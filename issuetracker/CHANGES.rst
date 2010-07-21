@@ -1,5 +1,5 @@
-0.5 (in development)
-====================
+0.5 (Jul 21, 2010)
+==================
 
 - Closed issues are automatically struck trough in HTML output
 - Require Sphinx 1.0 now
