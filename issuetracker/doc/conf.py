@@ -25,7 +25,8 @@ import sys, os
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.intersphinx']
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.intersphinx',
+              'sphinxcontrib.issuetracker']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -219,6 +220,12 @@ man_pages = [
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'http://docs.python.org/': None,
                        'http://sphinx.pocoo.org/latest/': None,}
+
+
+# issuetracker settings
+issuetracker = 'bitbucket'
+issuetracker_project = 'sphinx-contrib'
+issuetracker_user = 'birkenfeld'
 
 
 def setup(app):
