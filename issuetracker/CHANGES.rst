@@ -2,6 +2,7 @@
 ====================
 
 - Require Sphinx 1.0 now
+- Fixed #2:  Installation on windows
 
 
 0.4 (May 21, 2010)
