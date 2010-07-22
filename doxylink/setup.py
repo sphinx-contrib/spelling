@@ -11,7 +11,7 @@ setup(
     name='sphinxcontrib-doxylink',
     version='0.1',
     url='http://bitbucket.org/birkenfeld/sphinx-contrib',
-    download_url='http://pypi.python.org/pypi/doxylink',
+    download_url='http://pypi.python.org/pypi/sphinxcontrib-doxylink',
     license='BSD',
     author='Matt Williams',
     author_email='matt@milliams.com',
