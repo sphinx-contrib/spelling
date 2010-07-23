@@ -12,7 +12,7 @@ requires = ['Sphinx>=1.0b2']
 
 setup(
     name='sphinxcontrib-issuetracker',
-    version='0.4',
+    version='0.5',
     url='http://packages.python.org/sphinxcontrib-issuetracker',
     download_url='http://pypi.python.org/pypi/sphinxcontrib-issuetracker',
     license='BSD',

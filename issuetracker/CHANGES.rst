@@ -1,7 +1,16 @@
+0.5 (Jul 21, 2010)
+==================
+
+- Closed issues are automatically struck trough in HTML output
+- Require Sphinx 1.0 now
+- Fixed #2:  Installation on windows
+
+
 0.4 (May 21, 2010)
 ==================
 
 - Misc spelling fixes
+
 
 0.3 (May 02, 2010)
 ==================

@@ -131,10 +131,8 @@ def create_role(app, tag_filename, rootdir):
 			#By here, no match was found
 			env = app.env
 			env.warn(env.docname, 'Could not find match for `%s` in `%s` tag file' % (part, tag_filename), lineno)
-			
-		full_url="#"
-		#TODO find which command to use to just output it as plain text (no link) in this case
-		pnode = nodes.reference(title, title, internal=False, refuri=full_url)
+		
+		pnode = nodes.inline(rawsource=title, text=title)
 		return [pnode], []
 		
 	return find_doxygen_link

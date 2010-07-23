@@ -157,7 +157,7 @@ def copy_stylesheet(app, exception):
         return
     stylesheet = app.config.html_ansi_stylesheet
     if stylesheet:
-        app.info(bold('Copying ansi stylesheet... '))
+        app.info(bold('Copying ansi stylesheet... '), nonl=True)
         dest = path.join(app.builder.outdir, '_static', 'ansi.css')
         source = path.abspath(path.dirname(__file__))
         copyfile(path.join(source, stylesheet), dest)

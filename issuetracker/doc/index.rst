@@ -72,6 +72,8 @@ documentation would refer to the `Sphinx issue tracker`_:
    issuetracker_user = 'birkenfeld'
    issuetracker_project = 'sphinx'
 
+Closed issues are detected and automatically struck through in HTML output.
+
 By default the extension looks for issue references starting with a single
 dash, like ``#10``.  You can however change the pattern, which is used to
 find issue references:

@@ -42,10 +42,13 @@ import re
 import urllib
 from contextlib import closing
 from functools import partial
+from os import path
 
 from docutils import nodes
 from docutils.transforms import Transform
 from sphinx.addnodes import pending_xref
+from sphinx.util.osutil import copyfile
+from sphinx.util.console import bold
 
 
 GITHUB_URL = 'http://github.com/%(user)s/%(project)s/issues/%(issue_id)s'
@@ -254,7 +257,23 @@ def auto_connect_builtin_issue_resolvers(app):
                     BUILTIN_ISSUE_TRACKERS[app.config.issuetracker.lower()])
 
 
+def add_stylesheet(app):
+    app.add_stylesheet('issuetracker.css')
+
+
+def copy_stylesheet(app, exception):
+    if app.builder.name != 'html' or exception:
+        return
+    app.info(bold('Copying issuetracker stylesheet... '), nonl=True)
+    dest = path.join(app.builder.outdir, '_static', 'issuetracker.css')
+    source = path.join(path.abspath(path.dirname(__file__)),
+                          'issuetracker.css')
+    copyfile(source, dest)
+    app.info('done')
+
+
 def setup(app):
+    app.require_sphinx('1.0')
     app.add_transform(IssuesReferences)
     app.connect('builder-inited', auto_connect_builtin_issue_resolvers)
     app.add_config_value('issuetracker_issue_pattern',
@@ -262,3 +281,5 @@ def setup(app):
     app.add_config_value('issuetracker_user', None, 'env')
     app.add_config_value('issuetracker_project', None, 'env')
     app.add_config_value('issuetracker', None, 'env')
+    app.connect('builder-inited', add_stylesheet)
+    app.connect('build-finished', copy_stylesheet)
