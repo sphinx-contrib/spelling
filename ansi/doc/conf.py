@@ -11,8 +11,8 @@ master_doc = 'index'
 
 project = u'sphinxcontrib-ansi'
 copyright = u'2010, Sebastian Wiesner'
-version = '0.4'
-release = '0.4.1'
+version = '0.5'
+release = '0.5'
 
 exclude_patterns = ['_build']
 
