@@ -2,20 +2,23 @@
 
 from setuptools import setup, find_packages
 
-with open('README.rst') as stream:
-    long_desc = stream.read()
+long_desc = '''
+This package contains the cheeseshop Sphinx extension.
+
+It allows to add links to Cheese Shop distribution releases and packages.
+'''
 
 requires = ['Sphinx>=0.6']
 
 setup(
-    name='sphinxcontrib-doxylink',
+    name='sphinxcontrib-cheeseshop',
     version='0.1',
     url='http://bitbucket.org/birkenfeld/sphinx-contrib',
-    download_url='http://pypi.python.org/pypi/sphinxcontrib-doxylink',
+    download_url='http://pypi.python.org/pypi/cheeseshop',
     license='BSD',
-    author='Matt Williams',
-    author_email='matt@milliams.com',
-    description='Sphinx extension doxylink',
+    author='Richard Jones, Georg Brandl',
+    author_email='georg@python.org',
+    description='Sphinx extension cheeseshop',
     long_description=long_desc,
     zip_safe=False,
     classifiers=[

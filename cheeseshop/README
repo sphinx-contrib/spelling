@@ -1,0 +1,6 @@
+============================
+Cheese Shop Sphinx extension
+============================
+
+This extension adds directives for easy linking to Cheese Shop (Python Package
+Index) packages.
