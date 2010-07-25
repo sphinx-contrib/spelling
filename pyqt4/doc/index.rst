@@ -1,10 +1,10 @@
 .. highlight:: rest
 .. default-domain:: rst
 
-:py:mod:`lunar.sphinx.ext.pyqt4` -- Document Qt4 APIs
+:py:mod:`sphinxcontrib.pyqt4` -- Document Qt4 APIs
 =====================================================
 
-.. py:module:: lunar.sphinx.ext.pyqt4
+.. py:module:: sphinxcontribx.pyqt4
    :synopsis: Special directives for Qt4 APIs
 
 This Sphinx_ 1.0 extension provides markup to document PyQt4_ specific

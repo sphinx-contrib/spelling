@@ -1,10 +1,10 @@
 .. highlight:: rest
 .. default-domain:: rst
 
-:py:mod:`lunar.sphinx.ext.ansi` -- Parse ANSI control sequences
-===============================================================
+:py:mod:`sphinxcontrib.ansi` -- Parse ANSI control sequences
+============================================================
 
-.. py:module:: lunar.sphinx.ext.ansi
+.. py:module:: sphinxcontrib.ansi
    :synopsis:  Parse and interpret ANSI control sequences
 
 This extension for Sphinx_ 1.0 converts ANSI colour sequences to colored

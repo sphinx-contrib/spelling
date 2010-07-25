@@ -96,7 +96,7 @@ def get_launchpad_issue_information(project, user, issue_id, env):
     if not launchpad:
         from launchpadlib.launchpad import Launchpad
         launchpad = Launchpad.login_anonymously(
-            'lunar.sphinx.ext.issuetracker', service_root='production')
+            'sphinxcontrib.issuetracker', service_root='production')
         env.issuetracker_launchpad = launchpad
     try:
         # get the bug
