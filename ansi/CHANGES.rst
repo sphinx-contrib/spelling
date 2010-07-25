@@ -1,5 +1,5 @@
-0.5 (in development)
-====================
+0.5 (Jul 25, 2010)
+==================
 
 - Ignore colors in non-html output
 
