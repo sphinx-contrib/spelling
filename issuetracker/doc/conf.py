@@ -13,7 +13,7 @@ master_doc = 'index'
 project = u'sphinxcontrib-issuetracker'
 copyright = u'2010, Sebastian Wiesner'
 version = '0.5'
-release = '0.5'
+release = '0.5.1'
 
 exclude_patterns = ['_build']
 
