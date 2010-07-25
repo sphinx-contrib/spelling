@@ -92,7 +92,7 @@ it known to sphinx by including the following code snippet in your
 Contribution
 ------------
 
-Please contact the author or create an issue in the issue tracker of the
+Please contact the author or create an issue in the `issue tracker`_ of the
 sphinx-contrib_ repository, if you have found any bugs or miss some
 functionality (e.g. integration of some other issue tracker).  Patches are
 welcome!
@@ -105,7 +105,7 @@ welcome!
    changes.rst
 
 
-.. _`Sphinx`: http://sphinx.pocoo.org/latest
+.. _`Sphinx`: http://sphinx.pocoo.org/
 .. _`sphinx-contrib`: http://bitbucket.org/birkenfeld/sphinx-contrib
 .. _`issue tracker`: http://bitbucket.org/birkenfeld/sphinx-contrib/issues
 .. _`black-on-white.css`: http://bitbucket.org/birkenfeld/sphinx-contrib/src/tip/ansi/sphinxcontrib/black-on-white.css

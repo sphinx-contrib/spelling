@@ -61,7 +61,7 @@ clearly marks the signal as PyQt4 signal, avoiding any disambiguities.
 Contribution
 ------------
 
-Please contact the author or create an issue in the issue tracker of the
+Please contact the author or create an issue in the `issue tracker`_ of the
 sphinx-contrib_ repository, if you have found any bugs or miss some
 functionality (e.g. integration of some other issue tracker).  Patches are
 welcome!

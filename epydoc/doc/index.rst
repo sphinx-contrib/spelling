@@ -60,7 +60,7 @@ Add ``sphinxcontrib.epydoc`` to the configuration value
 Contribution
 ------------
 
-Please contact the author or create an issue in the issue tracker of the
+Please contact the author or create an issue in the `issue tracker`_ of the
 sphinx-contrib_ repository, if you have found any bugs or miss some
 functionality (e.g. integration of some other issue tracker).  Patches are
 welcome!
@@ -71,7 +71,7 @@ welcome!
    changes.rst
 
 
-.. _`Sphinx`: http://sphinx.pocoo.org/latest
+.. _`Sphinx`: http://sphinx.pocoo.org/
 .. _epydoc: http://epydoc.sourceforge.net/
 .. _`paludis.PackageID`: http://paludis.pioto.org/api/python/paludis.PackageID-class.html
 .. _`sphinx-contrib`: http://bitbucket.org/birkenfeld/sphinx-contrib
