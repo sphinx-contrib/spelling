@@ -39,7 +39,9 @@ To interpret ANSI colour codes, use the following directive:
 .. directive:: ansi-block
 
    This directive interprets its content as literal block containing ANSI
-   control sequences for coloured output.
+   control sequences for coloured output for HTML output.  If the document
+   is build with any other builder than ``html``, color sequences are
+   stripped from output.
 
    If the option ``string_escape`` is specified, the content of the
    directive is decoded using the ``string_escape`` codec.  Thus you can

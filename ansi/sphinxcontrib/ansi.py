@@ -97,54 +97,66 @@ class ANSIColorParser(object):
             else:
                 self.new_nodes.append(nodes.Text(text))
 
+    def _colorize_block_contents(self, block):
+        raw = block.rawsource
+        # create the "super" node, which contains to while block and all it
+        # sub nodes, and replace the old block with it
+        literal_node = nodes.literal_block()
+        literal_node['classes'].append('ansi-block')
+        block.replace_self(literal_node)
+
+        # this contains "pending" nodes.  A node representing an ANSI
+        # color is "pending", if it has not yet seen a reset
+        self.pending_nodes = []
+        # these are the nodes, that will finally be added to the
+        # literal_node
+        self.new_nodes = []
+        # this holds the end of the last regex match
+        last_end = 0
+        # iterate over all color codes
+        for match in COLOR_PATTERN.finditer(raw):
+            # add any text preceeding this match
+            head = raw[last_end:match.start()]
+            self._add_text(head)
+            # update the match end
+            last_end = match.end()
+            # get the single format codes
+            codes = [int(c) for c in match.group(1).split(';')]
+            if codes[-1] == 0:
+                # the last code is a reset, so finalize all pending
+                # nodes.
+                self._finalize_pending_nodes()
+            else:
+                # create a new color node
+                code_node = nodes.inline()
+                self.pending_nodes.append(code_node)
+                # and set the classes for its colors
+                for code in codes:
+                    code_node['classes'].append(
+                        'ansi-%s' % CODE_CLASS_MAP[code])
+        # add any trailing text
+        tail = raw[last_end:]
+        self._add_text(tail)
+        # move all pending nodes to new_nodes
+        self._finalize_pending_nodes()
+        # and add the new nodes to the block
+        literal_node.extend(self.new_nodes)
+
+    def _strip_color_from_block_content(self, block):
+        content = COLOR_PATTERN.sub('', block.rawsource)
+        literal_node = nodes.literal_block(content, content)
+        block.replace_self(literal_node)
+
     def __call__(self, app, doctree, docname):
         """
         Extract and parse all ansi escapes in ansi_literal_block nodes.
         """
+        handler = self._colorize_block_contents
+        if app.builder.name != 'html':
+            # strip all color codes in non-html output
+            handler = self._strip_color_from_block_content
         for ansi_block in doctree.traverse(ansi_literal_block):
-            raw = ansi_block.rawsource
-            # create the "super" node, which contains to while block and all
-            # it sub nodes, and replace the old block with it
-            literal_node = nodes.literal_block()
-            literal_node['classes'].append('ansi-block')
-            ansi_block.replace_self(literal_node)
-
-            # this contains "pending" nodes.  A node representing an ANSI
-            # color is "pending", if it has not yet seen a reset
-            self.pending_nodes = []
-            # these are the nodes, that will finally be added to the
-            # literal_node
-            self.new_nodes = []
-            # this holds the end of the last regex match
-            last_end = 0
-            # iterate over all color codes
-            for match in COLOR_PATTERN.finditer(raw):
-                # add any text preceeding this match
-                head = raw[last_end:match.start()]
-                self._add_text(head)
-                # update the match end
-                last_end = match.end()
-                # get the single format codes
-                codes = [int(c) for c in match.group(1).split(';')]
-                if codes[-1] == 0:
-                    # the last code is a reset, so finalize all pending
-                    # nodes.
-                    self._finalize_pending_nodes()
-                else:
-                    # create a new color node
-                    code_node = nodes.inline()
-                    self.pending_nodes.append(code_node)
-                    # and set the classes for its colors
-                    for code in codes:
-                        code_node['classes'].append(
-                            'ansi-%s' % CODE_CLASS_MAP[code])
-            # add any trailing text
-            tail = raw[last_end:]
-            self._add_text(tail)
-            # move all pending nodes to new_nodes
-            self._finalize_pending_nodes()
-            # and add the new nodes to the block
-            literal_node.extend(self.new_nodes)
+            handler(ansi_block)
 
 
 def add_stylesheet(app):

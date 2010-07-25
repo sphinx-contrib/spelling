@@ -1,6 +1,9 @@
 0.5 (in development)
 ====================
 
+- Ignore colors in non-html output
+
+
 0.4.1 (Jul 21, 2010)
 ====================
 
