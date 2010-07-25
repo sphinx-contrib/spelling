@@ -1,3 +1,11 @@
+Release 0.2
+===========
+
+* Allow giving a CSS class for the ``pypi-release`` directive.
+* Allow giving versions and explicit titles for the ``pypi`` role.
+* Add some documentation.
+
+
 Release 0.1
 ===========
 

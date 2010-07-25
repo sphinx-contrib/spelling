@@ -2,19 +2,15 @@
 
 from setuptools import setup, find_packages
 
-long_desc = '''
-This package contains the cheeseshop Sphinx extension.
+long_desc = file('README', 'r').read()
 
-It allows to add links to Cheese Shop distribution releases and packages.
-'''
-
-requires = ['Sphinx>=0.6']
+requires = ['Sphinx>=1.0']
 
 setup(
     name='sphinxcontrib-cheeseshop',
-    version='0.1',
+    version='0.2',
     url='http://bitbucket.org/birkenfeld/sphinx-contrib',
-    download_url='http://pypi.python.org/pypi/cheeseshop',
+    download_url='http://pypi.python.org/pypi/sphinxcontrib-cheeseshop',
     license='BSD',
     author='Richard Jones, Georg Brandl',
     author_email='georg@python.org',
