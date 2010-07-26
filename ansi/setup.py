@@ -9,7 +9,7 @@ requires = ['Sphinx>=1.0b2']
 
 setup(
     name='sphinxcontrib-ansi',
-    version='0.5',
+    version='0.5.1',
     url='http://bitbucket.org/birkenfeld/sphinx-contrib',
     download_url='http://pypi.python.org/pypi/ansi',
     license='BSD',
