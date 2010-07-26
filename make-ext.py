@@ -30,7 +30,7 @@ def templated(filename):
     fp = open(os.path.join('_template', filename), 'r')
     tmp = string.Template(fp.read())
     fp.close()
-    fp = open(os.path.join(name, 'setup.py'), 'w')
+    fp = open(os.path.join(name, filename), 'w')
     fp.write(tmp.safe_substitute(**globals()))
     fp.close()
 
