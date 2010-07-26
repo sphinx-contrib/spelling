@@ -62,6 +62,25 @@ def test_parser_colors_parsed(app, parser, paragraph):
     assert paragraph.astext() == 'foobarhelloworld'
 
 
+def test_setup(app):
+    ansi.setup(app)
+    assert app.require_sphinx.called
+    assert app.require_sphinx.call_args[0] == ('1.0',)
+    assert app.add_config_value.called
+    assert app.add_config_value.call_args[0] == \
+           ('html_ansi_stylesheet', None, 'env')
+    assert app.add_directive.called
+    assert app.add_directive.call_args[0] == \
+           ('ansi-block', ansi.ANSIBlockDirective)
+    assert app.connect.called
+    assert app.connect.call_args_list[:2] == [
+        (('builder-inited', ansi.add_stylesheet),),
+        (('build-finished', ansi.copy_stylesheet),)]
+    assert app.connect.call_args_list[2][0][0] == 'doctree-resolved'
+    assert isinstance(app.connect.call_args_list[2][0][1],
+                      ansi.ANSIColorParser)
+
+
 def main():
     import py
     py.cmdline.pytest()
