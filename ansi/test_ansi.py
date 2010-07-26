@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from docutils import nodes
+from mock import Mock
 
 from sphinxcontrib import ansi
 
@@ -17,10 +18,7 @@ def pytest_funcarg__paragraph(request):
 
 
 def pytest_funcarg__app(request):
-    obj = type('obj', (object, ), {})
-    app = obj()
-    app.builder = obj()
-    return app
+    return Mock()
 
 
 def pytest_funcarg__parser(request):
