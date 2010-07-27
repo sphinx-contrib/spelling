@@ -89,8 +89,8 @@ def test_resolve_reference_to_epydoc_ambiguous_objtype(
     env.domains['py'].objtypes_for_role.return_value = ('foo', 'bar')
     assert resolve() is None
     assert app.warn.called
-    msg = ('ambiguous object types for %s, cannot resolve to epydoc')
-    assert app.warn.call_args[0] == (msg % (node['reftarget']),)
+    app.warn.assert_called_with('ambiguous object types for %s, cannot '
+                                'resolve to epydoc' % node['reftarget'])
 
 def test_resolve_reference_to_epydoc_success(resolve, node, env):
     env.domains['py'].objtypes_for_role.return_value = ('method',)
@@ -104,12 +104,9 @@ def test_resolve_reference_to_epydoc_success(resolve, node, env):
 
 def test_setup(app):
     epydoc.setup(app)
-    assert app.add_config_value.called
-    assert app.add_config_value.call_args[0] == ('epydoc_mapping',
-                                                 {}, 'env')
-    assert app.connect.called
-    assert app.connect.call_args[0] == \
-           ('missing-reference', epydoc.resolve_reference_to_epydoc)
+    app.add_config_value.assert_called_With('epydoc_mapping', {}, 'env')
+    app.connect.assert_called_with('missing-reference',
+                                   epydoc.resolve_reference_to_epydoc)
 
 
 def main():

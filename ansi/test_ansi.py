@@ -64,15 +64,11 @@ def test_parser_colors_parsed(app, parser, paragraph):
 
 def test_setup(app):
     ansi.setup(app)
-    assert app.require_sphinx.called
-    assert app.require_sphinx.call_args[0] == ('1.0',)
-    assert app.add_config_value.called
-    assert app.add_config_value.call_args[0] == \
-           ('html_ansi_stylesheet', None, 'env')
-    assert app.add_directive.called
-    assert app.add_directive.call_args[0] == \
-           ('ansi-block', ansi.ANSIBlockDirective)
-    assert app.connect.called
+    app.require_sphinx.assert_called_with('1.0')
+    app.add_config_value.assert_called_with(
+        'html_ansi_stylesheet', None, 'env')
+    app.add_directive.assert_called_with(
+        'ansi-block', ansi.ANSIBlockDirective)
     assert app.connect.call_args_list[:2] == [
         (('builder-inited', ansi.add_stylesheet),),
         (('build-finished', ansi.copy_stylesheet),)]
