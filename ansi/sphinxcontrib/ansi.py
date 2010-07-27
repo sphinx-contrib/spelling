@@ -82,8 +82,8 @@ class ANSIColorParser(object):
 
         Pending nodes will be append to the new nodes.
         """
-        while self.pending_nodes:
-            self.new_nodes.append(self.pending_nodes.pop(0))
+        self.new_nodes.extend(self.pending_nodes)
+        self.pending_nodes = []
 
     def _add_text(self, text):
         """
