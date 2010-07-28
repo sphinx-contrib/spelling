@@ -2,6 +2,8 @@
 
 import sys, os
 
+needs_sphinx = '1.0'
+
 extensions = ['sphinx.ext.intersphinx',
               'sphinxcontrib.programoutput']
 
@@ -19,7 +21,7 @@ html_theme = 'default'
 html_static_path = []
 
 intersphinx_mapping = {
-    'http://packages.python.org/sphinxcontrib-ansi': None}
+    'ansi': ('http://packages.python.org/sphinxcontrib-ansi', None)}
 
 
 def setup(app):
