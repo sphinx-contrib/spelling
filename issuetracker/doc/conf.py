@@ -20,8 +20,8 @@ exclude_patterns = ['_build']
 html_theme = 'default'
 html_static_path = []
 
-intersphinx_mapping = {'http://docs.python.org/': None,
-                       'http://sphinx.pocoo.org/': None,}
+intersphinx_mapping = {'python': ('http://docs.python.org/', None),
+                       'sphinx': ('http://sphinx.pocoo.org/', None)}
 
 issuetracker = 'bitbucket'
 issuetracker_project = 'sphinx-contrib'
