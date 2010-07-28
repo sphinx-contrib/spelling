@@ -267,7 +267,7 @@ def setup(app):
     app.add_transform(IssuesReferences)
     app.connect('builder-inited', auto_connect_builtin_issue_resolvers)
     app.add_config_value('issuetracker_issue_pattern',
-                         re.compile('#(\d+)'), 'env')
+                         re.compile(r'#(\d+)'), 'env')
     app.add_config_value('issuetracker_user', None, 'env')
     app.add_config_value('issuetracker_project', None, 'env')
     app.add_config_value('issuetracker', None, 'env')
