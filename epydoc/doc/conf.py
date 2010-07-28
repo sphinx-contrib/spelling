@@ -19,9 +19,8 @@ exclude_patterns = ['_build']
 html_theme = 'default'
 html_static_path = []
 
-intersphinx_mapping = {'python': ('http://docs.python.org/', None),}
-                       #broken in sphinx 1.0
-                       #'sphinx': ('http://sphinx.pocoo.org/', None)}
+intersphinx_mapping = {'python': ('http://docs.python.org/', None),
+                       'sphinx': ('http://sphinx.pocoo.org/', None)}
 
 
 def setup(app):
