@@ -56,7 +56,7 @@ def _slice(value):
     parts = [int(v.strip()) for v in value.split(',')]
     if len(parts) > 2:
         raise ValueError('too many slice parts')
-    return (parts + [None]*2)[:2]
+    return tuple((parts + [None]*2)[:2])
 
 
 class ProgramOutputDirective(rst.Directive):
