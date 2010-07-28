@@ -55,7 +55,7 @@ class program_output(nodes.Element):
 def _slice(value):
     parts = [int(v.strip()) for v in value.split(',')]
     if len(parts) > 2:
-        raise ValueError('Need excatly two arguments')
+        raise ValueError('too many slice parts')
     return (parts + [None]*2)[:2]
 
 
