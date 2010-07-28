@@ -190,21 +190,11 @@ BUILTIN_ISSUE_TRACKERS = {
     }
 
 
-
-class issue_reference(nodes.reference):
-    """
-    A reference to an issue in an issue tracker.
-
-    This node always has the ``issue_id`` attribute, which contains the ID
-    of the referenced issue.
-    """
-    pass
-
-
 class IssuesReferences(Transform):
     """
-    Transform plain text issue numbers (e.g. #10) into
-    :class:`issue_reference` nodes.
+    Transform plain text issue numbers (e.g. #10) into ``pending_xref``
+    nodes, which are then resolved through the sphinx reference resolving
+    mechanism.
     """
 
     default_priority = 999
