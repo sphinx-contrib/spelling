@@ -43,6 +43,8 @@ This allows one to do:
 
 from docutils import nodes, utils
 
+import os
+
 from sphinx.util.nodes import split_explicit_title
 
 import xml.etree.ElementTree as ET
@@ -111,7 +113,13 @@ def find_url(doc, symbol):
 	
 	return None
 
+def join(*args):
+	return ''.join(args)
+
 def create_role(app, tag_filename, rootdir):
+	if not rootdir.endswith(('/', '\\')):
+		rootdir = join(rootdir, os.sep)
+	
 	def find_doxygen_link(name, rawtext, text, lineno, inliner, options={}, content=[]):
 		text = utils.unescape(text)
 		# from :name:`title <part>`
@@ -125,7 +133,15 @@ def create_role(app, tag_filename, rootdir):
 		else:
 			url = find_url(tag_file, part)
 			if url:
-				full_url = rootdir + url
+				
+				#If it's an absolute path then the link will work regardless of the document directory
+				if os.path.isabs(rootdir):
+					full_url = join(rootdir, url)
+				#But otherwise we need to add the relative path of the current document to the root source directory to the link
+				else:
+					relative_path_to_docsrc = os.path.relpath(app.env.srcdir, os.path.dirname(inliner.document.current_source))
+					full_url = join(relative_path_to_docsrc, os.sep, rootdir, url)
+				
 				pnode = nodes.reference(title, title, internal=False, refuri=full_url)
 				return [pnode], []
 			#By here, no match was found
