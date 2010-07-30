@@ -10,3 +10,4 @@ TAGS
 
 syntax: glob
 */distribute-*.tar.gz
+.tox/

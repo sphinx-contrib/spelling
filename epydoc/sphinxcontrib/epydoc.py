@@ -40,6 +40,22 @@ import posixpath
 from docutils import nodes
 
 
+def filename_for_object(objtype, name):
+    if objtype == 'exception':
+        # exceptions are classes for epydoc
+        objtype = 'class'
+    if not (objtype == 'module' or objtype == 'class'):
+        name, attribute = name.rsplit('.', 1)
+        anchor = '#%s' % attribute
+        if objtype == 'function' or objtype == 'data':
+            objtype = 'module'
+        else:
+            objtype = 'class'
+    else:
+        anchor = ''
+    return '%s-%s.html%s' % (name, objtype, anchor)
+
+
 def resolve_reference_to_epydoc(app, env, node, contnode):
     """
     Resolve a reference to an epydoc documentation.
@@ -64,20 +80,7 @@ def resolve_reference_to_epydoc(app, env, node, contnode):
                  'cannot resolve to epydoc' % target)
         return
 
-    if objtype == 'exception':
-        # exceptions are classes for epydoc
-        objtype = 'class'
-    if not (objtype == 'module' or objtype == 'class'):
-        target, attribute = target.rsplit('.', 1)
-        anchor = '#%s' % attribute
-        if objtype == 'function' or objtype == 'data':
-            objtype = 'module'
-        else:
-            objtype = 'class'
-    else:
-        anchor = ''
-    filename = '%s-%s.html%s' % (target, objtype, anchor)
-    uri = posixpath.join(baseurl, filename)
+    uri = posixpath.join(baseurl, filename_for_object(objtype, target))
 
     newnode = nodes.reference('', '')
     newnode['class'] = 'external-xref'

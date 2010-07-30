@@ -1,3 +1,9 @@
+0.5.1 (Jul 25, 2010)
+====================
+
+- Fixed client string for launchpad access
+
+
 0.5 (Jul 21, 2010)
 ==================
 

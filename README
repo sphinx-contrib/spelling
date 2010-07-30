@@ -58,6 +58,8 @@ List of extensions
 - pyqt4: markup for PyQt4 signals
 - doxylink: Link to external Doxygen-generated HTML documentation
 - ansi: parse ANSI color sequences inside documents
+- cheeseshop: easily link to PyPI packages
+- programoutput: include output of programs into documentation
 
 .. _aafigure: http://docutils.sourceforge.net/sandbox/aafigure/
 

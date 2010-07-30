@@ -11,14 +11,14 @@ This package contains the ${name} Sphinx extension.
 requires = ['Sphinx>=0.6']
 
 setup(
-    name='${name}',
+    name='sphinxcontrib-${name}',
     version='0.1',
     url='http://bitbucket.org/birkenfeld/sphinx-contrib',
-    download_url='http://pypi.python.org/pypi/${name}',
+    download_url='http://pypi.python.org/pypi/sphinxcontrib-${name}',
     license='BSD',
     author='${author}',
     author_email='${author_email}',
-    description='Sphinx extension ${name}',
+    description='Sphinx "${name}" extension',
     long_description=long_desc,
     zip_safe=False,
     classifiers=[

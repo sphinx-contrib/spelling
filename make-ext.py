@@ -26,11 +26,15 @@ if os.path.exists(name):
 
 shutil.copytree('_template', name)
 
-fp = open('_template/setup.py', 'r')
-tmp = string.Template(fp.read())
-fp.close()
-fp = open(os.path.join(name, 'setup.py'), 'w')
-fp.write(tmp.safe_substitute(**locals()))
-fp.close()
+def templated(filename):
+    fp = open(os.path.join('_template', filename), 'r')
+    tmp = string.Template(fp.read())
+    fp.close()
+    fp = open(os.path.join(name, filename), 'w')
+    fp.write(tmp.safe_substitute(**globals()))
+    fp.close()
+
+templated('setup.py')
+templated('README')
 
 print 'Created new package in directory', name

@@ -107,7 +107,7 @@ a function, which returns metadata for the given issue id:
 Contribution
 ------------
 
-Please contact the author or create an issue in the issue tracker of the
+Please contact the author or create an issue in the `issue tracker`_ of the
 sphinx-contrib_ repository, if you have found any bugs or miss some
 functionality (e.g. integration of some other issue tracker).  Patches are
 welcome!
@@ -120,7 +120,7 @@ welcome!
    changes.rst
 
 
-.. _`Sphinx`: http://sphinx.pocoo.org/latest
+.. _`Sphinx`: http://sphinx.pocoo.org/
 .. _`Sphinx issue tracker`: http://bitbucket.org/birkenfeld/sphinx/issues/
 .. _`lxml`: http://codespeak.net/lxml
 .. _`simplejson`: http://pypi.python.org/pypi/simplejson/

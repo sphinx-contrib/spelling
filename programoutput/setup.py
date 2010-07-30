@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import os
 from setuptools import setup, find_packages
 
 
@@ -8,17 +7,17 @@ with open('README') as stream:
     long_desc = stream.read()
 
 
-requires = ['Sphinx>=1.0b2']
+requires = ['Sphinx>=1.0']
 
 setup(
-    name='sphinxcontrib-issuetracker',
-    version='0.5.1',
-    url='http://packages.python.org/sphinxcontrib-issuetracker',
-    download_url='http://pypi.python.org/pypi/sphinxcontrib-issuetracker',
+    name='sphinxcontrib-programoutput',
+    version='0.4',
+    url='http://packages.python.org/sphinxcontrib-programoutput',
+    download_url='http://pypi.python.org/pypi/sphinxcontrib-programoutput',
     license='BSD',
     author='Sebastian Wiesner',
     author_email='lunaryorn@googlemail.com',
-    description='Sphinx integration with different issuetrackers',
+    description='Sphinx extension to include program output',
     long_description=long_desc,
     zip_safe=False,
     classifiers=[

@@ -1,10 +1,10 @@
 .. highlight:: rest
 .. default-domain:: rst
 
-:py:mod:`lunar.sphinx.ext.pyqt4` -- Document Qt4 APIs
+:py:mod:`sphinxcontrib.pyqt4` -- Document Qt4 APIs
 =====================================================
 
-.. py:module:: lunar.sphinx.ext.pyqt4
+.. py:module:: sphinxcontribx.pyqt4
    :synopsis: Special directives for Qt4 APIs
 
 This Sphinx_ 1.0 extension provides markup to document PyQt4_ specific
@@ -61,7 +61,7 @@ clearly marks the signal as PyQt4 signal, avoiding any disambiguities.
 Contribution
 ------------
 
-Please contact the author or create an issue in the issue tracker of the
+Please contact the author or create an issue in the `issue tracker`_ of the
 sphinx-contrib_ repository, if you have found any bugs or miss some
 functionality (e.g. integration of some other issue tracker).  Patches are
 welcome!

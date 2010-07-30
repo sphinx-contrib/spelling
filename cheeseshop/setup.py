@@ -1,24 +1,20 @@
 # -*- coding: utf-8 -*-
 
-import os
 from setuptools import setup, find_packages
 
+long_desc = file('README', 'r').read()
 
-with open('README') as stream:
-    long_desc = stream.read()
-
-
-requires = ['Sphinx>=1.0b2']
+requires = ['Sphinx>=1.0']
 
 setup(
-    name='sphinxcontrib-issuetracker',
-    version='0.5.1',
-    url='http://packages.python.org/sphinxcontrib-issuetracker',
-    download_url='http://pypi.python.org/pypi/sphinxcontrib-issuetracker',
+    name='sphinxcontrib-cheeseshop',
+    version='0.2',
+    url='http://bitbucket.org/birkenfeld/sphinx-contrib',
+    download_url='http://pypi.python.org/pypi/sphinxcontrib-cheeseshop',
     license='BSD',
-    author='Sebastian Wiesner',
-    author_email='lunaryorn@googlemail.com',
-    description='Sphinx integration with different issuetrackers',
+    author='Richard Jones, Georg Brandl',
+    author_email='georg@python.org',
+    description='Sphinx extension cheeseshop',
     long_description=long_desc,
     zip_safe=False,
     classifiers=[

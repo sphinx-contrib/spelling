@@ -96,7 +96,7 @@ def get_launchpad_issue_information(project, user, issue_id, env):
     if not launchpad:
         from launchpadlib.launchpad import Launchpad
         launchpad = Launchpad.login_anonymously(
-            'lunar.sphinx.ext.issuetracker', service_root='production')
+            'sphinxcontrib.issuetracker', service_root='production')
         env.issuetracker_launchpad = launchpad
     try:
         # get the bug
@@ -190,21 +190,11 @@ BUILTIN_ISSUE_TRACKERS = {
     }
 
 
-
-class issue_reference(nodes.reference):
-    """
-    A reference to an issue in an issue tracker.
-
-    This node always has the ``issue_id`` attribute, which contains the ID
-    of the referenced issue.
-    """
-    pass
-
-
 class IssuesReferences(Transform):
     """
-    Transform plain text issue numbers (e.g. #10) into
-    :class:`issue_reference` nodes.
+    Transform plain text issue numbers (e.g. #10) into ``pending_xref``
+    nodes, which are then resolved through the sphinx reference resolving
+    mechanism.
     """
 
     default_priority = 999
@@ -277,7 +267,7 @@ def setup(app):
     app.add_transform(IssuesReferences)
     app.connect('builder-inited', auto_connect_builtin_issue_resolvers)
     app.add_config_value('issuetracker_issue_pattern',
-                         re.compile('#(\d+)'), 'env')
+                         re.compile(r'#(\d+)'), 'env')
     app.add_config_value('issuetracker_user', None, 'env')
     app.add_config_value('issuetracker_project', None, 'env')
     app.add_config_value('issuetracker', None, 'env')
