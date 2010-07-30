@@ -7,6 +7,12 @@ Sphinx extension to link to external Doxygen API documentation.
 
 It works much like the extlinks extension but it does some more processing to link C++ symbols against their Doxygen HTML documentation.
 
+When generating your Doxygen documentation, you need to instruct it to create a 'tag' file. This is an XML file which contains the mapping between symbols and HTML files. To make Doxygen create this file ensure that you have a line like::
+
+	GENERATE_TAGFILE = PolyVox.tag
+
+in your ``Doxyfile``.
+
 .. confval:: doxylink
 
 	The environment is set up with a dictionary mapping the interpereted text role
