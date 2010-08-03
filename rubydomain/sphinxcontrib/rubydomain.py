@@ -608,13 +608,21 @@ class RubyDomain(Domain):
         newname = None
         if searchorder == 1:
             if modname and classname and \
-                   modname + '::' + classname + '#' + name in objects:
+                     modname + '::' + classname + '#' + name in objects:
                 newname = modname + '::' + classname + '#' + name
             elif modname and classname and \
-                   modname + '::' + classname + '.' + name in objects:
+                     modname + '::' + classname + '.' + name in objects:
                 newname = modname + '::' + classname + '.' + name
             elif modname and modname + '::' + name in objects:
                 newname = modname + '::' + name
+            elif modname and modname + '#' + name in objects:
+                newname = modname + '#' + name
+            elif modname and modname + '.' + name in objects:
+                newname = modname + '.' + name
+            elif classname and classname + '.' + name in objects:
+                newname = classname + '.' + name
+            elif classname and classname + '#' + name in objects:
+                newname = classname + '#' + name
             elif name in objects:
                 newname = name
         else:
@@ -626,6 +634,10 @@ class RubyDomain(Domain):
                 newname = classname + '#' + name
             elif modname and modname + '::' + name in objects:
                 newname = modname + '::' + name
+            elif modname and modname + '#' + name in objects:
+                newname = modname + '#' + name
+            elif modname and modname + '.' + name in objects:
+                newname = modname + '.' + name
             elif modname and classname and \
                      modname + '::' + classname + '#' + name in objects:
                 newname = modname + '::' + classname + '#' + name

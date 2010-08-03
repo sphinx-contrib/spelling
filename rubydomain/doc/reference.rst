@@ -3,9 +3,6 @@ Reference
 
 .. highlight:: rst
 
-The Ruby Domain
------------------
-
 The Ruby domain (name **rb**) provides the following directives for module
 declarations. Almost all directives are similar to Python's.
 

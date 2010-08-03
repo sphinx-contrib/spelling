@@ -7,6 +7,8 @@ This package contains the sphinxcontrib-rubydomain Sphinx extension.
 
 This extension adds Ruby Domain to Sphinx.
 It needs Sphinx 1.0 or newer.
+
+Detail document: http://packages.python.org/sphinxcontrib-rubydomain/
 '''
 
 requires = ['Sphinx>=1.0']
@@ -30,6 +32,7 @@ setup(
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
+        'Programming Language :: Ruby',
         'Topic :: Documentation',
         'Topic :: Utilities',
     ],
