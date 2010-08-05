@@ -149,10 +149,77 @@ def parse_tag_file(doc):
 			mapping[join(compound.findtext('name'), '::', member.findtext('name'))] = {'kind' : member.get('kind'), 'file' : join(member.findtext('anchorfile'),'#',member.findtext('anchor'))}
 	return mapping
 
+def find_url2(mapping, symbol):
+	#print "\n\nSearching for", symbol
+	#First we check for any mapping entries which even slightly match the requested symbol
+	endswith_list = {}
+	for item, data in mapping.items():
+		if item.endswith(symbol):
+			#print symbol + ' : ' + item
+			endswith_list[item] = data
+			#mapping[item]['file']
+	
+	#If we only find one then we return it.
+	if len(endswith_list) is 1:
+		return endswith_list.values()[0]['file']
+	
+	#print("Still", len(endswith_list), 'possible matches')
+	
+	#Match the requested symbol reverse piecewise (split on '::') against the tag names to ensure they match exactly (modulo ambiguity)
+	piecewise_list = {}
+	for item, data in endswith_list.items():
+		#split_req_symbol_list = reversed(symbol.split('::'))
+		#split_tag_symbol_list = reversed(item.split('::'))
+		zipped_list = zip(reversed(symbol.split('::')), reversed(item.split('::')))
+		
+		if zipped_list[0][0] == zipped_list[0][1]:
+			#print symbol + ' : ' + item
+			piecewise_list[item] = data
+	
+	if len(piecewise_list) is 1:
+		return piecewise_list.values()[0]['file']
+	
+	#print("Still", len(piecewise_list), 'possible matches')
+	
+	#Now we will prefer classes over names of constructors
+	classes_list = {}
+	for item, data in piecewise_list.items():
+		if data['kind'] == 'class':
+			classes_list[item] = data
+	
+	if len(classes_list) is 1:
+		return classes_list.values()[0]['file']
+	
+	#print("Still", len(classes_list), 'possible matches')
+	
+	#Now, to disambiguate between "PolyVox::Array< 1, ElementType >::operator[]" and "PolyVox::Array::operator[]" matching "operator[]", we will ignore templated (as in C++ templates) tag names by removing names containing '<'
+	
+	#If we exhaused the list by requiring classes, use the list from before the filter.
+	if len(classes_list) == 0:
+		classes_list = piecewise_list
+	
+	no_templates_list = {}
+	for item, data in classes_list.items():
+		if '<' not in item:
+			no_templates_list[item] = data
+	
+	if len(no_templates_list) is 1:
+		return no_templates_list.values()[0]['file']
+	
+	#print("Still", len(no_templates_list), 'possible matches')
+	
+	#If not found by now, just return the first one in the list
+	if len(no_templates_list) != 0:
+		return no_templates_list.values()[0]['file']
+	#Else return None if the list is empty
+	else:
+		return None
+
 def join(*args):
 	return ''.join(args)
 
 def create_role(app, tag_filename, rootdir):
+	#Tidy up the root directory path
 	if not rootdir.endswith(('/', '\\')):
 		rootdir = join(rootdir, os.sep)
 	
