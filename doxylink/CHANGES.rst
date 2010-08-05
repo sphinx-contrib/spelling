@@ -1,3 +1,8 @@
+0.3 (In Development)
+====================
+
+- Only parse the tag file once per run. This should increase the speed.
+
 0.2 (Jul 31, 2010)
 ====================
 

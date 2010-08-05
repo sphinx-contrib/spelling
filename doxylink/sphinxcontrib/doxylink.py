@@ -126,17 +126,18 @@ def create_role(app, tag_filename, rootdir):
 	if not rootdir.endswith(('/', '\\')):
 		rootdir = join(rootdir, os.sep)
 	
+	try:
+		tag_file = ET.parse(tag_filename)
+	except (IOError):
+		tag_file = None
+		app.warn('Could not open tag file %s. Make sure your `doxylink` config variable is set correctly.' % tag_filename)
+	
 	def find_doxygen_link(name, rawtext, text, lineno, inliner, options={}, content=[]):
 		text = utils.unescape(text)
 		# from :name:`title <part>`
 		has_explicit_title, title, part = split_explicit_title(text)
 		
-		try:
-			tag_file = ET.parse(tag_filename)
-		except (IOError):
-			env = inliner.document.settings.env
-			env.warn(env.docname, 'Could not open %s' % tag_filename)
-		else:
+		if tag_file:
 			url = find_url(tag_file, part)
 			if url:
 				
@@ -154,9 +155,13 @@ def create_role(app, tag_filename, rootdir):
 			env = app.env
 			env.warn(env.docname, 'Could not find match for `%s` in `%s` tag file' % (part, tag_filename), lineno)
 		
+		
+		env = app.env
+		env.warn(env.docname, 'Could not find match for `%s` because tag file not found' % (part), lineno)
+		
 		pnode = nodes.inline(rawsource=title, text=title)
 		return [pnode], []
-		
+	
 	return find_doxygen_link
 
 def setup_doxylink_roles(app):
