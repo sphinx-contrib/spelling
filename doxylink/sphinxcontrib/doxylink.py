@@ -119,6 +119,16 @@ def find_url(doc, symbol):
 	
 	return None
 
+def parse_tag_file(doc):
+	mapping = {}
+	for compound in doc.findall(".//compound"):
+		if compound.get('kind') != 'namespace' and compound.get('kind') != 'class':
+			continue
+		mapping[compound.findtext('name')] = {'kind' : compound.get('kind'), 'file' : compound.findtext('filename')}
+		for member in compound.findall('member'):
+			mapping[join(compound.findtext('name'), '::', member.findtext('name'))] = {'kind' : member.get('kind'), 'file' : join(member.findtext('anchorfile'),'#',member.findtext('anchor'))}
+	return mapping
+
 def join(*args):
 	return ''.join(args)
 
@@ -128,6 +138,7 @@ def create_role(app, tag_filename, rootdir):
 	
 	try:
 		tag_file = ET.parse(tag_filename)
+		mapping = parse_tag_file(tag_file)
 	except (IOError):
 		tag_file = None
 		app.warn('Could not open tag file %s. Make sure your `doxylink` config variable is set correctly.' % tag_filename)
