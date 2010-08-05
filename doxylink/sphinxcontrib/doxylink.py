@@ -120,6 +120,26 @@ def find_url(doc, symbol):
 	return None
 
 def parse_tag_file(doc):
+	"""
+	Takes in an XML free from a Doxygen tag file and returns a dictionary that looks something like:
+	
+	.. code-block:: python
+	
+		{'PolyVox': {'file': 'namespace_poly_vox.html', 'kind': 'namespace'},
+		 'PolyVox::Array': {'file': 'class_poly_vox_1_1_array.html', 'kind': 'class'},
+		 'PolyVox::Array1DDouble': {'file': 'namespace_poly_vox.html#a7a1f5fd5c4f7fbb4258a495d707b5c13',
+		                            'kind': 'typedef'},
+		 'PolyVox::Array1DFloat': {'file': 'namespace_poly_vox.html#a879a120e49733eba1905c33f8a7f131b',
+		                           'kind': 'typedef'},
+		 'PolyVox::Array1DInt16': {'file': 'namespace_poly_vox.html#aa1463ece448c6ebed55ab429d6ae3e43',
+		                           'kind': 'typedef'}}
+	
+	:Parameters:
+		doc : xml.etree.ElementTree
+			The XML DOM object
+	
+	:return: a dictionary mapping fully qualified symbols to files
+	"""
 	mapping = {}
 	for compound in doc.findall(".//compound"):
 		if compound.get('kind') != 'namespace' and compound.get('kind') != 'class':
