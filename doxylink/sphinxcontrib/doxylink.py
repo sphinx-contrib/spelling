@@ -154,10 +154,9 @@ def create_role(app, tag_filename, rootdir):
 			#By here, no match was found
 			env = app.env
 			env.warn(env.docname, 'Could not find match for `%s` in `%s` tag file' % (part, tag_filename), lineno)
-		
-		
-		env = app.env
-		env.warn(env.docname, 'Could not find match for `%s` because tag file not found' % (part), lineno)
+		else:
+			env = app.env
+			env.warn(env.docname, 'Could not find match for `%s` because tag file not found' % (part), lineno)
 		
 		pnode = nodes.inline(rawsource=title, text=title)
 		return [pnode], []
