@@ -194,11 +194,12 @@ def _get_paths(options):
 
 
 def run_script(input_file, script_name, 
-                interpreter='python',
-                include_prefix=True, 
-                ignore_error=False, 
-                trailing_newlines=True,
-                ):
+               interpreter='python',
+               include_prefix=True, 
+               ignore_error=False, 
+               trailing_newlines=True,
+               break_lines_at=0,
+               ):
     """Run a script in the context of the input_file's directory, 
     return the text output formatted to be included as an rst
     literal text block.
@@ -225,6 +226,12 @@ def run_script(input_file, script_name,
        Boolean controlling whether the trailing newlines are added to the output.
        If False, the output is passed to rstrip() then one newline is added.  If
        True, newlines are added to the output until it ends in 2.
+
+     break_lines_at=0
+       Integer indicating the length where lines should be broken and
+       continued on the next line.  Defaults to 0, meaning no special
+       handling should be done.
+       
     """
     rundir = path(input_file).dirname()
     if interpreter:
@@ -248,7 +255,18 @@ def run_script(input_file, script_name,
     else:
         response = ''
     response += '\t$ %(cmd)s\n\t' % vars()
-    response += '\n\t'.join(output_text.splitlines())
+    lines = output_text.splitlines()
+
+    # Deal with lines that might be too long
+    if break_lines_at:
+        broken_lines = []
+        for l in lines:
+            while l:
+                part, l = l[:break_lines_at], l[break_lines_at:]
+                broken_lines.append(part)
+        lines = broken_lines
+                
+    response += '\n\t'.join(lines)
     if trailing_newlines:
         while not response.endswith('\n\n'):
             response += '\n'

@@ -2,16 +2,18 @@
 sphinxcontrib.paverutils
 ########################
 
-This module provides an alternative integration of Sphinx and Paver_. It supports calling
-Sphinx from within Paver using multiple configurations, and does not assume you only want
-to build HTML output.
+This module provides an alternative integration of Sphinx and
+Paver_. It supports calling Sphinx from within Paver using multiple
+configurations, and does not assume you only want to build HTML
+output.
 
 Basic Usage
 ===========
 
-To use this module, import it in your pavement.py file as ``from sphinxcontrib import
-paverutils``, then define option Bundles for "html" and/or "pdf" output using the options
-described in the task help.
+To use this module, import it in your pavement.py file as ``from
+sphinxcontrib import paverutils``, then define option Bundles for
+"html" and/or "pdf" output using the options described in the task
+help.
 
 For example::
 
@@ -69,7 +71,11 @@ For example::
 Tasks
 =====
 
-After you have imported ``sphinxcontrib.paverutils`` in your ``pavement.py`` file, Paver will show two additional tasks.  ``html`` takes the place of the task defined in ``paver.doctools`` and can be used to build HTML output.  ``pdf`` uses the LaTeX builder and an external toolset such as TeXLive_ to create a PDF manual.
+After you have imported ``sphinxcontrib.paverutils`` in your
+``pavement.py`` file, Paver will show two additional tasks.  ``html``
+takes the place of the task defined in ``paver.doctools`` and can be
+used to build HTML output.  ``pdf`` uses the LaTeX builder and an
+external toolset such as TeXLive_ to create a PDF manual.
 
 Configuration Parameters
 ========================
@@ -110,7 +116,8 @@ builder
   default: ``html``
 
 template_args
-  dictionary of values to be passed as name-value pairs to the HTML builder
+  dictionary of values to be passed as name-value pairs to the HTML
+  builder
 
   default: ``{}``
 
@@ -170,7 +177,8 @@ renders to::
 
     .. {{{end}}}
 
-The lines prefixed with ``..`` are comments, and do not appear in the final HTML or PDF output.
+The lines prefixed with ``..`` are comments, and do not appear in the
+final HTML or PDF output.
 
 Arguments:
 
@@ -197,7 +205,10 @@ trailing_newlines=True
   If False, the output is passed to rstrip() then one newline is added.  If
   True, newlines are added to the output until it ends in 2.
 
-
+break_lines_at=0
+  Integer indicating the length where lines should be broken and
+  continued on the next line.  Defaults to 0, meaning no special
+  handling should be done.
 
 
 .. note::
@@ -209,10 +220,12 @@ Users
 =====
 
 PyMOTW_
-    The Python Module of the Week package is built using Paver and Sphinx, including three forms of HTML and a PDF.
+    The Python Module of the Week package is built using Paver and
+    Sphinx, including three forms of HTML and a PDF.
 
 virtualenvwrapper_
-    The documentation for virtualenvwrapper includes the packaged HTML and a website using alternate templates.
+    The documentation for virtualenvwrapper includes the packaged HTML
+    and a website using alternate templates.
 
 .. _Paver: http://www.blueskyonmars.com/projects/paver/
 
@@ -225,6 +238,11 @@ virtualenvwrapper_
 
 History
 =======
+
+1.3
+---
+
+Added simple line-splitting to ``run_script()``.
 
 1.2
 ---
@@ -243,4 +261,5 @@ Updated to include ``run_script()`` function.
 1.0
 ---
 
-First public release based on the versions of these functions developed for PyMOTW_.
+First public release based on the versions of these functions
+developed for PyMOTW_.
