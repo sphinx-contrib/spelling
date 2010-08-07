@@ -12,7 +12,7 @@ copyright = u'2010, Sebastian Wiesner'
 version = '0.5'
 release = '0.5'
 
-exclude_patterns = ['_build']
+exclude_patterns = ['_build/*']
 
 html_theme = 'default'
 html_static_path = []
