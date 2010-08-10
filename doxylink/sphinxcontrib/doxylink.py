@@ -150,63 +150,54 @@ def parse_tag_file(doc):
 	return mapping
 
 def find_url2(mapping, symbol):
-	#print "\n\nSearching for", symbol
+	print "\n\nSearching for", symbol
+	
+	#If we have an exact match then return it.
+	if mapping.get(symbol):
+		return mapping[symbol]['file']
+	
 	#First we check for any mapping entries which even slightly match the requested symbol
-	endswith_list = {}
-	for item, data in mapping.items():
-		if item.endswith(symbol):
+	#endswith_list = {}
+	#for item, data in mapping.items():
+	#	if item.endswith(symbol):
 			#print symbol + ' : ' + item
-			endswith_list[item] = data
-			#mapping[item]['file']
+	#		endswith_list[item] = data
+	#		mapping[item]['file']
 	
 	#If we only find one then we return it.
-	if len(endswith_list) is 1:
-		return endswith_list.values()[0]['file']
+	#if len(endswith_list) is 1:
+	#	return endswith_list.values()[0]['file']
 	
 	#print("Still", len(endswith_list), 'possible matches')
 	
-	#Match the requested symbol reverse piecewise (split on '::') against the tag names to ensure they match exactly (modulo ambiguity)
-	piecewise_list = {}
-	for item, data in endswith_list.items():
-		#split_req_symbol_list = reversed(symbol.split('::'))
-		#split_tag_symbol_list = reversed(item.split('::'))
-		zipped_list = zip(reversed(symbol.split('::')), reversed(item.split('::')))
-		
-		if zipped_list[0][0] == zipped_list[0][1]:
-			#print symbol + ' : ' + item
-			piecewise_list[item] = data
+	piecewise_list = find_url_piecewise(mapping, symbol)
 	
+	#If there is only one match, return it.
 	if len(piecewise_list) is 1:
 		return piecewise_list.values()[0]['file']
 	
-	#print("Still", len(piecewise_list), 'possible matches')
+	print("Still", len(piecewise_list), 'possible matches')
 	
-	#Now we will prefer classes over names of constructors
-	classes_list = {}
-	for item, data in piecewise_list.items():
-		if data['kind'] == 'class':
-			classes_list[item] = data
+	#If there is more than one item in piecewise_list then there is an ambiguity
+	#Often this is due to the symbol matching the name of the constructor as well as the class name itself
+	classes_list = find_url_classes(piecewise_list, symbol)
 	
+	#If there is only one by here we return it.
 	if len(classes_list) is 1:
 		return classes_list.values()[0]['file']
 	
-	#print("Still", len(classes_list), 'possible matches')
-	
-	#Now, to disambiguate between "PolyVox::Array< 1, ElementType >::operator[]" and "PolyVox::Array::operator[]" matching "operator[]", we will ignore templated (as in C++ templates) tag names by removing names containing '<'
+	print("Still", len(classes_list), 'possible matches')
 	
 	#If we exhaused the list by requiring classes, use the list from before the filter.
 	if len(classes_list) == 0:
 		classes_list = piecewise_list
 	
-	no_templates_list = {}
-	for item, data in classes_list.items():
-		if '<' not in item:
-			no_templates_list[item] = data
+	no_templates_list = find_url_remove_templates(classes_list, symbol)
 	
 	if len(no_templates_list) is 1:
 		return no_templates_list.values()[0]['file']
 	
-	#print("Still", len(no_templates_list), 'possible matches')
+	print("Still", len(no_templates_list), 'possible matches')
 	
 	#If not found by now, just return the first one in the list
 	if len(no_templates_list) != 0:
@@ -214,6 +205,58 @@ def find_url2(mapping, symbol):
 	#Else return None if the list is empty
 	else:
 		return None
+
+def find_url_piecewise(mapping, symbol):
+	#Match the requested symbol reverse piecewise (split on '::') against the tag names to ensure they match exactly (modulo ambiguity)
+	#So, if in the mapping there is "PolyVox::Volume::FloatVolume" and "PolyVox::Volume" they would be split into:
+	#    ['PolyVox', 'Volume', 'FloatVolume'] and ['PolyVox', 'Volume']
+	#and reversed:
+	#    ['FloatVolume', 'Volume', 'PolyVox'] and ['Volume', 'PolyVox']
+	#and truncated to the shorter of the two:
+	#    ['FloatVolume', 'Volume'] and ['Volume', 'PolyVox']
+	#If we're searching for the "PolyVox::Volume" symbol we would compare:
+	#    ['Volume', 'PolyVox'] to ['FloatVolume', 'Volume', 'PolyVox']. That doesn't match so we look at the next in the mapping:
+	#    ['Volume', 'PolyVox'] to ['Volume', 'PolyVox']. Good, so we add it to the list
+	piecewise_list = {}
+	for item, data in mapping.items():
+		split_symbol = symbol.split('::')
+		split_item = item.split('::')
+		
+		split_symbol.reverse()
+		split_item.reverse()
+		
+		min_length = min(len(split_symbol), len(split_item))
+		
+		split_symbol = split_symbol[:min_length]
+		split_item = split_item[:min_length]
+		
+		#print split_symbol, split_item
+		
+		if split_symbol == split_item:
+			print symbol + ' : ' + item
+			piecewise_list[item] = data
+	
+	return piecewise_list
+
+def find_url_classes(mapping, symbol):
+	#Prefer classes over names of constructors
+	classes_list = {}
+	for item, data in mapping.items():
+		if data['kind'] == 'class':
+			print symbol + ' : ' + item
+			classes_list[item] = data
+	
+	return classes_list
+
+def find_url_remove_templates(mapping, symbol):
+	#Now, to disambiguate between "PolyVox::Array< 1, ElementType >::operator[]" and "PolyVox::Array::operator[]" matching "operator[]", we will ignore templated (as in C++ templates) tag names by removing names containing '<'
+	no_templates_list = {}
+	for item, data in mapping.items():
+		if '<' not in item:
+			print symbol + ' : ' + item
+			no_templates_list[item] = data
+	
+	return no_templates_list
 
 def join(*args):
 	return ''.join(args)
