@@ -28,6 +28,11 @@ Usage
 Please refer to the ``sphinxcontrib/doxylink.py`` file for documentation on using this extension.
 
 
+Changelog
+---------
+
+.. include:: CHANGES.rst
+
 .. _`Sphinx`: http://sphinx.pocoo.org/latest
 .. _`sphinx-contrib`: http://bitbucket.org/birkenfeld/sphinx-contrib
 .. _documentation: http://packages.python.org/sphinxcontrib-doxylink

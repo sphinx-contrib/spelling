@@ -1,7 +1,8 @@
-0.3 (In Development)
+0.3 (Aug 10, 2010)
 ====================
 
 - Only parse the tag file once per run. This should increase the speed.
+- Automatically add parentheses to functions if the add_function_parentheses config variable is set.
 
 0.2 (Jul 31, 2010)
 ====================
