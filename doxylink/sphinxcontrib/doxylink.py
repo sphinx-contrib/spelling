@@ -82,7 +82,7 @@ def find_url(doc, symbol):
 	matches = []
 	for compound in doc.findall('.//compound'):
 		if compound.find('name').text == symbol:
-			matches += [compound.find('filename').text]
+			matches += [{'file':compound.find('filename').text, 'kind':compound.get('kind')}]
 	
 	if len(matches) > 1:
 		pass
@@ -97,7 +97,7 @@ def find_url(doc, symbol):
 		if len(symbol_list) == 2:
 			reducedsymbol = symbol_list[1]
 			if reducedsymbol == symbol:
-				return compound.find('filename').text
+				return {'file':compound.find('filename').text, 'kind':compound.get('kind')}
 	
 	#Now split the symbol by '::'. Find an exact match for the first part and then a member match for the second
 	#So PolyVox::Array::operator[] becomes like {namespace: "PolyVox::Array", endsymbol: "operator[]"}
@@ -110,12 +110,12 @@ def find_url(doc, symbol):
 				for member in compound.findall('member'):
 #					#If this compound object contains the matching member then return it
 					if member.find('name').text == endsymbol:
-						return member.find('anchorfile').text + '#' + member.find('anchor').text
+						return {'file':member.find('anchorfile').text + '#' + member.find('anchor').text, 'kind':compound.get('kind')}
 	
 	#Then we'll look at unqualified members
 	for member in doc.findall('.//member'):
 		if member.find('name').text == symbol:
-			return member.find('anchorfile').text + '#' + member.find('anchor').text
+			return {'file':member.find('anchorfile').text + '#' + member.find('anchor').text, 'kind':compound.get('kind')}
 	
 	return None
 
@@ -154,7 +154,7 @@ def find_url2(mapping, symbol):
 	
 	#If we have an exact match then return it.
 	if mapping.get(symbol):
-		return mapping[symbol]['file']
+		return mapping[symbol]
 	
 	#First we check for any mapping entries which even slightly match the requested symbol
 	#endswith_list = {}
@@ -174,7 +174,7 @@ def find_url2(mapping, symbol):
 	
 	#If there is only one match, return it.
 	if len(piecewise_list) is 1:
-		return piecewise_list.values()[0]['file']
+		return piecewise_list.values()[0]
 	
 	print("Still", len(piecewise_list), 'possible matches')
 	
@@ -184,7 +184,7 @@ def find_url2(mapping, symbol):
 	
 	#If there is only one by here we return it.
 	if len(classes_list) is 1:
-		return classes_list.values()[0]['file']
+		return classes_list.values()[0]
 	
 	print("Still", len(classes_list), 'possible matches')
 	
@@ -195,13 +195,13 @@ def find_url2(mapping, symbol):
 	no_templates_list = find_url_remove_templates(classes_list, symbol)
 	
 	if len(no_templates_list) is 1:
-		return no_templates_list.values()[0]['file']
+		return no_templates_list.values()[0]
 	
 	print("Still", len(no_templates_list), 'possible matches')
 	
 	#If not found by now, just return the first one in the list
 	if len(no_templates_list) != 0:
-		return no_templates_list.values()[0]['file']
+		return no_templates_list.values()[0]
 	#Else return None if the list is empty
 	else:
 		return None
@@ -284,11 +284,11 @@ def create_role(app, tag_filename, rootdir):
 				
 				#If it's an absolute path then the link will work regardless of the document directory
 				if os.path.isabs(rootdir):
-					full_url = join(rootdir, url)
+					full_url = join(rootdir, url['file'])
 				#But otherwise we need to add the relative path of the current document to the root source directory to the link
 				else:
 					relative_path_to_docsrc = os.path.relpath(app.env.srcdir, os.path.dirname(inliner.document.current_source))
-					full_url = join(relative_path_to_docsrc, os.sep, rootdir, url)
+					full_url = join(relative_path_to_docsrc, os.sep, rootdir, url['file'])
 				
 				pnode = nodes.reference(title, title, internal=False, refuri=full_url)
 				return [pnode], []
