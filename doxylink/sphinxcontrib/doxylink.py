@@ -42,6 +42,8 @@ This allows one to do:
 	Make the extension atuomatically re-run if the tag file is altered on disc
 	
 	Find a way to parse the tag file to a DOM tree *once* and then just reference it from then on.
+	
+	Correct function overloading when arguments are given.
 
 :copyright: Copyright 2010 by Matt Williams
 :license: BSD, see LICENSE for details.
@@ -110,12 +112,12 @@ def find_url(doc, symbol):
 				for member in compound.findall('member'):
 #					#If this compound object contains the matching member then return it
 					if member.find('name').text == endsymbol:
-						return {'file':member.find('anchorfile').text + '#' + member.find('anchor').text, 'kind':compound.get('kind')}
+						return {'file':member.find('anchorfile').text + '#' + member.find('anchor').text, 'kind':member.get('kind')}
 	
 	#Then we'll look at unqualified members
 	for member in doc.findall('.//member'):
 		if member.find('name').text == symbol:
-			return {'file':member.find('anchorfile').text + '#' + member.find('anchor').text, 'kind':compound.get('kind')}
+			return {'file':member.find('anchorfile').text + '#' + member.find('anchor').text, 'kind':member.get('kind')}
 	
 	return None
 
@@ -290,6 +292,9 @@ def create_role(app, tag_filename, rootdir):
 				else:
 					relative_path_to_docsrc = os.path.relpath(app.env.srcdir, os.path.dirname(inliner.document.current_source))
 					full_url = join(relative_path_to_docsrc, os.sep, rootdir, url['file'])
+				
+				if url['kind'] == 'function' and app.config.add_function_parentheses:
+					title = join(title, '()')
 				
 				pnode = nodes.reference(title, title, internal=False, refuri=full_url)
 				return [pnode], []
