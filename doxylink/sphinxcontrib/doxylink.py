@@ -144,9 +144,10 @@ def parse_tag_file(doc):
 	for compound in doc.findall(".//compound"):
 		if compound.get('kind') != 'namespace' and compound.get('kind') != 'class':
 			continue
+		
 		mapping[compound.findtext('name')] = {'kind' : compound.get('kind'), 'file' : compound.findtext('filename')}
 		for member in compound.findall('member'):
-			mapping[join(compound.findtext('name'), '::', member.findtext('name'))] = {'kind' : member.get('kind'), 'file' : join(member.findtext('anchorfile'),'#',member.findtext('anchor'))}
+			mapping[join(compound.findtext('name'), '::', member.findtext('name'))] = {'kind' : member.get('kind'), 'file' : join(member.findtext('anchorfile'),'#',member.findtext('anchor')), 'arglist' : member.findtext('arglist')}
 	return mapping
 
 def find_url2(mapping, symbol):
