@@ -12,7 +12,7 @@ Installation
 
 This extension can be installed from the Python Package Index::
 
-   pip install sphinx-contrib.doxylink
+   pip install sphinxcontrib-doxylink
 
 Alternatively, you can clone the sphinx-contrib_ repository from BitBucket,
 and install the extension directly from the repository::
@@ -27,11 +27,6 @@ Usage
 
 Please refer to the ``sphinxcontrib/doxylink.py`` file for documentation on using this extension.
 
-
-Changelog
----------
-
-.. include:: CHANGES.rst
 
 .. _`Sphinx`: http://sphinx.pocoo.org/latest
 .. _`sphinx-contrib`: http://bitbucket.org/birkenfeld/sphinx-contrib
