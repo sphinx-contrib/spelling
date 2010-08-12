@@ -14,6 +14,14 @@ def pytest_funcarg__app(request):
     return app
 
 
+def pytest_funcarg__directive(request):
+    state_machine = Mock()
+    state_machine.get_source_and_line.return_value = (Mock(), Mock())
+    return programoutput.ProgramOutputDirective(
+        'program-output', ['some command'], {}, [], 1, 1, '',
+        Mock(), state_machine)
+
+
 def test_slice():
     assert programoutput._slice('2') == (2, None)
     assert programoutput._slice('2,2') == (2, 2)
@@ -26,14 +34,6 @@ def test_slice():
     with py.test.raises(ValueError) as exc:
         programoutput._slice('2,2,2')
     assert str(exc.value) == 'too many slice parts'
-
-
-def pytest_funcarg__directive(request):
-    state_machine = Mock()
-    state_machine.get_source_and_line.return_value = (Mock(), Mock())
-    return programoutput.ProgramOutputDirective(
-        'program-output', ['some command'], {}, [], 1, 1, '',
-        Mock(), state_machine)
 
 
 def test_program_output_directive():
