@@ -57,6 +57,8 @@ from sphinx.util.nodes import split_explicit_title
 
 import xml.etree.ElementTree as ET
 
+import urlparse
+
 def find_url(doc, symbol):
 	"""
 	Return the URL for a given symbol.
@@ -112,12 +114,12 @@ def find_url(doc, symbol):
 				for member in compound.findall('member'):
 #					#If this compound object contains the matching member then return it
 					if member.find('name').text == endsymbol:
-						return {'file':member.find('anchorfile').text + '#' + member.find('anchor').text, 'kind':member.get('kind')}
+						return {'file':(member.findtext('anchorfile') or compound.findtext('filename')) + '#' + member.find('anchor').text, 'kind':member.get('kind')}
 	
 	#Then we'll look at unqualified members
 	for member in doc.findall('.//member'):
 		if member.find('name').text == symbol:
-			return {'file':member.find('anchorfile').text + '#' + member.find('anchor').text, 'kind':member.get('kind')}
+			return {'file':(member.findtext('anchorfile') or compound.findtext('filename')) + '#' + member.find('anchor').text, 'kind':member.get('kind')}
 	
 	return None
 
@@ -149,7 +151,12 @@ def parse_tag_file(doc):
 		
 		mapping[compound.findtext('name')] = {'kind' : compound.get('kind'), 'file' : compound.findtext('filename')}
 		for member in compound.findall('member'):
-			mapping[join(compound.findtext('name'), '::', member.findtext('name'))] = {'kind' : member.get('kind'), 'file' : join(member.findtext('anchorfile'),'#',member.findtext('anchor')), 'arglist' : member.findtext('arglist')}
+			
+			#If the member doesn't have an <anchorfile> element, use the parent compounds <filename> instead
+			#This is the way it is in the qt.tag and is perhaps an artefact of old Doxygen
+			anchorfile = member.findtext('anchorfile') or compound.findtext('filename')
+				
+			mapping[join(compound.findtext('name'), '::', member.findtext('name'))] = {'kind' : member.get('kind'), 'file' : join(anchorfile,'#',member.findtext('anchor')), 'arglist' : member.findtext('arglist')}
 	return mapping
 
 def find_url2(mapping, symbol):
@@ -280,13 +287,13 @@ def create_role(app, tag_filename, rootdir):
 		text = utils.unescape(text)
 		# from :name:`title <part>`
 		has_explicit_title, title, part = split_explicit_title(text)
-		
 		if tag_file:
 			url = find_url(tag_file, part)
 			if url:
 				
 				#If it's an absolute path then the link will work regardless of the document directory
-				if os.path.isabs(rootdir):
+				#Also check if it is a URL (i.e. it has a 'scheme' like 'http' or 'file')
+				if os.path.isabs(rootdir) or urlparse.urlparse(rootdir).scheme:
 					full_url = join(rootdir, url['file'])
 				#But otherwise we need to add the relative path of the current document to the root source directory to the link
 				else:

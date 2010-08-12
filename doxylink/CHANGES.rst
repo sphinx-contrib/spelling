@@ -1,3 +1,8 @@
+0.4 (In Development)
+====================
+
+- Allow URLs as base paths for the HTML links.
+
 0.3 (Aug 10, 2010)
 ====================
 
