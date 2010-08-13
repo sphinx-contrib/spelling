@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-See doc/index.rst for usage
-"""
 
 from docutils import nodes, utils
 
@@ -221,14 +218,30 @@ def find_url_piecewise(mapping, symbol):
 	"""
 	Match the requested symbol reverse piecewise (split on '::') against the tag names to ensure they match exactly (modulo ambiguity)
 	So, if in the mapping there is "PolyVox::Volume::FloatVolume" and "PolyVox::Volume" they would be split into:
+	
+	.. code-block:: python
+	
 		['PolyVox', 'Volume', 'FloatVolume'] and ['PolyVox', 'Volume']
+	
 	and reversed:
+	
+	.. code-block:: python
+	
 		['FloatVolume', 'Volume', 'PolyVox'] and ['Volume', 'PolyVox']
+	
 	and truncated to the shorter of the two:
+	
+	.. code-block:: python
+	
 		['FloatVolume', 'Volume'] and ['Volume', 'PolyVox']
+	
 	If we're searching for the "PolyVox::Volume" symbol we would compare:
+		
+	.. code-block:: python
+	
 		['Volume', 'PolyVox'] to ['FloatVolume', 'Volume', 'PolyVox']. That doesn't match so we look at the next in the mapping:
 		['Volume', 'PolyVox'] to ['Volume', 'PolyVox']. Good, so we add it to the list
+	
 	"""
 	piecewise_list = {}
 	for item, data in mapping.items():

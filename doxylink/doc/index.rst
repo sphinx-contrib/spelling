@@ -41,6 +41,11 @@ This allows one to do:
 	:polyvox:`tidyUpMemeory(int) <tidyUpMemory>`
 	:polyvox:`PolyVox::Array::operator[]`
 
+Function reference
+------------------
+
+.. automodule:: sphinxcontrib.doxylink
+
 :requires: Python 2.5
 
 .. todo::
