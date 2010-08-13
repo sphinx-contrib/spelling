@@ -25,7 +25,7 @@ and install the extension directly from the repository::
 Usage
 -----
 
-Please refer to the documentation_ file for documentation on using this extension.
+Please refer to the documentation_ file for information on using this extension.
 
 
 .. _`Sphinx`: http://sphinx.pocoo.org/latest

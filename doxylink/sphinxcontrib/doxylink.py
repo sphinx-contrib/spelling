@@ -13,6 +13,8 @@ import xml.etree.ElementTree as ET
 
 import urlparse
 
+import re
+
 def find_url(doc, symbol):
 	"""
 	Return the URL for a given symbol.
@@ -79,18 +81,37 @@ def find_url(doc, symbol):
 
 def parse_tag_file(doc):
 	"""
-	Takes in an XML free from a Doxygen tag file and returns a dictionary that looks something like:
+	Takes in an XML tree from a Doxygen tag file and returns a dictionary that looks something like:
 	
 	.. code-block:: python
 	
-		{'PolyVox': {'file': 'namespace_poly_vox.html', 'kind': 'namespace'},
-		 'PolyVox::Array': {'file': 'class_poly_vox_1_1_array.html', 'kind': 'class'},
+		{'PolyVox': {'file': 'namespace_poly_vox.html',
+		             'kind': 'namespace'},
+		 'PolyVox::Array': {'file': 'class_poly_vox_1_1_array.html',
+		                    'kind': 'class'},
 		 'PolyVox::Array1DDouble': {'file': 'namespace_poly_vox.html#a7a1f5fd5c4f7fbb4258a495d707b5c13',
 		                            'kind': 'typedef'},
 		 'PolyVox::Array1DFloat': {'file': 'namespace_poly_vox.html#a879a120e49733eba1905c33f8a7f131b',
 		                           'kind': 'typedef'},
 		 'PolyVox::Array1DInt16': {'file': 'namespace_poly_vox.html#aa1463ece448c6ebed55ab429d6ae3e43',
-		                           'kind': 'typedef'}}
+		                           'kind': 'typedef'},
+		 'QScriptContext::throwError': {'arglist': {'( Error error, const QString & text )': 'qscriptcontext.html#throwError',
+		                                            '( const QString & text )': 'qscriptcontext.html#throwError-2'},
+		                                'kind': 'function'},
+		 'QScriptContext::toString': {'arglist': {'()': 'qscriptcontext.html#toString'},
+		                              'kind': 'function'}
+	
+	Note the different form for functions. This is required to allow for 'overloading by argument type'.
+	
+	To access a filename for a symbol you do:
+	
+	.. code-block:: python
+	
+		symbol_mapping = mapping[symbol]
+		if symbol_mapping['kind'] == 'function':
+			url = symbol_mapping['arglist'][argument_string]
+		else:
+			url = symbol_mapping['file']
 	
 	:Parameters:
 		doc : xml.etree.ElementTree
@@ -101,16 +122,29 @@ def parse_tag_file(doc):
 	mapping = {}
 	for compound in doc.findall(".//compound"):
 		if compound.get('kind') != 'namespace' and compound.get('kind') != 'class':
-			continue
+			continue #Skip everything that isn't a namespace or class
 		
+		#If it's a compound we can simply add it
 		mapping[compound.findtext('name')] = {'kind' : compound.get('kind'), 'file' : compound.findtext('filename')}
+		
 		for member in compound.findall('member'):
 			
 			#If the member doesn't have an <anchorfile> element, use the parent compounds <filename> instead
 			#This is the way it is in the qt.tag and is perhaps an artefact of old Doxygen
 			anchorfile = member.findtext('anchorfile') or compound.findtext('filename')
-				
-			mapping[join(compound.findtext('name'), '::', member.findtext('name'))] = {'kind' : member.get('kind'), 'file' : join(anchorfile,'#',member.findtext('anchor')), 'arglist' : member.findtext('arglist')}
+			
+			member_symbol = join(compound.findtext('name'), '::', member.findtext('name'))
+			
+			if member.get('kind') == 'function':
+				#If we already have this function mentioned, simply append to the arglist array
+				if mapping.get(member_symbol):
+					mapping[member_symbol]['arglist'][member.findtext('arglist')] = join(anchorfile,'#',member.findtext('anchor'))
+				else:
+					mapping[member_symbol] = {'kind' : member.get('kind'), 'arglist' : {member.findtext('arglist') : join(anchorfile,'#',member.findtext('anchor'))}}
+			else:
+				mapping[member_symbol] = {'kind' : member.get('kind'), 'file' : join(anchorfile,'#',member.findtext('anchor'))}
+	from pprint import pprint
+	pprint(mapping)
 	return mapping
 
 def find_url2(mapping, symbol):
@@ -118,7 +152,20 @@ def find_url2(mapping, symbol):
 	
 	#If we have an exact match then return it.
 	if mapping.get(symbol):
+		print ('Exact match')
 		return mapping[symbol]
+	
+	try:
+		arguments = re.search('\(.*\)', symbol).group(0) #The function arguments including the parentheses
+	except AttributeError:
+		arguments = ''
+		
+	try:
+		modifiers = re.search('\s([a-zA-Z]+) ?$', symbol).group(1) #Things like 'volatile' or 'const'
+	except AttributeError:
+		modifiers = ''
+	
+	#If the user didn't pass in any arguments, i.e. `arguments == ''` then they don't care which version of the overloaded funtion they get.
 	
 	#First we check for any mapping entries which even slightly match the requested symbol
 	#endswith_list = {}
@@ -241,6 +288,7 @@ def create_role(app, tag_filename, rootdir):
 		text = utils.unescape(text)
 		# from :name:`title <part>`
 		has_explicit_title, title, part = split_explicit_title(text)
+		warning_message = ''
 		if tag_file:
 			url = find_url(tag_file, part)
 			if url:
@@ -260,14 +308,14 @@ def create_role(app, tag_filename, rootdir):
 				pnode = nodes.reference(title, title, internal=False, refuri=full_url)
 				return [pnode], []
 			#By here, no match was found
-			env = app.env
-			env.warn(env.docname, 'Could not find match for `%s` in `%s` tag file' % (part, tag_filename), lineno)
+			warning_message = 'Could not find match for `%s` in `%s` tag file' % (part, tag_filename)
 		else:
-			env = app.env
-			env.warn(env.docname, 'Could not find match for `%s` because tag file not found' % (part), lineno)
+			warning_message = 'Could not find match for `%s` because tag file not found' % (part)
+		
+		msg = inliner.reporter.warning(warning_message, line=lineno)
 		
 		pnode = nodes.inline(rawsource=title, text=title)
-		return [pnode], []
+		return [pnode], [msg]
 	
 	return find_doxygen_link
 
