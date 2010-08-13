@@ -218,16 +218,18 @@ def find_url2(mapping, symbol):
 		return None
 
 def find_url_piecewise(mapping, symbol):
-	#Match the requested symbol reverse piecewise (split on '::') against the tag names to ensure they match exactly (modulo ambiguity)
-	#So, if in the mapping there is "PolyVox::Volume::FloatVolume" and "PolyVox::Volume" they would be split into:
-	#    ['PolyVox', 'Volume', 'FloatVolume'] and ['PolyVox', 'Volume']
-	#and reversed:
-	#    ['FloatVolume', 'Volume', 'PolyVox'] and ['Volume', 'PolyVox']
-	#and truncated to the shorter of the two:
-	#    ['FloatVolume', 'Volume'] and ['Volume', 'PolyVox']
-	#If we're searching for the "PolyVox::Volume" symbol we would compare:
-	#    ['Volume', 'PolyVox'] to ['FloatVolume', 'Volume', 'PolyVox']. That doesn't match so we look at the next in the mapping:
-	#    ['Volume', 'PolyVox'] to ['Volume', 'PolyVox']. Good, so we add it to the list
+	"""
+	Match the requested symbol reverse piecewise (split on '::') against the tag names to ensure they match exactly (modulo ambiguity)
+	So, if in the mapping there is "PolyVox::Volume::FloatVolume" and "PolyVox::Volume" they would be split into:
+		['PolyVox', 'Volume', 'FloatVolume'] and ['PolyVox', 'Volume']
+	and reversed:
+		['FloatVolume', 'Volume', 'PolyVox'] and ['Volume', 'PolyVox']
+	and truncated to the shorter of the two:
+		['FloatVolume', 'Volume'] and ['Volume', 'PolyVox']
+	If we're searching for the "PolyVox::Volume" symbol we would compare:
+		['Volume', 'PolyVox'] to ['FloatVolume', 'Volume', 'PolyVox']. That doesn't match so we look at the next in the mapping:
+		['Volume', 'PolyVox'] to ['Volume', 'PolyVox']. Good, so we add it to the list
+	"""
 	piecewise_list = {}
 	for item, data in mapping.items():
 		split_symbol = symbol.split('::')
@@ -250,7 +252,7 @@ def find_url_piecewise(mapping, symbol):
 	return piecewise_list
 
 def find_url_classes(mapping, symbol):
-	#Prefer classes over names of constructors
+	"""Prefer classes over names of constructors"""
 	classes_list = {}
 	for item, data in mapping.items():
 		if data['kind'] == 'class':
@@ -260,7 +262,7 @@ def find_url_classes(mapping, symbol):
 	return classes_list
 
 def find_url_remove_templates(mapping, symbol):
-	#Now, to disambiguate between "PolyVox::Array< 1, ElementType >::operator[]" and "PolyVox::Array::operator[]" matching "operator[]", we will ignore templated (as in C++ templates) tag names by removing names containing '<'
+	"""Now, to disambiguate between "PolyVox::Array< 1, ElementType >::operator[]" and "PolyVox::Array::operator[]" matching "operator[]", we will ignore templated (as in C++ templates) tag names by removing names containing '<'"""
 	no_templates_list = {}
 	for item, data in mapping.items():
 		if '<' not in item:
