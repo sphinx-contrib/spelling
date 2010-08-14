@@ -242,8 +242,8 @@ def return_from_mapping(mapping_entry, normalised_arglist=''):
 
 def find_url_piecewise(mapping, symbol):
 	"""
-	Match the requested symbol reverse piecewise (split on '::') against the tag names to ensure they match exactly (modulo ambiguity)
-	So, if in the mapping there is "PolyVox::Volume::FloatVolume" and "PolyVox::Volume" they would be split into:
+	Match the requested symbol reverse piecewise (split on ``::``) against the tag names to ensure they match exactly (modulo ambiguity)
+	So, if in the mapping there is ``PolyVox::Volume::FloatVolume`` and ``PolyVox::Volume`` they would be split into:
 	
 	.. code-block:: python
 	
@@ -261,12 +261,19 @@ def find_url_piecewise(mapping, symbol):
 	
 		['FloatVolume', 'Volume'] and ['Volume', 'PolyVox']
 	
-	If we're searching for the "PolyVox::Volume" symbol we would compare:
-		
+	If we're searching for the ``PolyVox::Volume`` symbol we would compare:
+	
 	.. code-block:: python
 	
-		['Volume', 'PolyVox'] to ['FloatVolume', 'Volume', 'PolyVox']. That doesn't match so we look at the next in the mapping:
-		['Volume', 'PolyVox'] to ['Volume', 'PolyVox']. Good, so we add it to the list
+		['Volume', 'PolyVox'] to ['FloatVolume', 'Volume', 'PolyVox'].
+	
+	That doesn't match so we look at the next in the mapping:
+	
+	.. code-block:: python
+	
+		['Volume', 'PolyVox'] to ['Volume', 'PolyVox'].
+	
+	Good, so we add it to the list
 	
 	"""
 	piecewise_list = {}
@@ -301,7 +308,7 @@ def find_url_classes(mapping, symbol):
 	return classes_list
 
 def find_url_remove_templates(mapping, symbol):
-	"""Now, to disambiguate between "PolyVox::Array< 1, ElementType >::operator[]" and "PolyVox::Array::operator[]" matching "operator[]", we will ignore templated (as in C++ templates) tag names by removing names containing '<'"""
+	"""Now, to disambiguate between ``PolyVox::Array< 1, ElementType >::operator[]`` and ``PolyVox::Array::operator[]`` matching ``operator[]``, we will ignore templated (as in C++ templates) tag names by removing names containing ``<``"""
 	no_templates_list = {}
 	for item, data in mapping.items():
 		if '<' not in item:
