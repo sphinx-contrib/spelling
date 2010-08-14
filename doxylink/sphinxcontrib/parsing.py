@@ -38,9 +38,19 @@ arglist = Literal('(') + Group(ZeroOrMore(argument + Suppress(Literal(','))) + O
 
 full_symbol = (SkipTo('(').setResultsName('function_name') + Optional(arglist)) ^ symbol.setResultsName('symbol') #In this case 'input_type' is the function name
 
-def normalise(sample):
+def normalise(symbol):
+	"""
+	Takes a c++ symbol or funtion and splits it into symbol and a normalised argument list.
+	
+	:Parameters:
+		symbol : string
+			A C++ symbol or function definition like ``PolyVox::Volume``, ``Volume::printAll() const``
+	
+	:return:
+		a tuple consisting of two strings: ``(qualified function name or symbol, normalised argument list)``
+	"""
 	try:
-		result = full_symbol.parseString(sample)
+		result = full_symbol.parseString(symbol)
 	except ParseException, pe:
 		print sample
 		print pe
