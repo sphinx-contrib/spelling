@@ -12,6 +12,8 @@ import urlparse
 
 import re
 
+from parsing import normalise
+
 def find_url(doc, symbol):
 	"""
 	Return the URL for a given symbol.
@@ -134,33 +136,25 @@ def parse_tag_file(doc):
 			
 			if member.get('kind') == 'function':
 				#If we already have this function mentioned, simply append to the arglist array
+				parsed_symbol, normalised_arglist = normalise(member.findtext('arglist'))
 				if mapping.get(member_symbol):
-					mapping[member_symbol]['arglist'][member.findtext('arglist')] = join(anchorfile,'#',member.findtext('anchor'))
+					mapping[member_symbol]['arglist'][normalised_arglist] = join(anchorfile,'#',member.findtext('anchor'))
 				else:
-					mapping[member_symbol] = {'kind' : member.get('kind'), 'arglist' : {member.findtext('arglist') : join(anchorfile,'#',member.findtext('anchor'))}}
+					mapping[member_symbol] = {'kind' : member.get('kind'), 'arglist' : {normalised_arglist : join(anchorfile,'#',member.findtext('anchor'))}}
 			else:
 				mapping[member_symbol] = {'kind' : member.get('kind'), 'file' : join(anchorfile,'#',member.findtext('anchor'))}
-	from pprint import pprint
-	pprint(mapping)
+	#from pprint import pprint; pprint(mapping)
 	return mapping
 
 def find_url2(mapping, symbol):
 	print "\n\nSearching for", symbol
+	symbol, normalised_arglist =  normalise(symbol)
+	print symbol, normalised_arglist
 	
 	#If we have an exact match then return it.
 	if mapping.get(symbol):
 		print ('Exact match')
-		return mapping[symbol]
-	
-	try:
-		arguments = re.search('\(.*\)', symbol).group(0) #The function arguments including the parentheses
-	except AttributeError:
-		arguments = ''
-		
-	try:
-		modifiers = re.search('\s([a-zA-Z]+) ?$', symbol).group(1) #Things like 'volatile' or 'const'
-	except AttributeError:
-		modifiers = ''
+		return return_from_mapping(mapping[symbol], normalised_arglist)
 	
 	#If the user didn't pass in any arguments, i.e. `arguments == ''` then they don't care which version of the overloaded funtion they get.
 	
@@ -182,7 +176,7 @@ def find_url2(mapping, symbol):
 	
 	#If there is only one match, return it.
 	if len(piecewise_list) is 1:
-		return piecewise_list.values()[0]
+		return return_from_mapping(piecewise_list.values()[0], normalised_arglist)
 	
 	print("Still", len(piecewise_list), 'possible matches')
 	
@@ -203,16 +197,48 @@ def find_url2(mapping, symbol):
 	no_templates_list = find_url_remove_templates(classes_list, symbol)
 	
 	if len(no_templates_list) is 1:
-		return no_templates_list.values()[0]
+		return return_from_mapping(no_templates_list.values()[0], normalised_arglist)
 	
 	print("Still", len(no_templates_list), 'possible matches')
 	
 	#If not found by now, just return the first one in the list
 	if len(no_templates_list) != 0:
-		return no_templates_list.values()[0]
+		#TODO return a warning here?
+		return return_from_mapping(no_templates_list.values()[0], normalised_arglist)
 	#Else return None if the list is empty
 	else:
 		return None
+
+def return_from_mapping(mapping_entry, normalised_arglist=''):
+	"""
+	Return a mapping to a single URL in the form
+	
+	.. code-block:: python
+	
+		{'kind' : 'function', 'file' : 'something.html#foo'}
+	
+	:Parameters:
+		mapping_entry : dict
+			should be a single entry from the large mapping file corresponding to a single symbol. If the symbol is a function, then ``mappingentry['arglist']`` will be a dictionary mapping normalised signatures to URLs
+		normalised_arglist : string
+			the normalised form of the arglist that the user has requested. This can be empty in which case the function will return just the first element of ``mappingentry['arglist']``. This parameter is ignored if ``mappingentry['kind'] != 'function'``
+	"""
+	#If it's a function we need to grab the right signature from the arglist.
+	if mapping_entry['kind'] == 'function':
+		#If the user has requested a specific function through specifying an arglist then get the right anchor
+		if normalised_arglist:
+			filename = mapping_entry['arglist'].get(normalised_arglist)
+			if not filename: #If we didn't get the filename because it's not in the mapping then we will just return a random one?
+				#TODO return a warning here!
+				filename = mapping_entry['arglist'].values()[0]
+		else:
+			#Otherwise just return the first entry (if they don't care they get whatever comes first)
+			filename = mapping_entry['arglist'].values()[0]
+		
+		return {'kind' : 'function', 'file' : filename}
+	
+	#If it's not a function, then return it raw
+	return mapping_entry
 
 def find_url_piecewise(mapping, symbol):
 	"""
@@ -306,6 +332,7 @@ def create_role(app, tag_filename, rootdir):
 		warning_message = ''
 		if tag_file:
 			url = find_url(tag_file, part)
+			url = find_url2(mapping, part)
 			if url:
 				
 				#If it's an absolute path then the link will work regardless of the document directory
