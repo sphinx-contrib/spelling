@@ -3,7 +3,7 @@ Welcome to sphinxcontrib-doxylink's documentation
 
 Doxylink is a Sphinx extension to link to external Doxygen API documentation.
 
-It works much like the extlinks extension but it does some more processing to link C++ symbols against their Doxygen HTML documentation.
+It allows you to specify C++ symbols and it will convert them into links to the HTML page of their Doxygen documentation.
 
 Usage
 -----
@@ -14,8 +14,8 @@ You use Doxylink like:
 
 	:polyvox:`Array <PolyVox::Array>`.
 	:polyvox:`PolyVox::Volume`
-	:qtogre:`QtOgre::Log`
-	:polyvox:`tidyUpMemory(int) <tidyUpMemory>`
+	You use :qtogre:`QtOgre::Log` to log events for the user.
+	:polyvox:`tidyUpMemory(int) <tidyUpMemory>` will reduce memory usage.
 	:polyvox:`PolyVox::Array::operator[]`
 
 Where ``polyvox`` and ``qtogre`` roles are defined by the :confval:`doxylink` configuration value.
