@@ -98,7 +98,7 @@ def parse_tag_file(doc):
 		                                            '( const QString & text )': 'qscriptcontext.html#throwError-2'},
 		                                'kind': 'function'},
 		 'QScriptContext::toString': {'arglist': {'()': 'qscriptcontext.html#toString'},
-		                              'kind': 'function'}
+		                              'kind': 'function'}}
 	
 	Note the different form for functions. This is required to allow for 'overloading by argument type'.
 	
@@ -350,7 +350,7 @@ def create_role(app, tag_filename, rootdir):
 					relative_path_to_docsrc = os.path.relpath(app.env.srcdir, os.path.dirname(inliner.document.current_source))
 					full_url = join(relative_path_to_docsrc, os.sep, rootdir, url['file'])
 				
-				if url['kind'] == 'function' and app.config.add_function_parentheses:
+				if url['kind'] == 'function' and app.config.add_function_parentheses and not normalise(title)[1]:
 					title = join(title, '()')
 				
 				pnode = nodes.reference(title, title, internal=False, refuri=full_url)
