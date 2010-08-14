@@ -332,7 +332,6 @@ def create_role(app, tag_filename, rootdir):
 		warning_message = ''
 		if tag_file:
 			url = find_url(tag_file, part)
-			url = find_url2(mapping, part)
 			if url:
 				
 				#If it's an absolute path then the link will work regardless of the document directory
