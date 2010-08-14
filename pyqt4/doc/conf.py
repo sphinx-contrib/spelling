@@ -4,6 +4,8 @@ import sys, os
 
 needs_sphinx = '1.0'
 
+extensions = ['sphinx.ext.intersphinx']
+
 source_suffix = '.rst'
 master_doc = 'index'
 
@@ -16,3 +18,5 @@ exclude_patterns = ['_build/*']
 
 html_theme = 'default'
 html_static_path = []
+
+intersphinx_mapping = {'sphinx': ('http://sphinx.pocoo.org/', None)}
