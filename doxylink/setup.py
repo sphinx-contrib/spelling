@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 with open('README.rst') as stream:
     long_desc = stream.read()
 
-requires = ['Sphinx>=0.6']
+requires = ['Sphinx>=0.6', 'pyparsing']
 
 setup(
     name='sphinxcontrib-doxylink',
