@@ -138,7 +138,9 @@ def run_programs(app, doctree):
         extra_args = node.get('extraargs', '').encode(
             sys.getfilesystemencoding())
         if node['use_shell']:
-            cmd = cmd_bytes + ' ' + extra_args
+            cmd = cmd_bytes
+            if extra_args:
+                cmd += ' ' + extra_args
         else:
             cmd = shlex.split(cmd_bytes)
             if extra_args:
