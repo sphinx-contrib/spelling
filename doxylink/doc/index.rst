@@ -95,10 +95,6 @@ Function reference
 .. todo::
 
 	Make the extension atuomatically re-run if the tag file is altered on disc
-	
-	Find a way to parse the tag file to a DOM tree *once* and then just reference it from then on.
-	
-	Correct function overloading when arguments are given.
 
 :copyright: Copyright 2010 by Matt Williams
 :license: BSD, see LICENSE for details.

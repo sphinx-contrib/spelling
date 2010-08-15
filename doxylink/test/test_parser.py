@@ -4,6 +4,8 @@ from sphinxcontrib import parsing
 
 class TestNormalise(unittest.TestCase):
 	def setUp(self):
+		#List of tuples of: (input, correct output)
+		#Input is a string, output is a tuple.
 		self.arglists = [('( QUrl source )', ('', '(QUrl)')),
 		                 ('( QUrl * source )', ('', '(QUrl*)')),
 		                 ('( QUrl ** source )', ('', '(QUrl**)')),
