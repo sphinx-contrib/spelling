@@ -5,6 +5,11 @@ Doxylink is a Sphinx extension to link to external Doxygen API documentation.
 
 It allows you to specify C++ symbols and it will convert them into links to the HTML page of their Doxygen documentation.
 
+.. toctree::
+	:hidden:
+	
+	api
+
 Usage
 -----
 
@@ -82,11 +87,6 @@ Configuration values
 .. confval:: add_function_parentheses
 
    A boolean that decides whether parentheses are appended to function and method role text. Default is ``True``.
-
-Function reference
-------------------
-
-.. automodule:: sphinxcontrib.doxylink
 
 :requires: Python 2.5
 
