@@ -1,6 +1,6 @@
 import unittest
 
-from sphinxcontrib import parsing
+from sphinxcontrib.doxylink import parsing
 
 class TestNormalise(unittest.TestCase):
 	def setUp(self):

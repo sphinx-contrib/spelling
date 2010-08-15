@@ -88,8 +88,6 @@ Function reference
 
 .. automodule:: sphinxcontrib.doxylink
 
-.. automodule:: sphinxcontrib.parsing
-
 :requires: Python 2.5
 
 .. todo::
