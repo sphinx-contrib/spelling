@@ -2,6 +2,11 @@ import unittest
 
 from sphinxcontrib.doxylink import parsing
 
+try:
+    import cProfile as profile
+except ImportError:
+    import profile
+
 class TestNormalise(unittest.TestCase):
 	def setUp(self):
 		#List of tuples of: (input, correct output)
@@ -54,6 +59,4 @@ class TestNormalise(unittest.TestCase):
 		for arglist in self.arglists:
 			self.assertEqual(parsing.normalise(arglist[0]), arglist[1])
 
-if __name__ == '__main__':
-    unittest.main()
-
+profile.runctx("parsing.normalise('( QWidget * parent = 0, const char * name = 0, Qt::WindowFlags f = 0 )')", globals(), locals())
