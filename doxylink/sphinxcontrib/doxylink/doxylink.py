@@ -12,7 +12,7 @@ import urlparse
 
 import re
 
-from parsing import normalise
+from parsing import normalise, ParseException
 
 import pickle
 
@@ -140,11 +140,15 @@ def parse_tag_file(doc):
 			
 			if member.get('kind') == 'function':
 				#If we already have this function mentioned, simply append to the arglist array
-				parsed_symbol, normalised_arglist = normalise(member.findtext('arglist'))
-				if mapping.get(member_symbol):
-					mapping[member_symbol]['arglist'][normalised_arglist] = join(anchorfile,'#',member.findtext('anchor'))
-				else:
-					mapping[member_symbol] = {'kind' : member.get('kind'), 'arglist' : {normalised_arglist : join(anchorfile,'#',member.findtext('anchor'))}}
+				try:
+					parsed_symbol, normalised_arglist = normalise(member.findtext('arglist'))
+					if mapping.get(member_symbol):
+						mapping[member_symbol]['arglist'][normalised_arglist] = join(anchorfile,'#',member.findtext('anchor'))
+					else:
+						mapping[member_symbol] = {'kind' : member.get('kind'), 'arglist' : {normalised_arglist : join(anchorfile,'#',member.findtext('anchor'))}}
+				except ParseException as error:
+					print error
+					print 'Skipping %s' % member.findtext('arglist')
 			else:
 				mapping[member_symbol] = {'kind' : member.get('kind'), 'file' : join(anchorfile,'#',member.findtext('anchor'))}
 	#from pprint import pprint; pprint(mapping)
@@ -152,7 +156,10 @@ def parse_tag_file(doc):
 
 def find_url2(mapping, symbol):
 	print "\n\nSearching for", symbol
-	symbol, normalised_arglist =  normalise(symbol)
+	try:
+		symbol, normalised_arglist =  normalise(symbol)
+	except ParseException as error:
+		raise LookupError(error)
 	print symbol, normalised_arglist
 	
 	#If we have an exact match then return it.
@@ -364,7 +371,10 @@ def create_role(app, tag_filename, rootdir):
 		warning_message = ''
 		if tag_file:
 			url = find_url(tag_file, part)
-			#url = find_url2(app.env.doxylink_cache[cache_name]['mapping'], part)
+			#try:
+			#	url = find_url2(app.env.doxylink_cache[cache_name]['mapping'], part)
+			#except LookupError:
+			#	app.warn('Could not parse `%s`' % part)
 			if url:
 				
 				#If it's an absolute path then the link will work regardless of the document directory

@@ -83,6 +83,7 @@ def normalise(symbol):
 	except ParseException, pe:
 		print symbol
 		print pe
+		raise
 	else:
 		#Will be a list or normalised string arguments
 		#e.g. ['OBMol&', 'vector< int >&', 'OBBitVec&', 'OBBitVec&', 'int', 'int']
