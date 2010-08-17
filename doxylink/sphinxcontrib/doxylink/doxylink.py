@@ -14,6 +14,8 @@ import re
 
 from parsing import normalise
 
+import pickle
+
 def find_url(doc, symbol):
 	"""
 	Return the URL for a given symbol.
@@ -327,7 +329,20 @@ def create_role(app, tag_filename, rootdir):
 	
 	try:
 		tag_file = ET.parse(tag_filename)
-		mapping = parse_tag_file(tag_file)
+		pickle_filename = os.path.basename(tag_filename) + '.pkl'
+		try:
+			if os.stat(pickle_filename).st_mtime < os.stat(tag_filename).st_mtime: #We've already tried to open tag_filename so we know it's good.
+				app.info('%s is older than %s. Recreating...' % (pickle_filename, os.path.basename(tag_filename)))
+				mapping = parse_tag_file(tag_file)
+				pickle.dump(mapping, open(pickle_filename, 'wb'))
+			else:
+				app.info('Loading pickled data for %s' % os.path.basename(tag_filename))
+				mapping = pickle.load(open(pickle_filename, 'rb'))
+		except OSError as error:
+			app.info('Pickle file for %s could not be opened: ' % os.path.basename(tag_filename), error)
+			app.info('Recreating from tag file...')
+			mapping = parse_tag_file(tag_file)
+			pickle.dump(mapping, open(pickle_filename, 'wb'))
 	except (IOError):
 		tag_file = None
 		app.warn('Could not open tag file %s. Make sure your `doxylink` config variable is set correctly.' % tag_filename)
