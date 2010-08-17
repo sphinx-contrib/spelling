@@ -50,7 +50,6 @@ arglists = [('( QUrl source )', ('', '(QUrl)')),
             ('(const SharedPtr< ControllerValue< T > > &src)', ('', '(const SharedPtr< ControllerValue < T > >&)')),
             ('(typename T::iterator start, typename T::iterator last)', ('', '(typename T::iterator, typename T::iterator)')),
             ('(const Matrix4 *const *blendMatrices)', ('', '(const Matrix4* const *)')),
-            ('("center")', None), #This is an invalid function argument. Caused by a bug in Doxygen. See openbabel/src/ops.cpp : theOpCenter("center")
             ('(int nb=0,...)', ('','(int, ...)')),
 ]
 
@@ -73,6 +72,11 @@ class TestNormalise(unittest.TestCase):
 	def test_normalise_arglist(self):
 		for arglist in self.arglists:
 			self.assertEqual(parsing.normalise(arglist[0]), arglist[1])
+	
+	def test_false_signatures(self):
+		#This is an invalid function argument. Caused by a bug in Doxygen. See openbabel/src/ops.cpp : theOpCenter("center")
+		from pyparsing import ParseException
+		self.assertRaises(ParseException, parsing.normalise, '("center")')
 
 if __name__ == "__main__":
 	profile.runctx("for arglist in arglists: parsing.normalise(arglist[0])", globals(), locals(), filename='parsing_profile')
