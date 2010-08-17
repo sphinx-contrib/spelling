@@ -16,6 +16,8 @@ from parsing import normalise
 
 import pickle
 
+from sphinx.util.console import bold, standout
+
 def find_url(doc, symbol):
 	"""
 	Return the URL for a given symbol.
@@ -329,23 +331,31 @@ def create_role(app, tag_filename, rootdir):
 	
 	try:
 		tag_file = ET.parse(tag_filename)
-		pickle_filename = os.path.basename(tag_filename) + '.pkl'
-		try:
-			if os.stat(pickle_filename).st_mtime < os.stat(tag_filename).st_mtime: #We've already tried to open tag_filename so we know it's good.
-				app.info('%s is older than %s. Recreating...' % (pickle_filename, os.path.basename(tag_filename)))
-				mapping = parse_tag_file(tag_file)
-				pickle.dump(mapping, open(pickle_filename, 'wb'))
-			else:
-				app.info('Loading pickled data for %s' % os.path.basename(tag_filename))
-				mapping = pickle.load(open(pickle_filename, 'rb'))
-		except OSError as error:
-			app.info('Pickle file for %s could not be opened: ' % os.path.basename(tag_filename), error)
-			app.info('Recreating from tag file...')
+		
+		cache_name = os.path.basename(tag_filename)
+		
+		app.info(bold('Checking tag file cache for %s: ' % cache_name), nonl=True)
+		if not hasattr(app.env, 'doxylink_cache'):
+			# no cache present at all, initialise it
+			app.info('No cache at all, rebuilding...')
 			mapping = parse_tag_file(tag_file)
-			pickle.dump(mapping, open(pickle_filename, 'wb'))
-	except (IOError):
+			app.env.doxylink_cache = { cache_name : {'mapping' : mapping, 'mtime' : os.path.getmtime(tag_filename)}}
+		elif not app.env.doxylink_cache.get(cache_name):
+			# Main cache is there but the specific sub-cache for this tag file is not
+			app.info('Sub cache is missing, rebuilding...')
+			mapping = parse_tag_file(tag_file)
+			app.env.doxylink_cache[cache_name] = {'mapping' : mapping, 'mtime' : os.path.getmtime(tag_filename)}
+		elif app.env.doxylink_cache[cache_name]['mtime'] < os.path.getmtime(tag_filename):
+			# tag file has been modified since sub-cache creation
+			app.info('Sub-cache is out of date, rebuilding...')
+			mapping = parse_tag_file(tag_file)
+			app.env.doxylink_cache[cache_name] = {'mapping' : mapping, 'mtime' : os.path.getmtime(tag_filename)}
+		else:
+			#The cache is up to date
+			app.info('Sub-cache is up-to-date')
+	except IOError:
 		tag_file = None
-		app.warn('Could not open tag file %s. Make sure your `doxylink` config variable is set correctly.' % tag_filename)
+		app.warn(standout('Could not open tag file %s. Make sure your `doxylink` config variable is set correctly.' % tag_filename))
 	
 	def find_doxygen_link(name, rawtext, text, lineno, inliner, options={}, content=[]):
 		text = utils.unescape(text)
@@ -354,6 +364,7 @@ def create_role(app, tag_filename, rootdir):
 		warning_message = ''
 		if tag_file:
 			url = find_url(tag_file, part)
+			#url = find_url2(app.env.doxylink_cache[cache_name]['mapping'], part)
 			if url:
 				
 				#If it's an absolute path then the link will work regardless of the document directory
