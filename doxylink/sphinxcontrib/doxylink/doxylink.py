@@ -1,20 +1,15 @@
 # -*- coding: utf-8 -*-
 
-from docutils import nodes, utils
-
 import os
-
-from sphinx.util.nodes import split_explicit_title
-
 import xml.etree.ElementTree as ET
-
 import urlparse
-
 import re
 
-from parsing import normalise, ParseException
-
+from docutils import nodes, utils
+from sphinx.util.nodes import split_explicit_title
 from sphinx.util.console import bold, standout
+
+from parsing import normalise, ParseException
 
 def find_url(doc, symbol):
 	"""
@@ -398,7 +393,7 @@ def create_role(app, tag_filename, rootdir):
 			try:
 				url = find_url2(app.env.doxylink_cache[cache_name]['mapping'], part)
 			except LookupError as error:
-				warning_messages.append('Error while parsing `%s`' % (part))
+				warning_messages.append('Error while parsing `%s`. Is not a well-formed C++ function call or symbol. If this is not the case, it is a doxylink bug so please report it.' % (part))
 			if url:
 				
 				#If it's an absolute path then the link will work regardless of the document directory

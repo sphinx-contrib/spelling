@@ -1,6 +1,6 @@
-from pyparsing import Word, Literal, alphas, nums, alphanums, OneOrMore, Optional, SkipTo, ParseException, Group, ZeroOrMore, Suppress, Combine, delimitedList, quotedString, nestedExpr, ParseResults, oneOf
-
 from string import capitalize
+
+from pyparsing import Word, Literal, alphas, nums, alphanums, OneOrMore, Optional, SkipTo, ParseException, Group, ZeroOrMore, Suppress, Combine, delimitedList, quotedString, nestedExpr, ParseResults, oneOf
 
 #Qualifier to go in front of type in the argument list (unsigned const int foo)
 qualifier = OneOrMore(Literal('const') | Literal('unsigned') | Literal('typename'))
@@ -92,14 +92,14 @@ def normalise(symbol):
 		arglist_input_string = arglist_input_string[:closing_bracket_location+1]
 	except ValueError:
 		#This shouldn't happen.
-		print 'Could not find closing bracket'
+		print 'Could not find closing bracket in %s' % arglist_input_string
 		raise
 	
 	try:
 		result = arglist.parseString(arglist_input_string)
 	except ParseException as pe:
-		print symbol
-		print pe
+		#print symbol
+		#print pe
 		raise
 	else:
 		#Will be a list or normalised string arguments
