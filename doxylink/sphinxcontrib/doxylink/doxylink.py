@@ -14,8 +14,6 @@ import re
 
 from parsing import normalise, ParseException
 
-import pickle
-
 from sphinx.util.console import bold, standout
 
 def find_url(doc, symbol):
@@ -155,6 +153,27 @@ def parse_tag_file(doc):
 	return mapping
 
 def find_url2(mapping, symbol):
+	"""
+	Return the URL for a given symbol.
+	
+	This is where the magic happens.
+	
+	.. todo::
+		
+		Maybe print a list of all possible matches as a warning (but still only return the first)
+	
+	:Parameters:
+		mapping : dictionary
+			A dictionary of the form returned by :py:func:`parse_tag_file`
+		symbol : string
+			The symbol to lookup in the file. E.g. something like 'PolyVox::Array' or 'tidyUpMemory'
+	
+	:return: String representing the filename part of the URL
+	
+	:raises:
+		LookupError
+			Raised if the symbol could not be matched in the file
+	"""
 	#print "\n\nSearching for", symbol
 	try:
 		symbol, normalised_arglist =  normalise(symbol)
@@ -218,21 +237,26 @@ def find_url2(mapping, symbol):
 		return return_from_mapping(no_templates_list.values()[0], normalised_arglist)
 	#Else return None if the list is empty
 	else:
-		return None
+		LookupError('Could not find a match')
 
 def return_from_mapping(mapping_entry, normalised_arglist=''):
 	"""
-	Return a mapping to a single URL in the form
+	Return a mapping to a single URL in the form. This is needed since mapping entries for functions are more complicated due to function overriding.
 	
-	.. code-block:: python
-	
-		{'kind' : 'function', 'file' : 'something.html#foo'}
+	If the mapping to be returned is not a function, this will simply return the mapping entry intact. If the entry is a function it will attempt to get the right version based on the function signature.
 	
 	:Parameters:
 		mapping_entry : dict
 			should be a single entry from the large mapping file corresponding to a single symbol. If the symbol is a function, then ``mappingentry['arglist']`` will be a dictionary mapping normalised signatures to URLs
 		normalised_arglist : string
 			the normalised form of the arglist that the user has requested. This can be empty in which case the function will return just the first element of ``mappingentry['arglist']``. This parameter is ignored if ``mappingentry['kind'] != 'function'``
+	
+	:return: dictionary something like:
+	
+		.. code-block:: python
+		
+			{'kind' : 'function', 'file' : 'something.html#foo'}
+	
 	"""
 	#If it's a function we need to grab the right signature from the arglist.
 	if mapping_entry['kind'] == 'function':
@@ -371,10 +395,10 @@ def create_role(app, tag_filename, rootdir):
 		warning_message = ''
 		if tag_file:
 			url = find_url(tag_file, part)
-			#try:
-			#	url = find_url2(app.env.doxylink_cache[cache_name]['mapping'], part)
-			#except LookupError:
-			#	app.warn('Could not parse `%s`' % part)
+			try:
+				url = find_url2(app.env.doxylink_cache[cache_name]['mapping'], part)
+			except LookupError as error:
+				app.warn('%s `%s`' % (error, part))
 			if url:
 				
 				#If it's an absolute path then the link will work regardless of the document directory
