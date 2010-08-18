@@ -1,11 +1,6 @@
 import unittest
 
 from sphinxcontrib.doxylink import parsing
-
-try:
-	import cProfile as profile
-except ImportError:
-	import profile
    
 import pstats
 
@@ -25,16 +20,11 @@ arglists = [('( QUrl source )', ('', '(QUrl)')),
             ('(uint32_t uNoOfBlocksToProcess=(std::numeric_limits< uint32_t >::max)())', ('', '(uint32_t)')),
             ('( QWidget * parent = 0, const char * name = 0, Qt::WindowFlags f = 0 )', ('', '(QWidget*, const char*, Qt::WindowFlags)')),
             ('()', ('', '()')),
-            ('( const QPixmap & pixmap, const QString & text, int index = -1 )', ('', '(const QPixmap&, const QString&, int)')),
-            ('( const char ** strings, int numStrings = -1, int index = -1 )', ('', '(const char**, int, int)')),
-            ('( const QStringList & list, int index = -1 )', ('', '(const QStringList&, int)')),
             ('( int index = 0 )', ('', '(int)')),
             ('( bool ascending = true )', ('', '(bool)')),
             ('( const QIcon & icon, const QString & label, int width = -1 )', ('', '(const QIcon&, const QString&, int)')),
-            ('( const QString & text, int column, ComparisonFlags compare = ExactMatch | Qt::CaseSensitive )', ('', '(const QString&, int, ComparisonFlags)')),
             ('( QWidget * parent = 0, const char * name = 0, Qt::WindowFlags f = Qt::WType_TopLevel )', ('', '(QWidget*, const char*, Qt::WindowFlags)')),
             ('( QMutex * mutex, unsigned long time = ULONG_MAX )', ('', '(QMutex*, unsigned long)')),
-            ('( QReadWriteLock * readWriteLock, unsigned long time = ULONG_MAX )', ('', '(QReadWriteLock*, unsigned long)')),
             ('(const VolumeSampler< VoxelType > &volIter)', ('', '(const VolumeSampler< VoxelType >&)')),
             ('(VolumeSampler< VoxelType > &volIter)', ('', '(VolumeSampler< VoxelType >&)')),
             ('(const VolumeSampler< VoxelType > &volIter)', ('', '(const VolumeSampler< VoxelType >&)')),
@@ -50,7 +40,21 @@ arglists = [('( QUrl source )', ('', '(QUrl)')),
             ('(const SharedPtr< ControllerValue< T > > &src)', ('', '(const SharedPtr< ControllerValue < T > >&)')),
             ('(typename T::iterator start, typename T::iterator last)', ('', '(typename T::iterator, typename T::iterator)')),
             ('(const Matrix4 *const *blendMatrices)', ('', '(const Matrix4* const *)')),
-            ('(int nb=0,...)', ('','(int, ...)')),
+            ('(const Matrix4 *const *blendMatrices) const =0', ('', '(const Matrix4* const *) const')),
+]
+
+varargs = [('(int nb=0,...)', ('','(int, ...)')),
+]
+
+multiple_qualifiers = [('( QReadWriteLock * readWriteLock, unsigned long time = ULONG_MAX )', ('', '(QReadWriteLock*, unsigned long)')),
+]
+
+numbers_for_defaults = [('( const QPixmap & pixmap, const QString & text, int index = -1 )', ('', '(const QPixmap&, const QString&, int)')),
+                        ('( const char ** strings, int numStrings = -1, int index = -1 )', ('', '(const char**, int, int)')),
+                        ('( const QStringList & list, int index = -1 )', ('', '(const QStringList&, int)')),
+]
+
+flags_in_defaults = [('( const QString & text, int column, ComparisonFlags compare = ExactMatch | Qt::CaseSensitive )', ('', '(const QString&, int, ComparisonFlags)')),
 ]
 
 functions = [('PolyVox::Volume::getDepth', ('PolyVox::Volume::getDepth', '')),
@@ -64,6 +68,10 @@ class TestNormalise(unittest.TestCase):
 	def setUp(self):
 		self.arglists = arglists
 		self.functions = functions
+		self.varargs = varargs
+		self.multiple_qualifiers = multiple_qualifiers
+		self.numbers_for_defaults = numbers_for_defaults
+		self.flags_in_defaults = flags_in_defaults
 	
 	def test_split_function(self):
 		for function in self.functions:
@@ -72,6 +80,22 @@ class TestNormalise(unittest.TestCase):
 	def test_normalise_arglist(self):
 		for arglist in self.arglists:
 			self.assertEqual(parsing.normalise(arglist[0]), arglist[1])
+			
+	def test_varargs(self):
+		for arglist in self.varargs:
+			self.assertEqual(parsing.normalise(arglist[0]), arglist[1])
+			
+	def test_multiple_qualifiers(self):
+		for arglist in self.multiple_qualifiers:
+			self.assertEqual(parsing.normalise(arglist[0]), arglist[1])
+			
+	def test_numbers_for_defaults(self):
+		for arglist in self.numbers_for_defaults:
+			self.assertEqual(parsing.normalise(arglist[0]), arglist[1])
+			
+	def test_flags_in_defaults(self):
+		for arglist in self.flags_in_defaults:
+			self.assertEqual(parsing.normalise(arglist[0]), arglist[1])
 	
 	def test_false_signatures(self):
 		#This is an invalid function argument. Caused by a bug in Doxygen. See openbabel/src/ops.cpp : theOpCenter("center")
@@ -79,7 +103,14 @@ class TestNormalise(unittest.TestCase):
 		self.assertRaises(ParseException, parsing.normalise, '("center")')
 
 if __name__ == "__main__":
-	profile.runctx("for arglist in arglists: parsing.normalise(arglist[0])", globals(), locals(), filename='parsing_profile')
+	try:
+		import cProfile as profile
+	except ImportError:
+		import profile
+	
+	all_tests = arglists + varargs + multiple_qualifiers + functions + numbers_for_defaults + flags_in_defaults
+	
+	profile.runctx("for arglist in all_tests: parsing.normalise(arglist[0])", globals(), locals(), filename='parsing_profile')
 	p = pstats.Stats('parsing_profile')
 	p.strip_dirs().sort_stats('cumulative').print_stats(20)
 
