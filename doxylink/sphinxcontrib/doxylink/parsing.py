@@ -22,8 +22,8 @@ def normalise_templates(s, loc, toks):
 	return ''.join(s_list)
 
 #Skip pairs of brackets.
-#TODO Fix for nesting brackets
 angle_bracket_pair = nestedExpr(opener='<',closer='>').setParseAction(turn_parseresults_to_list)
+#TODO Fix for nesting brackets
 parentheses_pair = Literal('(') + SkipTo(')') + Literal(')')
 square_bracket_pair = Literal('[') + SkipTo(']') + Literal(']')
 

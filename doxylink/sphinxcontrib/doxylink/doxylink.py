@@ -147,7 +147,7 @@ def parse_tag_file(doc):
 					else:
 						mapping[member_symbol] = {'kind' : member.get('kind'), 'arglist' : {normalised_arglist : join(anchorfile,'#',member.findtext('anchor'))}}
 				except ParseException as error:
-					print error
+					#print error
 					print 'Skipping %s' % member.findtext('arglist')
 			else:
 				mapping[member_symbol] = {'kind' : member.get('kind'), 'file' : join(anchorfile,'#',member.findtext('anchor'))}
@@ -155,16 +155,16 @@ def parse_tag_file(doc):
 	return mapping
 
 def find_url2(mapping, symbol):
-	print "\n\nSearching for", symbol
+	#print "\n\nSearching for", symbol
 	try:
 		symbol, normalised_arglist =  normalise(symbol)
 	except ParseException as error:
 		raise LookupError(error)
-	print symbol, normalised_arglist
+	#print symbol, normalised_arglist
 	
 	#If we have an exact match then return it.
 	if mapping.get(symbol):
-		print ('Exact match')
+		#print ('Exact match')
 		return return_from_mapping(mapping[symbol], normalised_arglist)
 	
 	#If the user didn't pass in any arguments, i.e. `arguments == ''` then they don't care which version of the overloaded funtion they get.
@@ -189,7 +189,7 @@ def find_url2(mapping, symbol):
 	if len(piecewise_list) is 1:
 		return return_from_mapping(piecewise_list.values()[0], normalised_arglist)
 	
-	print("Still", len(piecewise_list), 'possible matches')
+	#print("Still", len(piecewise_list), 'possible matches')
 	
 	#If there is more than one item in piecewise_list then there is an ambiguity
 	#Often this is due to the symbol matching the name of the constructor as well as the class name itself
@@ -199,7 +199,7 @@ def find_url2(mapping, symbol):
 	if len(classes_list) is 1:
 		return classes_list.values()[0]
 	
-	print("Still", len(classes_list), 'possible matches')
+	#print("Still", len(classes_list), 'possible matches')
 	
 	#If we exhaused the list by requiring classes, use the list from before the filter.
 	if len(classes_list) == 0:
@@ -210,7 +210,7 @@ def find_url2(mapping, symbol):
 	if len(no_templates_list) is 1:
 		return return_from_mapping(no_templates_list.values()[0], normalised_arglist)
 	
-	print("Still", len(no_templates_list), 'possible matches')
+	#print("Still", len(no_templates_list), 'possible matches')
 	
 	#If not found by now, just return the first one in the list
 	if len(no_templates_list) != 0:
@@ -303,7 +303,7 @@ def find_url_piecewise(mapping, symbol):
 		#print split_symbol, split_item
 		
 		if split_symbol == split_item:
-			print symbol + ' : ' + item
+			#print symbol + ' : ' + item
 			piecewise_list[item] = data
 	
 	return piecewise_list
@@ -313,7 +313,7 @@ def find_url_classes(mapping, symbol):
 	classes_list = {}
 	for item, data in mapping.items():
 		if data['kind'] == 'class':
-			print symbol + ' : ' + item
+			#print symbol + ' : ' + item
 			classes_list[item] = data
 	
 	return classes_list
@@ -323,7 +323,7 @@ def find_url_remove_templates(mapping, symbol):
 	no_templates_list = {}
 	for item, data in mapping.items():
 		if '<' not in item:
-			print symbol + ' : ' + item
+			#print symbol + ' : ' + item
 			no_templates_list[item] = data
 	
 	return no_templates_list
