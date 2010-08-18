@@ -6,9 +6,9 @@ from string import capitalize
 qualifier = OneOrMore(Literal('const') | Literal('unsigned') | Literal('typename'))
 
 def turn_parseresults_to_list(s, loc, toks):
-	return ParseResults(normalise_templates(s, loc, toks[0].asList()))
+	return ParseResults(normalise_templates(toks[0].asList()))
 
-def normalise_templates(s, loc, toks):
+def normalise_templates(toks):
 	s_list = ['<']
 	for i, tok in enumerate(toks):
 		try: #See if it's a string
@@ -17,7 +17,7 @@ def normalise_templates(s, loc, toks):
 			s_list.append(tok)
 		except AttributeError:
 			#If it's not a string
-			s_list.append(normalise_templates(s, loc, tok))
+			s_list.append(normalise_templates(tok))
 	s_list.append(' >')
 	return ''.join(s_list)
 
