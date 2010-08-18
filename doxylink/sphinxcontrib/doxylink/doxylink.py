@@ -392,13 +392,13 @@ def create_role(app, tag_filename, rootdir):
 		text = utils.unescape(text)
 		# from :name:`title <part>`
 		has_explicit_title, title, part = split_explicit_title(text)
-		warning_message = ''
+		warning_messages = []
 		if tag_file:
 			url = find_url(tag_file, part)
 			try:
 				url = find_url2(app.env.doxylink_cache[cache_name]['mapping'], part)
 			except LookupError as error:
-				app.warn('%s `%s`' % (error, part))
+				warning_messages.append('Error while parsing `%s`' % (part))
 			if url:
 				
 				#If it's an absolute path then the link will work regardless of the document directory
@@ -416,14 +416,12 @@ def create_role(app, tag_filename, rootdir):
 				pnode = nodes.reference(title, title, internal=False, refuri=full_url)
 				return [pnode], []
 			#By here, no match was found
-			warning_message = 'Could not find match for `%s` in `%s` tag file' % (part, tag_filename)
+			warning_messages.append('Could not find match for `%s` in `%s` tag file' % (part, tag_filename))
 		else:
-			warning_message = 'Could not find match for `%s` because tag file not found' % (part)
-		
-		msg = inliner.reporter.warning(warning_message, line=lineno)
+			warning_messages.append('Could not find match for `%s` because tag file not found' % (part))
 		
 		pnode = nodes.inline(rawsource=title, text=title)
-		return [pnode], [msg]
+		return [pnode], [inliner.reporter.warning(message, line=lineno) for message in warning_messages]
 	
 	return find_doxygen_link
 
