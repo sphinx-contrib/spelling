@@ -17,6 +17,7 @@ setup(
     author_email='matt@milliams.com',
     description='Sphinx extension doxylink',
     long_description=long_desc,
+    keywords=['sphinx','doxygen','documentation','c++'],
     zip_safe=False,
     classifiers=[
         'Development Status :: 4 - Beta',
