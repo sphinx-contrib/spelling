@@ -4,12 +4,13 @@ import os
 import xml.etree.ElementTree as ET
 import urlparse
 import re
+import itertools
 
 from docutils import nodes, utils
 from sphinx.util.nodes import split_explicit_title
 from sphinx.util.console import bold, standout
 
-from parsing import normalise, ParseException
+from parsing import normalise, normalise_list, ParseException
 
 def find_url(doc, symbol):
 	"""
@@ -64,7 +65,7 @@ def find_url(doc, symbol):
 		for compound in doc.findall('.//compound'):
 			if compound.find('name').text == namespace:
 				for member in compound.findall('member'):
-#					#If this compound object contains the matching member then return it
+					#If this compound object contains the matching member then return it
 					if member.find('name').text == endsymbol:
 						return {'file':(member.findtext('anchorfile') or compound.findtext('filename')) + '#' + member.find('anchor').text, 'kind':member.get('kind')}
 	
@@ -115,35 +116,48 @@ def parse_tag_file(doc):
 	
 	:return: a dictionary mapping fully qualified symbols to files
 	"""
+	
 	mapping = {}
-	for compound in doc.findall(".//compound"):
-		if compound.get('kind') != 'namespace' and compound.get('kind') != 'class':
+	function_list = [] #This is a list of function to be parsed and inserted into mapping at the end of the function.
+	for compound in doc.findall("./compound"):
+		compound_kind = compound.get('kind')
+		if compound_kind != 'namespace' and compound_kind != 'class':
 			continue #Skip everything that isn't a namespace or class
 		
+		compound_name = compound.findtext('name')
+		compound_filename = compound.findtext('filename')
+		
 		#If it's a compound we can simply add it
-		mapping[compound.findtext('name')] = {'kind' : compound.get('kind'), 'file' : compound.findtext('filename')}
+		mapping[compound_name] = {'kind' : compound_kind, 'file' : compound_filename}
 		
 		for member in compound.findall('member'):
 			
 			#If the member doesn't have an <anchorfile> element, use the parent compounds <filename> instead
 			#This is the way it is in the qt.tag and is perhaps an artefact of old Doxygen
-			anchorfile = member.findtext('anchorfile') or compound.findtext('filename')
+			anchorfile = member.findtext('anchorfile') or compound_filename
+			member_symbol = join(compound_name, '::', member.findtext('name'))
+			member_kind = member.get('kind')
+			arglist_text = member.findtext('./arglist') #If it has an <arglist> then we assume it's a function. Empty <arglist> returns '', not None. Things like typedefs and enums can have empty arglists
 			
-			member_symbol = join(compound.findtext('name'), '::', member.findtext('name'))
-			
-			if member.get('kind') == 'function':
-				#If we already have this function mentioned, simply append to the arglist array
-				try:
-					parsed_symbol, normalised_arglist = normalise(member.findtext('arglist'))
-					if mapping.get(member_symbol):
-						mapping[member_symbol]['arglist'][normalised_arglist] = join(anchorfile,'#',member.findtext('anchor'))
-					else:
-						mapping[member_symbol] = {'kind' : member.get('kind'), 'arglist' : {normalised_arglist : join(anchorfile,'#',member.findtext('anchor'))}}
-				except ParseException as error:
-					#print error
-					print 'Skipping %s' % member.findtext('arglist')
+			if arglist_text and member_kind != 'variable' and member_kind != 'typedef' and member_kind != 'enumeration':
+				function_list.append((member_symbol, arglist_text, member_kind, join(anchorfile,'#',member.findtext('anchor'))))
 			else:
 				mapping[member_symbol] = {'kind' : member.get('kind'), 'file' : join(anchorfile,'#',member.findtext('anchor'))}
+	
+	for old_tuple, normalised_tuple in zip(function_list, itertools.imap(normalise, (member_tuple[1] for member_tuple in function_list))):
+		member_symbol = old_tuple[0]
+		original_arglist = old_tuple[1]
+		kind = old_tuple[2]
+		anchor_link = old_tuple[3]
+		normalised_arglist = normalised_tuple[1]
+		if normalised_tuple[1] is not None: #This is a 'flag' for a ParseException having happened
+			if mapping.get(member_symbol):
+				mapping[member_symbol]['arglist'][normalised_arglist] = anchor_link
+			else:
+				mapping[member_symbol] = {'kind' : kind, 'arglist' : {normalised_arglist : anchor_link}}
+		else:
+			print 'Skipping %s. Error reported was: %s' % (member.findtext('arglist'), normalised_tuple[0])
+	
 	#from pprint import pprint; pprint(mapping)
 	return mapping
 
@@ -266,6 +280,9 @@ def return_from_mapping(mapping_entry, normalised_arglist=''):
 			filename = mapping_entry['arglist'].values()[0]
 		
 		return {'kind' : 'function', 'file' : filename}
+	elif mapping_entry.get('arglist'):
+		#This arglist should only be one entry long and that entry should have '' as its key
+		return {'kind' : mapping_entry['kind'], 'file' : mapping_entry['arglist']['']}
 	
 	#If it's not a function, then return it raw
 	return mapping_entry
@@ -393,7 +410,7 @@ def create_role(app, tag_filename, rootdir):
 			try:
 				url = find_url2(app.env.doxylink_cache[cache_name]['mapping'], part)
 			except LookupError as error:
-				warning_messages.append('Error while parsing `%s`. Is not a well-formed C++ function call or symbol. If this is not the case, it is a doxylink bug so please report it.' % (part))
+				warning_messages.append('Error while parsing `%s`. Is not a well-formed C++ function call or symbol. If this is not the case, it is a doxylink bug so please report it. Error reported was: %s' % (part, error))
 			if url:
 				
 				#If it's an absolute path then the link will work regardless of the document directory
