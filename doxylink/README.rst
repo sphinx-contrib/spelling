@@ -2,10 +2,12 @@
 sphinxcontrib-doxylink
 ######################
 
-.. http://packages.python.org/sphinxcontrib-doxylink
-
 A Sphinx_ extension to link to external Doxygen API documentation.
 
+Usage
+-----
+
+Please refer to the documentation_ for information on using this extension.
 
 Installation
 ------------
@@ -20,13 +22,6 @@ and install the extension directly from the repository::
    hg clone http://bitbucket.org/birkenfeld/sphinx-contrib
    cd sphinx-contrib/doxylink
    python setup.py install
-
-
-Usage
------
-
-Please refer to the documentation_ file for information on using this extension.
-
 
 .. _`Sphinx`: http://sphinx.pocoo.org/latest
 .. _`sphinx-contrib`: http://bitbucket.org/birkenfeld/sphinx-contrib
