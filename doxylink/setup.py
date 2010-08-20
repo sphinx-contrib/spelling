@@ -15,7 +15,7 @@ setup(
     license='BSD',
     author='Matt Williams',
     author_email='matt@milliams.com',
-    description='Sphinx extension doxylink',
+    description='Sphinx extension for linking to Doxygen documentation.',
     long_description=long_desc,
     keywords=['sphinx','doxygen','documentation','c++'],
     zip_safe=False,
