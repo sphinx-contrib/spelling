@@ -1,4 +1,6 @@
 from string import capitalize
+#import multiprocessing
+import itertools
 
 from pyparsing import Word, Literal, alphas, nums, alphanums, OneOrMore, Optional, SkipTo, ParseException, Group, ZeroOrMore, Suppress, Combine, delimitedList, quotedString, nestedExpr, ParseResults, oneOf
 
@@ -10,7 +12,7 @@ def turn_parseresults_to_list(s, loc, toks):
 
 def normalise_templates(toks):
 	s_list = ['<']
-	for i, tok in enumerate(toks):
+	for tok in toks:
 		try: #See if it's a string
 			capitalize(tok)
 			s_list.append(' ')
@@ -68,7 +70,6 @@ def normalise(symbol):
 		a tuple consisting of two strings: ``(qualified function name or symbol, normalised argument list)``
 	"""
 	
-	
 	try:
 		bracket_location = symbol.index('(')
 		#Split the input string into everything before the opening bracket and everything else
@@ -97,10 +98,10 @@ def normalise(symbol):
 	
 	try:
 		result = arglist.parseString(arglist_input_string)
-	except ParseException as pe:
+	except ParseException as error:
 		#print symbol
 		#print pe
-		raise
+		return str(error), None
 	else:
 		#Will be a list or normalised string arguments
 		#e.g. ['OBMol&', 'vector< int >&', 'OBBitVec&', 'OBBitVec&', 'int', 'int']
@@ -146,3 +147,10 @@ def normalise(symbol):
 	
 	#TODO Maybe this should raise an exception?
 	return None
+
+def normalise_list(list_of_symbols):
+	#normalise_pool = multiprocessing.Pool(multiprocessing.cpu_count() * 2)
+	#results = normalise_pool.map(normalise, list_of_symbols)
+	#normalise_pool.terminate()
+	results = itertools.imap(normalise, list_of_symbols)
+	return results
