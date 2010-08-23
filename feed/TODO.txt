@@ -3,4 +3,4 @@ TODO
 =================================================================
 
   - handle dates with greater granularity than 24 hours
-  - fix up relative *image* links
+  - create tests to verify handling of relative *image* links

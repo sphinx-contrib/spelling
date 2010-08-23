@@ -85,6 +85,9 @@ def test_feed():
     yield assert_equals, entries[2].updated_parsed[0:3], (1979, 1, 1)
     yield assert_equals, entries[2].title, "The oldest blog post"
     
+    #Tests for relative URIs. note that these tests only work because there is
+    # no xml:base - otherwise feedparser will supposedly fix them up for us - 
+    # http://www.feedparser.org/docs/resolving-relative-links.html
     links = BeautifulSoup(entries[0].description).findAll('a')
     # Thes links will look like:
     #[<a class="headerlink" href="#the-latest-blog-post" title="Permalink to this headline">¶</a>, <a class="reference internal" href="older.html"><em>a relative link</em></a>, <a class="reference external" href="http://google.com/">an absolute link</a>]
