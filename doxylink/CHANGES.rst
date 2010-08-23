@@ -1,3 +1,9 @@
+0.4 (Aug 15, 2010)
+====================
+
+- Allow URLs as base paths for the HTML links.
+- Don't append parentheses if the user has provided them already in their query.
+
 0.3 (Aug 10, 2010)
 ====================
 

@@ -25,9 +25,9 @@ and install the extension directly from the repository::
 Usage
 -----
 
-Please refer to the ``sphinxcontrib/doxylink.py`` file for documentation on using this extension.
+Please refer to the documentation_ file for information on using this extension.
 
 
 .. _`Sphinx`: http://sphinx.pocoo.org/latest
 .. _`sphinx-contrib`: http://bitbucket.org/birkenfeld/sphinx-contrib
-.. _documentation: http://packages.python.org/sphinxcontrib-doxylink
+.. _`documentation`: http://packages.python.org/sphinxcontrib-doxylink

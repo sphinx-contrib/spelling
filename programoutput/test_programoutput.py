@@ -1,17 +1,70 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from itertools import product
+
 import py.test
-from mock import Mock
+from mock import Mock, MagicMock
+from docutils.parsers.rst import directives
+from docutils import nodes
 
 from sphinxcontrib import programoutput
-from docutils.parsers.rst import directives
+
+
+RUN_PROGRAMS_TESTDATA = dict(
+    simple={},
+    extraargs=dict(extraargs='foo "spam and eggs"'),
+    prompt=dict(show_prompt=True),
+    prompt_with_extraargs=dict(show_prompt=True,
+                               extraargs='foo "spam and eggs"'),
+    no_stderr=dict(hide_standard_error=True),
+    shell=dict(use_shell=True),
+    shell_with_prompt=dict(use_shell=True, show_prompt=True),
+    shell_with_extraargs=dict(use_shell=True, show_prompt=True,
+                              extraargs='foo "spam and eggs"')
+    )
+
+
+def pytest_generate_tests(metafunc):
+    if metafunc.function is test_run_programs:
+        for id, use_ansi in product(RUN_PROGRAMS_TESTDATA, (True, False)):
+            params = RUN_PROGRAMS_TESTDATA[id]
+            if use_ansi:
+                id += ',ansi'
+            args = dict(use_ansi=use_ansi, params=params)
+            metafunc.addcall(funcargs=args, id=id)
+
+
+def pytest_funcarg__nodecls(request):
+    if request.getfuncargvalue('use_ansi'):
+        from sphinxcontrib.ansi import ansi_literal_block
+        return ansi_literal_block
+    else:
+        return nodes.literal_block
+
+
+def pytest_funcarg__cache(request):
+    cache = MagicMock()
+    cache.__getitem__.return_value = 'some output'
+    return cache
 
 
 def pytest_funcarg__app(request):
     app = Mock()
-    app.env = type('obj', (object,), {})()
+    app.env = Mock()
+    app.env.programoutput_cache = request.getfuncargvalue('cache')
+    app.config = Mock()
+    app.config.programoutput_use_ansi = request.getfuncargvalue('use_ansi')
+    app.config.programoutput_prompt_template = '$ %(command)s\n%(output)s'
     return app
+
+
+def pytest_funcarg__directive(request):
+    state_machine = Mock()
+    state_machine.get_source_and_line.return_value = (Mock(), Mock())
+    return programoutput.ProgramOutputDirective(
+        'program-output', ['some command'], {}, [], 1, 1, '',
+        Mock(), state_machine)
 
 
 def test_slice():
@@ -26,14 +79,6 @@ def test_slice():
     with py.test.raises(ValueError) as exc:
         programoutput._slice('2,2,2')
     assert str(exc.value) == 'too many slice parts'
-
-
-def pytest_funcarg__directive(request):
-    state_machine = Mock()
-    state_machine.get_source_and_line.return_value = (Mock(), Mock())
-    return programoutput.ProgramOutputDirective(
-        'program-output', ['some command'], {}, [], 1, 1, '',
-        Mock(), state_machine)
 
 
 def test_program_output_directive():
@@ -101,7 +146,48 @@ def test_program_output_cache():
     assert (cmd, True, False) in cache
 
 
-def test_init_cache(app):
+def _make_node(show_prompt=False, hide_standard_error=False,
+               use_shell=False, ellipsis=None, extraargs=None):
+    node = programoutput.program_output()
+    node['command'] = ("hello 'eggs with spam'")
+    node['show_prompt'] = show_prompt
+    node['hide_standard_error'] = hide_standard_error
+    node['use_shell'] = use_shell
+    if ellipsis:
+        node['strip_lines'] = ellipsis
+    if extraargs:
+        node['extraargs'] = extraargs
+    return node
+
+def test_run_programs(app, cache, use_ansi, nodecls, params):
+    paragraph = nodes.paragraph()
+    paragraph.append(_make_node(**params))
+    programoutput.run_programs(app, paragraph)
+    if params.get('show_prompt'):
+        output = "$ hello 'eggs with spam'\nsome output"
+    else:
+        output = 'some output'
+    node = paragraph[0]
+    assert node.astext() == output
+    assert isinstance(node, nodecls)
+    if params.get('use_shell'):
+        cmd = "hello 'eggs with spam'"
+        if params.get('extraargs'):
+            cmd += ' foo "spam and eggs"'
+    else:
+        cmd = ('hello', 'eggs with spam')
+        if params.get('extraargs'):
+            cmd += ('foo', 'spam and eggs')
+    cache_key = (cmd, params.get('use_shell', False),
+                 params.get('hide_standard_error', False))
+    cache.__getitem__.assert_called_with(cache_key)
+
+
+def test_init_cache():
+    app = Mock()
+    # no mock object here, because we need a conservative __getattr__, which
+    # only returns, what really is defined
+    app.env = type('obj', (object,), {})()
     assert not hasattr(app.env, 'programoutput_cache')
     programoutput.init_cache(app)
     assert hasattr(app.env, 'programoutput_cache')
@@ -110,7 +196,8 @@ def test_init_cache(app):
     assert app.env.programoutput_cache is cache
 
 
-def test_setup(app):
+def test_setup():
+    app = Mock()
     programoutput.setup(app)
     assert app.add_config_value.call_args_list == [
         (('programoutput_use_ansi', False, 'env'), {}),
