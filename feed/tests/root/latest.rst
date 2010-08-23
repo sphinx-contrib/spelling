@@ -7,3 +7,7 @@ The latest blog post
 ====================
 
 Has the latest content.
+
+It also has :doc:`a relative link <older>`.
+
+Not to mention `an absolute link <http://google.com/>`_

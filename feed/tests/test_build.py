@@ -43,6 +43,8 @@ Has some cruft.
 """
 
 def test_feed():
+    from BeautifulSoup import BeautifulSoup
+    
     app = TestApp(buildername='html', warning=feed_warnfile, cleanenv=True)  
     app.build(force_all=True, filenames=[]) #build_all misses the crucial finish signal
     feed_warnings = feed_warnfile.getvalue().replace(os.sep, '/')
@@ -82,6 +84,15 @@ def test_feed():
     yield assert_equals, entries[1].title, "An older blog post"
     yield assert_equals, entries[2].updated_parsed[0:3], (1979, 1, 1)
     yield assert_equals, entries[2].title, "The oldest blog post"
+    
+    links = BeautifulSoup(entries[0].description).findAll('a')
+    # [<a class="headerlink" href="#the-latest-blog-post" title="Permalink to this headline">¶</a>, <a class="reference internal" href="older.html"><em>a relative link</em></a>, <a class="reference external" href="http://google.com/">an absolute link</a>]
+    yield assert_equals, links.pop()['href'], "http://google.com/"
+    yield assert_equals, links.pop()['href'], base_path + '/older.html'
+    yield assert_equals, links.pop()['href'], entries[0].guid + '#the-latest-blog-post'
+    
+    assert False
+    s = str(soup)
     app.cleanup()
     app2.cleanup()
 
