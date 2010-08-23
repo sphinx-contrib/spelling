@@ -86,13 +86,11 @@ def test_feed():
     yield assert_equals, entries[2].title, "The oldest blog post"
     
     links = BeautifulSoup(entries[0].description).findAll('a')
-    # [<a class="headerlink" href="#the-latest-blog-post" title="Permalink to this headline">¶</a>, <a class="reference internal" href="older.html"><em>a relative link</em></a>, <a class="reference external" href="http://google.com/">an absolute link</a>]
+    # Thes links will look like:
+    #[<a class="headerlink" href="#the-latest-blog-post" title="Permalink to this headline">¶</a>, <a class="reference internal" href="older.html"><em>a relative link</em></a>, <a class="reference external" href="http://google.com/">an absolute link</a>]
     yield assert_equals, links.pop()['href'], "http://google.com/"
     yield assert_equals, links.pop()['href'], base_path + '/older.html'
-    yield assert_equals, links.pop()['href'], entries[0].guid + '#the-latest-blog-post'
-    
-    assert False
-    s = str(soup)
+    yield assert_equals, links.pop()['href'], entries[0].link + '#the-latest-blog-post'
     app.cleanup()
     app2.cleanup()
 

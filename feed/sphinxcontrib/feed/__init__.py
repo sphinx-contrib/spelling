@@ -44,6 +44,7 @@ def create_feed_item(app, pagename, templatename, ctx, doctree):
     """
     global feed_entries
     import dateutil.parser
+    from absolutify_urls import absolutify
     date_parser = dateutil.parser.parser()
     metadata = app.builder.env.metadata.get(pagename, {})
     
@@ -65,7 +66,7 @@ def create_feed_item(app, pagename, templatename, ctx, doctree):
       'title': ctx.get('title'),
       'link': link,
       'unique_id': link,
-      'description': ctx.get('body'),
+      'description': absolutify(ctx.get('body'), link),
       'pubdate': pub_date
     }
     if 'author' in metadata:
@@ -85,54 +86,6 @@ def remove_dead_feed_item(app, env, docname):
         if name.endswith(munged_name):
             del(feed_entries[name])
 
-# resolve URLs using the following code and beautiful soup OR
-# html5lib as per http://gareth-rees.livejournal.com/27148.html
-# 
-# import re, urlparse
-# 
-# find_re = re.compile(r'\bhref\s*=\s*("[^"]*"|\'[^\']*\'|[^"\'<>=\s]+)')
-# 
-# def fix_urls(document, base_url):
-#     ret = []
-#     last_end = 0
-#     for match in find_re.finditer(document):
-#         url = match.group(1)
-#         if url[0] in "\"'":
-#             url = url.strip(url[0])
-#         parsed = urlparse.urlparse(url)
-#         if parsed.scheme == parsed.netloc == '': #relative to domain
-#             url = urlparse.urljoin(base_url, url)
-#             ret.append(document[last_end:match.start(1)])
-#             ret.append('"%s"' % (url,))
-#             last_end = match.end(1)
-#     ret.append(document[last_end:])
-#     return ''.join(ret)
-# 
-# def clean_blog_html(body):
-#     # Clean up the HTML
-#     import re
-#     import sys
-#     from BeautifulSoup import BeautifulSoup
-#     from cStringIO import StringIO
-# 
-#     # The post body is passed to stdin.
-#     soup = BeautifulSoup(body)
-# 
-#     # Remove the permalinks to each header since the blog does not have
-#     # the styles to hide them.
-#     links = soup.findAll('a', attrs={'class':"headerlink"})
-#     [l.extract() for l in links]
-# 
-#     # Get BeautifulSoup's version of the string
-#     s = str(soup)
-# 
-#     # Remove extra newlines.  This depends on the fact that
-#     # code blocks are passed through pygments, which wraps each part of the line
-#     # in a span tag.
-#     pattern = re.compile(r'([^s][^p][^a][^n]>)\n$', re.DOTALL|re.IGNORECASE)
-#     s = ''.join(pattern.sub(r'\1', l) for l in StringIO(s))
-#     
-#     return s
 def emit_feed(app, exc):
     global feed_entries
     import os.path
