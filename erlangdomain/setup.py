@@ -5,8 +5,10 @@ from setuptools import setup, find_packages
 long_desc = '''
 This package contains the sphinxcontrib-erlangdomain Sphinx extension.
 
-This extension adds Erlang Domain to Sphinx.
+This extension adds Ruby Domain to Sphinx.
 It needs Sphinx 1.0 or newer.
+
+Detail document: http://packages.python.org/sphinxcontrib-erlangdomain/
 '''
 
 requires = ['Sphinx>=1.0']
@@ -30,7 +32,7 @@ setup(
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Lauguage :: Erlang',
+        'Programming Language :: Ruby',
         'Topic :: Documentation',
         'Topic :: Utilities',
     ],

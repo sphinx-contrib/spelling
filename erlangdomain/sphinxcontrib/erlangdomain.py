@@ -191,10 +191,10 @@ class ErlangObject(ObjectDescription):
                     if fname in finv and arity_index in finv[fname]:
                         self.env.warn(
                             self.env.docname,
-                            ('duplicate Erlang object description'
+                            ('duplicate Erlang function description'
                              'of %s, ') % name +
                             'other instance in ' +
-                            self.env.doc2path(oinv[name][0]),
+                            self.env.doc2path(finv[fname][arity_index][0]),
                             self.lineno)
                     arities = finv.setdefault(fname, {})
                     arities[arity_index] = (self.env.docname, name)
@@ -390,7 +390,7 @@ class ErlangDomain(Domain):
     }
     initial_data = {
         'objects': {},    # fullname -> docname, objtype
-        'functions' : {}, # fullname ->  arity -> (targetname, docname)
+        'functions' : {}, # fullname -> arity -> (targetname, docname)
         'modules': {},    # modname -> docname, synopsis, platform, deprecated
     }
     indices = [
@@ -404,6 +404,12 @@ class ErlangDomain(Domain):
         for modname, (fn, _, _, _) in self.data['modules'].items():
             if fn == docname:
                 del self.data['modules'][modname]
+        for fullname, funcs in self.data['functions'].items():
+            for arity, (fn, _) in funcs.items():
+                if fn == docname:
+                    del self.data['functions'][fullname][arity]
+            if not self.data['functions'][fullname]:
+                del self.data['functions'][fullname]
 
     def _find_obj(self, env, modname, name, objtype, searchorder=0):
         """
