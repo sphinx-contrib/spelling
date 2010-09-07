@@ -1,3 +1,15 @@
+# -*- coding: utf-8 -*-
+"""
+    sphinxcontrib.adadomain
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Ada domain.
+
+    :copyright: Copyright 2010 by Tero Koskinen
+    :license: BSD, see LICENSE for details.
+
+    Some parts of the code copied from erlangdomain by SHIBUKAWA Yoshiki.
+"""
 
 import re
 import string
