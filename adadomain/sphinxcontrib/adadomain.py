@@ -203,6 +203,7 @@ class AdaObject(ObjectDescription):
 
     def add_target_and_index(self, name, sig, signode):
         print "DEBUG: add_target_and_index name = %s" % name
+        pieces = string.split(name, '.')
         if name not in self.state.document.ids:
             signode['names'].append(name)
             signode['ids'].append(name)
@@ -257,6 +258,11 @@ class AdaObject(ObjectDescription):
         indextext = self._get_index_text(name)
         if indextext:
             self.indexnode['entries'].append(('single', indextext, name, name))
+
+        plain_name = pieces[-1]
+        indextext = self._get_index_text(plain_name)
+        if indextext:
+            self.indexnode['entries'].append(('single', indextext, name, plain_name))
 
 
 class AdaModule(Directive):
