@@ -92,6 +92,8 @@ class AdaObject(ObjectDescription):
                 signode += addnodes.desc_returns(returntype, returntype)
             return fullname
 
+        signode += nodes.Text(' ')
+
         signode += addnodes.desc_parameterlist()
 
         stack = [signode[-1]]
@@ -99,7 +101,8 @@ class AdaObject(ObjectDescription):
         for token in string.split(arglist, ';'):
             pieces = string.split(token, ':')
             name = pieces[0].strip()
-            stack[-1] += addnodes.desc_parameter(name, name)
+            stack[-1] += addnodes.desc_parameter(name, name + " : " + pieces[1].strip())
+
             if len(stack) == 1:
                 counters[0] += 1
             else:
@@ -134,6 +137,8 @@ class AdaObject(ObjectDescription):
             if self.needs_arglist():
                 # for functions and procedures, add an empty parameter list
                 signode += addnodes.desc_parameterlist()
+
+        signode += nodes.Text(' ')
 
         signode += addnodes.desc_parameterlist()
 
