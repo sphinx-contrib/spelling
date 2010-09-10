@@ -30,7 +30,9 @@ The :dir:`autointerface` directive has the same form and option as the
    documenter.
 """
 import sphinx.ext.autodoc
-import sphinx.directives
+import sphinx.domains.python
+import sphinx.roles
+from sphinx.locale import l_
 
 import zope.interface.interface
 
@@ -83,7 +85,8 @@ class InterfaceDocumenter(sphinx.ext.autodoc.ClassDocumenter):
     """
     objtype = 'interface'               # Called 'autointerface'
 
-    priority = 10       # needs a higher priority than ClassDocumenter
+    # needs a higher priority than ClassDocumenter
+    priority = 1 + sphinx.ext.autodoc.ClassDocumenter.priority
 
     @classmethod
     def can_document_member(cls, member, membername, isattr, parent):
@@ -130,13 +133,13 @@ class InterfaceMethodDocumenter(sphinx.ext.autodoc.MethodDocumenter):
     def format_args(self):
         return interface_format_args(self.object)
 
-class InterfaceDirective(sphinx.directives.DescDirective):
-    """An 'interface' directive."""
+class InterfaceDirective(sphinx.domains.python.PyClasslike):
+    r"""An `'interface'` directive."""
     def get_index_text(self, modname, name_cls):
-        if self.desctype == 'interface':
+        if self.objtype == 'interface':
             if not modname:
                 return '%s (built-in interface)' % name_cls[0]
-            return '%s (interface in %s)' % (name_cls[0], modname)
+            return '%s (%s interface)' % (name_cls[0], modname)
         else:
             return ''
 
@@ -146,4 +149,8 @@ def setup(app):
     app.add_autodocumenter(InterfaceDocumenter)
     app.add_autodocumenter(InterfaceAttributeDocumenter)
     app.add_autodocumenter(InterfaceMethodDocumenter)
-    app.add_directive('interface', InterfaceDirective)
+    domain = sphinx.domains.python.PythonDomain
+    domain.object_types['interface'] = sphinx.domains.python.ObjType(
+        l_('interface'), 'interface', 'obj')
+    domain.directives['interface'] = InterfaceDirective
+    domain.roles['interface'] = sphinx.domains.python.PyXRefRole()
