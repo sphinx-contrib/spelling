@@ -70,10 +70,8 @@ def get_github_issue_information(project, user, issue_id, env):
     if 'error' in response:
         return None
 
-    info = response['issue']
-    info['closed'] = info['state'] == 'closed'
-    info['uri'] = GITHUB_URL % locals()
-    return info
+    return {'closed': response['issue']['state'] == 'closed',
+            'uri': GITHUB_URL % locals()}
 
 
 def get_bitbucket_issue_information(project, user, issue_id, env):
