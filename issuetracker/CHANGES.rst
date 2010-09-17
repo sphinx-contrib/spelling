@@ -3,6 +3,8 @@
 
 - #4: Fixed the URL of Google Code issues (thanks to Denis Bilenko)
 - Fixed detection of closed issues in Google Code (thanks to Denis Bilenko)
+- Improved error message, if ``issuetracker_issue_pattern`` has too many
+  groups (thanks to Denis Bilenko)
 
 
 0.5.1 (Jul 25, 2010)
