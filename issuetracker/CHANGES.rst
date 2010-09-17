@@ -1,3 +1,10 @@
+0.5.2 (in development)
+======================
+
+- #4: Fixed the URL of Google Code issues
+- Fixed detection of closed issues in Google Code
+
+
 0.5.1 (Jul 25, 2010)
 ====================
 
