@@ -209,6 +209,11 @@ class IssuesReferences(Transform):
             new_nodes = []
             last_issue_ref_end = 0
             for match in issue_pattern.finditer(text):
+                # catch invalid pattern with too many groups
+                if len(match.groups()) != 1:
+                    raise ValueError(
+                        'issuetracker_issue_pattern must have '
+                        'exactly one group: %r' % (match.groups(),))
                 # extract the text between the last issue reference and the
                 # current issue reference and put it into a new text node
                 head = text[last_issue_ref_end:match.start()]
