@@ -68,6 +68,58 @@ def pytest_funcarg__doc(request):
     return doc
 
 
+def test_get_github_issue_information(env):
+    info = issuetracker.get_github_issue_information(
+        'pyudev', 'lunaryorn', '2', env)
+    assert info == {'closed': True,
+                    'uri': 'http://github.com/lunaryorn/pyudev/issues/2'}
+
+
+def test_get_bitbucket_issue_information_resolved(env):
+    info = issuetracker.get_bitbucket_issue_information(
+        'synaptiks', 'lunar', '22', env)
+    assert info == {'closed': True,
+                    'uri': 'http://bitbucket.org/lunar/synaptiks/issue/22/'}
+
+
+def test_get_bitbucket_issue_information_invalid(env):
+    info = issuetracker.get_bitbucket_issue_information(
+        'synaptiks', 'lunar', '36', env)
+    assert info == {'closed': True,
+                    'uri': 'http://bitbucket.org/lunar/synaptiks/issue/36/'}
+
+
+def test_get_bitbucket_issue_information_duplicate(env):
+    info = issuetracker.get_bitbucket_issue_information(
+        'synaptiks', 'lunar', '42', env)
+    assert info == {'closed': True,
+                    'uri': 'http://bitbucket.org/lunar/synaptiks/issue/42/'}
+
+
+def test_get_google_code_issue_information_fixed(env):
+    info = issuetracker.get_google_code_issue_information(
+        'pytox', None, '2', env)
+    assert info == {
+        'closed': True,
+        'uri': 'http://code.google.com/p/pytox/issues/detail?id=2'}
+
+
+def test_get_google_code_issue_information_invalid(env):
+    info = issuetracker.get_google_code_issue_information(
+        'pytox', None, '5', env)
+    assert info == {
+        'closed': True,
+        'uri': 'http://code.google.com/p/pytox/issues/detail?id=5'}
+
+
+def test_get_google_code_issue_information_wontfix(env):
+    info = issuetracker.get_google_code_issue_information(
+        'pytox', None, '6', env)
+    assert info == {
+        'closed': True,
+        'uri': 'http://code.google.com/p/pytox/issues/detail?id=6'}
+
+
 def test_make_isssue_reference_resolver_invalid_reftype(
     app, env, resolver, node):
     node['reftype'] = 'spam'
