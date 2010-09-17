@@ -79,8 +79,10 @@ def get_bitbucket_issue_information(project, user, issue_id, app):
 
     uri = BITBUCKET_URL % locals()
     with closing(urllib.urlopen(uri)) as response:
-        if response.getcode() == 404:
-            # issue didn't exist
+        if response.getcode() != 200:
+            # warn about unexpected response code
+            app.warn('issue %s unavailable with code %s' %
+                     (issue_id, response.getcode()))
             return None
         tree = parse(response)
     info = tree.getroot().cssselect('.issues-issue-infotable')[0]
@@ -120,7 +122,10 @@ def get_google_code_issue_information(project, user, issue_id, app):
     show_issue = ('http://code.google.com/feeds/issues/p/'
                   '%(project)s/issues/full/%(issue_id)s' % locals())
     with closing(urllib.urlopen(show_issue)) as response:
-        if response.getcode() == 404:
+        if response.getcode() != 200:
+            # warn about unavailable issues
+            app.warn('issue %s unavailable with code %s' %
+                     (issue_id, response.getcode()))
             return None
         tree = etree.parse(response)
 

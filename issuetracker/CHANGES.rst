@@ -8,6 +8,8 @@
 - Fixed detection of closed issues in Google Code (thanks to Denis Bilenko)
 - Improved error message, if ``issuetracker_issue_pattern`` has too many
   groups (thanks to Denis Bilenko)
+- Added warnings for unexpected HTTP status codes in BitBucket and Google
+  Code issue trackers
 
 
 0.5.1 (Jul 25, 2010)
