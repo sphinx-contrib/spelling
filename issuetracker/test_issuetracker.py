@@ -205,6 +205,16 @@ def test_issues_references(doc):
     _assert_text(em[2], ' if you are #abc brave')
 
 
+def test_issues_references_too_many_groups(doc, config):
+    config.issuetracker_issue_pattern = r'(#)(\d+)'
+    transformer = issuetracker.IssuesReferences(doc)
+    with py.test.raises(ValueError) as exc_info:
+        transformer.apply()
+    error = exc_info.value
+    assert str(error) == ('issuetracker_issue_pattern must have '
+                          'exactly one group: %r' % ((u'#', u'1'),))
+
+
 def test_auto_connect_builtin_issue_resolvers_known_tracker(app):
     app.config.issuetracker = 'bitbucket'
     issuetracker.auto_connect_builtin_issue_resolvers(app)
