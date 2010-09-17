@@ -1,5 +1,5 @@
-0.5.2 (in development)
-======================
+0.5.2 (Sep 17, 2010)
+====================
 
 - Issue reference resolvers get the application object now as fourth
   argument.  The environment is availabe in the ``.env`` attribute of this
