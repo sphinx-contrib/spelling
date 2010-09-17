@@ -126,8 +126,9 @@ def get_google_code_issue_information(project, user, issue_id, env):
 
     state = tree.find(
         '{http://schemas.google.com/projecthosting/issues/2009}state')
-    uri = 'http://code.google.com/p/html5lib/issues/detail?id=%s' % issue_id
-    return {'uri': uri, 'closed': state and state.text == 'closed'}
+    uri = ('http://code.google.com/p/%(project)s/issues/'
+           'detail?id=%(issue_id)s' % locals())
+    return {'uri': uri, 'closed': state is not None and state.text == 'closed'}
 
 
 def make_issue_reference_resolver(get_issue_information):
