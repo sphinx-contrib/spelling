@@ -1,6 +1,9 @@
 0.5.2 (in development)
 ======================
 
+- Issue reference resolvers get the application object now as fourth
+  argument.  The environment is availabe in the ``.env`` attribute of this
+  object.
 - #4: Fixed the URL of Google Code issues (thanks to Denis Bilenko)
 - Fixed detection of closed issues in Google Code (thanks to Denis Bilenko)
 - Improved error message, if ``issuetracker_issue_pattern`` has too many

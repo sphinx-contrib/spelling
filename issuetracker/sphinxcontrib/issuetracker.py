@@ -56,7 +56,7 @@ BITBUCKET_URL = ('http://bitbucket.org/%(user)s/%(project)s/issue/'
                  '%(issue_id)s/')
 
 
-def get_github_issue_information(project, user, issue_id, env):
+def get_github_issue_information(project, user, issue_id, app):
     try:
         import json
     except ImportError:
@@ -74,7 +74,7 @@ def get_github_issue_information(project, user, issue_id, env):
             'uri': GITHUB_URL % locals()}
 
 
-def get_bitbucket_issue_information(project, user, issue_id, env):
+def get_bitbucket_issue_information(project, user, issue_id, app):
     from lxml.html import parse
 
     uri = BITBUCKET_URL % locals()
@@ -89,7 +89,7 @@ def get_bitbucket_issue_information(project, user, issue_id, env):
     return {'uri': uri, 'closed': not (is_open or is_new)}
 
 
-def get_launchpad_issue_information(project, user, issue_id, env):
+def get_launchpad_issue_information(project, user, issue_id, app):
     launchpad = getattr(env, 'issuetracker_launchpad', None)
     if not launchpad:
         from launchpadlib.launchpad import Launchpad
@@ -114,7 +114,7 @@ def get_launchpad_issue_information(project, user, issue_id, env):
     return {'uri': uri, 'closed': bool(task.date_closed)}
 
 
-def get_google_code_issue_information(project, user, issue_id, env):
+def get_google_code_issue_information(project, user, issue_id, app):
     from xml.etree import cElementTree as etree
 
     show_issue = ('http://code.google.com/feeds/issues/p/'
@@ -147,7 +147,7 @@ def make_issue_reference_resolver(get_issue_information):
     1. The issue tracker project as given to :confval:`issuetracker_project`
     2. The issue tracker user name as given to :confval:`issuetracker_user`
     3. The issue id
-    4. The sphinx build environment
+    4. The sphinx application object
 
     It shall return a dictionary, which may contain the following items:
 
@@ -162,7 +162,7 @@ def make_issue_reference_resolver(get_issue_information):
             return
         info = get_issue_information(
             app.config.issuetracker_project or app.config.project,
-            app.config.issuetracker_user, node['reftarget'], env)
+            app.config.issuetracker_user, node['reftarget'], app)
         if info is None:
             return None
         uri = info.get('uri')

@@ -165,11 +165,11 @@ def test_get_issue_information_called(
     app, env, resolver, node, get_issue_information):
     resolver(app, env, node, node[0])
     get_issue_information.assert_called_with(
-        'issuetracker', 'foobar', '10', env)
+        'issuetracker', 'foobar', '10', app)
     app.config.issuetracker_project = 'spam with eggs'
     resolver(app, env, node, node[0])
     get_issue_information.assert_called_with(
-        'spam with eggs', 'foobar', '10', env)
+        'spam with eggs', 'foobar', '10', app)
 
 
 def test_builtin_issue_trackers():
