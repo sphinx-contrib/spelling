@@ -22,7 +22,7 @@ Following code is sample::
 This module needs blockdiag_.
 '''
 
-requires = ['blockdiag', 'Sphinx>=0.6']
+requires = ['blockdiag>=0.2.2', 'Sphinx>=0.6']
 
 setup(
     name='sphinxcontrib-blockdiag',
