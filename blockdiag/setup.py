@@ -6,7 +6,6 @@ long_desc = '''
 This package contains the blockdiag Sphinx extension.
 
 .. _Sphinx: http://sphinx.pocoo.org/
-.. _sdedit: http://sdedit.sourceforge.net/
 .. _blockdiag: http://bitbucket.org/tk0miya/blockdiag/
 
 This extension enable you to insert block diagrams in your Sphinx document.
