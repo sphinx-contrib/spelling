@@ -10,6 +10,7 @@
     :license: BSDL.
 """
 
+from __future__ import absolute_import
 import posixpath
 import os
 try:
@@ -24,8 +25,8 @@ from sphinx.errors import SphinxError
 from sphinx.util.osutil import ensuredir, ENOENT, EPIPE
 from sphinx.util.compat import Directive
 
-from blockdiag import *
-from diagparser import *
+from blockdiag.blockdiag import *
+from blockdiag.diagparser import *
 
 
 class BlockdiagError(SphinxError):
@@ -149,7 +150,7 @@ def render_dot_latex(self, node, code, options, prefix='sdedit'):
     raise nodes.SkipNode
 
 
-def latex_visit_sequence_diagram(self, node):
+def latex_visit_blockdiag(self, node):
     render_dot_latex(self, node, node['code'], node['options'])
 
 
