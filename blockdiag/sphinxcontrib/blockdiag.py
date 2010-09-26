@@ -87,24 +87,22 @@ def render_dot(self, code, options, prefix='blockdiag'):
     if isinstance(code, unicode):
         code = code.encode('utf-8')
 
-    fonts = ['c:/windows/fonts/VL-Gothic-Regular.ttf',
-             'c:/windows/fonts/msmincho.ttf',
-             '/usr/share/fonts/truetype/ipafont/ipagp.ttf']
-
     ttfont = None
-    for path in fonts:
-        if path and os.path.isfile(path):
-            ttfont = ImageFont.truetype(path, 11)
-            break
-
-    draw = DiagramDraw.DiagramDraw()
+    fontpath = self.builder.config.blockdiag_fontpath
+    if fontpath and not hasattr(self.builder, '_blockdiag_fontpath_warned'):
+        try:
+            ttfont = ImageFont.truetype(fontpath, 11)
+        except IOError:
+            self.builder.warn('blockdiag cannot load "%s" as truetype font, '
+                              'check the blockdiag_path setting' % fontpath)
+            self.builder._blockdiag_fontpath_warned = True
 
     try:
         tree = parse(tokenize(code))
         screen = ScreenNodeBuilder.build(tree)
 
+        draw = DiagramDraw.DiagramDraw()
         draw.draw(screen, font=ttfont)
-
         draw.save(outfn, 'PNG')
     except Exception, e:
         raise BlockdiagError('blockdiag error:\n%s\n' % e)
@@ -158,3 +156,4 @@ def setup(app):
                  html=(html_visit_blockdiag, None),
                  latex=(latex_visit_blockdiag, None))
     app.add_directive('blockdiag', Blockdiag)
+    app.add_config_value('blockdiag_fontpath', None, 'html')
