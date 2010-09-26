@@ -72,6 +72,19 @@ Directive
    This code block has a source script of blockdiag.
   
 
+Configuration File Options
+==========================
+
+.. confval:: blockdiag_fontpath
+
+   This is a path for renderring fonts. You can use truetype font (.ttf) file path.
+
+.. confval:: blockdiag_antialias
+
+   If :confval:`blockdiag_antialias: is True, blockdiag generates images
+   with anti-alias filter.
+
+
 Repository
 ==========
 
