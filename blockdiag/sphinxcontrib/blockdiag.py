@@ -103,7 +103,7 @@ def render_dot(self, code, options, prefix='blockdiag'):
         tree = parse(tokenize(code))
         screen = ScreenNodeBuilder.build(tree)
 
-        draw.draw(screen)
+        draw.draw(screen, font=ttfont)
 
         draw.save(outfn, 'PNG')
     except Exception, e:
