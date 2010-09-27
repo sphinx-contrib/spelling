@@ -34,8 +34,8 @@ def create_feed_container(app):
     global feed_entries
     rss_fragment_path = os.path.realpath(os.path.join(app.outdir, '..', 'rss_entry_fragments'))
     feed_entries = FSDict(work_dir=rss_fragment_path)
-    # app.builder.env.feed_url = app.config.feed_base_url + \
-    #    app.config.feed_filename
+    app.builder.env.feed_url = app.config.feed_base_url + \
+        app.config.feed_filename
     
 def create_feed_item(app, pagename, templatename, ctx, doctree):
     """
@@ -73,7 +73,7 @@ def create_feed_item(app, pagename, templatename, ctx, doctree):
         item['author'] = metadata['author']
     feed_entries[nice_name(pagename, pub_date)] = item
     #Additionally, we might like to provide our templates with a way to link to the rss output file
-    ctx['rss_link'] = app.config.feed_base_url + '/' + app.config.feed_filename
+    ctx['rss_link'] = app.builder.env.feed_url #app.config.feed_base_url + '/' + app.config.feed_filename
 
 def remove_dead_feed_item(app, env, docname):
     """
@@ -93,6 +93,7 @@ def emit_feed(app, exc):
     feed_dict = {
       'title': app.config.project,
       'link': app.config.feed_base_url,
+      'feed_url': app.config.feed_base_url,
       'description': app.config.feed_description
     }
     if app.config.language:
