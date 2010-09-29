@@ -47,6 +47,7 @@ class Blockdiag(Directive):
     final_argument_whitespace = False
     option_spec = {
         'alt': directives.unchanged,
+        'maxwidth': directives.nonnegative_int,
     }
 
     def run(self):
@@ -57,15 +58,17 @@ class Blockdiag(Directive):
                 line=self.lineno)]
         node = blockdiag()
         node['code'] = dotcode
-        node['options'] = []
+        node['options'] = {}
         if 'alt' in self.options:
             node['alt'] = self.options['alt']
+        if 'maxwidth' in self.options:
+            node['options']['maxwidth'] = self.options['maxwidth']
         return [node]
 
 
-def render_dot(self, code, options, prefix='blockdiag'):
+def get_image_filename(self, code, options, prefix='blockdiag'):
     """
-    Render blockdiag code into a PNG output file.
+    Get path of output file.
     """
     hashkey = code.encode('utf-8') + str(options)
     fname = '%s-%s.png' % (prefix, sha(hashkey).hexdigest())
@@ -83,6 +86,13 @@ def render_dot(self, code, options, prefix='blockdiag'):
 
     ensuredir(os.path.dirname(outfn))
 
+    return relfn, outfn
+
+
+def create_blockdiag(self, code, options, prefix='blockdiag'):
+    """
+    Render blockdiag code into a PNG output file.
+    """
     # blockdiag expects UTF-8 by default
     if isinstance(code, unicode):
         code = code.encode('utf-8')
@@ -103,35 +113,57 @@ def render_dot(self, code, options, prefix='blockdiag'):
                               'check the blockdiag_path setting' % fontpath)
             self.builder._blockdiag_fontpath_warned = True
 
+    draw = None
     try:
         tree = parse(tokenize(code))
         screen = ScreenNodeBuilder.build(tree)
 
         draw = DiagramDraw.DiagramDraw(scale=scale)
         draw.draw(screen, font=ttfont)
-        draw.save(outfn, 'PNG')
     except Exception, e:
         raise BlockdiagError('blockdiag error:\n%s\n' % e)
 
-    return relfn, outfn
+    return draw
 
 
 def render_dot_html(self, node, code, options, prefix='blockdiag',
                     imgcls=None, alt=None):
     try:
-        fname, outfn = render_dot(self, code, options, prefix)
+        relfn, outfn = get_image_filename(self, code, options, prefix)
+
+        if not os.path.isfile(outfn):
+            image = create_blockdiag(self, code, options, prefix)
+            image.save(outfn, 'PNG')
+
+            image_size = image.image.size()
+            if 'maxwidth' in options and options['maxwidth'] > image_size[0]:
+                thumb_prefix = prefix + '_thumb'
+                trelfn, toutfn = get_image_filename(self, code,
+                                                    options, thumb_prefix)
+
+                thumb_size[0] = (options['maxwidth'], image_size[1])
+                image.save(toutfn, 'PNG', thumb_size)
+
     except BlockdiagError, exc:
         self.builder.warn('dot code %r: ' % code + str(exc))
         raise nodes.SkipNode
 
     self.body.append(self.starttag(node, 'p', CLASS='blockdiag'))
-    if fname is None:
+    if relfn is None:
         self.body.append(self.encode(code))
     else:
         if alt is None:
             alt = node.get('alt', self.encode(code).strip())
 
-        self.body.append('<img src="%s" alt="%s"/>\n' % (fname, alt))
+        imgtag_format = '<img src="%s" alt="%s" width="%s" height="%s" />\n'
+        if thumb_size:
+            self.body.append('<a href="%s">' % relfn)
+            self.body.append(imgtag_format %
+                             (trelfn, alt, thumb_size[0], thumb_size[1]))
+            self.body.append('</a>')
+        else:
+            self.body.append(imgtag_format %
+                             (relfn, alt, image_size[0], image_size[1]))
 
     self.body.append('</p>\n')
     raise nodes.SkipNode
