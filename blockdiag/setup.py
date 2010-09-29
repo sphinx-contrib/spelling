@@ -22,11 +22,11 @@ Following code is sample::
 This module needs blockdiag_.
 '''
 
-requires = ['blockdiag>=0.2.2', 'Sphinx>=0.6']
+requires = ['blockdiag>=0.3.1', 'Sphinx>=0.6']
 
 setup(
     name='sphinxcontrib-blockdiag',
-    version='0.2',
+    version='0.3',
     url='http://bitbucket.org/birkenfeld/sphinx-contrib',
     download_url='http://pypi.python.org/pypi/sphinxcontrib-blockdiag',
     license='BSD',
