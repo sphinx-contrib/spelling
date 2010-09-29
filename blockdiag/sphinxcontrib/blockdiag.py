@@ -101,14 +101,11 @@ def create_blockdiag(self, code, options, prefix='blockdiag'):
         scale = 2
     else:
         scale = 1
-    self.builder.warn('blockdiag_antialias = %d' % scale)
 
     ttfont = None
     fontpath = self.builder.config.blockdiag_fontpath
     if fontpath and not hasattr(self.builder, '_blockdiag_fontpath_warned'):
-        try:
-            ttfont = ImageFont.truetype(fontpath, 11 * scale)
-        except IOError:
+        if not os.path.isfile(fontpath):
             self.builder.warn('blockdiag cannot load "%s" as truetype font, '
                               'check the blockdiag_path setting' % fontpath)
             self.builder._blockdiag_fontpath_warned = True
@@ -118,8 +115,8 @@ def create_blockdiag(self, code, options, prefix='blockdiag'):
         tree = parse(tokenize(code))
         screen = ScreenNodeBuilder.build(tree)
 
-        draw = DiagramDraw.DiagramDraw(scale=scale)
-        draw.draw(screen, font=ttfont)
+        draw = DiagramDraw.DiagramDraw(scale=scale, font=fontpath)
+        draw.draw(screen)
     except Exception, e:
         raise BlockdiagError('blockdiag error:\n%s\n' % e)
 
@@ -128,21 +125,23 @@ def create_blockdiag(self, code, options, prefix='blockdiag'):
 
 def render_dot_html(self, node, code, options, prefix='blockdiag',
                     imgcls=None, alt=None):
+    has_thumbnail = False
     try:
         relfn, outfn = get_image_filename(self, code, options, prefix)
 
-        if not os.path.isfile(outfn):
-            image = create_blockdiag(self, code, options, prefix)
-            image.save(outfn, 'PNG')
+        image = create_blockdiag(self, code, options, prefix)
+        image.save(outfn, 'PNG')
 
-            image_size = image.image.size()
-            if 'maxwidth' in options and options['maxwidth'] > image_size[0]:
-                thumb_prefix = prefix + '_thumb'
-                trelfn, toutfn = get_image_filename(self, code,
-                                                    options, thumb_prefix)
+        image_size = image.image.size
+        if 'maxwidth' in options and options['maxwidth'] < image_size[0]:
+            has_thumbnail = True
+            thumb_prefix = prefix + '_thumb'
+            trelfn, toutfn = get_image_filename(self, code,
+                                                options, thumb_prefix)
 
-                thumb_size[0] = (options['maxwidth'], image_size[1])
-                image.save(toutfn, 'PNG', thumb_size)
+            thumb_size = (options['maxwidth'], image_size[1])
+            image.save(toutfn, 'PNG', thumb_size)
+            thumb_size = image.image.size
 
     except BlockdiagError, exc:
         self.builder.warn('dot code %r: ' % code + str(exc))
@@ -156,7 +155,7 @@ def render_dot_html(self, node, code, options, prefix='blockdiag',
             alt = node.get('alt', self.encode(code).strip())
 
         imgtag_format = '<img src="%s" alt="%s" width="%s" height="%s" />\n'
-        if thumb_size:
+        if has_thumbnail:
             self.body.append('<a href="%s">' % relfn)
             self.body.append(imgtag_format %
                              (trelfn, alt, thumb_size[0], thumb_size[1]))
@@ -175,7 +174,11 @@ def html_visit_blockdiag(self, node):
 
 def render_dot_latex(self, node, code, options, prefix='sdedit'):
     try:
-        fname, outfn = render_dot(self, code, options, prefix)
+        fname, outfn = get_image_filename(self, code, options, prefix)
+
+        image = create_blockdiag(self, code, options, prefix)
+        image.save(fname, 'PNG')
+
     except SdeditError, exc:
         self.builder.warn('dot code %r: ' % code + str(exc))
         raise nodes.SkipNode
