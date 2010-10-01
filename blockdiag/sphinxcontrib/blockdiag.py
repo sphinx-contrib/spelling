@@ -93,10 +93,6 @@ def create_blockdiag(self, code, options, prefix='blockdiag'):
     """
     Render blockdiag code into a PNG output file.
     """
-    # blockdiag expects UTF-8 by default
-    if isinstance(code, unicode):
-        code = code.encode('utf-8')
-
     if self.builder.config.blockdiag_antialias:
         scale = 2
     else:
