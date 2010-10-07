@@ -93,11 +93,6 @@ def create_blockdiag(self, code, options, prefix='blockdiag'):
     """
     Render blockdiag code into a PNG output file.
     """
-    if self.builder.config.blockdiag_antialias:
-        scale = 2
-    else:
-        scale = 1
-
     ttfont = None
     fontpath = self.builder.config.blockdiag_fontpath
     if fontpath and not hasattr(self.builder, '_blockdiag_fontpath_warned'):
@@ -111,8 +106,10 @@ def create_blockdiag(self, code, options, prefix='blockdiag'):
         tree = parse(tokenize(code))
         screen = ScreenNodeBuilder.build(tree)
 
-        draw = DiagramDraw.DiagramDraw(scale=scale, font=fontpath)
-        draw.draw(screen)
+        antialias = self.builder.config.blockdiag_antialias
+        draw = DiagramDraw.DiagramDraw('PNG', screen, font=fontpath,
+                                       antialias=antialias)
+        draw.draw()
     except Exception, e:
         raise BlockdiagError('blockdiag error:\n%s\n' % e)
 
