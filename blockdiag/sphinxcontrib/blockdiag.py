@@ -13,6 +13,7 @@
 from __future__ import absolute_import
 import posixpath
 import os
+import codecs
 try:
     from hashlib import sha1 as sha
 except ImportError:
@@ -43,7 +44,7 @@ class Blockdiag(Directive):
     """
     has_content = True
     required_arguments = 0
-    optional_arguments = 0
+    optional_arguments = 1
     final_argument_whitespace = False
     option_spec = {
         'alt': directives.unchanged,
@@ -51,11 +52,32 @@ class Blockdiag(Directive):
     }
 
     def run(self):
-        dotcode = '\n'.join(self.content)
-        if not dotcode.strip():
-            return [self.state_machine.reporter.warning(
-                'Ignoring "blockdiag" directive without content.',
-                line=self.lineno)]
+        if self.arguments:
+            document = self.state.document
+            if self.content:
+                return [document.reporter.warning(
+                    'blockdiag directive cannot have both content and '
+                    'a filename argument', line=self.lineno)]
+            env = self.state.document.settings.env
+            rel_filename, filename = relfn2path(env, self.arguments[0])
+            env.note_dependency(rel_filename)
+            try:
+                fp = codecs.open(filename, 'r', 'utf-8')
+                try:
+                    dotcode = fp.read()
+                finally:
+                    fp.close()
+            except (IOError, OSError):
+                return [document.reporter.warning(
+                    'External blockdiag file %r not found or reading '
+                    'it failed' % filename, line=self.lineno)]
+        else:
+            dotcode = '\n'.join(self.content)
+            if not dotcode.strip():
+                return [self.state_machine.reporter.warning(
+                    'Ignoring "blockdiag" directive without content.',
+                    line=self.lineno)]
+
         node = blockdiag()
         node['code'] = dotcode
         node['options'] = {}
@@ -64,6 +86,23 @@ class Blockdiag(Directive):
         if 'maxwidth' in self.options:
             node['options']['maxwidth'] = self.options['maxwidth']
         return [node]
+
+
+# compatibility to sphinx 1.0 (ported from sphinx trunk)
+def relfn2path(env, filename, docname=None):
+    if filename.startswith('/') or filename.startswith(os.sep):
+        rel_fn = filename[1:]
+    else:
+        docdir = os.path.dirname(env.doc2path(docname or env.docname,
+                                              base=None))
+        rel_fn = os.path.join(docdir, filename)
+    try:
+        return rel_fn, os.path.join(env.srcdir, rel_fn)
+    except UnicodeDecodeError:
+        # the source directory is a bytestring with non-ASCII characters;
+        # let's try to encode the rel_fn in the file system encoding
+        enc_rel_fn = rel_fn.encode(sys.getfilesystemencoding())
+        return rel_fn, os.path.join(env.srcdir, enc_rel_fn)
 
 
 def get_image_filename(self, code, options, prefix='blockdiag'):
