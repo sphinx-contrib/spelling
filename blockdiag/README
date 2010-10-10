@@ -66,11 +66,22 @@ option at :file:`conf.py`.
 Directive
 =========
 
-.. describe:: .. blockdiag::
+.. describe:: .. blockdiag:: [filename]
 
    This directive insert a block diagram into the generated document.
-   This code block has a source script of blockdiag.
-  
+   If filename is specified, sphinx reads external file as source script of blockfile.
+   In another case, blockdiag directive takes code block as source script.
+
+   Examples::
+
+      .. blockdiag:: foobar.diag
+
+      .. blockdiag::
+
+         diagram {
+            // some diagrams are here.
+         }
+
 
 Configuration File Options
 ==========================
