@@ -85,7 +85,8 @@ def pdf(options):
       default: pdf
     """
     run_sphinx(options, 'pdf')
-    latex_dir = path(options.builddir) / 'latex'
+    options.order('pdf')
+    latex_dir = path(options.builddir) / options.builder
     sh('cd %s; make' % latex_dir)
     return
 
@@ -254,13 +255,18 @@ def run_script(input_file, script_name,
         response = '\n::\n\n'
     else:
         response = ''
-    response += '\t$ %(cmd)s\n\t' % vars()
+    response += '\t$ %(cmd)s\n\n\t' % vars()
     lines = output_text.splitlines()
 
     # Deal with lines that might be too long
     if break_lines_at:
         broken_lines = []
         for l in lines:
+            # apparently blank line
+            if not l.strip():
+                broken_lines.append(l)
+                continue
+            # regular line
             while l:
                 part, l = l[:break_lines_at], l[break_lines_at:]
                 broken_lines.append(part)
