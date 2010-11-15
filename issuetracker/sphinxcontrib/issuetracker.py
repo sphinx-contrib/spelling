@@ -51,7 +51,7 @@ from sphinx.util.osutil import copyfile
 from sphinx.util.console import bold
 
 
-GITHUB_URL = 'http://github.com/%(user)s/%(project)s/issues/%(issue_id)s'
+GITHUB_URL = 'https://github.com/%(user)s/%(project)s/issues/%(issue_id)s'
 BITBUCKET_URL = ('http://bitbucket.org/%(user)s/%(project)s/issue/'
                  '%(issue_id)s/')
 
@@ -62,7 +62,7 @@ def get_github_issue_information(project, user, issue_id, app):
     except ImportError:
         import simplejson as json
 
-    show_issue = ('http://github.com/api/v2/json/issues/show/'
+    show_issue = ('https://github.com/api/v2/json/issues/show/'
                   '%(user)s/%(project)s/%(issue_id)s' % locals())
 
     with closing(urllib.urlopen(show_issue)) as response:

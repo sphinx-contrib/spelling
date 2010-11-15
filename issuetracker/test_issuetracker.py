@@ -72,7 +72,7 @@ def test_get_github_issue_information(env):
     info = issuetracker.get_github_issue_information(
         'pyudev', 'lunaryorn', '2', env)
     assert info == {'closed': True,
-                    'uri': 'http://github.com/lunaryorn/pyudev/issues/2'}
+                    'uri': 'https://github.com/lunaryorn/pyudev/issues/2'}
 
 
 def test_get_bitbucket_issue_information_resolved(env):
