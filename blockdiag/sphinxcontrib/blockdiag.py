@@ -48,6 +48,7 @@ class Blockdiag(Directive):
     final_argument_whitespace = False
     option_spec = {
         'alt': directives.unchanged,
+        'desctable': directives.flag,
         'maxwidth': directives.nonnegative_int,
     }
 
@@ -85,6 +86,8 @@ class Blockdiag(Directive):
             node['alt'] = self.options['alt']
         if 'maxwidth' in self.options:
             node['options']['maxwidth'] = self.options['maxwidth']
+        if 'desctable' in self.options:
+            node['options']['desctable'] = self.options['desctable']
         return [node]
 
 
@@ -164,7 +167,15 @@ def render_dot_html(self, node, code, options, prefix='blockdiag',
         image = create_blockdiag(self, code, options, prefix)
         image.save(outfn, 'PNG')
 
-        image_size = image.image.size
+        # generate description table
+        descriptions = []
+        if 'desctable' in options:
+            for n in image.screen.nodes:
+                if n.description:
+                    descriptions.append((n.id, n.numbered, n.description))
+
+        # generate thumbnails
+        image_size = image.drawer.image.size
         if 'maxwidth' in options and options['maxwidth'] < image_size[0]:
             has_thumbnail = True
             thumb_prefix = prefix + '_thumb'
@@ -195,6 +206,49 @@ def render_dot_html(self, node, code, options, prefix='blockdiag',
         else:
             self.body.append(imgtag_format %
                              (relfn, alt, image_size[0], image_size[1]))
+
+    if descriptions:
+        numbered = [x for x in descriptions if x[1]]
+
+        self.body.append('<table border="1" class="docutils">')
+        self.body.append('<thead valign="bottom">')
+        if numbered:
+            self.body.append('<tr><th class="head">No</th><th class="head">Name</th><th class="head">Description</th></tr>')
+        else:
+            self.body.append('<tr><th class="head">Name</th><th class="head">Description</th></tr>')
+        self.body.append('</thead>')
+        self.body.append('<tbody valign="top">')
+
+        if numbered:
+            def cmp_number(a, b):
+                if a[1]:
+                    n1 = int(a[1])
+                else:
+                    n1 = 0
+
+                if b[1]:
+                    n2 = int(b[1])
+                else:
+                    n2 = 0
+
+                return cmp(n1, n2)
+
+            descriptions.sort(cmp_number)
+
+        for desc in descriptions:
+            id, number, text = desc
+            self.body.append('<tr>')
+            if numbered:
+                if number is not None:
+                    self.body.append('<td>%s</td>' % number)
+                else:
+                    self.body.append('<td></td>')
+            self.body.append('<td>%s</td>' % id)
+            self.body.append('<td>%s</td>' % text)
+            self.body.append('</tr>')
+
+        self.body.append('</tbody>')
+        self.body.append('</table>')
 
     self.body.append('</p>\n')
     raise nodes.SkipNode
