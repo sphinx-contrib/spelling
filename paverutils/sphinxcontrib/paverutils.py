@@ -14,7 +14,7 @@ __author__ = 'Doug Hellmann <doug.hellmann@gmail.com>'
 
 from paver.easy import *
 import sphinx
-
+import textwrap
 
 @task
 def html(options):
@@ -200,6 +200,7 @@ def run_script(input_file, script_name,
                ignore_error=False, 
                trailing_newlines=True,
                break_lines_at=0,
+               wrap_lines_at=0,
                ):
     """Run a script in the context of the input_file's directory, 
     return the text output formatted to be included as an rst
@@ -232,6 +233,12 @@ def run_script(input_file, script_name,
        Integer indicating the length where lines should be broken and
        continued on the next line.  Defaults to 0, meaning no special
        handling should be done.
+
+     wrap_lines_at=0
+       Integer indicating the length where lines should be wrapped and
+       continued on the next line.  Defaults to 0, meaning no special
+       handling should be done.  Differs from break_lines_at because
+       textwrap.fill() is used instead of introducing a simple line break.
        
     """
     rundir = path(input_file).dirname()
@@ -271,6 +278,14 @@ def run_script(input_file, script_name,
                 part, l = l[:break_lines_at], l[break_lines_at:]
                 broken_lines.append(part)
         lines = broken_lines
+    elif wrap_lines_at:
+        wrapped_lines = []
+        for l in lines:
+            if not l.strip():
+                wrapped_lines.append(l)
+                continue
+            wrapped_lines.extend( textwrap.fill(l, width=wrap_lines_at).splitlines() )
+        lines = wrapped_lines
                 
     response += '\n\t'.join(lines)
     if trailing_newlines:
