@@ -7,8 +7,7 @@ from pyparsing import Word, Literal, alphas, nums, alphanums, OneOrMore, Optiona
 LPAR,RPAR,LBRACK,RBRACK,COMMA,EQ = map(Literal,"()[],=")
 
 #Qualifier to go in front of type in the argument list (unsigned const int foo)
-#qualifier = OneOrMore(Literal('const') | Literal('unsigned') | Literal('typename'))
-qualifier = OneOrMore(oneOf('const unsigned typename'))
+qualifier = OneOrMore(oneOf('const unsigned typename struct enum'))
 
 def turn_parseresults_to_list(s, loc, toks):
 	return ParseResults(normalise_templates(toks[0].asList()))
@@ -37,16 +36,16 @@ input_type = Combine(Word(alphanums + ':_') + Optional(angle_bracket_pair + Opti
 
 #A number. e.g. -1, 3.6 or 5
 number = Word('-.' + nums)
- 
+
 #The name of the argument. We will ignore this but it must be matched anyway.
 input_name = OneOrMore(Word(alphanums + '_') | angle_bracket_pair | parentheses_pair | square_bracket_pair)
- 
+
 #Grab the '&', '*' or '**' type bit in (const QString & foo, int ** bar)
 pointer_or_reference = oneOf('* &')
 
 #The '=QString()' or '=false' bit in (int foo = 4, bool bar = false)
 default_value = Literal('=') + OneOrMore(number | quotedString | input_type | parentheses_pair | angle_bracket_pair | square_bracket_pair | Word('|&^'))
- 
+
 #A combination building up the interesting bit -- the argument type, e.g. 'const QString &', 'int' or 'char*'
 argument_type = Optional(qualifier, default='')("qualifier") + \
                 input_type("input_type") + \
@@ -56,7 +55,7 @@ argument_type = Optional(qualifier, default='')("qualifier") + \
 
 #Argument + variable name + default
 argument = Group(argument_type('argument_type') + Optional(input_name) + Optional(default_value))
- 
+
 #List of arguments in parentheses with an optional 'const' on the end
 arglist = LPAR + delimitedList(argument)('arg_list') + Optional(COMMA + '...')('var_args') + RPAR
 
