@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# sphinxcontrib-rubydomain documentation build configuration file, created by
+# sphinxcontrib-erlangdomain documentation build configuration file, created by
 # sphinx-quickstart on Sun Apr 25 13:26:33 2010.
 #
 # This file is execfile()d with the current directory set to its containing dir.
@@ -21,11 +21,12 @@ sys.path.append(os.path.abspath('..'))
 # -- General configuration -----------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
-#needs_sphinx = '1.0'
+needs_sphinx = '1.0'
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinxcontrib.rubydomain']
+extensions = ['sphinxcontrib.erlangdomain',
+              'sphinx.ext.intersphinx']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -40,7 +41,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'sphinxcontrib-rubydomain'
+project = u'sphinxcontrib-erlangdomain'
 copyright = u'2010, SHIBUKAWA Yoshiki'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -86,12 +87,15 @@ pygments_style = 'sphinx'
 # A list of ignored prefixes for module index sorting.
 #modindex_common_prefix = []
 
+intersphinx_mapping = {
+    'sphinx': ('http://sphinx.pocoo.org', None)
+}
 
 # -- Options for HTML output ---------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  Major themes that come with
 # Sphinx are currently 'default' and 'sphinxdoc'.
-html_theme = 'default'
+html_theme = 'sphinxdoc'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -164,7 +168,7 @@ html_static_path = ['_static']
 #html_file_suffix = ''
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'sphinxcontrib-rubydomaindoc'
+htmlhelp_basename = 'sphinxcontrib-erlangdomaindoc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -178,7 +182,8 @@ htmlhelp_basename = 'sphinxcontrib-rubydomaindoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'sphinxcontrib-rubydomain.tex', u'sphinxcontrib-rubydomain Documentation',
+  ('index', 'sphinxcontrib-erlangdomain.tex', 
+   u'sphinxcontrib-erlangdomain Documentation',
    u'SHIBUKAWA Yoshiki', 'manual'),
 ]
 
@@ -205,7 +210,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'sphinxcontrib-rubydomain', u'sphinxcontrib-rubydomain Documentation',
+    ('index', 'sphinxcontrib-erlangdomain', 
+     u'sphinxcontrib-erlangdomain Documentation',
      [u'SHIBUKAWA Yoshiki'], 1)
 ]
 

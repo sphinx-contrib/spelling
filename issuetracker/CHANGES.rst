@@ -1,3 +1,29 @@
+0.5.4 (Nov 15, 2010)
+====================
+
+- Github uses https URLS now
+
+
+0.5.3 (Nov 14, 2010)
+====================
+
+- Added license text to source tarball
+
+
+0.5.2 (Sep 17, 2010)
+====================
+
+- Issue reference resolvers get the application object now as fourth
+  argument.  The environment is availabe in the ``.env`` attribute of this
+  object.
+- #4: Fixed the URL of Google Code issues (thanks to Denis Bilenko)
+- Fixed detection of closed issues in Google Code (thanks to Denis Bilenko)
+- Improved error message, if ``issuetracker_issue_pattern`` has too many
+  groups (thanks to Denis Bilenko)
+- Added warnings for unexpected HTTP status codes in BitBucket and Google
+  Code issue trackers
+
+
 0.5.1 (Jul 25, 2010)
 ====================
 

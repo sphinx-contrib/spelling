@@ -22,8 +22,7 @@ http://diveintomark.org/archives/2004/02/04/incompatible-rss
 
 import re
 import datetime
-from django.utils.xmlutils import SimplerXMLGenerator
-from django.utils.encoding import force_unicode, iri_to_uri
+from django_support import SimplerXMLGenerator, iri_to_uri, force_unicode
 
 def rfc2822_date(date):
     # We do this ourselves to be timezone aware, email.Utils is not tz aware.

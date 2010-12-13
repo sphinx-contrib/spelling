@@ -51,18 +51,18 @@ from sphinx.util.osutil import copyfile
 from sphinx.util.console import bold
 
 
-GITHUB_URL = 'http://github.com/%(user)s/%(project)s/issues/%(issue_id)s'
+GITHUB_URL = 'https://github.com/%(user)s/%(project)s/issues/%(issue_id)s'
 BITBUCKET_URL = ('http://bitbucket.org/%(user)s/%(project)s/issue/'
                  '%(issue_id)s/')
 
 
-def get_github_issue_information(project, user, issue_id, env):
+def get_github_issue_information(project, user, issue_id, app):
     try:
         import json
     except ImportError:
         import simplejson as json
 
-    show_issue = ('http://github.com/api/v2/json/issues/show/'
+    show_issue = ('https://github.com/api/v2/json/issues/show/'
                   '%(user)s/%(project)s/%(issue_id)s' % locals())
 
     with closing(urllib.urlopen(show_issue)) as response:
@@ -70,19 +70,21 @@ def get_github_issue_information(project, user, issue_id, env):
     if 'error' in response:
         return None
 
-    info = response['issue']
-    info['closed'] = info['state'] == 'closed'
-    info['uri'] = GITHUB_URL % locals()
-    return info
+    return {'closed': response['issue']['state'] == 'closed',
+            'uri': GITHUB_URL % locals()}
 
 
-def get_bitbucket_issue_information(project, user, issue_id, env):
+def get_bitbucket_issue_information(project, user, issue_id, app):
     from lxml.html import parse
 
     uri = BITBUCKET_URL % locals()
     with closing(urllib.urlopen(uri)) as response:
         if response.getcode() == 404:
-            # issue didn't exist
+            return None
+        elif response.getcode() != 200:
+            # warn about unexpected response code
+            app.warn('issue %s unavailable with code %s' %
+                     (issue_id, response.getcode()))
             return None
         tree = parse(response)
     info = tree.getroot().cssselect('.issues-issue-infotable')[0]
@@ -91,7 +93,7 @@ def get_bitbucket_issue_information(project, user, issue_id, env):
     return {'uri': uri, 'closed': not (is_open or is_new)}
 
 
-def get_launchpad_issue_information(project, user, issue_id, env):
+def get_launchpad_issue_information(project, user, issue_id, app):
     launchpad = getattr(env, 'issuetracker_launchpad', None)
     if not launchpad:
         from launchpadlib.launchpad import Launchpad
@@ -116,7 +118,7 @@ def get_launchpad_issue_information(project, user, issue_id, env):
     return {'uri': uri, 'closed': bool(task.date_closed)}
 
 
-def get_google_code_issue_information(project, user, issue_id, env):
+def get_google_code_issue_information(project, user, issue_id, app):
     from xml.etree import cElementTree as etree
 
     show_issue = ('http://code.google.com/feeds/issues/p/'
@@ -124,12 +126,18 @@ def get_google_code_issue_information(project, user, issue_id, env):
     with closing(urllib.urlopen(show_issue)) as response:
         if response.getcode() == 404:
             return None
+        elif response.getcode() != 200:
+            # warn about unavailable issues
+            app.warn('issue %s unavailable with code %s' %
+                     (issue_id, response.getcode()))
+            return None
         tree = etree.parse(response)
 
     state = tree.find(
         '{http://schemas.google.com/projecthosting/issues/2009}state')
-    uri = 'http://code.google.com/p/html5lib/issues/detail?id=%s' % issue_id
-    return {'uri': uri, 'closed': state and state.text == 'closed'}
+    uri = ('http://code.google.com/p/%(project)s/issues/'
+           'detail?id=%(issue_id)s' % locals())
+    return {'uri': uri, 'closed': state is not None and state.text == 'closed'}
 
 
 def make_issue_reference_resolver(get_issue_information):
@@ -148,7 +156,7 @@ def make_issue_reference_resolver(get_issue_information):
     1. The issue tracker project as given to :confval:`issuetracker_project`
     2. The issue tracker user name as given to :confval:`issuetracker_user`
     3. The issue id
-    4. The sphinx build environment
+    4. The sphinx application object
 
     It shall return a dictionary, which may contain the following items:
 
@@ -163,7 +171,7 @@ def make_issue_reference_resolver(get_issue_information):
             return
         info = get_issue_information(
             app.config.issuetracker_project or app.config.project,
-            app.config.issuetracker_user, node['reftarget'], env)
+            app.config.issuetracker_user, node['reftarget'], app)
         if info is None:
             return None
         uri = info.get('uri')
@@ -210,6 +218,11 @@ class IssuesReferences(Transform):
             new_nodes = []
             last_issue_ref_end = 0
             for match in issue_pattern.finditer(text):
+                # catch invalid pattern with too many groups
+                if len(match.groups()) != 1:
+                    raise ValueError(
+                        'issuetracker_issue_pattern must have '
+                        'exactly one group: %r' % (match.groups(),))
                 # extract the text between the last issue reference and the
                 # current issue reference and put it into a new text node
                 head = text[last_issue_ref_end:match.start()]

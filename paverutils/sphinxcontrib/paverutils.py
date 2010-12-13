@@ -14,7 +14,7 @@ __author__ = 'Doug Hellmann <doug.hellmann@gmail.com>'
 
 from paver.easy import *
 import sphinx
-
+import textwrap
 
 @task
 def html(options):
@@ -85,7 +85,8 @@ def pdf(options):
       default: pdf
     """
     run_sphinx(options, 'pdf')
-    latex_dir = path(options.builddir) / 'latex'
+    options.order('pdf')
+    latex_dir = path(options.builddir) / options.builder
     sh('cd %s; make' % latex_dir)
     return
 
@@ -199,6 +200,7 @@ def run_script(input_file, script_name,
                ignore_error=False, 
                trailing_newlines=True,
                break_lines_at=0,
+               line_break_mode='break',
                ):
     """Run a script in the context of the input_file's directory, 
     return the text output formatted to be included as an rst
@@ -231,6 +233,16 @@ def run_script(input_file, script_name,
        Integer indicating the length where lines should be broken and
        continued on the next line.  Defaults to 0, meaning no special
        handling should be done.
+
+     line_break_mode='break'
+       Name of mode to break lines.
+
+         break
+           Insert a hard break
+         continue
+           Insert a hard break with a backslash
+         wrap
+           Use textwrap.fill() to wrap
        
     """
     rundir = path(input_file).dirname()
@@ -254,16 +266,36 @@ def run_script(input_file, script_name,
         response = '\n::\n\n'
     else:
         response = ''
-    response += '\t$ %(cmd)s\n\t' % vars()
+    response += '\t$ %(cmd)s\n\n\t' % vars()
     lines = output_text.splitlines()
 
     # Deal with lines that might be too long
     if break_lines_at:
         broken_lines = []
         for l in lines:
-            while l:
-                part, l = l[:break_lines_at], l[break_lines_at:]
-                broken_lines.append(part)
+            # apparently blank line
+            if not l.strip() or len(l) <= break_lines_at:
+                broken_lines.append(l)
+                continue
+            
+            if line_break_mode == 'break':
+                while l:
+                    part, l = l[:break_lines_at], l[break_lines_at:]
+                    broken_lines.append(part)
+                    
+            elif line_break_mode == 'wrap':
+                broken_lines.extend( textwrap.fill(l, width=break_lines_at).splitlines() )
+
+            elif line_break_mode == 'continue':
+                while l:
+                    part, l = l[:break_lines_at], l[break_lines_at:]
+                    if l:
+                        part = part + '\\'
+                    broken_lines.append(part)
+
+            else:
+                raise ValueError('Unrecognized line_break_mode "%s"' % line_break_mode)
+                
         lines = broken_lines
                 
     response += '\n\t'.join(lines)

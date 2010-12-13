@@ -11,7 +11,7 @@ Currently the following issue trackers are supported:
 
 - `GitHub <http//github.com>`_
 - `BitBucket <http://bitbucket.org>`_
-- `Launchpad <http://launchpad.net>`_
+- `Launchpad <https://launchpad.net>`_
 - `Google Code <http://code.google.com>`_
 
 Furthermore this extension provides a simple API to add other issue

@@ -11,9 +11,9 @@ from util import test_root, raises, raises_msg, Struct,\
   ListOutput, TestApp, with_app, gen_with_app, path, with_tempdir,\
   write_file, sprint
 from sphinxcontrib.feed.path import path
-
+from BeautifulSoup import BeautifulSoup
 import feedparser
-
+from datetime import datetime
 from nose.tools import assert_equals, assert_true, assert_false
 
 def setup_module():
@@ -57,31 +57,42 @@ def test_feed():
     f = feedparser.parse(rss_path)
     yield assert_equals, f.bozo, 0 #feedparser well-formedness detection. We want this.
     entries = f.entries
-    yield assert_equals, entries[0].updated_parsed[0:3], (2001, 8, 11)
+    yield assert_equals, entries[0].updated_parsed[0:6], (2001, 8, 11, 13, 0, 0)
     yield assert_equals, entries[0].title, "The latest blog post"
     
-    yield assert_equals, entries[0].link, base_path + '/latest.html'
-    yield assert_equals, entries[0].guid, base_path + '/latest.html'
-    yield assert_equals, entries[1].updated_parsed[0:3], (2001, 8, 1)
+    yield assert_equals, entries[0].link, base_path + '/B_latest.html'
+    yield assert_equals, entries[0].guid, base_path + '/B_latest.html'
+    yield assert_equals, entries[1].updated_parsed[0:6], (2001, 8, 11, 9, 0, 0)
     yield assert_equals, entries[1].title, "An older blog post"
-    yield assert_equals, entries[1].link, base_path + '/older.html'
-    yield assert_equals, entries[1].guid, base_path + '/older.html'
-    yield assert_equals, entries[2].updated_parsed[0:3], (1979, 1, 1)
+    yield assert_equals, entries[1].link, base_path + '/A_older.html'
+    yield assert_equals, entries[1].guid, base_path + '/A_older.html'
+    yield assert_equals, entries[2].updated_parsed[0:6], (1979, 1, 1, 0, 0, 0,)
     yield assert_equals, entries[2].title, "The oldest blog post"
-    yield assert_equals, entries[2].link, base_path + '/most_aged.html'
-    yield assert_equals, entries[2].guid, base_path + '/most_aged.html'
+    yield assert_equals, entries[2].link, base_path + '/C_most_aged.html'
+    yield assert_equals, entries[2].guid, base_path + '/C_most_aged.html'
     #Now we do it all again to make sure that things work when handling stale files
     app2 = TestApp(buildername='html', warning=feed_warnfile)  
     app2.build(force_all=False, filenames=['most_aged'])
     f = feedparser.parse(rss_path)
     yield assert_equals, f.bozo, 0 #feedparser well-formedness detection. We want this.
     entries = f.entries
-    yield assert_equals, entries[0].updated_parsed[0:3], (2001, 8, 11)
+    yield assert_equals, entries[0].updated_parsed[0:6], (2001, 8, 11, 13, 0, 0)
     yield assert_equals, entries[0].title, "The latest blog post"
-    yield assert_equals, entries[1].updated_parsed[0:3], (2001, 8, 1)
+    yield assert_equals, entries[1].updated_parsed[0:6], (2001, 8, 11, 9, 0, 0)
     yield assert_equals, entries[1].title, "An older blog post"
-    yield assert_equals, entries[2].updated_parsed[0:3], (1979, 1, 1)
+    yield assert_equals, entries[2].updated_parsed[0:6], (1979, 1, 1, 0, 0, 0)
     yield assert_equals, entries[2].title, "The oldest blog post"
+    
+    #Tests for relative URIs. note that these tests only work because there is
+    # no xml:base - otherwise feedparser will supposedly fix them up for us - 
+    # http://www.feedparser.org/docs/resolving-relative-links.html
+    links = BeautifulSoup(entries[0].description).findAll('a')
+    # These links will look like:
+    #[<a class="headerlink" href="#the-latest-blog-post" title="Permalink to this headline">¶</a>, <a class="reference internal" href="older.html"><em>a relative link</em></a>, <a class="reference external" href="http://google.com/">an absolute link</a>]
+    yield assert_equals, links.pop()['href'], "http://google.com/"
+    yield assert_equals, links.pop()['href'], base_path + '/A_older.html'
+    yield assert_equals, links.pop()['href'], entries[0].link + '#the-latest-blog-post'
+    
     app.cleanup()
     app2.cleanup()
 
@@ -106,7 +117,7 @@ def test_feed():
 #         app1.build()
 #         f = feedparser.parse(rss_path)
 #         entries = f.entries
-#         yield assert_equals, entries[0].updated_parsed[0:3], (2002, 8, 11)
+#         yield assert_equals, entries[0].updated_parsed[0:6], (2002, 8, 11)
 #         yield assert_equals, entries[0].title, "blog post of irrelevant age"
 #         tmp_path.remove()
 #         yield assert_false, tmp_path.exists()
@@ -114,7 +125,7 @@ def test_feed():
 #         app1.build()
 #         f = feedparser.parse(rss_path)
 #         entries = f.entries
-#         yield assert_equals, entries[0].updated_parsed[0:3], (2001, 8, 11)
+#         yield assert_equals, entries[0].updated_parsed[0:6], (2001, 8, 11)
 #         yield assert_equals, entries[0].title, "The latest blog post"
 #     finally:
 #         pass #if tmp_path.exists(): tmp_path.remove()

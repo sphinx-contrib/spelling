@@ -1,0 +1,6 @@
+=================================================================
+TODO
+=================================================================
+
+  - handle dates with greater granularity than 24 hours
+  - create tests to verify handling of relative *image* links

@@ -1,0 +1,16 @@
+LICENSE
+MANIFEST.in
+README
+setup.cfg
+setup.py
+sphinxcontrib/__init__.py
+sphinxcontrib/omegat/__init__.py
+sphinxcontrib/omegat/builder.py
+sphinxcontrib/omegat/compiler.py
+sphinxcontrib_omegat.egg-info/PKG-INFO
+sphinxcontrib_omegat.egg-info/SOURCES.txt
+sphinxcontrib_omegat.egg-info/dependency_links.txt
+sphinxcontrib_omegat.egg-info/namespace_packages.txt
+sphinxcontrib_omegat.egg-info/not-zip-safe
+sphinxcontrib_omegat.egg-info/requires.txt
+sphinxcontrib_omegat.egg-info/top_level.txt

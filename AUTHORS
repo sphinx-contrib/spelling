@@ -63,3 +63,6 @@ programoutput:
 cheeseshop:
    Richard Jones <r1chardj0n3s@gmail.com>
    Georg Brandl <georg@python.org>
+
+plantuml:
+   Yuya Nishihara <yuya@tcha.org>

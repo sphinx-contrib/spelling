@@ -3,9 +3,6 @@ Reference
 
 .. highlight:: rst
 
-The Erlang Domain
------------------
-
 The Erlang domain (name **erl**) provides the following directives for module
 declarations. Almost all directives are similar to Python's.
 
@@ -17,8 +14,8 @@ declarations. Almost all directives are similar to Python's.
 
    This directive will also cause an entry in the global module index.
 
-   It has ``platform`` option, ``synopsis`` option and ``deprecated`` option as same as
-   :rst:dir:`py:module`.
+   It has ``platform`` option, ``synopsis`` option and ``deprecated`` 
+   option as same as :rst:dir:`py:module`.
 
 
 .. rst:directive:: .. erl:currentmodule:: name
@@ -29,59 +26,32 @@ The following directives are provided for module level contents:
 
 .. rst:directive:: .. erl:function:: name(signature)
 
-   Describes a module-level function. Usage of this directive is almost as 
-   same as Python's one.
+   Describes a module-level function. Usage of this directive is almost as same as Python's one.
 
-   If this directive is out of :rst:dir:`erl:module` directive, 
-   It is belong to "erlang" module automatically in Erlang's rule.
-   
-   .. code-block:: rst
+   Erlang domain can accept functions whose names are same.
+   To identify these, Erlang domain have arity information::
 
-      .. erl:function:: run_test(testname[, options])
+      .. erl:module:: lists
 
-         This function launch test.
+      .. erl:function:: append(List1, List2)
 
-   You can use ``:erl:func:`` roles to reference Erlang functions.
-   But this role can accept **arity** in Erlang's customary way.
-   If you don't add arity, This role search function whose arity id minimum.
+         This has ``lists:append/2`` for internal name.
 
-   .. code-block:: rst
+      .. erl:function:: flatten(DeepList[, Tail]) -> List
 
-      You should call :erl:func:`run_test/1` to run test.
+         This has both ``lists:flatten/1`` and ``lists:flatten/2`` as
+         internal name.
 
-   Above funciton description has two arities,  /1 and /2. Both roles can refer
-   above description.
-   
    .. seealso:: .. py:function:: name
+   
+.. rst:directive:: .. erl:macro:: name
 
+   Describes macro which typically starts with capital character.
 
 .. rst:directive:: .. erl:record:: name
 
-   Record name starts with '#' charactor.
-
-   .. code-block:: rst
-
-      .. erl:record:: #person
-
-         This records include name, address, phone number.
-
-
-.. rst:directive:: .. erl:macro:: name
-
-   Macro name starts with capital charactors.
-
-   .. code-block:: rst
-
-      .. erl:macro:: HostUrl
-
-         Host address(URI format)
-
-
-Info field lists
-~~~~~~~~~~~~~~~~
-
-Erlang domain has field lists as same as Python domain except ``key``, 
-``keyword``.
+   Describes a record.
+   
 
 Cross-referencing Erlang objects
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -91,23 +61,29 @@ a matching identifier is found:
 
 .. rst:role:: erl:mod
 
-   Reference a module. Erlang domain doesn't support nested module name.
+   Reference a module. 
 
 .. rst:role:: erl:func
 
    Reference a Erlang function; a name with module may be used.
-   Usually role text includes trailing arity number like 
-   ``:erl:func:`eggs:counter/1`. 
-   If you don't add arity, this role search the function description whose
-   name is same and arity is minimum.
+
+   It can handle **arity**. If you don't pass arity, erlang domain search
+   the function whose arity is minimum.
+   If you don't pass module name, it uses ``erlang`` module by default.
+   The role text needs
+   not include trailing parentheses to enhance readability; they will be added
+   automatically by Sphinx if the :confval:`add_function_parentheses` config
+   value is true (the default).
+   
+   If you want to refer module function, you should use following style::
+   
+      :erl:func:`modulename:func_name`
+
+.. rst:role:: erl:macro
+
+   Reference a macro whose name starts with capital charactor.
 
 .. rst:role:: erl:record
 
-   Reference a record whose name has ``#`` prefix.
-   
-.. rst:role:: erl:macro
-
-   Reference a macro(defined by ``-define`` directive in Erlang)
-   whose name starts with capital charactor.
-
+   Reference a record. Typically, it starts with ``#``.
 

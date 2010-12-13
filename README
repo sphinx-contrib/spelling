@@ -60,6 +60,9 @@ List of extensions
 - ansi: parse ANSI color sequences inside documents
 - cheeseshop: easily link to PyPI packages
 - programoutput: include output of programs into documentation
+- erlangdomain: an extension for Erlang support (Sphinx 1.0 needed)
+- omegat: support tools to collaborate with OmegaT_ (Sphinx 1.1 needed)
+- plantuml: embed UML diagram by using PlantUML_
 
 .. _aafigure: http://docutils.sourceforge.net/sandbox/aafigure/
 
@@ -76,6 +79,10 @@ List of extensions
 .. _Trac: http://trac.edgewall.org
 
 .. _TracLinks: http://trac.edgewall.org/wiki/TracLinks
+
+.. _OmegaT: http://www.omegat.org/
+
+.. _PlantUML: http://plantuml.sourceforge.net/
 
 For contributors
 ================

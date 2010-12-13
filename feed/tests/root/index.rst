@@ -6,9 +6,9 @@ Contents:
 .. toctree::
     :maxdepth: 2
     
-    latest
-    older
-    most_aged
+    B_latest
+    A_older
+    C_most_aged
 
 Indices and tables
 ==================
