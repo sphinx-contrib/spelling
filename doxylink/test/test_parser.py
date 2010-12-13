@@ -109,9 +109,10 @@ if __name__ == "__main__":
 		import profile
 	
 	all_tests = arglists + varargs + multiple_qualifiers + functions + numbers_for_defaults + flags_in_defaults
+	all_tests += all_tests + all_tests + all_tests + all_tests
 	
 	profile.runctx("for arglist in all_tests: parsing.normalise(arglist[0])", globals(), locals(), filename='parsing_profile')
 	p = pstats.Stats('parsing_profile')
-	p.strip_dirs().sort_stats('cumulative').print_stats(20)
+	p.strip_dirs().sort_stats('time', 'cum').print_stats(40)
 
 

@@ -10,7 +10,7 @@ from docutils import nodes, utils
 from sphinx.util.nodes import split_explicit_title
 from sphinx.util.console import bold, standout
 
-from parsing import normalise, normalise_list, ParseException
+from parsing import normalise, ParseException
 
 def find_url(doc, symbol):
 	"""
@@ -156,7 +156,7 @@ def parse_tag_file(doc):
 			else:
 				mapping[member_symbol] = {'kind' : kind, 'arglist' : {normalised_arglist : anchor_link}}
 		else:
-			print 'Skipping %s. Error reported was: %s' % (member.findtext('arglist'), normalised_tuple[0])
+			print 'Skipping %s %s%s. Error reported from parser was: %s' % (old_tuple[2], old_tuple[0], old_tuple[1], normalised_tuple[0])
 	
 	#from pprint import pprint; pprint(mapping)
 	return mapping
