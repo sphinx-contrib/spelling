@@ -17,13 +17,45 @@ You use Doxylink like:
 
 .. code-block:: rst
 
-	:polyvox:`Array <PolyVox::Array>`.
 	:polyvox:`PolyVox::Volume`
 	You use :qtogre:`QtOgre::Log` to log events for the user.
-	:polyvox:`tidyUpMemory(int) <tidyUpMemory>` will reduce memory usage.
 	:polyvox:`PolyVox::Array::operator[]`
 
-Where ``polyvox`` and ``qtogre`` roles are defined by the :confval:`doxylink` configuration value.
+Where :rst:role:`polyvox` and :rst:role:`qtogre` roles are defined by the :confval:`doxylink` configuration value.
+
+Like any interpreted text role in Sphinx, if you want to display different text to what you searched for, you can include some angle brackets ``<...>``. In this case, the text inside the angle brackets will be used to match up with Doxygen and the part in front will be displayed to the user:
+
+.. code-block:: rst
+
+	:polyvox:`Array <PolyVox::Array>`.
+	:polyvox:`tidyUpMemory <tidyUpMemory(int)>` will reduce memory usage.
+	
+.. note::
+	In C++, it is common that classes and functions will be templated and so will have angle brackets themselves. For example, the C++ class:
+	
+	.. code-block:: c++
+	
+		PolyVox::Array<0,ElementType>
+	
+	would be naively linked to with Doxylink with:
+	
+	.. code-block:: rst
+	
+		:polyvox:`PolyVox::Array<0,ElementType>`
+	
+	but that would result in Sphinx parsing it as you wanting to search for ``0,ElementType`` and display ``PolyVox::Array`` as the text to the user. To avoid this misparsing you must escape the opening ``<`` by prepending it with a ``\``:
+	
+	.. code-block:: rst
+	
+		:polyvox:`PolyVox::Array\<0,ElementType>`
+	
+	If you want to use templated symbols inside the angle brackets like:
+	
+	.. code-block:: rst
+	
+		:polyvox:`Array <PolyVox::Array<0,ElementType>>`
+	
+	then that will work without having to escape anything.
 
 Namespaces, classes etc.
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -86,13 +118,20 @@ Configuration values
 
 .. confval:: add_function_parentheses
 
-   A boolean that decides whether parentheses are appended to function and method role text. Default is ``True``.
+	A boolean that decides whether parentheses are appended to function and method role text. Default is ``True``.
+
+Troubleshooting
+---------------
+
+
 
 :requires: Python 2.5
 
 .. todo::
 
-	Make the extension atuomatically re-run if the tag file is altered on disc
+	Add unit tests for things in doxylink.py
+	
+	Parallelise the calls to normalise() in parse_tag_file() using multiprocessing. Set up a pool of processes and pass in a queue of strings. Non-function calls will be done in the same way as present. For function calls, build up the information into a list of tuples, convert it into an appropriate Queue format and run it. Maybe even a multiprocessing.Pool.map could do the job. 
 
 :copyright: Copyright 2010 by Matt Williams
 :license: BSD, see LICENSE for details.
