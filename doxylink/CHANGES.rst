@@ -1,4 +1,4 @@
-1.0 ()
+1.0 (Dec 14, 2010)
 ====================
 
 - New Dependency: PyParsing (http://pyparsing.wikispaces.com/)
