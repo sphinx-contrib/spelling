@@ -60,7 +60,11 @@ Like any interpreted text role in Sphinx, if you want to display different text 
 Namespaces, classes etc.
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-For non-functions (i.e. namespaces, classes, enums, variables) you simply pass in the name of the symbol. If you pass in a partial symbol, e.g. ```Volume``` when you have a symbol in C++ called ``PolyVox::Utils::Volume`` then it would be able to match it as long as there is no ambiguity (e.g. with another symbol called ``PolyVox::Old::Volume``).
+For non-functions (i.e. namespaces, classes, enums, variables) you simply pass in the name of the symbol. If you pass in a partial symbol, e.g. ```Volume``` when you have a symbol in C++ called ``PolyVox::Utils::Volume`` then it would be able to match it as long as there is no ambiguity (e.g. with another symbol called ``PolyVox::Old::Volume``). If there is ambiguity then simply enter the fully qualified name like:
+
+.. code-block:: rst
+
+	:polyvox:`PolyVox::Utils::Volume` or :polyvox:`PolyVox::Utils::Volume <Volume>`
 
 Functions
 ^^^^^^^^^
@@ -120,10 +124,10 @@ Configuration values
 
 	A boolean that decides whether parentheses are appended to function and method role text. Default is ``True``.
 
-Troubleshooting
----------------
+Bug reports
+-----------
 
-
+If you find any errors, bugs, crashes etc. then please let me know. You can contact me at ``matt@milliams.com``. If there is a crash please include the backtrace and log returned by Sphinx. If you have a bug, particularly with Doxylink not being able to parse a function, please send the tag file so tat I can reproduce and fix it.
 
 :requires: Python 2.5
 
