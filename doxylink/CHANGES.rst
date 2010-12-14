@@ -1,3 +1,12 @@
+1.0 ()
+====================
+
+- New Dependency: PyParsing (http://pyparsing.wikispaces.com/)
+- Completely new tag file parsing system. Allows for function overloading.
+  The parsed results are cached to speed things up.
+- Full usage documentation. Build with `sphinx-build -W -b html doc html`.
+- Fix problem with mixed slashes when building on Windows.
+
 0.4 (Aug 15, 2010)
 ====================
 

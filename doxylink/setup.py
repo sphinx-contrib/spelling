@@ -9,7 +9,7 @@ requires = ['Sphinx>=0.6', 'pyparsing']
 
 setup(
     name='sphinxcontrib-doxylink',
-    version='0.4',
+    version='1.0',
 	url='http://packages.python.org/sphinxcontrib-doxylink',
     download_url='http://pypi.python.org/pypi/sphinxcontrib-doxylink',
     license='BSD',
@@ -20,7 +20,7 @@ setup(
     keywords=['sphinx','doxygen','documentation','c++'],
     zip_safe=False,
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Environment :: Console',
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
