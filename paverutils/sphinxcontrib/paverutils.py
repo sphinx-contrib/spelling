@@ -194,6 +194,44 @@ def _get_paths(options):
     return Bunch(locals())
 
 
+def adjust_line_widths(lines, break_lines_at, line_break_mode):
+    broken_lines = []
+    for l in lines:
+        # apparently blank line
+        if not l.strip() or len(l) <= break_lines_at:
+            broken_lines.append(l)
+            continue
+
+        if line_break_mode == 'break':
+            while l:
+                part, l = l[:break_lines_at], l[break_lines_at:]
+                broken_lines.append(part)
+
+        elif line_break_mode == 'wrap':
+            broken_lines.extend( textwrap.fill(l, width=break_lines_at).splitlines() )
+
+        elif line_break_mode == 'fill':
+            prefix = l[:len(l)-len(l.lstrip())]
+            broken_lines.extend( textwrap.fill(l, width=break_lines_at,
+                                               subsequent_indent=prefix).splitlines() )
+
+        elif line_break_mode == 'continue':
+            while l:
+                part, l = l[:break_lines_at], l[break_lines_at:]
+                if l:
+                    part = part + '\\'
+                broken_lines.append(part)
+
+        elif line_break_mode == 'truncate':
+            broken_lines.append( l[:break_lines_at] )
+
+        else:
+            raise ValueError('Unrecognized line_break_mode "%s"' % line_break_mode)
+
+    return broken_lines
+    
+
+
 def run_script(input_file, script_name, 
                interpreter='python',
                include_prefix=True, 
@@ -266,37 +304,20 @@ def run_script(input_file, script_name,
         response = '\n::\n\n'
     else:
         response = ''
-    response += '\t$ %(cmd)s\n\n\t' % vars()
-    lines = output_text.splitlines()
+#     response += '\t$ %(cmd)s\n\n\t' % vars()
+
+    command_line = adjust_line_widths(['\t$ %s' % cmd],
+                                      break_lines_at - 1 if break_lines_at else 73,
+                                      'continue')
+        
+    lines = []
+    lines.extend(command_line)
+    lines.append('') # a blank line
+    lines.extend(output_text.splitlines()) # the output
 
     # Deal with lines that might be too long
     if break_lines_at:
-        broken_lines = []
-        for l in lines:
-            # apparently blank line
-            if not l.strip() or len(l) <= break_lines_at:
-                broken_lines.append(l)
-                continue
-            
-            if line_break_mode == 'break':
-                while l:
-                    part, l = l[:break_lines_at], l[break_lines_at:]
-                    broken_lines.append(part)
-                    
-            elif line_break_mode == 'wrap':
-                broken_lines.extend( textwrap.fill(l, width=break_lines_at).splitlines() )
-
-            elif line_break_mode == 'continue':
-                while l:
-                    part, l = l[:break_lines_at], l[break_lines_at:]
-                    if l:
-                        part = part + '\\'
-                    broken_lines.append(part)
-
-            else:
-                raise ValueError('Unrecognized line_break_mode "%s"' % line_break_mode)
-                
-        lines = broken_lines
+        lines = adjust_line_widths(lines, break_lines_at, line_break_mode)
                 
     response += '\n\t'.join(lines)
     if trailing_newlines:
