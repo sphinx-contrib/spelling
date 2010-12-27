@@ -190,6 +190,10 @@ script_name
   If not using an interpreter, this can be a complete command line.  If using an
   alternate interpreter, it can be some other type of file.
 
+interpreter='python'
+  The external interpreter to use for the program.  Specify 'python',
+  'python3', 'jython', etc.
+
 include_prefix=True
   Boolean controlling whether the ``::`` prefix is included. When chaining multiple
   commands together, the first instance would typically use the default and subsequent
@@ -209,6 +213,24 @@ break_lines_at=0
   Integer indicating the length where lines should be broken and
   continued on the next line.  Defaults to 0, meaning no special
   handling should be done.
+
+line_break_mode='break'
+  Mode to control how the line breaks are inserted.  Options are:
+
+    'break'
+      Insert the newline.
+    'wrap'
+      Use the textwrap module to wrap each line individually to the
+      specified width.
+    'fill'
+      Use the textwrap module to wrap each line individually,
+      inserting an appropriate amount of whitespace to keep the left
+      edge of the lines aligned.
+    'continue'
+      Insert a backslash (``\``) and then a newline to break the line.
+    'truncate'
+      Break the line at the indicated location and discard the
+      remainder.
 
 
 .. note::
@@ -238,6 +260,14 @@ virtualenvwrapper_
 
 History
 =======
+
+1.4
+---
+
+- Add different modes for breaking lines in the output of ``run_script()``.  
+
+- Incorporate a fix from Maciek Starzyk for issue #6 so docroot can be
+  set to something other than ``.``.
 
 1.3
 ---

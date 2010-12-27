@@ -86,7 +86,8 @@ def pdf(options):
     """
     run_sphinx(options, 'pdf')
     options.order('pdf')
-    latex_dir = path(options.builddir) / options.builder
+    paths = _get_paths(options)
+    latex_dir = paths.builddir / options.builder
     sh('cd %s; make' % latex_dir)
     return
 
@@ -135,7 +136,7 @@ def run_sphinx(options, *option_sets):
     # Set the search order of the options
     options.order(*option_sets, **kwds)
     
-    paths = _get_paths(options)
+    paths = _get_and_create_paths(options)
     template_args = [ '-A%s=%s' % (name, value)
                       for (name, value) in getattr(options, 'template_args', {}).items() 
                       ]
@@ -151,9 +152,19 @@ def run_sphinx(options, *option_sets):
     options.order()
     return
 
+def _get_and_create_paths(options):
+    """Retrieves and creates paths needed to run sphinx.
+
+    Returns a Bundle with the required values filled in.
+    """
+    paths = _get_paths(options)
+    paths.builddir.mkdir()
+    paths.outdir.mkdir()
+    paths.doctrees.mkdir()
+    return paths
 
 def _get_paths(options):
-    """Retrieve and create the paths needed to run sphinx.
+    """Retrieves paths needed to run sphinx.
     
     Returns a Bundle with the required values filled in.
     """
@@ -165,7 +176,6 @@ def _get_paths(options):
                            % docroot)
     
     builddir = docroot / opts.get("builddir", ".build")
-    builddir.mkdir()
     
     srcdir = docroot / opts.get("sourcedir", "")
     if not srcdir.exists():
@@ -181,7 +191,6 @@ def _get_paths(options):
         outdir = path(outdir)
     else:
         outdir = builddir / opts.get('builder', 'html')
-    outdir.mkdir()
     
     # Where are doctrees cached?
     doctrees = opts.get('doctrees', '')
@@ -189,7 +198,6 @@ def _get_paths(options):
         doctrees = builddir / "doctrees"
     else:
         doctrees = path(doctrees)
-    doctrees.mkdir()
 
     return Bunch(locals())
 
