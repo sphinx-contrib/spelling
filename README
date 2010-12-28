@@ -63,6 +63,7 @@ List of extensions
 - erlangdomain: an extension for Erlang support (Sphinx 1.0 needed)
 - omegat: support tools to collaborate with OmegaT_ (Sphinx 1.1 needed)
 - plantuml: embed UML diagram by using PlantUML_
+- spelling: Spelling checker using PyEnchant_
 
 .. _aafigure: http://docutils.sourceforge.net/sandbox/aafigure/
 
@@ -83,6 +84,8 @@ List of extensions
 .. _OmegaT: http://www.omegat.org/
 
 .. _PlantUML: http://plantuml.sourceforge.net/
+
+.. _PyEnchant: http://www.rfk.id.au/software/pyenchant/
 
 For contributors
 ================

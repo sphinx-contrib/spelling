@@ -1,0 +1,24 @@
+=========================
+ sphinxcontrib-spelling
+=========================
+
+This package contains sphinxcontrb.spelling, a spelling checker for
+Sphinx-based documentation.  It uses PyEnchant_ to produce a report
+showing misspelled words.
+
+Installation
+============
+
+1.
+
+Configuration
+=============
+
+1.
+
+Configuration Options
+---------------------
+
+
+
+.. _PyEnchant: http://www.rfk.id.au/software/pyenchant/
