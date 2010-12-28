@@ -249,13 +249,10 @@ class SpellingBuilder(Builder):
         return
     
     def finish(self):
-        # TODO - Use color output?
-        print
-        print
+        self.info()
         for text in self.output:
-            print text
-            print
-        self.info('done')
+            self.info(text)
+        return
 
 def setup(app):
     print 'Initializing Spelling Checker'
