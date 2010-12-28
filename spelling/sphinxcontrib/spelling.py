@@ -23,9 +23,8 @@ import imp
 import enchant
 from enchant.tokenize import get_tokenizer
 
-# FIXME - Directive (or comment syntax?) to allow words to be ignored in a document
-# FIXME - Words with multiple uppercase letters treated as classes and ignored
-# FIXME - Show counts for misspelled words but not every occurrence
+# TODO - Directive (or comment syntax?) to allow words to be ignored in a document
+# TODO - Words with multiple uppercase letters treated as classes and ignored
 
 class SpellingChecker(object):
     """Checks the spelling of blocks of text.
@@ -34,10 +33,9 @@ class SpellingChecker(object):
     the checking and filtering behavior.
     """
     
-    def __init__(self, lang, suggest):
-        # FIXME - personal word list file
-        self.dictionary = enchant.Dict(lang)
-        # FIXME - filters
+    def __init__(self, lang, suggest, word_list_filename):
+        # TODO - filters
+        self.dictionary = enchant.DictWithPWL(lang, word_list_filename)
         self.tokenizer = get_tokenizer(lang)
         self.suggest = suggest
         
@@ -51,7 +49,7 @@ class SpellingChecker(object):
             if correct:
                 continue
 
-            # FIXME - filter to ignore acronyms
+            # TODO - filter to ignore acronyms
 #             if word.upper() == word:
 #                 # assume acronyms are right
 #                 continue
@@ -59,17 +57,17 @@ class SpellingChecker(object):
 #                 # plural acronyms, too
 #                 continue
 
-            # FIXME - filter to ignore python builtins
+            # TODO - filter to ignore python builtins
 #             if word in __builtins__:
 #                 # python built-in
 #                 continue
 
-            # FIXME - filter to ignore "code-like" patterns, maybe via an option defining regex?
+            # TODO - filter to ignore "code-like" patterns, maybe via an option defining regex?
 #             if '_' in word:
 #                 # probably something from code
 #                 continue
 
-            # FIXME - option to ignore importable modules
+            # TODO - option to ignore importable modules
 #             try:
 #                 imp.find_module(word)
 #             except ImportError:
@@ -82,7 +80,7 @@ class SpellingChecker(object):
 #                     pass
 #                 continue
 
-            # FIXME - option to include suggestions
+            # TODO - option to include suggestions
             yield word, self.dictionary.suggest(word) if self.suggest else []
 
         return
@@ -154,11 +152,9 @@ TEXT_NODES = set([ 'block_quote', 'paragraph',
 class SpellingVisitor(GenericNodeVisitor):
     """A Visitor class; see the docutils for more details.
     """
-    def __init__(self, *args, **kw):
+    def __init__(self, checker, *args, **kw):
         GenericNodeVisitor.__init__(self, *args, **kw)
-        # FIXME - Set the language from a configuration option
-        # FIXME - Combine dictionary with personal word list
-        self.spelling_checker = SpellingChecker('en_US', False)
+        self.spelling_checker = checker
         self.sections = [ Section(self.spelling_checker) ]
 
     def visit_title(self, node):
@@ -205,8 +201,11 @@ class SpellingVisitor(GenericNodeVisitor):
 
 class SpellingWriter(Writer):
     """Boilerplate attaching our Visitor to a docutils document."""
+    def __init__(self, checker, *args, **kwds):
+        self.spelling_checker = checker
+        Writer.__init__(self, *args, **kwds)
     def translate(self):
-        visitor = SpellingVisitor(self.document)
+        visitor = SpellingVisitor(self.spelling_checker, self.document)
         self.document.walkabout(visitor)
         self.output = '\n' + visitor.astext() + '\n'
 
@@ -226,9 +225,14 @@ class SpellingBuilder(Builder):
 
     def write(self, *ignored):
         self.output = []
+
+        checker = SpellingChecker(lang=self.config.spelling_lang, #'en_US',
+                                  suggest=self.config.spelling_show_suggestions,
+                                  word_list_filename=self.config.spelling_word_list_filename,
+                                  )
         
         master = self.config.master_doc
-        docwriter = SpellingWriter()
+        docwriter = SpellingWriter(checker=checker)
         docsettings = OptionParser(
             defaults=self.env.settings,
             components=(docwriter,)).get_default_values()
@@ -245,7 +249,7 @@ class SpellingBuilder(Builder):
         return
     
     def finish(self):
-        # FIXME - Use color output?
+        # TODO - Use color output?
         print
         print
         for text in self.output:
@@ -256,4 +260,7 @@ class SpellingBuilder(Builder):
 def setup(app):
     print 'Initializing Spelling Checker'
     app.add_builder(SpellingBuilder)
+    app.add_config_value('spelling_show_suggestions', False, 'env')
+    app.add_config_value('spelling_lang', 'en_US', 'env')
+    app.add_config_value('spelling_word_list_filename', 'spelling_wordlist.txt', 'env')
     return
