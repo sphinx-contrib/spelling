@@ -226,7 +226,7 @@ class SpellingBuilder(Builder):
     def write(self, *ignored):
         self.output = []
 
-        checker = SpellingChecker(lang=self.config.spelling_lang, #'en_US',
+        checker = SpellingChecker(lang=self.config.spelling_lang,
                                   suggest=self.config.spelling_show_suggestions,
                                   word_list_filename=self.config.spelling_word_list_filename,
                                   )
@@ -255,7 +255,7 @@ class SpellingBuilder(Builder):
         return
 
 def setup(app):
-    print 'Initializing Spelling Checker'
+    app.info('Initializing Spelling Checker')
     app.add_builder(SpellingBuilder)
     app.add_config_value('spelling_show_suggestions', False, 'env')
     app.add_config_value('spelling_lang', 'en_US', 'env')

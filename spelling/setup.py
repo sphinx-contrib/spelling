@@ -2,9 +2,12 @@
 
 from setuptools import setup, find_packages
 
-with open('README', 'r') as f:
+f = open('README', 'r')
+try:
     long_desc = f.read()
-
+finally:
+    f.close()
+    
 requires = ['Sphinx>=0.6',
             #'PyEnchant>=1.6.5',
             ]
