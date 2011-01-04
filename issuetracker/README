@@ -13,6 +13,7 @@ Currently the following issue trackers are supported:
 - `BitBucket <http://bitbucket.org>`_
 - `Launchpad <https://launchpad.net>`_
 - `Google Code <http://code.google.com>`_
+- `Debian BTS <http://bugs.debian.org>`_
 
 Furthermore this extension provides a simple API to add other issue
 trackers.
