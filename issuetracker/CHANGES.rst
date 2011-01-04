@@ -2,6 +2,7 @@
 ====================
 
 - Added support for the debian bugtracker (thanks to Fladischer Michael)
+- Fixed NameError in launchpad issue tracker
 
 
 0.5.4 (Nov 15, 2010)
