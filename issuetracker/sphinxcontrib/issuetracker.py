@@ -51,7 +51,7 @@ from sphinx.util.console import bold
 
 
 GITHUB_URL = 'https://github.com/%(user)s/%(project)s/issues/%(issue_id)s'
-BITBUCKET_URL = ('http://bitbucket.org/%(user)s/%(project)s/issue/'
+BITBUCKET_URL = ('https://bitbucket.org/%(user)s/%(project)s/issue/'
                  '%(issue_id)s/')
 
 

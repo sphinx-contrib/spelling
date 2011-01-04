@@ -3,6 +3,7 @@
 
 - Added support for the debian bugtracker (thanks to Fladischer Michael)
 - Fixed NameError in launchpad issue tracker
+- Bitbucket also uses HTTPS urls now
 
 
 0.5.4 (Nov 15, 2010)
