@@ -1,5 +1,5 @@
-0.6 (in development)
-====================
+0.6 (Jan 04, 2011)
+==================
 
 - Added support for the debian bugtracker (thanks to Fladischer Michael)
 - Fixed NameError in launchpad issue tracker
