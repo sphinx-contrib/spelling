@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2010, Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (c) 2010, 2011, Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -107,6 +107,7 @@ def get_debian_issue_information(project, user, issue_id, app):
 
     uri = 'http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=%s' % issue_id
     return {'uri': uri, 'closed': bug.done}
+
 
 def get_launchpad_issue_information(project, user, issue_id, app):
     launchpad = getattr(env, 'issuetracker_launchpad', None)

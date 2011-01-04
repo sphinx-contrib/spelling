@@ -119,12 +119,14 @@ def test_get_google_code_issue_information_wontfix(env):
         'closed': True,
         'uri': 'http://code.google.com/p/pytox/issues/detail?id=6'}
 
+
 def test_get_debian_issue_information_fixed(env):
     info = issuetracker.get_debian_issue_information(
         'ldb-tools', None, '584227', env)
     assert info == {
         'closed': True,
         'uri': 'http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=584227'}
+
 
 def test_get_debian_issue_information_open(env):
     info = issuetracker.get_debian_issue_information(
@@ -133,10 +135,12 @@ def test_get_debian_issue_information_open(env):
         'closed': False,
         'uri': 'http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=600890'}
 
+
 def test_get_debian_issue_information_invalid(env):
     info = issuetracker.get_debian_issue_information(
         'release.debian.org', None, '1', env)
     assert info == None
+
 
 def test_make_isssue_reference_resolver_invalid_reftype(
     app, env, resolver, node):
