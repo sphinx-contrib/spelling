@@ -16,7 +16,7 @@ def pytest_funcarg__issue_info(request):
 
 
 def pytest_funcarg__get_issue_information(request):
-    get_issue_information = Mock()
+    get_issue_information = Mock(name='get_issue_information')
     info = request.getfuncargvalue('issue_info')
     get_issue_information.return_value = info
     return mocksignature(
@@ -29,7 +29,7 @@ def pytest_funcarg__resolver(request):
 
 
 def pytest_funcarg__config(request):
-    config = Mock()
+    config = Mock(name='Config')
     config.project = 'issuetracker'
     config.issuetracker = 'spamtracker'
     config.issuetracker_user = 'foobar'
@@ -37,14 +37,15 @@ def pytest_funcarg__config(request):
     config.issuetracker_issue_pattern = re.compile(r'#(\d+)')
     return config
 
+
 def pytest_funcarg__app(request):
-    app = Mock()
+    app = Mock(name='Sphinx')
     app.config = request.getfuncargvalue('config')
     return app
 
 
 def pytest_funcarg__env(request):
-    env = Mock()
+    env = Mock(name='BuildEnvironment')
     env.config = request.getfuncargvalue('config')
     return env
 
