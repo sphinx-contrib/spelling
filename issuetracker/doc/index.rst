@@ -150,5 +150,5 @@ welcome!
 .. _`debianbts`: https://github.com/venthur/python-debianbts
 .. _`suds`: https://fedorahosted.org/suds/
 .. _`sphinx-contrib`: https://bitbucket.org/birkenfeld/sphinx-contrib
-.. _`issue tracker`: https://bitbucket.org/birkenfeld/sphinx-contrib/issues
+.. _`issue tracker`: https://bitbucket.org/birkenfeld/sphinx-contrib/issues/
 .. _LICENSE: https://bitbucket.org/birkenfeld/sphinx-contrib/src/tip/LICENSE
