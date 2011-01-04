@@ -47,6 +47,16 @@ Add ``sphinxcontrib.issuetracker`` to the configuration value
      issue tracker, launchpadlib_ must be installed.
    - ``google code``: The issue tracker of http://code.google.com.  To use
      this issue tracker, Python 2.5 or newer is required.
+   - ``debian``: The Debian issue tracker at http://bugs.debian.org.  To use
+     this issue tracker, you need the debianpts_ module from (available as
+     ``python-debianpts`` in Debian package repositories).
+
+     .. warning::
+
+        The underlying ``debianpts`` module has serious quality issues
+        [#debianpts-problems]_.  Use at own risk, the code of this issue
+        tracker is unlikely to receive bug fixes and consequently might break
+        any time.
 
 .. confval:: issuetracker_project
 
@@ -113,6 +123,18 @@ functionality (e.g. integration of some other issue tracker).  Patches are
 welcome!
 
 
+.. rubric:: Footnotes
+
+.. [#debianpts-problems] ``debianpts`` does not provide a standard
+   distutils/setuptools installation script.  It is consequently not contained
+   in the package index, and hard to install on anything else then Debian and
+   Debian-based distributions.  And above all, it uses the outdated and
+   unmaintained SOAPpy library internally.  Patches, which replace
+   ``debianpts`` with some decent SOAP code (probably based on suds_) are
+   welcome.  Patches, which replace SOAP completely with some decent RPC
+   interface are even more welcome.
+
+
 .. toctree::
    :maxdepth: 2
    :hidden:
@@ -125,6 +147,8 @@ welcome!
 .. _`lxml`: http://codespeak.net/lxml
 .. _`simplejson`: http://pypi.python.org/pypi/simplejson/
 .. _`launchpadlib`: http://pypi.python.org/pypi/launchpadlib/
+.. _`debianpts`: https://github.com/venthur/python-debianbts
+.. _`suds`: https://fedorahosted.org/suds/
 .. _`sphinx-contrib`: http://bitbucket.org/birkenfeld/sphinx-contrib
 .. _`issue tracker`: http://bitbucket.org/birkenfeld/sphinx-contrib/issues
 .. _LICENSE: http://bitbucket.org/birkenfeld/sphinx-contrib/src/tip/LICENSE
