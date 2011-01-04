@@ -4,7 +4,7 @@
 import re
 
 import py.test
-from mock import Mock
+from mock import Mock, mocksignature
 from docutils import nodes
 from sphinx.addnodes import pending_xref
 
@@ -19,7 +19,8 @@ def pytest_funcarg__get_issue_information(request):
     get_issue_information = Mock()
     info = request.getfuncargvalue('issue_info')
     get_issue_information.return_value = info
-    return get_issue_information
+    return mocksignature(
+        issuetracker.get_github_issue_information, get_issue_information)
 
 
 def pytest_funcarg__resolver(request):
@@ -195,11 +196,11 @@ def test_make_issue_reference_resolver_closed_issue(
 def test_get_issue_information_called(
     app, env, resolver, node, get_issue_information):
     resolver(app, env, node, node[0])
-    get_issue_information.assert_called_with(
+    get_issue_information.mock.assert_called_with(
         'issuetracker', 'foobar', '10', app)
     app.config.issuetracker_project = 'spam with eggs'
     resolver(app, env, node, node[0])
-    get_issue_information.assert_called_with(
+    get_issue_information.mock.assert_called_with(
         'spam with eggs', 'foobar', '10', app)
 
 
