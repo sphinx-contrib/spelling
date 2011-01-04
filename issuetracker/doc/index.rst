@@ -22,7 +22,7 @@ This extension can be installed from the Python Package Index::
 Alternatively, you can clone the sphinx-contrib_ repository from BitBucket,
 and install the extension directly from the repository::
 
-   hg clone http://bitbucket.org/birkenfeld/sphinx-contrib
+   hg clone https://bitbucket.org/birkenfeld/sphinx-contrib
    cd sphinx-contrib/issuetracker
    python setup.py install
 
@@ -38,10 +38,10 @@ Add ``sphinxcontrib.issuetracker`` to the configuration value
    The issuetracker to use.  As of now, the following trackers are
    supported:
 
-   - ``github``: The issue tracker of http://github.com.  To use this issue
-     tracker, either Python 2.6 or later must be used, or simplejson_ must
-     be installed.
-   - ``bitbucket``: The issue tracker of http://bitbucket.org.  To use this
+   - ``github``: The issue tracker of https://github.com.  To use this issue
+     tracker, either Python 2.6 or later must be used, or simplejson_ must be
+     installed.
+   - ``bitbucket``: The issue tracker of https://bitbucket.org.  To use this
      issue tracker, `lxml`_ 2.0 or newer must be installed.
    - ``launchpad``: The issue tracker of https://launchpad.net.  To use this
      issue tracker, launchpadlib_ must be installed.
@@ -143,12 +143,12 @@ welcome!
 
 
 .. _`Sphinx`: http://sphinx.pocoo.org/
-.. _`Sphinx issue tracker`: http://bitbucket.org/birkenfeld/sphinx/issues/
+.. _`Sphinx issue tracker`: https://bitbucket.org/birkenfeld/sphinx/issues/
 .. _`lxml`: http://codespeak.net/lxml
 .. _`simplejson`: http://pypi.python.org/pypi/simplejson/
 .. _`launchpadlib`: http://pypi.python.org/pypi/launchpadlib/
 .. _`debianbts`: https://github.com/venthur/python-debianbts
 .. _`suds`: https://fedorahosted.org/suds/
-.. _`sphinx-contrib`: http://bitbucket.org/birkenfeld/sphinx-contrib
-.. _`issue tracker`: http://bitbucket.org/birkenfeld/sphinx-contrib/issues
-.. _LICENSE: http://bitbucket.org/birkenfeld/sphinx-contrib/src/tip/LICENSE
+.. _`sphinx-contrib`: https://bitbucket.org/birkenfeld/sphinx-contrib
+.. _`issue tracker`: https://bitbucket.org/birkenfeld/sphinx-contrib/issues
+.. _LICENSE: https://bitbucket.org/birkenfeld/sphinx-contrib/src/tip/LICENSE
