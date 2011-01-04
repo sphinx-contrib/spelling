@@ -9,9 +9,9 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 project = u'sphinxcontrib-issuetracker'
-copyright = u'2010, Sebastian Wiesner'
-version = '0.5'
-release = '0.5.2'
+copyright = u'2010, 2011, Sebastian Wiesner'
+version = '0.6'
+release = '0.6'
 
 exclude_patterns = ['_build/*']
 
