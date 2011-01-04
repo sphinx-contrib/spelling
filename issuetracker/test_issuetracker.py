@@ -68,77 +68,77 @@ def pytest_funcarg__doc(request):
     return doc
 
 
-def test_get_github_issue_information(env):
+def test_get_github_issue_information(app):
     info = issuetracker.get_github_issue_information(
-        'pyudev', 'lunaryorn', '2', env)
+        'pyudev', 'lunaryorn', '2', app)
     assert info == {'closed': True,
                     'uri': 'https://github.com/lunaryorn/pyudev/issues/2'}
 
 
-def test_get_bitbucket_issue_information_resolved(env):
+def test_get_bitbucket_issue_information_resolved(app):
     info = issuetracker.get_bitbucket_issue_information(
-        'synaptiks', 'lunar', '22', env)
+        'synaptiks', 'lunar', '22', app)
     assert info == {'closed': True,
                     'uri': 'http://bitbucket.org/lunar/synaptiks/issue/22/'}
 
 
-def test_get_bitbucket_issue_information_invalid(env):
+def test_get_bitbucket_issue_information_invalid(app):
     info = issuetracker.get_bitbucket_issue_information(
-        'synaptiks', 'lunar', '36', env)
+        'synaptiks', 'lunar', '36', app)
     assert info == {'closed': True,
                     'uri': 'http://bitbucket.org/lunar/synaptiks/issue/36/'}
 
 
-def test_get_bitbucket_issue_information_duplicate(env):
+def test_get_bitbucket_issue_information_duplicate(app):
     info = issuetracker.get_bitbucket_issue_information(
-        'synaptiks', 'lunar', '42', env)
+        'synaptiks', 'lunar', '42', app)
     assert info == {'closed': True,
                     'uri': 'http://bitbucket.org/lunar/synaptiks/issue/42/'}
 
 
-def test_get_google_code_issue_information_fixed(env):
+def test_get_google_code_issue_information_fixed(app):
     info = issuetracker.get_google_code_issue_information(
-        'pytox', None, '2', env)
+        'pytox', None, '2', app)
     assert info == {
         'closed': True,
         'uri': 'http://code.google.com/p/pytox/issues/detail?id=2'}
 
 
-def test_get_google_code_issue_information_invalid(env):
+def test_get_google_code_issue_information_invalid(app):
     info = issuetracker.get_google_code_issue_information(
-        'pytox', None, '5', env)
+        'pytox', None, '5', app)
     assert info == {
         'closed': True,
         'uri': 'http://code.google.com/p/pytox/issues/detail?id=5'}
 
 
-def test_get_google_code_issue_information_wontfix(env):
+def test_get_google_code_issue_information_wontfix(app):
     info = issuetracker.get_google_code_issue_information(
-        'pytox', None, '6', env)
+        'pytox', None, '6', app)
     assert info == {
         'closed': True,
         'uri': 'http://code.google.com/p/pytox/issues/detail?id=6'}
 
 
-def test_get_debian_issue_information_fixed(env):
+def test_get_debian_issue_information_fixed(app):
     info = issuetracker.get_debian_issue_information(
-        'ldb-tools', None, '584227', env)
+        'ldb-tools', None, '584227', app)
     assert info == {
         'closed': True,
         'uri': 'http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=584227'}
 
 
-def test_get_debian_issue_information_open(env):
+def test_get_debian_issue_information_open(app):
     info = issuetracker.get_debian_issue_information(
-        'xul-ext-sync', None, '600890', env)
+        'xul-ext-sync', None, '600890', app)
     assert info == {
         'closed': False,
         'uri': 'http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=600890'}
 
 
-def test_get_debian_issue_information_invalid(env):
+def test_get_debian_issue_information_invalid(app):
     info = issuetracker.get_debian_issue_information(
-        'release.debian.org', None, '1', env)
+        'release.debian.org', None, '1', app)
     assert info == None
 
 
