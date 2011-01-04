@@ -142,6 +142,15 @@ def test_get_debian_issue_information_invalid(app):
     assert info == None
 
 
+def test_get_launchpad_issue_information(app):
+    app.env.issuetracker_launchpad = None
+    info = issuetracker.get_launchpad_issue_information(
+        'inkscape', None, '647789', app)
+    assert info == {
+        'closed': True,
+        'uri': 'https://bugs.launchpad.net/bugs/647789'}
+
+
 def test_make_isssue_reference_resolver_invalid_reftype(
     app, env, resolver, node):
     node['reftype'] = 'spam'
