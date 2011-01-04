@@ -8,7 +8,7 @@
 0.5.4 (Nov 15, 2010)
 ====================
 
-- Github uses https URLS now
+- Github uses HTTPS urls now
 
 
 0.5.3 (Nov 14, 2010)
