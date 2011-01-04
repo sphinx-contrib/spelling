@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import sys, os
-
 needs_sphinx = '1.0'
 
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.intersphinx',
