@@ -41,7 +41,6 @@
 import re
 import urllib
 from contextlib import closing
-from functools import partial
 from os import path
 
 from docutils import nodes
