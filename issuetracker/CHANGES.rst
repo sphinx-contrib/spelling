@@ -1,3 +1,9 @@
+0.6 (in development)
+====================
+
+- Added support for the debian bugtracker (thanks to Fladischer Michael)
+
+
 0.5.4 (Nov 15, 2010)
 ====================
 

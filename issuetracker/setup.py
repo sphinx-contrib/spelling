@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import os
 from setuptools import setup, find_packages
 
 
@@ -12,7 +11,7 @@ requires = ['Sphinx>=1.0b2']
 
 setup(
     name='sphinxcontrib-issuetracker',
-    version='0.5.4',
+    version='0.6',
     url='http://packages.python.org/sphinxcontrib-issuetracker',
     download_url='http://pypi.python.org/pypi/sphinxcontrib-issuetracker',
     license='BSD',
