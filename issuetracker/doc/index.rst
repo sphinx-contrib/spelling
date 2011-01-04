@@ -142,13 +142,13 @@ welcome!
    changes.rst
 
 
-.. _`Sphinx`: http://sphinx.pocoo.org/
-.. _`Sphinx issue tracker`: https://bitbucket.org/birkenfeld/sphinx/issues/
-.. _`lxml`: http://codespeak.net/lxml
-.. _`simplejson`: http://pypi.python.org/pypi/simplejson/
-.. _`launchpadlib`: http://pypi.python.org/pypi/launchpadlib/
-.. _`debianbts`: https://github.com/venthur/python-debianbts
-.. _`suds`: https://fedorahosted.org/suds/
-.. _`sphinx-contrib`: https://bitbucket.org/birkenfeld/sphinx-contrib
-.. _`issue tracker`: https://bitbucket.org/birkenfeld/sphinx-contrib/issues/
+.. _Sphinx: http://sphinx.pocoo.org/
+.. _Sphinx issue tracker: https://bitbucket.org/birkenfeld/sphinx/issues/
+.. _lxml: http://codespeak.net/lxml
+.. _simplejson: http://pypi.python.org/pypi/simplejson/
+.. _launchpadlib: http://pypi.python.org/pypi/launchpadlib/
+.. _debianbts: https://github.com/venthur/python-debianbts
+.. _suds: https://fedorahosted.org/suds/
+.. _sphinx-contrib: https://bitbucket.org/birkenfeld/sphinx-contrib
+.. _issue tracker: https://bitbucket.org/birkenfeld/sphinx-contrib/issues/
 .. _LICENSE: https://bitbucket.org/birkenfeld/sphinx-contrib/src/tip/LICENSE
