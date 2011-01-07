@@ -26,6 +26,9 @@
 
 import os
 import sys
+import re
+
+from sphinx import addnodes
 
 doc_directory = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.normpath(
@@ -59,6 +62,24 @@ issuetracker_project = 'sphinx-contrib'
 issuetracker_user = 'birkenfeld'
 
 
+event_sig_re = re.compile(r'([a-zA-Z-]+)\s*\((.*)\)')
+
+def parse_event(env, sig, signode):
+    m = event_sig_re.match(sig)
+    if not m:
+        signode += addnodes.desc_name(sig, sig)
+        return sig
+    name, args = m.groups()
+    signode += addnodes.desc_name(name, name)
+    plist = addnodes.desc_parameterlist()
+    for arg in args.split(','):
+        arg = arg.strip()
+        plist += addnodes.desc_parameter(arg, arg)
+    signode += plist
+    return name
+
+
 def setup(app):
     app.add_description_unit('confval', 'confval',
                              'pair: %s; configuration value')
+    app.add_description_unit('event', 'event', 'pair: %s; event', parse_event)

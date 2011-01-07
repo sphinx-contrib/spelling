@@ -56,7 +56,7 @@ BITBUCKET_URL = ('https://bitbucket.org/%(user)s/%(project)s/issue/'
                  '%(issue_id)s/')
 
 
-def get_github_issue_information(project, user, issue_id, app):
+def get_github_issue_information(app, project, user, issue_id):
     try:
         import json
     except ImportError:
@@ -74,7 +74,7 @@ def get_github_issue_information(project, user, issue_id, app):
             'uri': GITHUB_URL % locals()}
 
 
-def get_bitbucket_issue_information(project, user, issue_id, app):
+def get_bitbucket_issue_information(app, project, user, issue_id):
     from lxml.html import parse
 
     uri = BITBUCKET_URL % locals()
@@ -93,7 +93,7 @@ def get_bitbucket_issue_information(project, user, issue_id, app):
     return {'uri': uri, 'closed': not (is_open or is_new)}
 
 
-def get_debian_issue_information(project, user, issue_id, app):
+def get_debian_issue_information(app, project, user, issue_id):
     import debianbts
     try:
         # get the bug
@@ -109,7 +109,7 @@ def get_debian_issue_information(project, user, issue_id, app):
     return {'uri': uri, 'closed': bug.done}
 
 
-def get_launchpad_issue_information(project, user, issue_id, app):
+def get_launchpad_issue_information(app, project, user, issue_id):
     launchpad = getattr(app.env, 'issuetracker_launchpad', None)
     if not launchpad:
         from launchpadlib.launchpad import Launchpad
@@ -134,7 +134,7 @@ def get_launchpad_issue_information(project, user, issue_id, app):
     return {'uri': uri, 'closed': bool(task.date_closed)}
 
 
-def get_google_code_issue_information(project, user, issue_id, app):
+def get_google_code_issue_information(app, project, user, issue_id):
     from xml.etree import cElementTree as etree
 
     show_issue = ('http://code.google.com/feeds/issues/p/'
@@ -156,105 +156,12 @@ def get_google_code_issue_information(project, user, issue_id, app):
     return {'uri': uri, 'closed': state is not None and state.text == 'closed'}
 
 
-def make_issue_reference(issue_uri, content_node, is_closed=False):
-    """
-    Create a reference node for the given issue.
-
-    ``issue_uri`` is the uri of a web page describing the issue.  It must *not*
-    be a resource uri for a webservice of an issue tracker.  ``content_node``
-    is a docutils node, which is added as content of the created reference.  If
-    ``is_closed`` is ``True``, the issue is considered as closed, and the
-    reference node gets an additional class ``'issue-closed'``.
-
-    Return a :class:`docutils.nodes.reference` for the issue.
-    """
-    reference = nodes.reference()
-    reference['refuri'] = issue_uri
-    if is_closed:
-        reference['classes'].append('issue-closed')
-    reference['classes'].append('reference-issue')
-    reference.append(content_node)
-    return reference
-
-
-def lookup_issue_information(issue_id, app, fallback_func):
-    """
-    Lookup information for the given issue.
-
-    The issue information is first searched in an internal cache.  On cache
-    miss, ``fallback_func`` is called to retrieve the issue information from
-    the issue tracker.  This information is than cached.
-
-    ``app`` is the sphinx application object.  ``issue_id`` is a string
-    containing the issue id.  ``fallback_func`` is a callable used to retrieve
-    issue information upon cache miss.  It must accept four arguments in this
-    order:
-
-    - The project name as string
-    - The user name as string
-    - The issue id, as given in ``issue_id``
-    - The sphinx application object as given in ``app``.
-    """
-    cache = app.env.issuetracker_cache
-    info = cache.get(issue_id)
-    if not info:
-        project = app.config.issuetracker_project or app.config.project
-        user = app.config.issuetracker_user
-        info = fallback_func(project, user, issue_id, app)
-        cache[issue_id] = info
-    return info
-
-
-def make_issue_reference_resolver(get_issue_information):
-    """
-    Create and return a function which serves as callback for the
-    ``missing-reference`` event, and handles all pending references whose
-    ``reftype`` is ``'issue'``.
-
-    If invoked, the function created by this function returns a reference
-    node which points to the issue, or ``None`` if the issue reference could
-    not be resolved.
-
-    ``get_issue_information`` must be a callable, accepting the follwing
-    four arguments:
-
-    1. The issue tracker project as given to :confval:`issuetracker_project`
-    2. The issue tracker user name as given to :confval:`issuetracker_user`
-    3. The issue id
-    4. The sphinx application object
-
-    It shall return a dictionary, which may contain the following items:
-
-    - ``'uri'``: The uri to a website representing the issue.  If missing,
-      the created function returns ``None`` to indicate that it can't
-      resolve this issue.
-    - ``'closed'``: If present and ``True``, mark the issue as closed by
-      adding the class ``issue-closed`` to the returned reference.
-    """
-    def resolver(app, env, node, contnode):
-        if node['reftype'] != 'issue':
-            return
-        info = lookup_issue_information(node['reftarget'], app,
-                                        get_issue_information)
-        if info is None:
-            return None
-        uri = info.get('uri')
-        if not uri:
-            return None
-        return make_issue_reference(uri, contnode, info.get('closed'))
-    return resolver
-
-
 BUILTIN_ISSUE_TRACKERS = {
-    'github': make_issue_reference_resolver(get_github_issue_information),
-    'bitbucket': make_issue_reference_resolver(
-        get_bitbucket_issue_information),
-    'debian': make_issue_reference_resolver(
-        get_debian_issue_information),
-    'launchpad': make_issue_reference_resolver(
-        get_launchpad_issue_information),
-    'google code': make_issue_reference_resolver(
-        get_google_code_issue_information),
+    'github': get_github_issue_information,
+    'bitbucket': get_bitbucket_issue_information,
+    'debian': get_debian_issue_information,
+    'launchpad': get_launchpad_issue_information,
+    'google code': get_google_code_issue_information,
     }
 
 
@@ -314,9 +221,68 @@ class IssuesReferences(Transform):
             parent.replace(node, new_nodes)
 
 
+def make_issue_reference(issue_uri, content_node, is_closed=False):
+    """
+    Create a reference node for the given issue.
+
+    ``issue_uri`` is the uri of a web page describing the issue.  It must *not*
+    be a resource uri for a webservice of an issue tracker.  ``content_node``
+    is a docutils node, which is added as content of the created reference.  If
+    ``is_closed`` is ``True``, the issue is considered as closed, and the
+    reference node gets an additional class ``'issue-closed'``.
+
+    Return a :class:`docutils.nodes.reference` for the issue.
+    """
+    reference = nodes.reference()
+    reference['refuri'] = issue_uri
+    if is_closed:
+        reference['classes'].append('issue-closed')
+    reference['classes'].append('reference-issue')
+    reference.append(content_node)
+    return reference
+
+
+def lookup_issue_information(issue_id, app):
+    """
+    Lookup information for the given issue.
+
+    The issue information is first searched in an internal cache.  On cache
+    miss, ``fallback_func`` is called to retrieve the issue information from
+    the issue tracker.  This information is than cached.
+
+    ``app`` is the sphinx application object.  ``issue_id`` is a string
+    containing the issue id.
+    """
+    cache = app.env.issuetracker_cache
+    info = cache.get(issue_id)
+    if not info:
+        project = app.config.issuetracker_project or app.config.project
+        user = app.config.issuetracker_user
+        info = app.emit_firstresult(
+            'issuetracker-resolve-issue', project, user, issue_id)
+        cache[issue_id] = info
+    return info
+
+
+def resolve_issue_references(app, doctree):
+    """
+    Resolve all pending issue references in the given ``doctree``.
+    """
+    cache = app.env.issuetracker_cache
+    for node in doctree.traverse(pending_xref):
+        if node['reftype'] == 'issue':
+            info = lookup_issue_information(node['reftarget'], app)
+            if (not info) or 'uri' not in info:
+                new_node = node[0]
+            else:
+                new_node = make_issue_reference(info['uri'], node[0],
+                                                info.get('closed'))
+            node.replace_self(new_node)
+
+
 def auto_connect_builtin_issue_resolvers(app):
     if app.config.issuetracker:
-        app.connect('missing-reference',
+        app.connect('issuetracker-resolve-issue',
                     BUILTIN_ISSUE_TRACKERS[app.config.issuetracker.lower()])
 
 
@@ -343,6 +309,7 @@ def copy_stylesheet(app, exception):
 def setup(app):
     app.require_sphinx('1.0')
     app.add_transform(IssuesReferences)
+    app.add_event('issuetracker-resolve-issue')
     app.connect('builder-inited', auto_connect_builtin_issue_resolvers)
     app.add_config_value('issuetracker_issue_pattern',
                          re.compile(r'#(\d+)'), 'env')
@@ -351,4 +318,6 @@ def setup(app):
     app.add_config_value('issuetracker', None, 'env')
     app.connect('builder-inited', add_stylesheet)
     app.connect('builder-inited', init_cache)
+    app.connect('doctree-read', resolve_issue_references)
     app.connect('build-finished', copy_stylesheet)
+

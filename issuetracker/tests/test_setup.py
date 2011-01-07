@@ -39,7 +39,9 @@ def test_builtin_issue_trackers():
 def test_auto_connect_builtin_issue_resolvers_known_tracker(app):
     app.config.issuetracker = 'bitbucket'
     issuetracker.auto_connect_builtin_issue_resolvers(app)
-    assert app.connect.called
+    app.connect.assert_called_with(
+        'issuetracker-resolve-issue',
+        issuetracker.get_bitbucket_issue_information)
 
 
 def test_auto_connect_builtin_issue_resolvers_unknown_tracker(app):
@@ -63,10 +65,12 @@ def test_setup(app):
     issuetracker.setup(app)
     app.require_sphinx.assert_called_with('1.0')
     app.add_transform.assert_called_with(issuetracker.IssuesReferences)
+    app.add_event.assert_called_with('issuetracker-resolve-issue')
     app.connect.call_args_list = [
         (('builder-inited',
           issuetracker.auto_connect_builtin_issue_resolvers), {}),
         (('builder-inited', issuetracker.add_stylesheet), {}),
+        (('doctree-read', issuetracker.resolve_issue_references), {}),
         (('build-finished', issuetracker.copy_stylesheet), {})]
     app.add_config_value.call_args_list = [
         (('issuetracker_issue_pattern', re.compile(r'#(\d+)'), 'env'), {}),

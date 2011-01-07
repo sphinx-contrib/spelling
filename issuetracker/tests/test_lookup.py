@@ -41,23 +41,22 @@ def pytest_funcarg__issue_info(request):
 def pytest_funcarg__lookup(request):
     app = request.getfuncargvalue('app')
     issue_id = request.getfuncargvalue('issue_id')
-    fallback = request.getfuncargvalue('get_issue_information')
-    return partial(lookup_issue_information, issue_id, app, fallback)
+    return partial(lookup_issue_information, issue_id, app)
 
 
-def test_lookup_cache_miss(app, lookup, cache, issue_id, issue_info,
-                           get_issue_information):
+def test_lookup_cache_miss(app, lookup, cache, issue_id, issue_info):
+    app.emit_firstresult.return_value = issue_info
     assert lookup() is issue_info
     cache.get.assert_called_with(issue_id)
     cache.__setitem__.assert_called_with(issue_id, issue_info)
-    get_issue_information.mock.assert_called_with(
-        app.config.project, app.config.issuetracker_user, issue_id, app)
+    app.emit_firstresult.assert_called_with(
+        'issuetracker-resolve-issue', app.config.project,
+        app.config.issuetracker_user, issue_id)
 
 
-def test_lookup_cache_hit(lookup, cache, issue_id, issue_info,
-                          get_issue_information):
+def test_lookup_cache_hit(app, lookup, cache, issue_id, issue_info):
     cache.get.return_value = issue_info
     assert lookup() is issue_info
     cache.get.assert_called_with(issue_id)
     assert not cache.__setitem__.called
-    assert not get_issue_information.mock.called
+    assert not app.emit_firstresult.called

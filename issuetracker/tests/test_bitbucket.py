@@ -32,18 +32,18 @@ pytest.importorskip('lxml')
 
 
 def test_get_bitbucket_issue_information_resolved():
-    info = get_bitbucket_issue_information('synaptiks', 'lunar', '22', None)
+    info = get_bitbucket_issue_information(None, 'synaptiks', 'lunar', '22')
     assert info == {'closed': True,
                     'uri': 'https://bitbucket.org/lunar/synaptiks/issue/22/'}
 
 
 def test_get_bitbucket_issue_information_invalid():
-    info = get_bitbucket_issue_information('synaptiks', 'lunar', '36', None)
+    info = get_bitbucket_issue_information(None, 'synaptiks', 'lunar', '36')
     assert info == {'closed': True,
                     'uri': 'https://bitbucket.org/lunar/synaptiks/issue/36/'}
 
 
 def test_get_bitbucket_issue_information_duplicate():
-    info = get_bitbucket_issue_information('synaptiks', 'lunar', '42', None)
+    info = get_bitbucket_issue_information(None, 'synaptiks', 'lunar', '42')
     assert info == {'closed': True,
                     'uri': 'https://bitbucket.org/lunar/synaptiks/issue/42/'}

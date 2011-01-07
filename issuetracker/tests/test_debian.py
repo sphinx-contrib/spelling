@@ -32,20 +32,20 @@ pytest.importorskip('debianbts')
 
 
 def test_get_debian_issue_information_fixed():
-    info = get_debian_issue_information('ldb-tools', None, '584227', None)
+    info = get_debian_issue_information(None, 'ldb-tools', None, '584227')
     assert info == {
         'closed': True,
         'uri': 'http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=584227'}
 
 
 def test_get_debian_issue_information_open():
-    info = get_debian_issue_information('xul-ext-sync', None, '600890', None)
+    info = get_debian_issue_information(None, 'xul-ext-sync', None, '600890')
     assert info == {
         'closed': False,
         'uri': 'http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=600890'}
 
 
 def test_get_debian_issue_information_invalid():
-    info = get_debian_issue_information('release.debian.org', None, '1', None)
+    info = get_debian_issue_information(None, 'release.debian.org', None, '1')
     assert info == None
 

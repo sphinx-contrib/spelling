@@ -100,18 +100,32 @@ find issue references:
 Customization
 -------------
 
-If you use an issue tracker, that is not supported by this extension, then
-set :confval:`issuetracker` to ``None`` or leave it unset, and create your
-own callback for the ``missing-reference`` event of Sphinx.  This callback
-should handle all nodes whose ``reftype`` attribute is ``'issue'``, and
-return ``None`` for all other nodes.  For nodes whose ``reftype`` is
-``'issue'`` the issue id is available in the ``reftarget`` attribute.
+If you use an issue tracker, that is not supported by this extension, then set
+:confval:`issuetracker` to ``None`` or leave it unset, and connect your own
+callback to the :event:`issuetracker-resolve-issue`:
 
-You may want to use the following convenience function.  It creates a
-callback that does all the node handling for you.  You only have to provide
-a function, which returns metadata for the given issue id:
+.. event:: issuetracker-resolve-issue(app, project, user, issue_id)
 
-.. autofunction:: make_issue_reference_resolver
+   Emitted if a issue reference is to be resolved.
+
+   ``app`` is the Sphinx application object.  ``project`` and ``user`` are
+   strings, describing the issuetracker project and username.  These are simply
+   the values, the user entered for :confval:`issuetracker_project` and
+   :confval:`issuetracker_user`.  ``issue_id`` is the issue id as string.
+
+   Callbacks for this event must return a dictionary with issue information,
+   having the following keys:
+
+   - ``'uri'``: The URI to the issue web page
+   - ``'closed'``: ``True``, if the issue is closed.  If ``False`` or if the
+     key is missing, the issue is still open.
+
+   If ``'uri'`` is missing, the issue reference is not turned into a real
+   reference, but remains in plain text.
+
+   A callback can return ``None`` instead to indicate, that it cannot resolve
+   the issue.  Resolval is delegated to further callbacks, that might be
+   connected to the event.
 
 
 Contribution

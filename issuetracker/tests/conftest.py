@@ -25,9 +25,7 @@
 
 import re
 
-from mock import Mock, MagicMock, mocksignature
-
-from sphinxcontrib.issuetracker import get_github_issue_information
+from mock import Mock, MagicMock
 
 
 def pytest_funcarg__config(request):
@@ -38,13 +36,6 @@ def pytest_funcarg__config(request):
     config.issuetracker_project = None
     config.issuetracker_issue_pattern = re.compile(r'#(\d+)')
     return config
-
-
-def pytest_funcarg__get_issue_information(request):
-    get_issue_information = Mock(name='get_issue_information')
-    info = request.getfuncargvalue('issue_info')
-    get_issue_information.return_value = info
-    return mocksignature(get_github_issue_information, get_issue_information)
 
 
 def pytest_funcarg__cache(request):
