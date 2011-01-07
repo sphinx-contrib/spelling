@@ -1,5 +1,5 @@
-0.7 (in development)
-====================
+0.7 (Jan 08, 2011)
+==================
 
 - Issue information is now cached
 - Custom issue trackers must now connect to the ``issuetracker-resolve-issue``
