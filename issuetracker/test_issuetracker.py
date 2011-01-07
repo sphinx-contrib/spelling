@@ -168,7 +168,7 @@ def test_make_isssue_reference_resolver_invalid_reftype(
 
 def test_make_issue_reference_resolver_no_issue(
     app, env, resolver, node, get_issue_information):
-    get_issue_information.return_value = None
+    get_issue_information.mock.return_value = None
     assert resolver(app, env, node, node[0]) is None
 
 
