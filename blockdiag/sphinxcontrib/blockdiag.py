@@ -10,7 +10,6 @@
     :license: BSDL.
 """
 
-from __future__ import absolute_import
 import posixpath
 import os
 import codecs
@@ -26,8 +25,7 @@ from sphinx.errors import SphinxError
 from sphinx.util.osutil import ensuredir, ENOENT, EPIPE
 from sphinx.util.compat import Directive
 
-from blockdiag.blockdiag import *
-from blockdiag.diagparser import *
+from blockdiag_sphinxhelper import *
 
 
 class BlockdiagError(SphinxError):
