@@ -37,6 +37,7 @@
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
 """
 
+__version__ = '0.7'
 
 import re
 import urllib

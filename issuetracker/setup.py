@@ -2,6 +2,7 @@
 
 from setuptools import setup, find_packages
 
+from sphinxcontrib import issuetracker
 
 with open('README') as stream:
     long_desc = stream.read()
@@ -11,7 +12,7 @@ requires = ['Sphinx>=1.0b2']
 
 setup(
     name='sphinxcontrib-issuetracker',
-    version='0.6',
+    version=issuetracker.__version__,
     url='http://packages.python.org/sphinxcontrib-issuetracker',
     download_url='http://pypi.python.org/pypi/sphinxcontrib-issuetracker',
     license='BSD',
