@@ -81,21 +81,21 @@ def test_get_bitbucket_issue_information_resolved(app):
     info = issuetracker.get_bitbucket_issue_information(
         'synaptiks', 'lunar', '22', app)
     assert info == {'closed': True,
-                    'uri': 'http://bitbucket.org/lunar/synaptiks/issue/22/'}
+                    'uri': 'https://bitbucket.org/lunar/synaptiks/issue/22/'}
 
 
 def test_get_bitbucket_issue_information_invalid(app):
     info = issuetracker.get_bitbucket_issue_information(
         'synaptiks', 'lunar', '36', app)
     assert info == {'closed': True,
-                    'uri': 'http://bitbucket.org/lunar/synaptiks/issue/36/'}
+                    'uri': 'https://bitbucket.org/lunar/synaptiks/issue/36/'}
 
 
 def test_get_bitbucket_issue_information_duplicate(app):
     info = issuetracker.get_bitbucket_issue_information(
         'synaptiks', 'lunar', '42', app)
     assert info == {'closed': True,
-                    'uri': 'http://bitbucket.org/lunar/synaptiks/issue/42/'}
+                    'uri': 'https://bitbucket.org/lunar/synaptiks/issue/42/'}
 
 
 def test_get_google_code_issue_information_fixed(app):
