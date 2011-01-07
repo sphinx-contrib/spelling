@@ -156,6 +156,27 @@ def get_google_code_issue_information(project, user, issue_id, app):
     return {'uri': uri, 'closed': state is not None and state.text == 'closed'}
 
 
+def make_issue_reference(issue_uri, content_node, is_closed=False):
+    """
+    Create a reference node for the given issue.
+
+    ``issue_uri`` is the uri of a web page describing the issue.  It must *not*
+    be a resource uri for a webservice of an issue tracker.  ``content_node``
+    is a docutils node, which is added as content of the created reference.  If
+    ``is_closed`` is ``True``, the issue is considered as closed, and the
+    reference node gets an additional class ``'issue-closed'``.
+
+    Return a :class:`docutils.nodes.reference` for the issue.
+    """
+    reference = nodes.reference()
+    reference['refuri'] = issue_uri
+    if is_closed:
+        reference['classes'].append('issue-closed')
+    reference['classes'].append('reference-issue')
+    reference.append(content_node)
+    return reference
+
+
 def make_issue_reference_resolver(get_issue_information):
     """
     Create and return a function which serves as callback for the
@@ -193,13 +214,7 @@ def make_issue_reference_resolver(get_issue_information):
         uri = info.get('uri')
         if not uri:
             return None
-        reference = nodes.reference()
-        reference['refuri'] = uri
-        if info.get('closed'):
-            reference['classes'].append('issue-closed')
-        reference['classes'].append('reference-issue')
-        reference.append(contnode)
-        return reference
+        return make_issue_reference(uri, contnode, info.get('closed'))
     return resolver
 
 
