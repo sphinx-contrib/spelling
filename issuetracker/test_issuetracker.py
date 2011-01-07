@@ -78,6 +78,7 @@ def test_get_github_issue_information(app):
 
 
 def test_get_bitbucket_issue_information_resolved(app):
+    pytest.importorskip('lxml')
     info = issuetracker.get_bitbucket_issue_information(
         'synaptiks', 'lunar', '22', app)
     assert info == {'closed': True,
@@ -85,6 +86,7 @@ def test_get_bitbucket_issue_information_resolved(app):
 
 
 def test_get_bitbucket_issue_information_invalid(app):
+    pytest.importorskip('lxml')
     info = issuetracker.get_bitbucket_issue_information(
         'synaptiks', 'lunar', '36', app)
     assert info == {'closed': True,
@@ -92,6 +94,7 @@ def test_get_bitbucket_issue_information_invalid(app):
 
 
 def test_get_bitbucket_issue_information_duplicate(app):
+    pytest.importorskip('lxml')
     info = issuetracker.get_bitbucket_issue_information(
         'synaptiks', 'lunar', '42', app)
     assert info == {'closed': True,
@@ -123,6 +126,7 @@ def test_get_google_code_issue_information_wontfix(app):
 
 
 def test_get_debian_issue_information_fixed(app):
+    pytest.importorskip('debianpts')
     info = issuetracker.get_debian_issue_information(
         'ldb-tools', None, '584227', app)
     assert info == {
@@ -131,6 +135,7 @@ def test_get_debian_issue_information_fixed(app):
 
 
 def test_get_debian_issue_information_open(app):
+    pytest.importorskip('debianpts')
     info = issuetracker.get_debian_issue_information(
         'xul-ext-sync', None, '600890', app)
     assert info == {
@@ -139,12 +144,14 @@ def test_get_debian_issue_information_open(app):
 
 
 def test_get_debian_issue_information_invalid(app):
+    pytest.importorskip('debianpts')
     info = issuetracker.get_debian_issue_information(
         'release.debian.org', None, '1', app)
     assert info == None
 
 
 def test_get_launchpad_issue_information(app):
+    pytest.importorskip('launchpadlib')
     app.env.issuetracker_launchpad = None
     info = issuetracker.get_launchpad_issue_information(
         'inkscape', None, '647789', app)
