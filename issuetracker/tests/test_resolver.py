@@ -25,12 +25,10 @@
 
 from functools import partial
 
-from mock import Mock, MagicMock, mocksignature
 from docutils import nodes
 from sphinx.addnodes import pending_xref
 
-from sphinxcontrib.issuetracker import (get_github_issue_information,
-                                        make_issue_reference_resolver)
+from sphinxcontrib.issuetracker import make_issue_reference_resolver
 
 
 def assert_cache_ignored(app):
@@ -71,25 +69,6 @@ def pytest_funcarg__node(request):
     node['reftarget'] = issue_id
     node.append(request.getfuncargvalue('contnode'))
     return node
-
-
-def pytest_funcarg__app(request):
-    app = Mock(name='application')
-    config = request.getfuncargvalue('config')
-    app.config = config
-    app.env = Mock('environment')
-    app.env.config = config
-    app.env.issuetracker_cache = cache = MagicMock(name='issue_cache')
-    # fake cache misses to always trigger a call to the fallback function
-    cache.get = Mock(name='issue_cache.get', return_value=None)
-    return app
-
-
-def pytest_funcarg__get_issue_information(request):
-    get_issue_information = Mock(name='get_issue_information')
-    info = request.getfuncargvalue('issue_info')
-    get_issue_information.return_value = info
-    return mocksignature(get_github_issue_information, get_issue_information)
 
 
 def pytest_funcarg__resolver(request):

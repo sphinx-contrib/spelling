@@ -26,13 +26,8 @@
 import re
 
 import pytest
-from mock import Mock
 
 from sphinxcontrib import issuetracker
-
-
-def pytest_funcarg__app(request):
-    return Mock(name='application')
 
 
 def test_builtin_issue_trackers():

@@ -23,42 +23,41 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import re
+from functools import partial
 
-from mock import Mock, MagicMock, mocksignature
+import mock
 
-from sphinxcontrib.issuetracker import get_github_issue_information
-
-
-def pytest_funcarg__config(request):
-    config = Mock(name='config')
-    config.project = 'issuetracker'
-    config.issuetracker = 'spamtracker'
-    config.issuetracker_user = 'foobar'
-    config.issuetracker_project = None
-    config.issuetracker_issue_pattern = re.compile(r'#(\d+)')
-    return config
+from sphinxcontrib.issuetracker import lookup_issue_information
 
 
-def pytest_funcarg__get_issue_information(request):
-    get_issue_information = Mock(name='get_issue_information')
-    info = request.getfuncargvalue('issue_info')
-    get_issue_information.return_value = info
-    return mocksignature(get_github_issue_information, get_issue_information)
+def pytest_funcarg__issue_id(request):
+    return '10'
 
 
-def pytest_funcarg__cache(request):
-    cache = MagicMock(name='issue_cache')
-    # fake cache misses to always trigger a call to the fallback function
-    cache.get = Mock(name='issue_cache.get', return_value=None)
-    return cache
+def pytest_funcarg__issue_info(request):
+    return mock.sentinel.issue_info
 
 
-def pytest_funcarg__app(request):
-    app = Mock(name='application')
-    config = request.getfuncargvalue('config')
-    app.config = config
-    app.env = Mock('environment')
-    app.env.config = config
-    app.env.issuetracker_cache = request.getfuncargvalue('cache')
-    return app
+def pytest_funcarg__lookup(request):
+    app = request.getfuncargvalue('app')
+    issue_id = request.getfuncargvalue('issue_id')
+    fallback = request.getfuncargvalue('get_issue_information')
+    return partial(lookup_issue_information, issue_id, app, fallback)
+
+
+def test_lookup_cache_miss(app, lookup, cache, issue_id, issue_info,
+                           get_issue_information):
+    assert lookup() is issue_info
+    cache.get.assert_called_with(issue_id)
+    cache.__setitem__.assert_called_with(issue_id, issue_info)
+    get_issue_information.mock.assert_called_with(
+        app.config.project, app.config.issuetracker_user, issue_id, app)
+
+
+def test_lookup_cache_hit(lookup, cache, issue_id, issue_info,
+                          get_issue_information):
+    cache.get.return_value = issue_info
+    assert lookup() is issue_info
+    cache.get.assert_called_with(issue_id)
+    assert not cache.__setitem__.called
+    assert not get_issue_information.mock.called
