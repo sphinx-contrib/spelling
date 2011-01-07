@@ -1,21 +1,13 @@
 blockdiag extension README
 ==========================
 
-This is a sphinx extension which render block diagrams by using
-`blockdiag <http://bitbucket.org/tk0miya/blockdiag/>`_ .
+This package contains the blockdiag Sphinx extension.
 
-rendered:
+.. _Sphinx: http://sphinx.pocoo.org/
+.. _blockdiag: http://tk0miya.bitbucket.org/blockdiag/build/html/index.html
 
-.. blockdiag::
-
-   diagram {
-     A -> B -> C;
-          B -> D;
-   }
-
-source:
-
-.. code-block:: text
+This extension enable you to insert block diagrams in your Sphinx document.
+Following code is sample::
 
    .. blockdiag::
 
@@ -23,6 +15,8 @@ source:
         A -> B -> C;
              B -> D;
       }
+
+This module needs blockdiag_.
 
 Setting
 =======

@@ -2,25 +2,7 @@
 
 from setuptools import setup, find_packages
 
-long_desc = '''
-This package contains the blockdiag Sphinx extension.
-
-.. _Sphinx: http://sphinx.pocoo.org/
-.. _blockdiag: http://bitbucket.org/tk0miya/blockdiag/
-
-This extension enable you to insert block diagrams in your Sphinx document.
-Following code is sample::
-
-   .. blockdiag::
-
-      diagram {
-        A -> B -> C;
-             B -> D;
-      }
-
-
-This module needs blockdiag_.
-'''
+long_desc = open('README', 'r').read()
 
 requires = ['blockdiag>=0.5.2', 'Sphinx>=0.6']
 
