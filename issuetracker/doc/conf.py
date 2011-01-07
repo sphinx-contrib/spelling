@@ -29,9 +29,9 @@ import sys
 
 doc_directory = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.normpath(
-    os.path.join(doc_directory, os.pardir)))
+    os.path.join(doc_directory, os.pardir, 'sphinxcontrib')))
 
-from sphinxcontrib import issuetracker
+import issuetracker
 
 needs_sphinx = '1.0'
 

@@ -24,9 +24,12 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
+import sys
+sys.path.insert(0, 'sphinxcontrib')
+
 from setuptools import setup, find_packages
 
-from sphinxcontrib import issuetracker
+import issuetracker
 
 with open('README') as stream:
     long_desc = stream.read()
