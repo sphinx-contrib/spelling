@@ -4,15 +4,25 @@
 import re
 
 import pytest
-from mock import Mock, mocksignature
+from mock import Mock, MagicMock, mocksignature
 from docutils import nodes
 from sphinx.addnodes import pending_xref
 
 from sphinxcontrib import issuetracker
 
 
+def pytest_funcarg__issue_id(request):
+    return '10'
+
+
+def pytest_funcarg__issue_uri(request):
+    id = request.getfuncargvalue('issue_id')
+    return 'http://example.com/issues/{0}'.format(id)
+
+
 def pytest_funcarg__issue_info(request):
-    return dict(uri='http://example.com/issues/10', closed=False)
+    uri = request.getfuncargvalue('issue_uri')
+    return dict(uri=uri, closed=False)
 
 
 def pytest_funcarg__get_issue_information(request):
@@ -41,20 +51,30 @@ def pytest_funcarg__config(request):
 def pytest_funcarg__app(request):
     app = Mock(name='Sphinx')
     app.config = request.getfuncargvalue('config')
+    app.env = request.getfuncargvalue('env')
     return app
+
+
+def pytest_funcarg__issue_cache(request):
+    cache = MagicMock(name='issue_cache')
+    # fake cache misses to always trigger a call to the fallback function
+    cache.get = Mock(name='issue_cache.get', return_value=None)
+    return cache
 
 
 def pytest_funcarg__env(request):
     env = Mock(name='BuildEnvironment')
     env.config = request.getfuncargvalue('config')
+    env.issuetracker_cache = request.getfuncargvalue('issue_cache')
     return env
 
 
 def pytest_funcarg__node(request):
+    issue_id = request.getfuncargvalue('issue_id')
     node = pending_xref()
     node['reftype'] = 'issue'
-    node['reftarget'] = '10'
-    node.append(nodes.Text('#10'))
+    node['reftarget'] = issue_id
+    node.append(nodes.Text('#{0}'.format(issue_id)))
     return node
 
 

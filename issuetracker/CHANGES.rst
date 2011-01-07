@@ -1,6 +1,8 @@
 0.7 (in development)
 ====================
 
+- Issue information is now cached
+
 
 0.6 (Jan 04, 2011)
 ==================

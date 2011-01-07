@@ -177,6 +177,34 @@ def make_issue_reference(issue_uri, content_node, is_closed=False):
     return reference
 
 
+def lookup_issue_information(issue_id, app, fallback_func):
+    """
+    Lookup information for the given issue.
+
+    The issue information is first searched in an internal cache.  On cache
+    miss, ``fallback_func`` is called to retrieve the issue information from
+    the issue tracker.  This information is than cached.
+
+    ``app`` is the sphinx application object.  ``issue_id`` is a string
+    containing the issue id.  ``fallback_func`` is a callable used to retrieve
+    issue information upon cache miss.  It must accept four arguments in this
+    order:
+
+    - The project name as string
+    - The user name as string
+    - The issue id, as given in ``issue_id``
+    - The sphinx application object as given in ``app``.
+    """
+    cache = app.env.issuetracker_cache
+    info = cache.get(issue_id)
+    if not info:
+        project = app.config.issuetracker_project or app.config.project
+        user = app.config.issuetracker_user
+        info = fallback_func(project, user, issue_id, app)
+        cache[issue_id] = info
+    return info
+
+
 def make_issue_reference_resolver(get_issue_information):
     """
     Create and return a function which serves as callback for the
@@ -206,9 +234,8 @@ def make_issue_reference_resolver(get_issue_information):
     def resolver(app, env, node, contnode):
         if node['reftype'] != 'issue':
             return
-        info = get_issue_information(
-            app.config.issuetracker_project or app.config.project,
-            app.config.issuetracker_user, node['reftarget'], app)
+        info = lookup_issue_information(node['reftarget'], app,
+                                        get_issue_information)
         if info is None:
             return None
         uri = info.get('uri')
@@ -297,6 +324,11 @@ def add_stylesheet(app):
     app.add_stylesheet('issuetracker.css')
 
 
+def init_cache(app):
+    if not hasattr(app.env, 'issuetracker_cache'):
+        app.env.issuetracker_cache = {}
+
+
 def copy_stylesheet(app, exception):
     if app.builder.name != 'html' or exception:
         return
@@ -318,4 +350,5 @@ def setup(app):
     app.add_config_value('issuetracker_project', None, 'env')
     app.add_config_value('issuetracker', None, 'env')
     app.connect('builder-inited', add_stylesheet)
+    app.connect('builder-inited', init_cache)
     app.connect('build-finished', copy_stylesheet)
