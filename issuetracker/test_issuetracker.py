@@ -3,7 +3,7 @@
 
 import re
 
-import py.test
+import pytest
 from mock import Mock, mocksignature
 from docutils import nodes
 from sphinx.addnodes import pending_xref
@@ -241,7 +241,7 @@ def test_issues_references(doc):
 def test_issues_references_too_many_groups(doc, config):
     config.issuetracker_issue_pattern = r'(#)(\d+)'
     transformer = issuetracker.IssuesReferences(doc)
-    with py.test.raises(ValueError) as exc_info:
+    with pytest.raises(ValueError) as exc_info:
         transformer.apply()
     error = exc_info.value
     assert str(error) == ('issuetracker_issue_pattern must have '
@@ -256,7 +256,7 @@ def test_auto_connect_builtin_issue_resolvers_known_tracker(app):
 
 def test_auto_connect_builtin_issue_resolvers_unknown_tracker(app):
     app.config.issuetracker = 'spamtracker'
-    with py.test.raises(KeyError):
+    with pytest.raises(KeyError):
         issuetracker.auto_connect_builtin_issue_resolvers(app)
 
 
