@@ -23,45 +23,40 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from functools import partial
 
-import sys
-sys.path.insert(0, 'sphinxcontrib')
+import mock
 
-from setuptools import setup, find_packages
-
-import issuetracker
-
-with open('README') as stream:
-    long_desc = stream.read()
+from sphinxcontrib.issuetracker import lookup_issue_information
 
 
-requires = ['Sphinx>=1.0b2']
+def pytest_funcarg__issue_id(request):
+    return '10'
 
-setup(
-    name='sphinxcontrib-issuetracker',
-    version=issuetracker.__version__,
-    url='http://packages.python.org/sphinxcontrib-issuetracker',
-    download_url='http://pypi.python.org/pypi/sphinxcontrib-issuetracker',
-    license='BSD',
-    author='Sebastian Wiesner',
-    author_email='lunaryorn@googlemail.com',
-    description='Sphinx integration with different issuetrackers',
-    long_description=long_desc,
-    zip_safe=False,
-    classifiers=[
-        'Development Status :: 4 - Beta',
-        'Environment :: Console',
-        'Environment :: Web Environment',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: BSD License',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python',
-        'Topic :: Documentation',
-        'Topic :: Utilities',
-    ],
-    platforms='any',
-    packages=find_packages(),
-    include_package_data=True,
-    install_requires=requires,
-    namespace_packages=['sphinxcontrib'],
-)
+
+def pytest_funcarg__issue_info(request):
+    return mock.sentinel.issue_info
+
+
+def pytest_funcarg__lookup(request):
+    app = request.getfuncargvalue('app')
+    issue_id = request.getfuncargvalue('issue_id')
+    return partial(lookup_issue_information, issue_id, app)
+
+
+def test_lookup_cache_miss(app, lookup, cache, issue_id, issue_info):
+    app.emit_firstresult.return_value = issue_info
+    assert lookup() is issue_info
+    cache.get.assert_called_with(issue_id)
+    cache.__setitem__.assert_called_with(issue_id, issue_info)
+    app.emit_firstresult.assert_called_with(
+        'issuetracker-resolve-issue', app.config.project,
+        app.config.issuetracker_user, issue_id)
+
+
+def test_lookup_cache_hit(app, lookup, cache, issue_id, issue_info):
+    cache.get.return_value = issue_info
+    assert lookup() is issue_info
+    cache.get.assert_called_with(issue_id)
+    assert not cache.__setitem__.called
+    assert not app.emit_firstresult.called

@@ -23,45 +23,27 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import pytest
 
-import sys
-sys.path.insert(0, 'sphinxcontrib')
-
-from setuptools import setup, find_packages
-
-import issuetracker
-
-with open('README') as stream:
-    long_desc = stream.read()
+from sphinxcontrib.issuetracker import get_bitbucket_issue_information
 
 
-requires = ['Sphinx>=1.0b2']
+pytest.importorskip('lxml')
 
-setup(
-    name='sphinxcontrib-issuetracker',
-    version=issuetracker.__version__,
-    url='http://packages.python.org/sphinxcontrib-issuetracker',
-    download_url='http://pypi.python.org/pypi/sphinxcontrib-issuetracker',
-    license='BSD',
-    author='Sebastian Wiesner',
-    author_email='lunaryorn@googlemail.com',
-    description='Sphinx integration with different issuetrackers',
-    long_description=long_desc,
-    zip_safe=False,
-    classifiers=[
-        'Development Status :: 4 - Beta',
-        'Environment :: Console',
-        'Environment :: Web Environment',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: BSD License',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python',
-        'Topic :: Documentation',
-        'Topic :: Utilities',
-    ],
-    platforms='any',
-    packages=find_packages(),
-    include_package_data=True,
-    install_requires=requires,
-    namespace_packages=['sphinxcontrib'],
-)
+
+def test_get_bitbucket_issue_information_resolved():
+    info = get_bitbucket_issue_information(None, 'synaptiks', 'lunar', '22')
+    assert info == {'closed': True,
+                    'uri': 'https://bitbucket.org/lunar/synaptiks/issue/22/'}
+
+
+def test_get_bitbucket_issue_information_invalid():
+    info = get_bitbucket_issue_information(None, 'synaptiks', 'lunar', '36')
+    assert info == {'closed': True,
+                    'uri': 'https://bitbucket.org/lunar/synaptiks/issue/36/'}
+
+
+def test_get_bitbucket_issue_information_duplicate():
+    info = get_bitbucket_issue_information(None, 'synaptiks', 'lunar', '42')
+    assert info == {'closed': True,
+                    'uri': 'https://bitbucket.org/lunar/synaptiks/issue/42/'}

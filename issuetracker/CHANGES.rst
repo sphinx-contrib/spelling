@@ -1,3 +1,11 @@
+0.7 (Jan 08, 2011)
+==================
+
+- Issue information is now cached
+- Custom issue trackers must now connect to the ``issuetracker-resolve-issue``
+  event, the builtin ``missing-reference`` event is no longer used.
+
+
 0.6 (Jan 04, 2011)
 ==================
 

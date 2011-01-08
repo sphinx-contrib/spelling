@@ -23,45 +23,25 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import pytest
+from mock import Mock
 
-import sys
-sys.path.insert(0, 'sphinxcontrib')
-
-from setuptools import setup, find_packages
-
-import issuetracker
-
-with open('README') as stream:
-    long_desc = stream.read()
+from sphinxcontrib.issuetracker import get_launchpad_issue_information
 
 
-requires = ['Sphinx>=1.0b2']
+pytest.importorskip('launchpadlib')
 
-setup(
-    name='sphinxcontrib-issuetracker',
-    version=issuetracker.__version__,
-    url='http://packages.python.org/sphinxcontrib-issuetracker',
-    download_url='http://pypi.python.org/pypi/sphinxcontrib-issuetracker',
-    license='BSD',
-    author='Sebastian Wiesner',
-    author_email='lunaryorn@googlemail.com',
-    description='Sphinx integration with different issuetrackers',
-    long_description=long_desc,
-    zip_safe=False,
-    classifiers=[
-        'Development Status :: 4 - Beta',
-        'Environment :: Console',
-        'Environment :: Web Environment',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: BSD License',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python',
-        'Topic :: Documentation',
-        'Topic :: Utilities',
-    ],
-    platforms='any',
-    packages=find_packages(),
-    include_package_data=True,
-    install_requires=requires,
-    namespace_packages=['sphinxcontrib'],
-)
+
+def pytest_funcarg__app(request):
+    app = Mock(name='application')
+    app.env = Mock(name='environment')
+    app.env.issuetracker_launchpad = None
+    return app
+
+
+def test_get_launchpad_issue_information(app):
+    info = get_launchpad_issue_information(app, 'inkscape', None, '647789')
+    assert info == {
+        'closed': True,
+        'uri': 'https://bugs.launchpad.net/bugs/647789'}
+

@@ -24,44 +24,26 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-import sys
-sys.path.insert(0, 'sphinxcontrib')
-
-from setuptools import setup, find_packages
-
-import issuetracker
-
-with open('README') as stream:
-    long_desc = stream.read()
+from sphinxcontrib.issuetracker import get_google_code_issue_information
 
 
-requires = ['Sphinx>=1.0b2']
 
-setup(
-    name='sphinxcontrib-issuetracker',
-    version=issuetracker.__version__,
-    url='http://packages.python.org/sphinxcontrib-issuetracker',
-    download_url='http://pypi.python.org/pypi/sphinxcontrib-issuetracker',
-    license='BSD',
-    author='Sebastian Wiesner',
-    author_email='lunaryorn@googlemail.com',
-    description='Sphinx integration with different issuetrackers',
-    long_description=long_desc,
-    zip_safe=False,
-    classifiers=[
-        'Development Status :: 4 - Beta',
-        'Environment :: Console',
-        'Environment :: Web Environment',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: BSD License',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python',
-        'Topic :: Documentation',
-        'Topic :: Utilities',
-    ],
-    platforms='any',
-    packages=find_packages(),
-    include_package_data=True,
-    install_requires=requires,
-    namespace_packages=['sphinxcontrib'],
-)
+def test_get_google_code_issue_information_fixed():
+    info = get_google_code_issue_information(None, 'pytox', None, '2')
+    assert info == {
+        'closed': True,
+        'uri': 'http://code.google.com/p/pytox/issues/detail?id=2'}
+
+
+def test_get_google_code_issue_information_invalid():
+    info = get_google_code_issue_information(None, 'pytox', None, '5')
+    assert info == {
+        'closed': True,
+        'uri': 'http://code.google.com/p/pytox/issues/detail?id=5'}
+
+
+def test_get_google_code_issue_information_wontfix():
+    info = get_google_code_issue_information(None, 'pytox', None, '6')
+    assert info == {
+        'closed': True,
+        'uri': 'http://code.google.com/p/pytox/issues/detail?id=6'}

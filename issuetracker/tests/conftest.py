@@ -23,45 +23,33 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import re
 
-import sys
-sys.path.insert(0, 'sphinxcontrib')
-
-from setuptools import setup, find_packages
-
-import issuetracker
-
-with open('README') as stream:
-    long_desc = stream.read()
+from mock import Mock, MagicMock
 
 
-requires = ['Sphinx>=1.0b2']
+def pytest_funcarg__config(request):
+    config = Mock(name='config')
+    config.project = 'issuetracker'
+    config.issuetracker = 'spamtracker'
+    config.issuetracker_user = 'foobar'
+    config.issuetracker_project = None
+    config.issuetracker_issue_pattern = re.compile(r'#(\d+)')
+    return config
 
-setup(
-    name='sphinxcontrib-issuetracker',
-    version=issuetracker.__version__,
-    url='http://packages.python.org/sphinxcontrib-issuetracker',
-    download_url='http://pypi.python.org/pypi/sphinxcontrib-issuetracker',
-    license='BSD',
-    author='Sebastian Wiesner',
-    author_email='lunaryorn@googlemail.com',
-    description='Sphinx integration with different issuetrackers',
-    long_description=long_desc,
-    zip_safe=False,
-    classifiers=[
-        'Development Status :: 4 - Beta',
-        'Environment :: Console',
-        'Environment :: Web Environment',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: BSD License',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python',
-        'Topic :: Documentation',
-        'Topic :: Utilities',
-    ],
-    platforms='any',
-    packages=find_packages(),
-    include_package_data=True,
-    install_requires=requires,
-    namespace_packages=['sphinxcontrib'],
-)
+
+def pytest_funcarg__cache(request):
+    cache = MagicMock(name='issue_cache')
+    # fake cache misses to always trigger a call to the fallback function
+    cache.get = Mock(name='issue_cache.get', return_value=None)
+    return cache
+
+
+def pytest_funcarg__app(request):
+    app = Mock(name='application')
+    config = request.getfuncargvalue('config')
+    app.config = config
+    app.env = Mock('environment')
+    app.env.config = config
+    app.env.issuetracker_cache = request.getfuncargvalue('cache')
+    return app

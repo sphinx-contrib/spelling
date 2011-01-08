@@ -23,45 +23,29 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import pytest
 
-import sys
-sys.path.insert(0, 'sphinxcontrib')
-
-from setuptools import setup, find_packages
-
-import issuetracker
-
-with open('README') as stream:
-    long_desc = stream.read()
+from sphinxcontrib.issuetracker import get_debian_issue_information
 
 
-requires = ['Sphinx>=1.0b2']
+pytest.importorskip('debianbts')
 
-setup(
-    name='sphinxcontrib-issuetracker',
-    version=issuetracker.__version__,
-    url='http://packages.python.org/sphinxcontrib-issuetracker',
-    download_url='http://pypi.python.org/pypi/sphinxcontrib-issuetracker',
-    license='BSD',
-    author='Sebastian Wiesner',
-    author_email='lunaryorn@googlemail.com',
-    description='Sphinx integration with different issuetrackers',
-    long_description=long_desc,
-    zip_safe=False,
-    classifiers=[
-        'Development Status :: 4 - Beta',
-        'Environment :: Console',
-        'Environment :: Web Environment',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: BSD License',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python',
-        'Topic :: Documentation',
-        'Topic :: Utilities',
-    ],
-    platforms='any',
-    packages=find_packages(),
-    include_package_data=True,
-    install_requires=requires,
-    namespace_packages=['sphinxcontrib'],
-)
+
+def test_get_debian_issue_information_fixed():
+    info = get_debian_issue_information(None, 'ldb-tools', None, '584227')
+    assert info == {
+        'closed': True,
+        'uri': 'http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=584227'}
+
+
+def test_get_debian_issue_information_open():
+    info = get_debian_issue_information(None, 'xul-ext-sync', None, '600890')
+    assert info == {
+        'closed': False,
+        'uri': 'http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=600890'}
+
+
+def test_get_debian_issue_information_invalid():
+    info = get_debian_issue_information(None, 'release.debian.org', None, '1')
+    assert info == None
+
