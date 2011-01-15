@@ -184,7 +184,7 @@ def render_dot_html(self, node, code, options, prefix='blockdiag',
 
             thumb_size = (options['maxwidth'], image_size[1])
             image.save(toutfn, thumb_size)
-            thumb_size = image.image.size
+            thumb_size = image.drawer.image.size
 
     except BlockdiagError, exc:
         self.builder.warn('dot code %r: ' % code + str(exc))
