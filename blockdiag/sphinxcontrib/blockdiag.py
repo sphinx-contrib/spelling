@@ -258,14 +258,14 @@ def html_visit_blockdiag(self, node):
     render_dot_html(self, node, node['code'], node['options'])
 
 
-def render_dot_latex(self, node, code, options, prefix='sdedit'):
+def render_dot_latex(self, node, code, options, prefix='blockdiag'):
     try:
         fname, outfn = get_image_filename(self, code, options, prefix)
 
         image = create_blockdiag(self, code, options, prefix)
-        image.save(fname, 'PNG')
+        image.save(outfn, 'PNG')
 
-    except SdeditError, exc:
+    except BlockdiagError, exc:
         self.builder.warn('dot code %r: ' % code + str(exc))
         raise nodes.SkipNode
 
