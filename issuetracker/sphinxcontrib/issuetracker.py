@@ -268,7 +268,6 @@ def resolve_issue_references(app, doctree):
     """
     Resolve all pending issue references in the given ``doctree``.
     """
-    cache = app.env.issuetracker_cache
     for node in doctree.traverse(pending_xref):
         if node['reftype'] == 'issue':
             info = lookup_issue_information(node['reftarget'], app)
