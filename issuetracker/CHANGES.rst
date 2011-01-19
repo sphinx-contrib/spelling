@@ -1,6 +1,9 @@
 0.7.1 (in development)
 ======================
 
+- Fixed #8: Copy the stylesheet after build again to avoid exceptions on
+  non-existing build directories
+
 
 0.7 (Jan 08, 2011)
 ==================

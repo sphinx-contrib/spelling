@@ -56,6 +56,11 @@ def test_auto_connect_builtin_issue_resolvers_no_tracker(app):
     assert not app.connect.called
 
 
+def test_add_stylesheet(app):
+    issuetracker.add_stylesheet(app)
+    app.add_stylesheet.assert_called_with('issuetracker.css')
+
+
 def test_setup(app):
     issuetracker.setup(app)
     app.require_sphinx.assert_called_with('1.0')
@@ -65,7 +70,8 @@ def test_setup(app):
         (('builder-inited',
           issuetracker.auto_connect_builtin_issue_resolvers), {}),
         (('builder-inited', issuetracker.add_stylesheet), {}),
-        (('doctree-read', issuetracker.resolve_issue_references), {})]
+        (('doctree-read', issuetracker.resolve_issue_references), {}),
+        (('build-finished', issuetracker.copy_stylesheet), {})]
     app.add_config_value.call_args_list = [
         (('issuetracker_issue_pattern', re.compile(r'#(\d+)'), 'env'), {}),
         (('issuetracker_user', None, 'env'), {}),

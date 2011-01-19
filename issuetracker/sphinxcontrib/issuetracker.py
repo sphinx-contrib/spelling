@@ -286,20 +286,23 @@ def auto_connect_builtin_issue_resolvers(app):
 
 
 def add_stylesheet(app):
-    if app.builder.name != 'html':
-        return
     app.add_stylesheet('issuetracker.css')
-    app.info(bold('Adding issuetracker stylesheet... '), nonl=True)
-    dest = path.join(app.builder.outdir, '_static', 'issuetracker.css')
-    source = path.join(path.abspath(path.dirname(__file__)),
-                          'issuetracker.css')
-    copyfile(source, dest)
-    app.info('done')
 
 
 def init_cache(app):
     if not hasattr(app.env, 'issuetracker_cache'):
         app.env.issuetracker_cache = {}
+
+
+def copy_stylesheet(app, exception):
+    if app.builder.name != 'html' or exception:
+        return
+    app.info(bold('Copying issuetracker stylesheet... '), nonl=True)
+    dest = path.join(app.builder.outdir, '_static', 'issuetracker.css')
+    source = path.join(path.abspath(path.dirname(__file__)),
+                          'issuetracker.css')
+    copyfile(source, dest)
+    app.info('done')
 
 
 def setup(app):
@@ -315,3 +318,4 @@ def setup(app):
     app.connect('builder-inited', add_stylesheet)
     app.connect('builder-inited', init_cache)
     app.connect('doctree-read', resolve_issue_references)
+    app.connect('build-finished', copy_stylesheet)
