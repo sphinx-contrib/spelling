@@ -40,6 +40,6 @@ Usage
 Please refer to the documentation_ for further information.
 
 
-.. _`Sphinx`: http://sphinx.pocoo.org/latest
-.. _`sphinx-contrib`: http://bitbucket.org/birkenfeld/sphinx-contrib
+.. _Sphinx: http://sphinx.pocoo.org/latest
+.. _sphinx-contrib: http://bitbucket.org/birkenfeld/sphinx-contrib
 .. _documentation: http://packages.python.org/sphinxcontrib-issuetracker
