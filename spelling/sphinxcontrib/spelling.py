@@ -179,6 +179,14 @@ class SpellingVisitor(GenericNodeVisitor):
     def default_visit(self, node): pass
     def default_departure(self, node): pass
 
+    def unknown_visit(self, node):
+        self.document.reporter.warning('Ignoring node: %s' % node.tagname)
+    def unknown_departure(self, node): pass
+
+    # Ignore conditional "only" nodes
+    def visit_only(self, node): pass
+    def depart_only(self, node): pass
+
     # Ignore inline literal text
     def visit_literal(self, node): pass
     def depart_literal(self, node): pass

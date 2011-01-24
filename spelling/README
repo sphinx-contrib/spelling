@@ -66,4 +66,13 @@ the misspelling.
      Supported Shells
      - "bitbucket"
 
+History
+=======
+
+0.2
+  Warn but otherwise ignore unknown node types.
+
+0.1
+  First public release.
+
 .. _PyEnchant: http://www.rfk.id.au/software/pyenchant/
