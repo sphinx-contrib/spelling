@@ -85,8 +85,9 @@ class InterfaceDocumenter(sphinx.ext.autodoc.ClassDocumenter):
     """
     objtype = 'interface'               # Called 'autointerface'
 
-    # needs a higher priority than ClassDocumenter
-    priority = 1 + sphinx.ext.autodoc.ClassDocumenter.priority
+    # Since these have very specific tests, we give the classes defined here
+    # very high priority so that they override any other documenters.
+    priority = 100 + sphinx.ext.autodoc.ClassDocumenter.priority
 
     @classmethod
     def can_document_member(cls, member, membername, isattr, parent):
@@ -112,11 +113,21 @@ class InterfaceAttributeDocumenter(sphinx.ext.autodoc.AttributeDocumenter):
     interface attributes.
     """
     objtype = 'interfaceattribute'   # Called 'autointerfaceattribute'
-    directivetype = 'attribute'      # Formats as a 'class' for now
+    directivetype = 'attribute'      # Formats as a 'attribute' for now
+    priority = 100 + sphinx.ext.autodoc.AttributeDocumenter.priority
 
     @classmethod
     def can_document_member(cls, member, membername, isattr, parent):
-        return isinstance(member, zope.interface.interface.Attribute)
+        res = (isinstance(member, zope.interface.interface.Attribute)
+               and not isinstance(member, zope.interface.interface.Method))
+        return res
+
+    def add_content(self, more_content, no_docstring=False):
+        # Revert back to default since the docstring *is* the correct thing to
+        # display here.
+        sphinx.ext.autodoc.ClassLevelDocumenter.add_content(
+            self, more_content, no_docstring)
+
 
 class InterfaceMethodDocumenter(sphinx.ext.autodoc.MethodDocumenter):
     """
@@ -124,7 +135,8 @@ class InterfaceMethodDocumenter(sphinx.ext.autodoc.MethodDocumenter):
     interface attributes.
     """
     objtype = 'interfacemethod'   # Called 'autointerfacemethod'
-    directivetype = 'method'      # Formats as a 'class' for now
+    directivetype = 'method'      # Formats as a 'method' for now
+    priority = 100 + sphinx.ext.autodoc.MethodDocumenter.priority
 
     @classmethod
     def can_document_member(cls, member, membername, isattr, parent):
@@ -133,6 +145,7 @@ class InterfaceMethodDocumenter(sphinx.ext.autodoc.MethodDocumenter):
     def format_args(self):
         return interface_format_args(self.object)
 
+#class InterfaceDirective(sphinx.ext.autodoc.AutoDirective):
 class InterfaceDirective(sphinx.domains.python.PyClasslike):
     r"""An `'interface'` directive."""
     def get_index_text(self, modname, name_cls):
@@ -149,6 +162,7 @@ def setup(app):
     app.add_autodocumenter(InterfaceDocumenter)
     app.add_autodocumenter(InterfaceAttributeDocumenter)
     app.add_autodocumenter(InterfaceMethodDocumenter)
+
     domain = sphinx.domains.python.PythonDomain
     domain.object_types['interface'] = sphinx.domains.python.ObjType(
         l_('interface'), 'interface', 'obj')
