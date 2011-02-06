@@ -40,13 +40,11 @@ def interface_getattr(*v):
     """Behaves like `getattr` but for zope Interface objects which
     hide the attributes.
 
-
-    .. note::  Originally I simply tried to override
-      :meth:`InterfaceDocumenter.special_attrgetter` to deal with the
-      special access needs of :class:`Interface` objects, but found
-      that this is not intended to be overwritten.  Instead one should
-      register the special accessor  using
-      :func:`app.add_autodoc_attrgetter`.
+    .. note:: Originally I simply tried to override
+      :meth:`InterfaceDocumenter.special_attrgetter` to deal with the special
+      access needs of :class:`Interface` objects, but found that this is not
+      intended to be overwritten.  Instead one should register the special
+      accessor using :func:`app.add_autodoc_attrgetter`.
     """
     obj, name = v[:2]
     if "__dict__" == name:
@@ -56,7 +54,7 @@ def interface_getattr(*v):
     try:
         return getattr(obj, name)
     except AttributeError:
-        if name in obj.names():
+        if name in obj.names(all=True):
             return obj.get(name)
         elif 2 < len(v):
             return v[2]
