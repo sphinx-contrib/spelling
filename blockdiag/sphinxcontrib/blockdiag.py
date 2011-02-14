@@ -133,7 +133,6 @@ def create_blockdiag(self, code, options, prefix='blockdiag'):
     """
     Render blockdiag code into a PNG output file.
     """
-    ttfont = None
     fontpath = self.builder.config.blockdiag_fontpath
     if fontpath and not hasattr(self.builder, '_blockdiag_fontpath_warned'):
         if not os.path.isfile(fontpath):
@@ -151,7 +150,6 @@ def create_blockdiag(self, code, options, prefix='blockdiag'):
         antialias = self.builder.config.blockdiag_antialias
         draw = DiagramDraw.DiagramDraw('PNG', screen, font=fontpath,
                                        antialias=antialias)
-        draw.draw()
     except Exception, e:
         raise BlockdiagError('blockdiag error:\n%s\n' % e)
 
@@ -165,7 +163,9 @@ def render_dot_html(self, node, code, options, prefix='blockdiag',
         relfn, outfn = get_image_filename(self, code, options, prefix)
 
         image = create_blockdiag(self, code, options, prefix)
-        image.save(outfn)
+        if not os.path.isfile(outfn):
+            image.draw()
+            image.save(outfn)
 
         # generate description table
         descriptions = []
@@ -183,7 +183,9 @@ def render_dot_html(self, node, code, options, prefix='blockdiag',
                                                 options, thumb_prefix)
 
             thumb_size = (options['maxwidth'], image_size[1])
-            image.save(toutfn, thumb_size)
+            if not os.path.isfile(toutfn):
+                image.draw()
+                image.save(toutfn, thumb_size)
             thumb_size = image.drawer.image.size
 
     except BlockdiagError, exc:
@@ -263,7 +265,9 @@ def render_dot_latex(self, node, code, options, prefix='blockdiag'):
         fname, outfn = get_image_filename(self, code, options, prefix)
 
         image = create_blockdiag(self, code, options, prefix)
-        image.save(outfn, 'PNG')
+        if not os.path.isfile(outfn):
+            image.draw()
+            image.save(outfn)
 
     except BlockdiagError, exc:
         self.builder.warn('dot code %r: ' % code + str(exc))
