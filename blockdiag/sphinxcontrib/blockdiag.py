@@ -129,7 +129,7 @@ def get_image_filename(self, code, options, prefix='blockdiag'):
     return relfn, outfn
 
 
-def create_blockdiag(self, code, options, prefix='blockdiag'):
+def create_blockdiag(self, code, filename, options, prefix='blockdiag'):
     """
     Render blockdiag code into a PNG output file.
     """
@@ -148,7 +148,7 @@ def create_blockdiag(self, code, options, prefix='blockdiag'):
         screen = ScreenNodeBuilder.build(tree)
 
         antialias = self.builder.config.blockdiag_antialias
-        draw = DiagramDraw.DiagramDraw('PNG', screen, font=fontpath,
+        draw = DiagramDraw.DiagramDraw('PNG', screen, filename, font=fontpath,
                                        antialias=antialias)
     except Exception, e:
         raise BlockdiagError('blockdiag error:\n%s\n' % e)
@@ -162,10 +162,10 @@ def render_dot_html(self, node, code, options, prefix='blockdiag',
     try:
         relfn, outfn = get_image_filename(self, code, options, prefix)
 
-        image = create_blockdiag(self, code, options, prefix)
+        image = create_blockdiag(self, code, outfn, options, prefix)
         if not os.path.isfile(outfn):
             image.draw()
-            image.save(outfn)
+            image.save()
 
         # generate description table
         descriptions = []
@@ -264,10 +264,10 @@ def render_dot_latex(self, node, code, options, prefix='blockdiag'):
     try:
         fname, outfn = get_image_filename(self, code, options, prefix)
 
-        image = create_blockdiag(self, code, options, prefix)
+        image = create_blockdiag(self, code, outfn, options, prefix)
         if not os.path.isfile(outfn):
             image.draw()
-            image.save(outfn)
+            image.save()
 
     except BlockdiagError, exc:
         self.builder.warn('dot code %r: ' % code + str(exc))
