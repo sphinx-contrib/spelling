@@ -113,6 +113,14 @@ def get_image_filename(self, code, format, options, prefix='blockdiag'):
     if format not in ('PNG', 'PDF'):
         raise BlockdiagError('blockdiag error:\nunknown format: %s\n' % format)
 
+    if format == 'PDF':
+        try:
+            import reportlab
+        except ImportError:
+            msg = 'blockdiag error:\n' + \
+                  'colud not output PDF format; Install reportlab\n'
+            raise BlockdiagError(msg)
+
     hashkey = code.encode('utf-8') + str(options)
     fname = '%s-%s.%s' % (prefix, sha(hashkey).hexdigest(), format.lower())
     if hasattr(self.builder, 'imgpath'):
