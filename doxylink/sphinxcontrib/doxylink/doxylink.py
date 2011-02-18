@@ -127,6 +127,12 @@ def parse_tag_file(doc):
 		compound_name = compound.findtext('name')
 		compound_filename = compound.findtext('filename')
 		
+		#TODO The following is a hack bug fix I think
+		#Doxygen doesn't seem to include the file extension to <compound kind="file"><filename> entries
+		#If it's a 'file' type, check if it _does_ have an extension, if not append '.html'
+		if compound_kind == 'file' and not os.path.splitext(compound_filename)[1]:
+			compound_filename = join(compound_filename, '.html')
+		
 		#If it's a compound we can simply add it
 		mapping[compound_name] = {'kind' : compound_kind, 'file' : compound_filename}
 		
