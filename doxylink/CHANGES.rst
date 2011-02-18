@@ -1,3 +1,8 @@
+1.1 ()
+====================
+
+- Add support for linking directly to struct definitions.
+
 1.0 (Dec 14, 2010)
 ====================
 
