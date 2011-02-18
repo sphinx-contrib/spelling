@@ -1,4 +1,4 @@
-1.1 ()
+1.1 (Feb 19, 2011)
 ====================
 
 - Add support for linking directly to struct definitions.

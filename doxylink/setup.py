@@ -9,7 +9,7 @@ requires = ['Sphinx>=0.6', 'pyparsing']
 
 setup(
     name='sphinxcontrib-doxylink',
-    version='1.0',
+    version='1.1',
 	url='http://packages.python.org/sphinxcontrib-doxylink',
     download_url='http://pypi.python.org/pypi/sphinxcontrib-doxylink',
     license='BSD',
