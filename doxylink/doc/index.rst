@@ -94,6 +94,16 @@ The argument list is not whitespace sensitive (any more than C++ is anyway) and 
 
 When making a match, Doxylink splits up the requested string into the function symbol and the argument list. If it finds a match for the function symbol part but not for the argument list then it will return a link to any one of the function versions.
 
+Files
+^^^^^
+
+You can also link directly to a header or source file by giving the name of the file:
+
+.. code-block:: rst
+
+	:myapi:`main.cpp`
+	:myapi:`MainWindow.h`
+
 Setup
 -----
 
