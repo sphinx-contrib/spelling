@@ -94,7 +94,7 @@ def normalise(symbol):
 		arglist_input_string = arglist_input_string[:closing_bracket_location+1]
 	except ValueError:
 		#This shouldn't happen.
-		print 'Could not find closing bracket in %s' % arglist_input_string
+		print('Could not find closing bracket in %s' % arglist_input_string)
 		raise
 	
 	try:
