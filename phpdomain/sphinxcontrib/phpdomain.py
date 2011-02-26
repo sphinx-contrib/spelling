@@ -408,6 +408,73 @@ class PhpXRefRole(XRefRole):
 
         return title, target
 
+class PhpNamespaceIndex(Index):
+    """
+    Index subclass to provide the Php module index.
+    """
+
+    name = 'modindex'
+    localname = l_('PHP Namespace Index')
+    shortname = l_('namespaces')
+
+    def generate(self, docnames=None):
+        content = {}
+        # list of prefixes to ignore
+        ignores = self.domain.env.config['modindex_common_prefix']
+        ignores = sorted(ignores, key=len, reverse=True)
+        # list of all modules, sorted by module name
+        modules = sorted(self.domain.data['namespaces'].iteritems(),
+                         key=lambda x: x[0].lower())
+        # sort out collapsable modules
+        prev_modname = ''
+        num_toplevels = 0
+        for modname, (docname, synopsis, deprecated) in modules:
+            if docnames and docname not in docnames:
+                continue
+
+            for ignore in ignores:
+                if modname.startswith(ignore):
+                    modname = modname[len(ignore):]
+                    stripped = ignore
+                    break
+            else:
+                stripped = ''
+
+            # we stripped the whole module name?
+            if not modname:
+                modname, stripped = stripped, ''
+
+            entries = content.setdefault(modname[0].lower(), [])
+
+            package = modname.split('\\')[0]
+            if package != modname:
+                # it's a submodule
+                if prev_modname == package:
+                    # first submodule - make parent a group head
+                    entries[-1][1] = 1
+                elif not prev_modname.startswith(package):
+                    # submodule without parent in list, add dummy entry
+                    entries.append([stripped + package, 1, '', '', '', '', ''])
+                subtype = 2
+            else:
+                num_toplevels += 1
+                subtype = 0
+
+            qualifier = deprecated and _('Deprecated') or ''
+            entries.append([stripped + modname, subtype, docname,
+                            'namespace-' + stripped + modname, '',
+                            qualifier, synopsis])
+            prev_modname = modname
+
+        # apply heuristics when to collapse modindex at page load:
+        # only collapse if number of toplevel modules is larger than
+        # number of submodules
+        collapse = len(modules) - num_toplevels < num_toplevels
+
+        # sort by first letter
+        content = sorted(content.iteritems())
+
+        return content, collapse
 
 class PhpDomain(Domain):
     """PHP language domain."""
@@ -451,9 +518,9 @@ class PhpDomain(Domain):
         'objects': {},  # fullname -> docname, objtype
         'namespaces': {},  # namespace -> docname, synopsis
     }
-    # indices = [
-    #         RubyModuleIndex,
-    #     ]
+    indices = [
+        PhpNamespaceIndex,
+    ]
 
     def clear_doc(self, docname):
         for fullname, (fn, _) in self.data['objects'].items():

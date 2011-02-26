@@ -88,6 +88,8 @@ Test Case - Global symbols with no namespaces
 
 :php:func:`OtherClass::staticMethod`
 
+:php:exc:`InvalidArgumentException`
+
 
 .. php:namespace:: LibraryName
 
