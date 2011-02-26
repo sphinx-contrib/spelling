@@ -46,3 +46,7 @@ Classes
     .. php:const:: ATOM
     
         Y-m-d\TH:i:sP
+    
+    .. php:attr:: testattr
+    
+        Value of some attribute
