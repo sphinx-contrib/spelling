@@ -50,3 +50,53 @@ Classes
     .. php:attr:: testattr
     
         Value of some attribute
+
+.. php:class:: OtherClass
+
+    Another class
+
+.. php:method:: OtherClass::staticMethod()
+
+    A static method.
+
+Exceptions
+==========
+
+.. php:exception:: InvalidArgumentException
+
+    Throw when you get an argument that is bad.
+
+
+.. php:namespace:: LibraryName
+
+Namespaced elements
+===================
+
+.. php:function:: namespaced_function($one[, $two])
+
+    A function in a namespace
+    
+    :param string $one: First parameter.
+    :param string $two: Second parameter.
+
+.. php:class:: LibraryClass
+
+    A class in a namespace
+
+    .. php:method:: instanceMethod($foo)
+    
+    An instance method
+
+.. php:method:: LibraryClass::staticMethod()
+
+    A static method in a namespace
+
+Nested namespaces
+=================
+
+.. php:namespace:: LibraryName\SubPackage
+
+.. php:class:: SubpackageClass
+
+    A class in a subpackage
+    

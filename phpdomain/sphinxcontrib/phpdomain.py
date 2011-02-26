@@ -25,8 +25,8 @@ from sphinx.util.docfields import Field, GroupedField, TypedField
 
 
 php_sig_re = re.compile(
-    r'''^ ([\w.]*\.)?            # class name(s)
-          (\$?\w+\??!?)  \s*     # thing name
+    r'''^ ([\w.]*\:\:)?          # class name(s)
+          (\$?\w+)  \s*          # thing name
           (?: \((.*)\)           # optional: arguments
            (?:\s* -> \s* (.*))?  #           return annotation
           )? $                   # and nothing more
@@ -36,8 +36,8 @@ php_sig_re = re.compile(
 php_paramlist_re = re.compile(r'([\[\],])')  # split at '[', ']' and ','
 
 separators = {
-  'method':'::', 'function':'', 'class':'', 'namespace':'\\',
-  'global':'', 'const':'::', 'attr': '::$'
+  'method':'::', 'function':'\\', 'class':'\\', 'namespace':'\\',
+  'global':'', 'const':'::', 'attr': '::$', 'exception': ''
 }
 
 php_separator = re.compile(r"(\w+)?(?:[:]{2})?")
@@ -99,6 +99,7 @@ class PhpObject(ObjectDescription):
             raise ValueError
 
         name_prefix, name, arglist, retann = m.groups()
+
         if not name_prefix:
             name_prefix = ""
 
@@ -118,14 +119,14 @@ class PhpObject(ObjectDescription):
             if name_prefix and name_prefix.startswith(classname):
                 fullname = name_prefix + name
                 # class name is given again in the signature
-                name_prefix = name_prefix[len(classname):].lstrip('.')
+                name_prefix = name_prefix[len(classname):].lstrip('::')
             else:
                 separator = separators[self.objtype]
                 fullname = classname + separator + name_prefix + name
         else:
             add_module = True
             if name_prefix:
-                classname = name_prefix.rstrip('.')
+                classname = name_prefix.rstrip('::')
                 fullname = name_prefix + name
             else:
                 classname = ''
@@ -136,10 +137,13 @@ class PhpObject(ObjectDescription):
         signode['fullname'] = fullname
 
         sig_prefix = self.get_signature_prefix(sig)
+
         if sig_prefix:
             signode += addnodes.desc_annotation(sig_prefix, sig_prefix)
 
         if name_prefix:
+            if modname:
+                name_prefix = modname + separators['class'] + name_prefix
             signode += addnodes.desc_addname(name_prefix, name_prefix)
         # exceptions are a special case, since they are documented in the
         # 'exceptions' module.
@@ -344,8 +348,41 @@ class PhpClassmember(PhpObject):
         else:
             return ''
 
-class PhpNamespace(PhpObject):
-    pass
+class PhpNamespace(Directive):
+    """
+    Directive to start a new PHP namespace, which are similar to modules.
+    """
+    has_content = False
+    required_arguments = 1
+    optional_arguments = 0
+    final_argument_whitespace = False
+    option_spec = {
+        'synopsis': lambda x: x,
+        'noindex': directives.flag,
+        'deprecated': directives.flag,
+    }
+
+    def run(self):
+        env = self.state.document.settings.env
+        modname = self.arguments[0].strip()
+        noindex = 'noindex' in self.options
+        env.temp_data['php:namespace'] = modname
+        env.domaindata['php']['namespaces'][modname] = (
+            env.docname, self.options.get('synopsis', ''),
+            'deprecated' in self.options)
+
+        targetnode = nodes.target('', '', ids=['namespace-' + modname], ismod=True)
+        self.state.document.note_explicit_target(targetnode)
+        ret = [targetnode]
+
+        # the synopsis isn't printed; in fact, it is only used in the
+        # modindex currently
+        if not noindex:
+            indextext = _('%s (module)') % modname
+            inode = addnodes.index(entries=[('single', indextext,
+                                             'namespace-' + modname, modname)])
+            ret.append(inode)
+        return ret
 
 
 class PhpDomain(Domain):
@@ -358,9 +395,9 @@ class PhpDomain(Domain):
         'const': ObjType(l_('const'), 'const', 'obj'),
         'method': ObjType(l_('method'), 'meth', 'obj'),
         'class': ObjType(l_('class'), 'class', 'obj'),
-        'attr': ObjType(l_('attribute'), 'attr', 'obj')
-        # 'exception': ObjType(l_('exception'), 'exc', 'obj'),
-        # 'namespace': ObjType(l_('namespace'), 'ns', 'obj'),
+        'attr': ObjType(l_('attribute'), 'attr', 'obj'),
+        'exception': ObjType(l_('exception'), 'exc', 'obj'),
+        'namespace': ObjType(l_('namespace'), 'ns', 'obj'),
     }
 
     directives = {
@@ -369,9 +406,9 @@ class PhpDomain(Domain):
         'const': PhpGloballevel,
         'class': PhpClasslike,
         'method': PhpClassmember,
-        'attr': PhpClassmember
-        # 'exception': PhpClasslike,
-        # 'namespace': PhpNamespace,
+        'attr': PhpClassmember,
+        'exception': PhpClasslike,
+        'namespace': PhpNamespace,
     }
 
     # roles = {
@@ -397,7 +434,7 @@ class PhpDomain(Domain):
         for fullname, (fn, _) in self.data['objects'].items():
             if fn == docname:
                 del self.data['objects'][fullname]
-        for ns, (fn, _, _, _) in self.data['namespaces'].items():
+        for ns, (fn, _, _) in self.data['namespaces'].items():
             if fn == docname:
                 del self.data['namespaces'][ns]
 
