@@ -20,3 +20,29 @@ Globals
     :param array haystack: The array to search.
     :returns boolean: Element exists in array.
 
+Classes
+=======
+
+.. php:class:: DateTime
+
+    Datetime class
+    
+    .. php:method:: setDate($year, $month, $day)
+        
+        Set the date in the datetime object
+        
+        :param int $year: The year.
+        :param int $month: The month.
+        :param int $day: The day.
+    
+    .. php:method:: setTime($hour, $minute[, $second])
+    
+        Set the time
+        
+        :param int $hour: The hour
+        :param int $minute: The minute
+        :param int $second: The second
+    
+    .. php:const:: ATOM
+    
+        Y-m-d\TH:i:sP

@@ -40,11 +40,11 @@ separators = {
   'global':'', 'const':'::', 'attr': '$'
 }
 
-php_separator = re.compile(r"(?:\w+)?(?:::)?(?:\\)?(?:\$)?")
+php_separator = re.compile(r"(\w+)?(?:[:]{2})?")
 
 def php_rsplit(fullname):
     items = [item for item in php_separator.findall(fullname)]
-    return ''.join(items[:-2]), items[-1]
+    return ''.join(items[:-2]), ''.join(items[1:-1])
 
 
 class PhpObject(ObjectDescription):
@@ -243,7 +243,7 @@ class PhpObject(ObjectDescription):
 
 class PhpGloballevel(PhpObject):
     """
-    Description of an object on global level (functions, data).
+    Description of an object on global level (functions, constants, data).
     """
 
     def get_index_text(self, modname, name_cls):
@@ -270,11 +270,57 @@ class PhpNamespacelevel(PhpObject):
         else:
             return ''
 
-class PhpEverywhere(PhpObject):
-    pass
-
 class PhpClasslike(PhpObject):
-    pass
+    """
+    Description of a class-like object (classes, exceptions).
+    """
+
+    def get_signature_prefix(self, sig):
+        return self.objtype + ' '
+
+    def get_index_text(self, modname, name_cls):
+        if self.objtype == 'class':
+            if not modname:
+                return _('%s (class)') % name_cls[0]
+            return _('%s (class in %s)') % (name_cls[0], modname)
+        elif self.objtype == 'exception':
+            return name_cls[0]
+        else:
+            return ''
+
+    def before_content(self):
+        PhpObject.before_content(self)
+        if self.names:
+            self.env.temp_data['php:class'] = self.names[0][0]
+            self.clsname_set = True
+
+class PhpEverywhere(PhpObject):
+    """
+    Description of a class member (methods, attributes).
+    """
+
+    def needs_arglist(self):
+        return self.objtype == 'method'
+
+    def get_index_text(self, modname, name_cls):
+        name, cls = name_cls
+        add_modules = self.env.config.add_module_names
+        if self.objtype == 'method':
+            try:
+                clsname, methname = php_rsplit(name)
+            except ValueError:
+                if modname:
+                    return _('%s() (in namespace %s)') % (name, modname)
+                else:
+                    return '%s()' % name
+            if modname and add_modules:
+                return _('%s() (%s::%s method)') % (methname, modname,
+                                                          clsname)
+            else:
+                return _('%s() (%s method)') % (methname, clsname)
+        else:
+            return ''
+
 
 class PhpNamespace(PhpObject):
     pass
@@ -288,8 +334,8 @@ class PhpDomain(Domain):
         'function': ObjType(l_('function'), 'func', 'obj'),
         'global': ObjType(l_('global variable'), 'global', 'obj'),
         'const': ObjType(l_('const'), 'const', 'obj'),
-        # 'method': ObjType(l_('method'), 'meth', 'obj'),
-        # 'class': ObjType(l_('class'), 'class', 'obj'),
+        'method': ObjType(l_('method'), 'meth', 'obj'),
+        'class': ObjType(l_('class'), 'class', 'obj'),
         # 'exception': ObjType(l_('exception'), 'exc', 'obj'),
         # 'namespace': ObjType(l_('namespace'), 'ns', 'obj'),
     }
@@ -298,7 +344,8 @@ class PhpDomain(Domain):
         'function': PhpNamespacelevel,
         'global': PhpGloballevel,
         'const': PhpGloballevel,
-        # 'class': PhpClasslike,
+        'class': PhpClasslike,
+        'method': PhpEverywhere
         # 'exception': PhpClasslike,
         # 'namespace': PhpNamespace,
     }
