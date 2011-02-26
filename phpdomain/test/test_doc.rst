@@ -67,6 +67,26 @@ Exceptions
     Throw when you get an argument that is bad.
 
 
+Test Case - Global symbols with no namespaces
+---------------------------------------------
+
+:php:global:`$global_var`
+
+:php:const:`SOME_CONSTANT`
+
+:php:func:`in_array`
+
+:php:class:`DateTime`
+
+:php:func:`DateTime::setTime()`
+
+:php:func:`DateTime::ATOM`
+
+:php:func:`DateTime::$testattr`
+
+:php:func:`OtherClass::staticMethod`
+
+
 .. php:namespace:: LibraryName
 
 Namespaced elements
@@ -91,6 +111,31 @@ Namespaced elements
 
     A static method in a namespace
 
+
+Test Case - not including namespace
+-----------------------------------
+
+:php:func:`namespaced_function()`
+
+:php:class:`LibraryClass`
+
+:php:func:`LibraryClass::instanceMethod`
+
+:php:func:`LibraryClass::staticMethod()`
+
+
+Test Case - global access
+-------------------------
+
+:php:class:`DateTime`
+
+:php:func:`DateTime::setTime()`
+
+:php:global:`$global_var`
+
+:php:const:`SOME_CONSTANT`
+
+
 Nested namespaces
 =================
 
@@ -99,4 +144,11 @@ Nested namespaces
 .. php:class:: SubpackageClass
 
     A class in a subpackage
-    
+
+
+Test Case - Test subpackage links
+---------------------------------
+
+:php:class:`SubpackageClass`
+
+:php:class:`LibraryName\\SubPackage\\SubpackageClass`

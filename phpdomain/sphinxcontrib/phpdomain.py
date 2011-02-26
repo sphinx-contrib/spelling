@@ -208,7 +208,7 @@ class PhpObject(ObjectDescription):
         separator = separators[self.objtype]
         if self._is_class_member():
             if signode['class']:
-                prefix = modname and modname + '::' or ''
+                prefix = modname and modname + '\\' or ''
             else:
                 prefix = modname and modname + separator or ''
         else:
@@ -385,6 +385,35 @@ class PhpNamespace(Directive):
         return ret
 
 
+class PhpXRefRole(XRefRole):
+    """
+    Provides cross reference links for PHP objects
+    """
+    def process_link(self, env, refnode, has_explicit_title, title, target):
+        if not has_explicit_title:
+            title = title.lstrip('#')
+            if title.startswith("::"):
+                title = title[2:]
+            target = target.lstrip('~') # only has a meaning for the title
+            # if the first character is a tilde, don't display the module/class
+            # parts of the contents
+            if title[0:1] == '~':
+                m = re.search(r"(?:\.)?(?:#)?(?:::)?(.*)\Z", title)
+                if m:
+                    title = m.group(1)
+
+        if not title.startswith("$"):
+            refnode['php:namespace'] = env.temp_data.get('php:namespace')
+            refnode['php:class'] = env.temp_data.get('php:class')
+
+        # if the first character is a dot, search more specific namespaces first
+        # else search builtins first
+        if target[0:1] == '.':
+            target = target[1:]
+            refnode['refspecific'] = True
+        return title, target
+
+
 class PhpDomain(Domain):
     """PHP language domain."""
     name = 'php'
@@ -411,17 +440,18 @@ class PhpDomain(Domain):
         'namespace': PhpNamespace,
     }
 
-    # roles = {
-    #         'func':  RubyXRefRole(fix_parens=False),
-    #         'global':RubyXRefRole(),
-    #         'class': RubyXRefRole(),
-    #         'exc':   RubyXRefRole(),
-    #         'meth':  RubyXRefRole(fix_parens=False),
-    #         'attr':  RubyXRefRole(),
-    #         'const': RubyXRefRole(),
-    #         'mod':   RubyXRefRole(),
-    #         'obj':   RubyXRefRole(),
-    #     }
+    roles = {
+        'func': PhpXRefRole(fix_parens=False),
+        'global': PhpXRefRole(),
+        'class': PhpXRefRole(),
+        'exc': PhpXRefRole(),
+        'meth': PhpXRefRole(fix_parens=False),
+        'attr': PhpXRefRole(),
+        'const': PhpXRefRole(),
+        'ns': PhpXRefRole(),
+        'obj': PhpXRefRole(),
+    }
+
     initial_data = {
         'objects': {},  # fullname -> docname, objtype
         'namespaces': {},  # namespace -> docname, synopsis
@@ -437,6 +467,83 @@ class PhpDomain(Domain):
         for ns, (fn, _, _) in self.data['namespaces'].items():
             if fn == docname:
                 del self.data['namespaces'][ns]
+
+    def resolve_xref(self, env, fromdocname, builder,
+                     typ, target, node, contnode):
+        if (typ == 'ns' or
+            typ == 'obj' and target in self.data['namespaces']):
+            docname, synopsis, deprecated = \
+                self.data['namespaces'].get(target, ('','','', ''))
+            if not docname:
+                return None
+            else:
+                title = '%s%s' % (synopsis,
+                                    (deprecated and ' (deprecated)' or ''))
+                return make_refnode(builder, fromdocname, docname,
+                                    'namespace-' + target, contnode, title)
+        else:
+            modname = node.get('php:namespace')
+            clsname = node.get('php:class')
+            searchorder = node.hasattr('refspecific') and 1 or 0
+            name, obj = self.find_obj(env, modname, clsname,
+                                      target, typ, searchorder)
+            if not obj:
+                return None
+            else:
+                return make_refnode(builder, fromdocname, obj[0], name,
+                                    contnode, name)
+
+    def find_obj(self, env, modname, classname, name, type, searchorder=0):
+        """
+        Find a PHP object for "name", perhaps using the given namespace and/or
+        classname.
+        """
+        # skip parens
+        if name[-2:] == '()':
+            name = name[:-2]
+
+        if not name:
+            return None, None
+
+        objects = self.data['objects']
+        
+        newname = None
+        if searchorder == 1:
+            if modname and classname and \
+                     modname + '\\' + classname + '::' + name in objects:
+                newname = modname + '\\' + classname + '::' + name
+            elif modname and modname + '\\' + name in objects:
+                newname = modname + '\\' + name
+            elif modname and modname + '\\' + name in objects:
+                newname = modname + '\\' + name
+            elif classname and classname + '::' + name in objects:
+                newname = classname + '.' + name
+            elif classname and classname + '::$' + name in objects:
+                newname = classname + '::$' + name
+            elif name in objects:
+                newname = name
+        else:
+            if name in objects:
+                newname = name
+            elif classname and classname + '::' + name in objects:
+                newname = classname + '::' + name
+            elif classname and classname + '::$' + name in objects:
+                newname = classname + '::$' + name
+            elif modname and modname + '\\' + name in objects:
+                newname = modname + '\\' + name
+            elif modname and classname and \
+                     modname + '\\' + classname + '::' + name in objects:
+                newname = modname + '\\' + classname + '::' + name
+            elif modname and classname and \
+                     modname + '\\' + classname + '::$' + name in objects:
+                newname = modname + '\\' + classname + '::$' + name
+            # special case: object methods
+            elif type in ('func', 'meth') and '::' not in name and \
+                 'object::' + name in objects:
+                newname = 'object::' + name
+        if newname is None:
+            return None, None
+        return newname, objects[newname]
 
     def get_objects(self):
         for ns, info in self.data['namespaces'].iteritems():
