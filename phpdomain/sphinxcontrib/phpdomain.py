@@ -391,14 +391,14 @@ class PhpXRefRole(XRefRole):
     """
     def process_link(self, env, refnode, has_explicit_title, title, target):
         if not has_explicit_title:
-            title = title.lstrip('#')
             if title.startswith("::"):
                 title = title[2:]
             target = target.lstrip('~') # only has a meaning for the title
             # if the first character is a tilde, don't display the module/class
             # parts of the contents
             if title[0:1] == '~':
-                m = re.search(r"(?:\.)?(?:#)?(?:::)?(.*)\Z", title)
+                m = re.search(r"(?:\\|[:]{2})(.*)\Z", title)
+                print m.groups()
                 if m:
                     title = m.group(1)
 
@@ -406,11 +406,6 @@ class PhpXRefRole(XRefRole):
             refnode['php:namespace'] = env.temp_data.get('php:namespace')
             refnode['php:class'] = env.temp_data.get('php:class')
 
-        # if the first character is a dot, search more specific namespaces first
-        # else search builtins first
-        if target[0:1] == '.':
-            target = target[1:]
-            refnode['refspecific'] = True
         return title, target
 
 

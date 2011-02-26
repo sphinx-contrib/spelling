@@ -80,6 +80,8 @@ Test Case - Global symbols with no namespaces
 
 :php:func:`DateTime::setTime()`
 
+:php:func:`~DateTime::setDate()`
+
 :php:func:`DateTime::ATOM`
 
 :php:func:`DateTime::$testattr`
@@ -118,6 +120,8 @@ Test Case - not including namespace
 :php:func:`namespaced_function()`
 
 :php:class:`LibraryClass`
+
+:php:class:`~LibraryName\\LibraryClass`
 
 :php:func:`LibraryClass::instanceMethod`
 
