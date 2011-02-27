@@ -3,7 +3,7 @@
     sphinx.domains.php
     ~~~~~~~~~~~~~~~~~~~
 
-    The PHP domain.
+    The PHP domain. Based off of the rubydomain by SHIBUKAWA Yoshiki
 
     :copyright: Copyright 2011 by Mark Story
     :license: BSD, see LICENSE for details.
