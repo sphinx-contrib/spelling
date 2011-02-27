@@ -119,7 +119,7 @@ You can modify a DateTime's date using :php:meth:`DateTime::setDate`.
 Install
 =======
 
-.. code-block::
+You can install the phpdomain using easy_install::
 
    easy_install -U sphinxcontrib-phpdomain
 
