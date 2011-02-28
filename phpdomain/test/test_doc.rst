@@ -119,6 +119,8 @@ Namespaced elements
 Test Case - not including namespace
 -----------------------------------
 
+:php:ns:`LibraryName`
+
 :php:func:`namespaced_function()`
 
 :php:class:`LibraryClass`
@@ -154,6 +156,8 @@ Nested namespaces
 
 Test Case - Test subpackage links
 ---------------------------------
+
+:php:ns:`LibraryName\\SubPackage`
 
 :php:class:`SubpackageClass`
 
