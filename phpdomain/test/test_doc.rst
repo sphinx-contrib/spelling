@@ -103,6 +103,10 @@ Namespaced elements
     :param string $one: First parameter.
     :param string $two: Second parameter.
 
+.. php:const:: NS_CONST
+   
+   A constant in a namespace
+
 .. php:class:: LibraryClass
 
     A class in a namespace
@@ -110,6 +114,14 @@ Namespaced elements
     .. php:method:: instanceMethod($foo)
     
     An instance method
+    
+    .. php:const:: TEST_CONST
+    
+    Test constant
+    
+    .. php:attr:: property
+    
+    A property!
 
 .. php:method:: LibraryClass::staticMethod()
 
@@ -123,6 +135,8 @@ Test Case - not including namespace
 
 :php:func:`namespaced_function()`
 
+:php:const:`NS_CONST`
+
 :php:class:`LibraryClass`
 
 :php:class:`~LibraryName\\LibraryClass`
@@ -131,6 +145,9 @@ Test Case - not including namespace
 
 :php:func:`LibraryClass::staticMethod()`
 
+:php:attr:`LibraryClass::$property`
+
+:php:const:`LibraryClass::TEST_CONST`
 
 Test Case - global access
 -------------------------
@@ -142,6 +159,12 @@ Test Case - global access
 :php:global:`$global_var`
 
 :php:const:`SOME_CONSTANT`
+
+:php:attr:`LibraryName\\LibraryClass::$property`
+
+:php:const:`LibraryName\\LibraryClass::TEST_CONST`
+
+:php:const:`LibraryName\\NS_CONST`
 
 
 Nested namespaces

@@ -24,6 +24,7 @@ from sphinx.util.compat import Directive
 from sphinx.util.docfields import Field, GroupedField, TypedField
 
 
+
 php_sig_re = re.compile(
     r'''^ ([\w.]*\:\:)?          # class name(s)
           (\$?\w+)  \s*          # thing name
@@ -35,12 +36,15 @@ php_sig_re = re.compile(
 
 php_paramlist_re = re.compile(r'([\[\],])')  # split at '[', ']' and ','
 
+NS = '\\'
+
 separators = {
-  'method':'::', 'function':'\\', 'class':'\\', 'namespace':'\\',
+  'method':'::', 'function':NS, 'class':NS, 'namespace':NS,
   'global':'', 'const':'::', 'attr': '::$', 'exception': ''
 }
 
 php_separator = re.compile(r"(\w+)?(?:[:]{2})?")
+
 
 def php_rsplit(fullname):
     items = [item for item in php_separator.findall(fullname)]
@@ -143,7 +147,7 @@ class PhpObject(ObjectDescription):
 
         if name_prefix:
             if modname:
-                name_prefix = modname + separators['class'] + name_prefix
+                name_prefix = modname + NS + name_prefix
             signode += addnodes.desc_addname(name_prefix, name_prefix)
         # exceptions are a special case, since they are documented in the
         # 'exceptions' module.
@@ -155,9 +159,9 @@ class PhpObject(ObjectDescription):
                 modname = self.options.get(
                     'namespace', self.env.temp_data.get('php:namespace'))
                 if modname and modname != 'exceptions':
-                    nodetext = modname + separators[self.objtype]
+                    nodetext = modname + NS
                     signode += addnodes.desc_addname(nodetext, nodetext)
-
+    
         signode += addnodes.desc_name(name, name)
         if not arglist:
             if self.needs_arglist():
@@ -197,7 +201,7 @@ class PhpObject(ObjectDescription):
         raise NotImplementedError('must be implemented in subclasses')
 
     def _is_class_member(self):
-        return self.objtype.endswith('method') or self.objtype.startswith('attr')
+        return self.objtype.startswith('method') or self.objtype.startswith('attr')
 
     def add_target_and_index(self, name_cls, sig, signode):
         if self.objtype == 'global':
@@ -208,12 +212,13 @@ class PhpObject(ObjectDescription):
         separator = separators[self.objtype]
         if self._is_class_member():
             if signode['class']:
-                prefix = modname and modname + '\\' or ''
+                prefix = modname and modname + NS or ''
             else:
-                prefix = modname and modname + separator or ''
+                prefix = modname and modname + NS or ''
         else:
-            prefix = modname and modname + separator or ''
+            prefix = modname and modname + NS or ''
         fullname = prefix + name_cls[0]
+        
         # note target
         if fullname not in self.state.document.ids:
             signode['names'].append(fullname)
@@ -247,39 +252,41 @@ class PhpObject(ObjectDescription):
 
 class PhpGloballevel(PhpObject):
     """
-    Description of an object on global level (functions, constants, data).
+    Description of an object on global level (global variables).
     """
-
-    def get_signature_prefix(self, sig):
-        """
-        Adds class prefix for constants created inside classes
-        """
-        if self.class_name:
-            return self.class_name + '::'
 
     def get_index_text(self, modname, name_cls):
         if self.objtype == 'global':
             return _('%s (global variable)') % name_cls[0]
-        elif self.objtype == 'const' and self.class_name != '':
-            return _('%s (class constant)') % (name_cls[0])
-        elif self.objtype == 'const':
-            return _('%s (global constant)') % name_cls[0]
         else:
             return ''
 
 class PhpNamespacelevel(PhpObject):
     """
-    Description of an object on namespace level (functions, global vars).
+    Description of an object on namespace level (functions, constants).
     """
 
     def needs_arglist(self):
         return self.objtype == 'function'
 
+    def get_signature_prefix(self, sig):
+        """
+        Adds class prefix for constants created inside classes
+        """
+        if self.class_name != '':
+            return self.class_name + '::'
+
     def get_index_text(self, modname, name_cls):
         if self.objtype == 'function':
             if not modname:
                 return _('%s() (global function)') % name_cls[0]
-            return _('%s() (namespace function in %s)') % (name_cls[0], modname)
+            return _('%s() (function in %s)') % (name_cls[0], modname)
+        elif self.objtype == 'const' and self.class_name != '':
+            return _('%s (class constant)') % (name_cls[0])
+        elif self.objtype == 'const':
+            if not modname:
+                return _('%s (global constant)')
+            return _('%s (constant in %s)') % (name_cls[0], modname)
         else:
             return ''
 
@@ -398,7 +405,6 @@ class PhpXRefRole(XRefRole):
             # parts of the contents
             if title[0:1] == '~':
                 m = re.search(r"(?:\\|[:]{2})(.*)\Z", title)
-                print m.groups()
                 if m:
                     title = m.group(1)
 
@@ -446,7 +452,7 @@ class PhpNamespaceIndex(Index):
 
             entries = content.setdefault(modname[0].lower(), [])
 
-            package = modname.split('\\')[0]
+            package = modname.split(NS)[0]
             if package != modname:
                 # it's a submodule
                 if prev_modname == package:
@@ -494,7 +500,7 @@ class PhpDomain(Domain):
     directives = {
         'function': PhpNamespacelevel,
         'global': PhpGloballevel,
-        'const': PhpGloballevel,
+        'const': PhpNamespacelevel,
         'class': PhpClasslike,
         'method': PhpClassmember,
         'attr': PhpClassmember,
@@ -572,12 +578,12 @@ class PhpDomain(Domain):
         newname = None
         if searchorder == 1:
             if modname and classname and \
-                     modname + '\\' + classname + '::' + name in objects:
-                newname = modname + '\\' + classname + '::' + name
-            elif modname and modname + '\\' + name in objects:
-                newname = modname + '\\' + name
-            elif modname and modname + '\\' + name in objects:
-                newname = modname + '\\' + name
+                     modname + NS + classname + '::' + name in objects:
+                newname = modname + NS + classname + '::' + name
+            elif modname and modname + NS + name in objects:
+                newname = modname + NS + name
+            elif modname and modname + NS + name in objects:
+                newname = modname + NS + name
             elif classname and classname + '::' + name in objects:
                 newname = classname + '.' + name
             elif classname and classname + '::$' + name in objects:
@@ -591,14 +597,14 @@ class PhpDomain(Domain):
                 newname = classname + '::' + name
             elif classname and classname + '::$' + name in objects:
                 newname = classname + '::$' + name
-            elif modname and modname + '\\' + name in objects:
-                newname = modname + '\\' + name
+            elif modname and modname + NS + name in objects:
+                newname = modname + NS + name
             elif modname and classname and \
-                     modname + '\\' + classname + '::' + name in objects:
-                newname = modname + '\\' + classname + '::' + name
+                     modname + NS + classname + '::' + name in objects:
+                newname = modname + NS + classname + '::' + name
             elif modname and classname and \
-                     modname + '\\' + classname + '::$' + name in objects:
-                newname = modname + '\\' + classname + '::$' + name
+                     modname + NS + classname + '::$' + name in objects:
+                newname = modname + NS + classname + '::$' + name
             # special case: object methods
             elif type in ('func', 'meth') and '::' not in name and \
                  'object::' + name in objects:
