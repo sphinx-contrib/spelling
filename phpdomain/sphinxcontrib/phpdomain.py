@@ -285,7 +285,7 @@ class PhpNamespacelevel(PhpObject):
             return _('%s (class constant)') % (name_cls[0])
         elif self.objtype == 'const':
             if not modname:
-                return _('%s (global constant)')
+                return _('%s (global constant)') % (name_cls[0])
             return _('%s (constant in %s)') % (name_cls[0], modname)
         else:
             return ''

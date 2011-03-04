@@ -12,6 +12,10 @@ Globals
 
     A global constant
 
+.. php:const:: VALUE
+
+    A global constant
+
 .. php:function:: in_array(needle, haystack)
     
     Checks for needle in haystack.
