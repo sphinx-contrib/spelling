@@ -22,7 +22,8 @@ Globals
     
     :param needle: The element to search for.
     :param array haystack: The array to search.
-    :returns boolean: Element exists in array.
+    :returns: Element exists in array.
+    :returntype: boolean
 
 Classes
 =======

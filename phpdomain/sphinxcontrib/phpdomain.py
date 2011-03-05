@@ -29,7 +29,7 @@ php_sig_re = re.compile(
     r'''^ ([\w.]*\:\:)?          # class name(s)
           (\$?\w+)  \s*          # thing name
           (?: \((.*)\)           # optional: arguments
-           (?:\s* -> \s* (.*))?  #           return annotation
+          (?:\s* -> \s* (.*))?   # return annotation
           )? $                   # and nothing more
           ''', re.VERBOSE)
 
@@ -177,6 +177,7 @@ class PhpObject(ObjectDescription):
             if retann:
                 signode += addnodes.desc_returns(retann, retann)
             return fullname, name_prefix
+
         signode += addnodes.desc_parameterlist()
 
         stack = [signode[-1]]
