@@ -1,0 +1,18 @@
+0.1.2
+=====
+
+* Made it possible to not require class properties to be nested under the 
+  class definition.
+* Added ``.. php:staticmethod:`` to solve ambiguity in method naming.
+* Added prefixes for a number of things, and removed classname as a prefix for
+  indented class constants.
+
+0.1.1
+=====
+
+* Fixed issues with constant documentation.
+
+0.1.0
+=====
+
+* Initial release.

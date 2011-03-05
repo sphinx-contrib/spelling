@@ -44,10 +44,27 @@ Each directive populates the index, and or the namespace index.
 
    Describes a class.  Methods, attributes, and constants belonging to the class
    should be inside this directive's body::
-   
+
         .. php:class:: MyClass
         
+            Class description
+        
            .. php:method:: method($argument)
+        
+           Method description
+
+
+   Attributes, methods and constants don't need to be nested.  They can also just 
+   follow the class declaration::
+
+        .. php:class:: MyClass
+        
+            Text about the class
+        
+        .. php:method:: methodName()
+        
+            Text about the method
+        
 
    .. seealso:: .. php:method:: name
                 .. php:attr:: name
@@ -55,12 +72,21 @@ Each directive populates the index, and or the namespace index.
 
 .. rst:directive:: .. php:method:: name(signature)
 
-   Describe a class method, its arguments, return value, and exceptions.  You
-   can use this directive to document static methods as well::
+   Describe a class method, its arguments, return value, and exceptions::
    
-        .. php:method:: OtherClass::staticMethod()
+        .. php:method:: instanceMethod($one, $two)
         
-           This is a static method.
+            :param string $one: The first parameter.
+            :param string $two: The second parameter.
+            :returns: An array of stuff.
+            :throws: InvalidArgumentException
+        
+           This is an instance method.
+
+.. rst:directive:: .. php:staticmethod:: ClassName::methodName(signature)
+
+    Describe a static method, its arguments, return value and exceptions,
+    see :rst:dir:`php:method` for options.
 
 .. rst:directive:: .. php:attr:: name
 
@@ -101,7 +127,7 @@ matching directive is found:
    Reference a class; a name with namespace can be used. If you include a namespace,
    you should use following style::
    
-     :rb:class:`LibraryName\\ClassName`
+     :php:class:`LibraryName\\ClassName`
 
 .. rst:role:: php:meth
 
@@ -110,7 +136,7 @@ matching directive is found:
      :php:meth:`DateTime::setDate`
      :php:meth:`Classname::staticMethod`
 
-.. rst:role:: rb:attr
+.. rst:role:: php:attr
 
    Reference a property on an object::
    

@@ -59,7 +59,19 @@ Classes
 
     Another class
 
-.. php:method:: OtherClass::staticMethod()
+.. php:method:: update()
+
+    Update something.
+
+.. php:attr:: nonIndentedAttribute
+
+    This attribute wasn't indented
+
+.. php:const:: NO_INDENT
+
+    This class constant wasn't indented
+
+.. php:staticmethod:: OtherClass::staticMethod()
 
     A static method.
 
@@ -90,6 +102,12 @@ Test Case - Global symbols with no namespaces
 
 :php:func:`DateTime::$testattr`
 
+:php:func:`OtherClass::update`
+
+:php:attr:`OtherClass::$nonIndentedAttribute`
+
+:php:const:`OtherClass::NO_INDENT`
+
 :php:func:`OtherClass::staticMethod`
 
 :php:exc:`InvalidArgumentException`
@@ -109,28 +127,47 @@ Namespaced elements
 
 .. php:const:: NS_CONST
    
-   A constant in a namespace
+       A constant in a namespace
 
 .. php:class:: LibraryClass
 
     A class in a namespace
 
-    .. php:method:: instanceMethod($foo)
+    .. php:method:: LibraryClass::instanceMethod($foo)
     
-    An instance method
+        An instance method
     
     .. php:const:: TEST_CONST
     
-    Test constant
+        Test constant
     
     .. php:attr:: property
     
-    A property!
+        A property!
 
-.. php:method:: LibraryClass::staticMethod()
+.. php:staticmethod:: LibraryClass::staticMethod()
 
     A static method in a namespace
 
+.. php:class:: NamespaceClass
+
+    A class in the namespace, no indenting on children
+
+.. php:method:: firstMethod($one, $two)
+
+    A normal instance method.
+
+.. php:attr:: property
+
+    A property
+
+.. php:const:: NAMESPACE_CONST
+
+    Const on class in namespace
+
+.. php:staticmethod:: namespaceStatic($foo)
+
+    A static method here.
 
 Test Case - not including namespace
 -----------------------------------
@@ -152,6 +189,14 @@ Test Case - not including namespace
 :php:attr:`LibraryClass::$property`
 
 :php:const:`LibraryClass::TEST_CONST`
+
+:php:class:`NamespaceClass`
+
+:php:func:`NamespaceClass::firstMethod`
+
+:php:attr:`NamespaceClass::$property`
+
+:php:const:`NamespaceClass::NAMESPACE_CONST`
 
 Test Case - global access
 -------------------------
