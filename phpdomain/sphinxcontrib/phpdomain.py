@@ -40,7 +40,7 @@ NS = '\\'
 
 separators = {
   'method':'::', 'function':NS, 'class':NS, 'namespace':NS,
-  'global':'', 'const':'::', 'attr': '::$', 'exception': ''
+  'global':'', 'const':'::', 'attr': '::$', 'exception': '', 'interface':NS
 }
 
 php_separator = re.compile(r"(\w+)?(?:[:]{2})?")
@@ -161,7 +161,7 @@ class PhpObject(ObjectDescription):
                 if modname and modname != 'exceptions':
                     nodetext = modname + NS
                     signode += addnodes.desc_addname(nodetext, nodetext)
-    
+
         signode += addnodes.desc_name(name, name)
         if not arglist:
             if self.needs_arglist():
@@ -218,7 +218,7 @@ class PhpObject(ObjectDescription):
         else:
             prefix = modname and modname + NS or ''
         fullname = prefix + name_cls[0]
-        
+
         # note target
         if fullname not in self.state.document.ids:
             signode['names'].append(fullname)
@@ -303,6 +303,10 @@ class PhpClasslike(PhpObject):
             if not modname:
                 return _('%s (class)') % name_cls[0]
             return _('%s (class in %s)') % (name_cls[0], modname)
+        elif self.objtype == 'interface':
+            if not modname:
+                return _('%s (interface)') % name_cls[0]
+            return _('%s (interface in %s)') % (name_cls[0], modname)
         elif self.objtype == 'exception':
             return name_cls[0]
         else:
@@ -337,7 +341,7 @@ class PhpClassmember(PhpObject):
             except ValueError:
                 propname = name
                 clsname = None
-        
+
         if self.objtype == 'method':
             if modname and clsname is None:
                 return _('%s() (in namespace %s)') % (name, modname)
@@ -495,6 +499,7 @@ class PhpDomain(Domain):
         'attr': ObjType(l_('attribute'), 'attr', 'obj'),
         'exception': ObjType(l_('exception'), 'exc', 'obj'),
         'namespace': ObjType(l_('namespace'), 'ns', 'obj'),
+        'interface': ObjType(l_('interface'), 'interface', 'obj'),
     }
 
     directives = {
@@ -506,6 +511,7 @@ class PhpDomain(Domain):
         'attr': PhpClassmember,
         'exception': PhpClasslike,
         'namespace': PhpNamespace,
+        'interface': PhpClasslike,
     }
 
     roles = {
@@ -518,6 +524,7 @@ class PhpDomain(Domain):
         'const': PhpXRefRole(),
         'ns': PhpXRefRole(),
         'obj': PhpXRefRole(),
+        'interface': PhpXRefRole(),
     }
 
     initial_data = {
@@ -574,7 +581,7 @@ class PhpDomain(Domain):
             return None, None
 
         objects = self.data['objects']
-        
+
         newname = None
         if searchorder == 1:
             if modname and classname and \
