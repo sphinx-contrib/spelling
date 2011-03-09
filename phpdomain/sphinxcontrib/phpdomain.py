@@ -134,7 +134,7 @@ class PhpObject(ObjectDescription):
                 fullname = name_prefix + name
 
             # Currently in a class, but not creating another class,
-            elif classname and not self.objtype in ['class', 'exception']:                
+            elif classname and not self.objtype in ['class', 'exception', 'interface']:
                 if not self.env.temp_data['php:in_class']:
                     name_prefix = classname + separator
                 
