@@ -342,14 +342,14 @@ class PhpClassmember(PhpObject):
         name, cls = name_cls
         add_modules = self.env.config.add_module_names
 
-        if self.objtype == 'method' or self.objtype == 'attr':
+        if self.objtype.endswith('method') or self.objtype == 'attr':
             try:
                 clsname, propname = php_rsplit(name)
             except ValueError:
                 propname = name
                 clsname = None
 
-        if self.objtype == 'method':
+        if self.objtype.endswith('method'):
             if modname and clsname is None:
                 return _('%s() (in namespace %s)') % (name, modname)
             elif modname and add_modules:
