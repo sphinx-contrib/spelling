@@ -358,11 +358,11 @@ class PhpClassmember(PhpObject):
                 return _('%s() (%s method)') % (propname, clsname)
         elif self.objtype == 'attr':
             if modname and clsname is None:
-                return _('$%s (in namespace %s)') % (name, modname)
+                return _('%s (in namespace %s)') % (name, modname)
             elif modname and add_modules:
-                return _('$%s (%s\\%s property)') % (propname, modname, clsname)
+                return _('%s (%s\\%s property)') % (propname, modname, clsname)
             else:
-                return _('$%s (%s property)') % (propname, clsname)
+                return _('%s (%s property)') % (propname, clsname)
         else:
             return ''
 
