@@ -1,5 +1,5 @@
-0.7.2 (in development)
-======================
+0.7.2 (Mar 10, 2011)
+====================
 
 - Fixed source distribution to include tests again
 - Fixed extraction of issue state for open issues from bitbucket
