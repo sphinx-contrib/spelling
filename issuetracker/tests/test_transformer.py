@@ -33,11 +33,13 @@ from sphinxcontrib import issuetracker
 
 
 def assert_text(node, text):
+    __tracebackhide__ = True
     assert isinstance(node, nodes.Text)
     assert node.astext() == text
 
 
 def assert_xref(node, target):
+    __tracebackhide__ = True
     assert isinstance(node, pending_xref)
     assert_text(node[0], '#%s' % target)
     assert node['reftype'] == 'issue'
