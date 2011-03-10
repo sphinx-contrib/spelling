@@ -26,7 +26,7 @@ requires = ['blockdiag>=0.6.7', 'Sphinx>=0.6']
 
 setup(
     name='sphinxcontrib-blockdiag',
-    version='0.7.0',
+    version='0.7.1',
     url='http://bitbucket.org/birkenfeld/sphinx-contrib',
     download_url='http://pypi.python.org/pypi/sphinxcontrib-blockdiag',
     license='BSD',
