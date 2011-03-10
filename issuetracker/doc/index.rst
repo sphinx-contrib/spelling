@@ -9,8 +9,8 @@ looks up the issue in the configured issue tracker, and includes a link to
 the issue.  References in inline literals and literal blocks (e.g. source code
 examples) are ignored.
 
-The extension is available under the terms of the BSD license, see LICENSE_
-for more information.
+The extension is available under the terms of the BSD license, see
+:doc:`license` for more information.
 
 
 Installation
@@ -155,6 +155,7 @@ welcome!
    :hidden:
 
    changes.rst
+   license.rst
 
 
 .. _Sphinx: http://sphinx.pocoo.org/
@@ -166,4 +167,3 @@ welcome!
 .. _suds: https://fedorahosted.org/suds/
 .. _sphinx-contrib: https://bitbucket.org/birkenfeld/sphinx-contrib
 .. _issue tracker: https://bitbucket.org/birkenfeld/sphinx-contrib/issues/
-.. _LICENSE: https://bitbucket.org/birkenfeld/sphinx-contrib/src/tip/LICENSE
