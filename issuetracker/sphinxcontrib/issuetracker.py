@@ -180,8 +180,11 @@ class IssuesReferences(Transform):
         if isinstance(issue_pattern, basestring):
             issue_pattern = re.compile(issue_pattern)
         for node in self.document.traverse(nodes.Text):
-            text = unicode(node)
             parent = node.parent
+            if isinstance(parent, (nodes.literal, nodes.FixedTextElement)):
+                # ignore inline and block literal text
+                continue
+            text = unicode(node)
             new_nodes = []
             last_issue_ref_end = 0
             for match in issue_pattern.finditer(text):

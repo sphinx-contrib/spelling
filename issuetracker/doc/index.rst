@@ -6,7 +6,8 @@
 
 This extension for Sphinx_ 1.0 parses textual issue references like ``#10``,
 looks up the issue in the configured issue tracker, and includes a link to
-the issue.
+the issue.  References in inline literals and literal blocks (e.g. source code
+examples) are ignored.
 
 The extension is available under the terms of the BSD license, see LICENSE_
 for more information.

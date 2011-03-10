@@ -56,6 +56,12 @@ def pytest_funcarg__doc(request):
     em = nodes.emphasis()
     em.append(nodes.Text('see #2 if you are #abc brave'))
     doc.append(em)
+    lit = nodes.literal()
+    lit.append(nodes.Text('#3 is not transformed inside inline literal'))
+    doc.append(lit)
+    litblock = nodes.literal_block()
+    litblock.append(nodes.Text('#4 is not transformed inside literal block'))
+    doc.append(litblock)
     doc.settings = Mock(name='settings')
     doc.settings.language_code = ''
     doc.settings.env = request.getfuncargvalue('env')
@@ -66,7 +72,11 @@ def test_issues_references(doc):
     transformer = issuetracker.IssuesReferences(doc)
     transformer.apply()
     assert isinstance(doc, nodes.paragraph)
-    assert doc.astext() == 'foo #1 barsee #2 if you are #abc brave'
+    assert doc.astext() == ('foo #1 bar'
+                            'see #2 if you are #abc brave'
+                            '#3 is not transformed inside inline literal'
+                            '#4 is not transformed inside literal block')
+
     assert_text(doc[0], 'foo ')
     assert_xref(doc[1], '1')
     assert_text(doc[2], ' bar')
@@ -75,6 +85,12 @@ def test_issues_references(doc):
     assert_text(em[0], 'see ')
     assert_xref(em[1], '2')
     assert_text(em[2], ' if you are #abc brave')
+    lit = doc[4]
+    assert isinstance(lit, nodes.literal)
+    assert_text(lit[0], '#3 is not transformed inside inline literal')
+    litblock = doc[5]
+    assert isinstance(litblock, nodes.literal_block)
+    assert_text(litblock[0], '#4 is not transformed inside literal block')
 
 
 def test_issues_references_too_many_groups(doc, config):

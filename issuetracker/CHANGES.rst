@@ -3,6 +3,7 @@
 
 - Fixed source distribution to include tests again
 - Fixed extraction of issue state for open issues from bitbucket
+- Ignore references in inline literals and literal blocks
 
 
 0.7.1 (Jan 19, 2011)
