@@ -163,7 +163,7 @@ welcome!
 
 .. _Sphinx: http://sphinx.pocoo.org/
 .. _Sphinx issue tracker: https://bitbucket.org/birkenfeld/sphinx/issues/
-.. _lxml: http://codespeak.net/lxml
+.. _lxml: http://lxml.de
 .. _simplejson: http://pypi.python.org/pypi/simplejson/
 .. _launchpadlib: http://pypi.python.org/pypi/launchpadlib/
 .. _debianbts: https://github.com/venthur/python-debianbts
