@@ -1,3 +1,9 @@
+0.7.2 (in development)
+======================
+
+- Fixed source distribution to include tests again
+
+
 0.7.1 (Jan 19, 2011)
 ====================
 
