@@ -138,6 +138,9 @@ functionality (e.g. integration of some other issue tracker).  Patches are
 welcome!
 
 
+.. include:: ../CREDITS
+
+
 .. rubric:: Footnotes
 
 .. [#debianbts-problems] ``debianbts`` does not provide a standard
