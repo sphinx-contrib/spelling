@@ -2,6 +2,7 @@
 ======================
 
 - Fixed source distribution to include tests again
+- Fixed extraction of issue state for open issues from bitbucket
 
 
 0.7.1 (Jan 19, 2011)

@@ -89,7 +89,7 @@ def get_bitbucket_issue_information(app, project, user, issue_id):
         tree = parse(response)
     info = tree.getroot().cssselect('.issues-issue-infotable')[0]
     is_new = info.cssselect('.issue-status-new')
-    is_open = info.cssselect('.issue-stats-open')
+    is_open = info.cssselect('.issue-status-open')
     return {'uri': uri, 'closed': not (is_open or is_new)}
 
 
