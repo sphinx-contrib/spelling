@@ -35,8 +35,6 @@ with open('README') as stream:
     long_desc = stream.read()
 
 
-requires = ['Sphinx>=1.0b2']
-
 setup(
     name='sphinxcontrib-issuetracker',
     version=issuetracker.__version__,
@@ -62,6 +60,6 @@ setup(
     platforms='any',
     packages=find_packages(),
     include_package_data=True,
-    install_requires=requires,
+    install_requires=['Sphinx>=1.0.7'],
     namespace_packages=['sphinxcontrib'],
 )
