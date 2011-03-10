@@ -52,15 +52,18 @@ def pytest_funcarg__env(request):
 
 def pytest_funcarg__doc(request):
     doc = nodes.paragraph()
-    doc.append(nodes.Text('foo #1 bar'))
+    para = nodes.paragraph()
+    para.append(nodes.Text('Transformed #1 inside a normal paragraph'))
+    para.append(nodes.Text('Not transformed #abc inside a normal paragraph'))
+    doc.append(para)
     em = nodes.emphasis()
-    em.append(nodes.Text('see #2 if you are #abc brave'))
+    em.append(nodes.Text('Transformed #2 inside emphasis'))
     doc.append(em)
     lit = nodes.literal()
-    lit.append(nodes.Text('#3 is not transformed inside inline literal'))
+    lit.append(nodes.Text('Not transformed #3 inside inline literal'))
     doc.append(lit)
     litblock = nodes.literal_block()
-    litblock.append(nodes.Text('#4 is not transformed inside literal block'))
+    litblock.append(nodes.Text('Not transformed #4 inside literal block'))
     doc.append(litblock)
     doc.settings = Mock(name='settings')
     doc.settings.language_code = ''
@@ -72,25 +75,29 @@ def test_issues_references(doc):
     transformer = issuetracker.IssuesReferences(doc)
     transformer.apply()
     assert isinstance(doc, nodes.paragraph)
-    assert doc.astext() == ('foo #1 bar'
-                            'see #2 if you are #abc brave'
-                            '#3 is not transformed inside inline literal'
-                            '#4 is not transformed inside literal block')
+    assert doc.astext() == ('Transformed #1 inside a normal paragraph'
+                            'Not transformed #abc inside a normal paragraph'
+                            'Transformed #2 inside emphasis'
+                            'Not transformed #3 inside inline literal'
+                            'Not transformed #4 inside literal block')
 
-    assert_text(doc[0], 'foo ')
-    assert_xref(doc[1], '1')
-    assert_text(doc[2], ' bar')
-    em = doc[3]
+    para = doc[0]
+    assert isinstance(para, nodes.paragraph)
+    assert_text(para[0], 'Transformed ')
+    assert_xref(para[1], '1')
+    assert_text(para[2], ' inside a normal paragraph')
+    assert_text(para[3], 'Not transformed #abc inside a normal paragraph')
+    em = doc[1]
     assert isinstance(em, nodes.emphasis)
-    assert_text(em[0], 'see ')
+    assert_text(em[0], 'Transformed ')
     assert_xref(em[1], '2')
-    assert_text(em[2], ' if you are #abc brave')
-    lit = doc[4]
+    assert_text(em[2], ' inside emphasis')
+    lit = doc[2]
     assert isinstance(lit, nodes.literal)
-    assert_text(lit[0], '#3 is not transformed inside inline literal')
-    litblock = doc[5]
+    assert_text(lit[0], 'Not transformed #3 inside inline literal')
+    litblock = doc[3]
     assert isinstance(litblock, nodes.literal_block)
-    assert_text(litblock[0], '#4 is not transformed inside literal block')
+    assert_text(litblock[0], 'Not transformed #4 inside literal block')
 
 
 def test_issues_references_too_many_groups(doc, config):
