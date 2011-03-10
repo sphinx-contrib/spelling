@@ -23,21 +23,32 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-
-import sys
-sys.path.insert(0, 'sphinxcontrib')
+import os
+import re
 
 from setuptools import setup, find_packages
 
-import issuetracker
 
 with open('README') as stream:
     long_desc = stream.read()
 
 
+VERSION_PATTERN = re.compile(r"__version__ = '([^']+)'")
+
+
+def read_version_number():
+    with open(os.path.join('sphinxcontrib', 'issuetracker.py')) as stream:
+        for line in stream:
+            match = VERSION_PATTERN.search(line)
+            if match:
+                return match.group(1)
+        else:
+            raise ValueError('Could not extract version number')
+
+
 setup(
     name='sphinxcontrib-issuetracker',
-    version=issuetracker.__version__,
+    version=read_version_number(),
     url='http://packages.python.org/sphinxcontrib-issuetracker',
     download_url='http://pypi.python.org/pypi/sphinxcontrib-issuetracker',
     license='BSD',
