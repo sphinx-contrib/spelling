@@ -131,17 +131,17 @@ This extension understands the following configuration options:
 
 .. confval:: programoutput_prompt_template
 
-   This configuration value defines the looks of the output of
-   :dir:`command-output` and :dir:`program-output` with option ``prompt``.
-   The default value is ``$ %(command)s\n%(output)s``.  The key ``command``
-   is replaced with the command, the key ``output`` with the output of this
-   command.
+   A string with a template for the output of :dir:`command-output` and also
+   :dir:`program-output`, if the option ``prompt`` is given.  The default value
+   is ``'$ %(command)s\n%(output)s'``.  The key ``command`` is replaced with
+   the command, the key ``output`` with the output of this command.
 
 .. confval:: programoutput_use_ansi
 
-   Interpret ANSI colour sequences in program output.  The extension
-   :py:mod:`sphinxcontrib.ansi` must be enabled and configured to use this
-   feature!
+   If ``True``, ANSI colour sequences in program output are interpreted.  To
+   use this feature, the extension :py:mod:`sphinxcontrib.ansi` must be enabled
+   and configured.  If missing or ``False``, these sequences are not
+   interpreted, but appear in documentation unchanged.
 
 Contribution
 ------------
