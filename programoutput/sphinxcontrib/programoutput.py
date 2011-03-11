@@ -34,7 +34,7 @@
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
 """
 
-__version__ = '0.4'
+__version__ = '0.4.1'
 
 import sys
 import shlex
