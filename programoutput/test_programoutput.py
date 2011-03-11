@@ -61,8 +61,8 @@ def pytest_generate_tests(metafunc):
 
 def pytest_funcarg__nodecls(request):
     if request.getfuncargvalue('use_ansi'):
-        from sphinxcontrib.ansi import ansi_literal_block
-        return ansi_literal_block
+        ansi = pytest.importorskip('sphinxcontrib.ansi')
+        return ansi.ansi_literal_block
     else:
         return nodes.literal_block
 
