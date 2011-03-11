@@ -3,7 +3,7 @@
 
 from itertools import product
 
-import py.test
+import pytest
 from mock import Mock, MagicMock
 from docutils.parsers.rst import directives
 from docutils import nodes
@@ -70,13 +70,13 @@ def pytest_funcarg__directive(request):
 def test_slice():
     assert programoutput._slice('2') == (2, None)
     assert programoutput._slice('2,2') == (2, 2)
-    with py.test.raises(ValueError) as exc:
+    with pytest.raises(ValueError) as exc:
         assert programoutput._slice('')
     assert str(exc.value) == "invalid literal for int() with base 10: ''"
-    with py.test.raises(ValueError) as exc:
+    with pytest.raises(ValueError) as exc:
         programoutput._slice('foo,2')
     assert str(exc.value) == "invalid literal for int() with base 10: 'foo'"
-    with py.test.raises(ValueError) as exc:
+    with pytest.raises(ValueError) as exc:
         programoutput._slice('2,2,2')
     assert str(exc.value) == 'too many slice parts'
 
