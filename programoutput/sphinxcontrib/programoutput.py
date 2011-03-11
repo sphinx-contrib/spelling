@@ -36,17 +36,14 @@
 
 __version__ = '0.4'
 
-import os
 import sys
 import shlex
-import cPickle as pickle
 from subprocess import Popen, CalledProcessError, PIPE, STDOUT
 from collections import defaultdict
 
 from docutils import nodes
 from docutils.parsers import rst
 from docutils.parsers.rst.directives import flag, unchanged
-from sphinx.util.console import bold
 
 
 class program_output(nodes.Element):
