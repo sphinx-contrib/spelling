@@ -118,14 +118,31 @@ Interfaces
 
     Another interface
 
+
+More globals after classes
+==========================
+
+.. php:global:: $other_global_var
+
+    A global variable
+
+.. php:global:: strpos($needle, $haystack)
+
+    Position of needle in haystack
+
+
 Test Case - Global symbols with no namespaces
 ---------------------------------------------
 
 :php:global:`$global_var`
 
+:php:global:`$other_global_var`
+
 :php:const:`SOME_CONSTANT`
 
 :php:func:`in_array`
+
+:php:func:`strpos`
 
 :php:class:`DateTime`
 

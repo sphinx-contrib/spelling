@@ -115,7 +115,7 @@ class PhpObject(ObjectDescription):
         classname = self.env.temp_data.get('php:class')
         separator = separators[self.objtype]
 
-        if self.objtype == 'global':
+        if self.objtype == 'global' or self.objtype == 'function':
             add_module = False
             modname = None
             classname = None
@@ -275,7 +275,7 @@ class PhpNamespacelevel(PhpObject):
         """
         if self.objtype == 'const':
             return _('constant ')
-        if self.class_name != '':
+        if self.class_name and self.class_name != '':
             return self.class_name + '::'
 
     def get_index_text(self, modname, name_cls):
