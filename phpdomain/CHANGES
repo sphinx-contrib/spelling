@@ -1,3 +1,10 @@
+0.1.3
+=====
+
+* Fixed issues with global functions getting nested inside classes that preceded them.
+* Fixed static methods being omitted from the index.
+* Interface support added (thanks heavenshell).
+
 0.1.2
 =====
 

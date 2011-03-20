@@ -40,6 +40,11 @@ Each directive populates the index, and or the namespace index.
    This directive declares a new Exception in the current namespace. The 
    signature can include constructor arguments.
 
+.. rst:directive:: .. php:interface:: name
+
+   Describe an interface.  Methods and constants belonging to the interface 
+   should follow or be nested inside this directive.
+
 .. rst:directive:: .. php:class:: name
 
    Describes a class.  Methods, attributes, and constants belonging to the class
@@ -145,3 +150,7 @@ matching directive is found:
 .. rst:role:: php:exc
 
    Reference an exception.  A namespaced name may be used.
+
+.. rst:role:: php:interface
+
+   Reference an interface.  A namespaced name may be used.
