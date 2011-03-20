@@ -397,7 +397,7 @@ class PhpNamespace(Directive):
         # the synopsis isn't printed; in fact, it is only used in the
         # modindex currently
         if not noindex:
-            indextext = _('%s (module)') % modname
+            indextext = _('%s (namespace)') % modname
             inode = addnodes.index(entries=[('single', indextext,
                                              'namespace-' + modname, modname)])
             ret.append(inode)
