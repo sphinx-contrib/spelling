@@ -155,6 +155,7 @@ def create_blockdiag(self, code, format, filename, options, prefix='blockdiag'):
     try:
         DiagramNode.clear()
         DiagramEdge.clear()
+        NodeGroup.clear()
         tree = parse(tokenize(code))
         screen = ScreenNodeBuilder.build(tree)
 
