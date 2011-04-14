@@ -99,14 +99,18 @@ class AdaObject(ObjectDescription):
         if not arglist:
             if self.needs_arglist():
                 # for functions and procedures, add an empty parameter list
-                signode += addnodes.desc_parameterlist()
+                new_node = addnodes.desc_parameterlist()
+                new_node.child_text_separator = '; '
+                signode += new_node
             if returntype:
                 signode += addnodes.desc_returns(returntype, returntype)
             return fullname
 
         signode += nodes.Text(' ')
 
-        signode += addnodes.desc_parameterlist()
+        new_node = addnodes.desc_parameterlist()
+        new_node.child_text_separator = '; '
+        signode += new_node
 
         stack = [signode[-1]]
         counters = [0, 0]
@@ -148,11 +152,15 @@ class AdaObject(ObjectDescription):
         if not arglist:
             if self.needs_arglist():
                 # for functions and procedures, add an empty parameter list
-                signode += addnodes.desc_parameterlist()
+                newnode = addnodes.desc_parameterlist()
+                newnode.child_text_separator = '; '
+                signode += newnode
 
         signode += nodes.Text(' ')
 
-        signode += addnodes.desc_parameterlist()
+        newnode = addnodes.desc_parameterlist()
+        newnode.child_text_separator = '; '
+        signode += newnode
 
         stack = [signode[-1]]
         counters = [0, 0]
