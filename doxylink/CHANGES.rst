@@ -1,3 +1,9 @@
+1.1 (Feb 19, 2011)
+====================
+
+- Add support for linking directly to struct definitions.
+- Allow to link to functions etc. which are in a header/source file but not a member of a class.
+
 1.0 (Dec 14, 2010)
 ====================
 

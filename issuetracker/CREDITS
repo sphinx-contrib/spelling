@@ -1,0 +1,14 @@
+Credits
+-------
+
+sphinxcontrib-issuetracker is written and maintained by Sebastian Wiesner
+<lunaryorn@googlemail.com>
+
+The following people, listed alphabetically, contributed to this extension or
+supported its development otherwise:
+
+* Michael Fladischer – Integration of DebianBTS, Debian packaging, testing and
+  issue reporting
+* Denis Bilenko – Fixes to Google Code integration and error reporting
+
+Many thanks for all contributions!

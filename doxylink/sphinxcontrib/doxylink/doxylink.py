@@ -121,11 +121,17 @@ def parse_tag_file(doc):
 	function_list = [] #This is a list of function to be parsed and inserted into mapping at the end of the function.
 	for compound in doc.findall("./compound"):
 		compound_kind = compound.get('kind')
-		if compound_kind != 'namespace' and compound_kind != 'class':
-			continue #Skip everything that isn't a namespace or class
+		if compound_kind != 'namespace' and compound_kind != 'class' and compound_kind!= 'struct' and compound_kind != 'file':
+			continue #Skip everything that isn't a namespace, class, struct or file
 		
 		compound_name = compound.findtext('name')
 		compound_filename = compound.findtext('filename')
+		
+		#TODO The following is a hack bug fix I think
+		#Doxygen doesn't seem to include the file extension to <compound kind="file"><filename> entries
+		#If it's a 'file' type, check if it _does_ have an extension, if not append '.html'
+		if compound_kind == 'file' and not os.path.splitext(compound_filename)[1]:
+			compound_filename = join(compound_filename, '.html')
 		
 		#If it's a compound we can simply add it
 		mapping[compound_name] = {'kind' : compound_kind, 'file' : compound_filename}
@@ -156,7 +162,7 @@ def parse_tag_file(doc):
 			else:
 				mapping[member_symbol] = {'kind' : kind, 'arglist' : {normalised_arglist : anchor_link}}
 		else:
-			print 'Skipping %s %s%s. Error reported from parser was: %s' % (old_tuple[2], old_tuple[0], old_tuple[1], normalised_tuple[0])
+			print('Skipping %s %s%s. Error reported from parser was: %s' % (old_tuple[2], old_tuple[0], old_tuple[1], normalised_tuple[0]))
 	
 	#from pprint import pprint; pprint(mapping)
 	return mapping

@@ -15,6 +15,7 @@ For example:
         
         >>> for i in range(5):
         ...    print i
+        ...
 
 Produces
 
@@ -22,6 +23,7 @@ Produces
         
     >>> for i in range(5):
     ...    print i
+    ...
 
 
 Another example
@@ -109,13 +111,6 @@ Example of configuring autorun to run gnuplot scripts.
         plot log(x)
 
 
-.. runblock:: gnuplot
-        
-    set term png
-    set out 'log.png'
-    set xrange [1:]
-    plot x**2, x*log(x), x, log(x)
-
 This will not produce any output on stdout but it will write the
 :download:`log.png` file that can be included with a standard image directive:
 
@@ -123,4 +118,3 @@ This will not produce any output on stdout but it will write the
 
     .. image:: log.png
 
-.. image:: log.png

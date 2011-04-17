@@ -37,7 +37,7 @@
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
 """
 
-__version__ = '0.7.1'
+__version__ = '0.7.2'
 
 import re
 import urllib
@@ -89,7 +89,7 @@ def get_bitbucket_issue_information(app, project, user, issue_id):
         tree = parse(response)
     info = tree.getroot().cssselect('.issues-issue-infotable')[0]
     is_new = info.cssselect('.issue-status-new')
-    is_open = info.cssselect('.issue-stats-open')
+    is_open = info.cssselect('.issue-status-open')
     return {'uri': uri, 'closed': not (is_open or is_new)}
 
 
@@ -180,8 +180,11 @@ class IssuesReferences(Transform):
         if isinstance(issue_pattern, basestring):
             issue_pattern = re.compile(issue_pattern)
         for node in self.document.traverse(nodes.Text):
-            text = unicode(node)
             parent = node.parent
+            if isinstance(parent, (nodes.literal, nodes.FixedTextElement)):
+                # ignore inline and block literal text
+                continue
+            text = unicode(node)
             new_nodes = []
             last_issue_ref_end = 0
             for match in issue_pattern.finditer(text):

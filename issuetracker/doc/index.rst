@@ -6,10 +6,11 @@
 
 This extension for Sphinx_ 1.0 parses textual issue references like ``#10``,
 looks up the issue in the configured issue tracker, and includes a link to
-the issue.
+the issue.  References in inline literals and literal blocks (e.g. source code
+examples) are ignored.
 
-The extension is available under the terms of the BSD license, see LICENSE_
-for more information.
+The extension is available under the terms of the BSD license, see
+:doc:`license` for more information.
 
 
 Installation
@@ -137,6 +138,9 @@ functionality (e.g. integration of some other issue tracker).  Patches are
 welcome!
 
 
+.. include:: ../CREDITS
+
+
 .. rubric:: Footnotes
 
 .. [#debianbts-problems] ``debianbts`` does not provide a standard
@@ -154,15 +158,15 @@ welcome!
    :hidden:
 
    changes.rst
+   license.rst
 
 
 .. _Sphinx: http://sphinx.pocoo.org/
 .. _Sphinx issue tracker: https://bitbucket.org/birkenfeld/sphinx/issues/
-.. _lxml: http://codespeak.net/lxml
+.. _lxml: http://lxml.de
 .. _simplejson: http://pypi.python.org/pypi/simplejson/
 .. _launchpadlib: http://pypi.python.org/pypi/launchpadlib/
 .. _debianbts: https://github.com/venthur/python-debianbts
 .. _suds: https://fedorahosted.org/suds/
 .. _sphinx-contrib: https://bitbucket.org/birkenfeld/sphinx-contrib
 .. _issue tracker: https://bitbucket.org/birkenfeld/sphinx-contrib/issues/
-.. _LICENSE: https://bitbucket.org/birkenfeld/sphinx-contrib/src/tip/LICENSE

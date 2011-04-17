@@ -106,12 +106,23 @@ def relfn2path(env, filename, docname=None):
         return rel_fn, os.path.join(env.srcdir, enc_rel_fn)
 
 
-def get_image_filename(self, code, options, prefix='blockdiag'):
+def get_image_filename(self, code, format, options, prefix='blockdiag'):
     """
     Get path of output file.
     """
+    if format not in ('PNG', 'PDF'):
+        raise BlockdiagError('blockdiag error:\nunknown format: %s\n' % format)
+
+    if format == 'PDF':
+        try:
+            import reportlab
+        except ImportError:
+            msg = 'blockdiag error:\n' + \
+                  'colud not output PDF format; Install reportlab\n'
+            raise BlockdiagError(msg)
+
     hashkey = code.encode('utf-8') + str(options)
-    fname = '%s-%s.png' % (prefix, sha(hashkey).hexdigest())
+    fname = '%s-%s.%s' % (prefix, sha(hashkey).hexdigest(), format.lower())
     if hasattr(self.builder, 'imgpath'):
         # HTML
         relfn = posixpath.join(self.builder.imgpath, fname)
@@ -129,11 +140,10 @@ def get_image_filename(self, code, options, prefix='blockdiag'):
     return relfn, outfn
 
 
-def create_blockdiag(self, code, options, prefix='blockdiag'):
+def create_blockdiag(self, code, format, filename, options, prefix='blockdiag'):
     """
     Render blockdiag code into a PNG output file.
     """
-    ttfont = None
     fontpath = self.builder.config.blockdiag_fontpath
     if fontpath and not hasattr(self.builder, '_blockdiag_fontpath_warned'):
         if not os.path.isfile(fontpath):
@@ -145,13 +155,13 @@ def create_blockdiag(self, code, options, prefix='blockdiag'):
     try:
         DiagramNode.clear()
         DiagramEdge.clear()
+        NodeGroup.clear()
         tree = parse(tokenize(code))
         screen = ScreenNodeBuilder.build(tree)
 
         antialias = self.builder.config.blockdiag_antialias
-        draw = DiagramDraw.DiagramDraw('PNG', screen, font=fontpath,
+        draw = DiagramDraw.DiagramDraw(format, screen, filename, font=fontpath,
                                        antialias=antialias)
-        draw.draw()
     except Exception, e:
         raise BlockdiagError('blockdiag error:\n%s\n' % e)
 
@@ -162,10 +172,13 @@ def render_dot_html(self, node, code, options, prefix='blockdiag',
                     imgcls=None, alt=None):
     has_thumbnail = False
     try:
-        relfn, outfn = get_image_filename(self, code, options, prefix)
+        format = 'PNG'
+        relfn, outfn = get_image_filename(self, code, format, options, prefix)
 
-        image = create_blockdiag(self, code, options, prefix)
-        image.save(outfn)
+        image = create_blockdiag(self, code, format, outfn, options, prefix)
+        if not os.path.isfile(outfn):
+            image.draw()
+            image.save()
 
         # generate description table
         descriptions = []
@@ -179,11 +192,13 @@ def render_dot_html(self, node, code, options, prefix='blockdiag',
         if 'maxwidth' in options and options['maxwidth'] < image_size[0]:
             has_thumbnail = True
             thumb_prefix = prefix + '_thumb'
-            trelfn, toutfn = get_image_filename(self, code,
+            trelfn, toutfn = get_image_filename(self, code, format,
                                                 options, thumb_prefix)
 
             thumb_size = (options['maxwidth'], image_size[1])
-            image.save(toutfn, thumb_size)
+            if not os.path.isfile(toutfn):
+                image.draw()
+                image.save(toutfn, thumb_size)
             thumb_size = image.drawer.image.size
 
     except BlockdiagError, exc:
@@ -260,17 +275,20 @@ def html_visit_blockdiag(self, node):
 
 def render_dot_latex(self, node, code, options, prefix='blockdiag'):
     try:
-        fname, outfn = get_image_filename(self, code, options, prefix)
+        format = self.builder.config.blockdiag_tex_image_format
+        fname, outfn = get_image_filename(self, code, format, options, prefix)
 
-        image = create_blockdiag(self, code, options, prefix)
-        image.save(outfn, 'PNG')
+        image = create_blockdiag(self, code, format, outfn, options, prefix)
+        if not os.path.isfile(outfn):
+            image.draw()
+            image.save()
 
     except BlockdiagError, exc:
         self.builder.warn('dot code %r: ' % code + str(exc))
         raise nodes.SkipNode
 
     if fname is not None:
-        self.body.append('\\includegraphics{%s}' % fname)
+        self.body.append('\\par\\includegraphics{%s}\\par' % fname)
     raise nodes.SkipNode
 
 
@@ -285,3 +303,4 @@ def setup(app):
     app.add_directive('blockdiag', Blockdiag)
     app.add_config_value('blockdiag_fontpath', None, 'html')
     app.add_config_value('blockdiag_antialias', False, 'html')
+    app.add_config_value('blockdiag_tex_image_format', 'PNG', 'html')
