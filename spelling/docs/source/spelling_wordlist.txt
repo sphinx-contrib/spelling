@@ -1,0 +1,6 @@
+inlined
+PyEnchant
+sphinxcontrib
+reStructuredText
+docutils
+virtualenv

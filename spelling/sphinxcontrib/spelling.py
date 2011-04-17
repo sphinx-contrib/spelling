@@ -6,19 +6,23 @@
 """Spelling checker extension for Sphinx.
 """
 
-from docutils.nodes import GenericNodeVisitor
+import codecs
+import imp
+import itertools
+import os
+import re
+import textwrap
+
 #from docutils import core
+from docutils.frontend import OptionParser
+from docutils.io import StringOutput
+import docutils.nodes
+from docutils.nodes import GenericNodeVisitor
 from docutils.writers import Writer
 from sphinx.builders import Builder
 from sphinx.util.console import bold, darkgreen
-from docutils.frontend import OptionParser
+from sphinx.util.console import purple, red, darkgreen, darkgray
 from sphinx.util.nodes import inline_all_toctrees
-from docutils.io import StringOutput
-
-import itertools
-import re
-import textwrap
-import imp
 
 import enchant
 from enchant.tokenize import get_tokenizer
@@ -85,137 +89,13 @@ class SpellingChecker(object):
 
         return
 
-class Section(object):
-    
-    def __init__(self, spelling_checker):
-        self.title = ''
-        self.spelling_checker = spelling_checker
-        self.errors = []
-        self.subsections = []
         
-    def get_text_lines(self):
-        lines = self.errors[:]
-
-        for subsection in self.subsections:
-            lines.extend(' ' + line
-                         for line in subsection.get_text_lines()
-                         )
-
-        if lines:
-            lines.insert(0, self.title)
-            lines.insert(0, '')
-        return lines
-    
-    def add_subsection(self, subsection):
-        self.subsections.append(subsection)
-        return
-    
-    def set_title(self, title):
-        self.title = title
-        self.check_spelling(title)
-        
-    def astext(self):
-        lines = itertools.chain(*tuple(section.get_text_lines()
-                                       for section in self.subsections
-                                       )
-                                 )
-        # May want this formatting when suggestions are added
-        real_lines = []
-        for line in lines:
-            initial_indent = line[:len(line)-len(line.lstrip())]
-            if line.lstrip().startswith('-'): # error line
-                subsequent_indent = initial_indent + '  '
-            else:
-                subsequent_indent = initial_indent
-            line = textwrap.fill(line.lstrip(), width=70,
-                                 initial_indent=initial_indent,
-                                 subsequent_indent=subsequent_indent,
-                                 )
-            real_lines.append(line)
-        return '\n'.join(real_lines)
-
-    def add_text(self, text):
-        self.check_spelling(text)
-    
-    def check_spelling(self, text):
-        for word, suggestions in self.spelling_checker.check(text):
-            msg = '- "%s"' % word
-            if suggestions:
-                msg = '%s: %s' % (msg, ', '.join(suggestions))
-            self.errors.append(msg)
-        return
-        
-TEXT_NODES = set([ 'block_quote', 'paragraph',
-                   'list_item', 'term', 'definition_list_item', ])
-    
-
-class SpellingVisitor(GenericNodeVisitor):
-    """A Visitor class; see the docutils for more details.
-    """
-    def __init__(self, checker, *args, **kw):
-        GenericNodeVisitor.__init__(self, *args, **kw)
-        self.spelling_checker = checker
-        self.sections = [ Section(self.spelling_checker) ]
-
-    def visit_title(self, node):
-        # Set the title for the current section.
-        if not self.sections[-1].title:
-            self.sections[-1].set_title(node.astext())
-
-    def visit_section(self, node):
-        # Start a new section
-        new_section = Section(self.spelling_checker)
-        self.sections[-1].add_subsection(new_section)
-        self.sections.append(new_section)
-        
-    def depart_section(self, node):
-        # Pop the section stack
-        self.sections.pop()
-
-    def visit_Text(self, node):
-        if node.parent.tagname in TEXT_NODES:
-            self.sections[-1].add_text(node.astext())
-
-    def default_visit(self, node): pass
-    def default_departure(self, node): pass
-
-    def unknown_visit(self, node):
-        self.document.reporter.warning('Ignoring node: %s' % node.tagname)
-    def unknown_departure(self, node): pass
-
-    # Ignore conditional "only" nodes
-    def visit_only(self, node): pass
-    def depart_only(self, node): pass
-
-    # Ignore inline literal text
-    def visit_literal(self, node): pass
-    def depart_literal(self, node): pass
-    def visit_emphasis(self, node): pass
-    def depart_emphasis(self, node): pass
-
-    # Ignore comment blocks
-    def visit_comment(self, node): pass
-    def depart_comment(self, node): pass
-
-    # Ignore literal blocks
-    def visit_literal_block(self, node): pass
-
-    def astext(self):
-        body = '\n'.join(section.astext()
-                         for section in self.sections
-                         )
-        return body
-
-
-class SpellingWriter(Writer):
-    """Boilerplate attaching our Visitor to a docutils document."""
-    def __init__(self, checker, *args, **kwds):
-        self.spelling_checker = checker
-        Writer.__init__(self, *args, **kwds)
-    def translate(self):
-        visitor = SpellingVisitor(self.spelling_checker, self.document)
-        self.document.walkabout(visitor)
-        self.output = '\n' + visitor.astext() + '\n'
+TEXT_NODES = set([ 'block_quote',
+                   'paragraph',
+                   'list_item',
+                   'term',
+                   'definition_list_item',
+                   ])
 
 
 class SpellingBuilder(Builder):
@@ -231,35 +111,71 @@ class SpellingBuilder(Builder):
     def get_outdated_docs(self):
         return 'all documents'
 
-    def write(self, *ignored):
-        self.output = []
+    def prepare_writing(self, docnames):
+        return
 
+    def get_target_uri(self, docname, typ=None):
+        return ''
+
+    def format_suggestions(self, suggestions):
+        if not self.config.spelling_show_suggestions or not suggestions:
+            return u''
+        return u'[' + u', '.join(u'"%s"' % s for s in suggestions) + u']'
+
+    def write_doc(self, docname, doctree):
+        word_list_filename = os.path.join(self.srcdir, self.config.spelling_word_list_filename)
         checker = SpellingChecker(lang=self.config.spelling_lang,
                                   suggest=self.config.spelling_show_suggestions,
-                                  word_list_filename=self.config.spelling_word_list_filename,
+                                  word_list_filename=word_list_filename,
                                   )
         
-        master = self.config.master_doc
-        docwriter = SpellingWriter(checker=checker)
-        docsettings = OptionParser(
-            defaults=self.env.settings,
-            components=(docwriter,)).get_default_values()
-            
-        tree = self.env.get_doctree(master)
-        tree = inline_all_toctrees(self, set(), master, tree, darkgreen)
-        tree['docname'] = master
+        for node in doctree.traverse(docutils.nodes.Text):
+            if node.tagname == '#text' and  node.parent.tagname in TEXT_NODES:
 
-        destination = StringOutput(encoding='utf-8')
-        text = docwriter.write(tree, destination).strip()
-        if text:
-            self.output.append(text)
+                # Figure out the line number for this node by climbing the
+                # tree until we find a node that has a line number.
+                lineno = None
+                parent = node
+                seen = set()
+                while lineno is None:
+                    #self.info('looking for line number on %r' % node)
+                    seen.add(parent)
+                    parent = node.parent
+                    if parent is None or parent in seen:
+                        break
+                    lineno = parent.line
+                filename = self.env.doc2path(docname, base=None)
 
+                # Check the text of the node.
+                for word, suggestions in checker.check(node.astext()):
+                    msg_parts = []
+                    if lineno:
+                        msg_parts.append(darkgreen('(line %3d)' % lineno))
+                    msg_parts.append(red(word))
+                    msg_parts.append(self.format_suggestions(suggestions))
+                    msg = ' '.join(msg_parts)
+                    self.info(msg)
+                    self.write_entry(docname, lineno, word, suggestions)
+
+                    # We found at least one bad spelling, so set the status
+                    # code for the app to a value that indicates an error.
+                    self.app.statuscode = 1
         return
-    
+
+    def write_entry(self, docname, lineno, word, suggestions):
+        output = codecs.open(os.path.join(self.outdir, 'output.txt'), 'a', encoding='UTF-8')
+        try:
+            output.write(u"%s:%s: [%s] %s\n" % (self.env.doc2path(docname, None),
+                                                lineno, word,
+                                                self.format_suggestions(suggestions),
+                                                )
+                         )
+        finally:
+            output.close()
+            
     def finish(self):
-        self.info()
-        for text in self.output:
-            self.info(text)
+        output_filename = os.path.join(self.outdir, 'output.txt')
+        self.info('Spelling checker messages written to %s' % output_filename)
         return
 
 def setup(app):
