@@ -1,6 +1,5 @@
 inlined
-PyEnchant
-sphinxcontrib
 reStructuredText
-docutils
-virtualenv
+sphinxcontrib
+tokenizer
+wikis

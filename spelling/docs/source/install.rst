@@ -18,6 +18,8 @@ Configuration
 
     extensions = [ 'sphinxcontrib.spelling' ]
 
+.. _install-options:
+
 Configuration Options
 =====================
 
@@ -34,6 +36,32 @@ Configuration Options
   line.  Refer to the `PyEnchant tutoral
   <http://www.rfk.id.au/software/pyenchant/tutorial.html>`_ for
   details.
-
+``spelling_ignore_pypi_package_names``
+  Boolean controlling whether words that look like package names from
+  PyPI are treated as spelled properly. When ``True``, the current
+  list of package names is downloaded at the start of the build and
+  used to extend the list of known words in the dictionary. Defaults
+  to ``False``.
+``spelling_ignore_wiki_words``
+  Boolean controlling whether words that follow the CamelCase
+  conventions used for page names in wikis should be treated as
+  spelled properly. Defaults to ``True``.
+``spelling_ignore_acronyms``
+  Boolean controlling treatment of words that appear in all capital
+  letters, or all capital letters followed by a lower case ``s``. When
+  ``True``, acronyms are assumed to be spelled properly. Defaults to
+  ``True``.
+``spelling_ignore_python_builtins``
+  Boolean controlling whether names built in to Python should be
+  treated as spelled properly. Defaults to ``True``.
+``spelling_ignore_importable_modules``
+  Boolean controlling whether words that are names of modules found on
+  ``sys.path`` are treated as spelled properly. Defaults to ``True``.
+``spelling_filters``
+  List of filter classes to be added to the tokenizer that produces
+  words to be checked. The classes should be derived from
+  ``enchant.tokenize.Filter``. Refer to `the PyEnchant tutorial
+  <http://www.rfk.id.au/software/pyenchant/tutorial.html#basics>`__
+  for examples.
 
 .. _PyEnchant: http://www.rfk.id.au/software/pyenchant/

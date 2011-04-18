@@ -28,6 +28,7 @@ import sys, os
 extensions = [ 'sphinxcontrib.spelling' ]
 
 spelling_show_suggestions = True
+spelling_ignore_pypi_package_names = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
