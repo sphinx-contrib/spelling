@@ -13,6 +13,9 @@ trunk
     spelled properly.
   - Add an option to let the user provide a list of other filter
     classes for the tokenizer.
+  - Add ``spelling`` directive for passing local configuration
+    settings to the spelling checker. This version allows setting a
+    list of words known to be spelled correctly.
 
 1.0
 

@@ -1,3 +1,8 @@
+.. spelling::
+
+   sphinxcontrib
+   reStructuredText
+
 ============
  Developers
 ============

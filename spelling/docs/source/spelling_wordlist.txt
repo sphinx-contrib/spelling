@@ -1,5 +1,1 @@
-inlined
-reStructuredText
-sphinxcontrib
 tokenizer
-wikis

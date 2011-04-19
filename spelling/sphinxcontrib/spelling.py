@@ -7,6 +7,7 @@
 """
 
 import codecs
+import collections
 import imp
 import itertools
 import os
@@ -20,6 +21,7 @@ from docutils.frontend import OptionParser
 from docutils.io import StringOutput
 import docutils.nodes
 from docutils.nodes import GenericNodeVisitor
+from docutils.parsers import rst
 from docutils.writers import Writer
 from sphinx.builders import Builder
 from sphinx.util.console import bold, darkgreen
@@ -27,10 +29,42 @@ from sphinx.util.console import purple, red, darkgreen, darkgray
 from sphinx.util.nodes import inline_all_toctrees
 
 import enchant
-from enchant.tokenize import get_tokenizer, Filter, EmailFilter, WikiWordFilter, unit_tokenize
+from enchant.tokenize import (get_tokenizer,
+                              Filter, EmailFilter, WikiWordFilter,
+                              unit_tokenize, wrap_tokenizer,
+                              )
 
-# TODO - Directive (or comment syntax?) to allow words to be ignored in a document
 # TODO - Words with multiple uppercase letters treated as classes and ignored
+
+class SpellingDirective(rst.Directive):
+    """Custom directive for passing instructions to the spelling checker.
+
+    .. spelling::
+
+       word1
+       word2
+    
+    """
+
+    option_spec = {}
+    has_content = True
+
+    def run(self):
+        env = self.state.document.settings.env
+        if not hasattr(env, 'spelling_document_filters'):
+            env.spelling_document_filters = collections.defaultdict(list)
+        good_words = []
+        for entry in self.content:
+            if not entry:
+                continue
+            good_words.extend(entry.split())
+        if good_words:
+            env.app.info('Extending local dictionary with %s' % str(good_words))
+            env.spelling_document_filters[env.docname].append(
+                IgnoreWordsFilterFactory(good_words)
+                )
+        return []
+
 
 class AcronymFilter(Filter):
     """If a word looks like an acronym (all upper case letters),
@@ -50,10 +84,17 @@ class ContractionFilter(Filter):
     """Strip common contractions from words.
     """
     def _split(self, word):
+        # Possessive
         if word.lower().endswith("'s"):
             return unit_tokenize(word[:-2])
+
+        # * not
+        if word.lower() == "won't":
+            return unit_tokenize(word[0])
         if word.lower().endswith("n't"):
             return unit_tokenize(word[:-3])
+
+        # I am
         if word.lower() == "i'm":
             return unit_tokenize(word[0])
         return unit_tokenize(word)
@@ -62,19 +103,23 @@ class IgnoreWordsFilter(Filter):
     """Given a set of words, ignore them all.
     """
     def __init__(self, tokenizer, word_set):
-        self.word_set = word_set
+        self.word_set = set(word_set)
         Filter.__init__(self, tokenizer)
     def _skip(self, word):
         return word in self.word_set
 
-class PyPIFilterFactory(object):
+class IgnoreWordsFilterFactory(object):
+    def __init__(self, words):
+        self.words = words
+    def __call__(self, tokenizer):
+        return IgnoreWordsFilter(tokenizer, self.words)
+
+class PyPIFilterFactory(IgnoreWordsFilterFactory):
     """Build an IgnoreWordsFilter for all of the names of packages on PyPI.
     """
     def __init__(self):
         client = xmlrpclib.ServerProxy('http://pypi.python.org/pypi')
-        self.package_names = set(client.list_packages())
-    def __call__(self, tokenizer):
-        return IgnoreWordsFilter(tokenizer, self.package_names)
+        IgnoreWordsFilterFactory.__init__(self, client.list_packages())
 
 class PythonBuiltinsFilter(Filter):
     """Ignore names of built-in Python symbols.
@@ -114,7 +159,21 @@ class SpellingChecker(object):
     def __init__(self, lang, suggest, word_list_filename, filters=[]):
         self.dictionary = enchant.DictWithPWL(lang, word_list_filename)
         self.tokenizer = get_tokenizer(lang, filters)
+        self.original_tokenizer = self.tokenizer
         self.suggest = suggest
+
+    def push_filters(self, new_filters):
+        """Add a filter to the tokenizer chain.
+        """
+        t = self.tokenizer
+        for f in new_filters:
+            t = f(t)
+        self.tokenizer = t
+
+    def pop_filters(self):
+        """Remove the filters pushed during the last call to push_filters().
+        """
+        self.tokenizer = self.original_tokenizer
 
     def check(self, text):
         """Generator function that yields bad words and suggested alternate spellings.
@@ -153,7 +212,7 @@ class SpellingBuilder(Builder):
         if self.config.spelling_ignore_acronyms:
             filters.append(AcronymFilter)
         if self.config.spelling_ignore_pypi_package_names:
-            self.info('Retrieving package names from PyPI...')
+            self.info('Adding package names from PyPI to local spelling dictionary...')
             filters.append(PyPIFilterFactory())
         if self.config.spelling_ignore_python_builtins:
             filters.append(PythonBuiltinsFilter)
@@ -185,6 +244,8 @@ class SpellingBuilder(Builder):
         return u'[' + u', '.join(u'"%s"' % s for s in suggestions) + u']'
 
     def write_doc(self, docname, doctree):
+        self.checker.push_filters(self.env.spelling_document_filters[docname])
+        
         for node in doctree.traverse(docutils.nodes.Text):
             if node.tagname == '#text' and  node.parent.tagname in TEXT_NODES:
 
@@ -220,6 +281,8 @@ class SpellingBuilder(Builder):
                     # We found at least one bad spelling, so set the status
                     # code for the app to a value that indicates an error.
                     self.app.statuscode = 1
+
+        self.checker.pop_filters()
         return
 
     def finish(self):
@@ -248,4 +311,6 @@ def setup(app):
     app.add_config_value('spelling_ignore_importable_modules', True, 'env')
     # Add any user-defined filter classes
     app.add_config_value('spelling_filters', [], 'env')
+    # Register the 'spelling' directive for setting parameters within a document
+    rst.directives.register_directive('spelling', SpellingDirective)
     return
