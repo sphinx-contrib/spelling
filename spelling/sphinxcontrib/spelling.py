@@ -29,7 +29,7 @@ from sphinx.util.console import purple, red, darkgreen, darkgray
 from sphinx.util.nodes import inline_all_toctrees
 
 import enchant
-from enchant.tokenize import (get_tokenizer,
+from enchant.tokenize import (get_tokenizer, tokenize,
                               Filter, EmailFilter, WikiWordFilter,
                               unit_tokenize, wrap_tokenizer,
                               )
@@ -80,23 +80,38 @@ class AcronymFilter(Filter):
                  )
                 )
 
+class list_tokenize(tokenize):
+    def __init__(self, words):
+        tokenize.__init__(self, '')
+        self._words = words
+    def next(self):
+        if not self._words:
+            raise StopIteration()
+        word = self._words.pop(0)
+        return (word, 0)
+
 class ContractionFilter(Filter):
     """Strip common contractions from words.
     """
+    splits = {
+        "won't":['will', 'not'],
+        "isn't":['is', 'not'],
+        "can't":['can', 'not'],
+        "i'm":['I', 'am'],
+        }
     def _split(self, word):
+        # Fixed responses
+        if word.lower() in self.splits:
+            return list_tokenize(self.splits[word.lower()])
+
         # Possessive
         if word.lower().endswith("'s"):
             return unit_tokenize(word[:-2])
 
         # * not
-        if word.lower() == "won't":
-            return unit_tokenize(word[0])
         if word.lower().endswith("n't"):
             return unit_tokenize(word[:-3])
 
-        # I am
-        if word.lower() == "i'm":
-            return unit_tokenize(word[0])
         return unit_tokenize(word)
 
 class IgnoreWordsFilter(Filter):
