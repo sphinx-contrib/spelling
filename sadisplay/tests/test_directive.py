@@ -45,12 +45,14 @@ def test_simple(nodes):
     """Simple sadisplay directive
 
     .. sadisplay::
-        :module: myapp.model
+        :module: myapp.model, myapp.model2
+        :link:
     """
     n = nodes[0]
     assert n['alt'] is None
+    assert n['link'] is True
     assert n['render'] == 'plantuml'
-    assert n['module'] == 'myapp.model'
+    assert n['module'] == ['myapp.model', 'myapp.model2']
     assert n['include'] == []
     assert n['exclude'] == []
 
@@ -65,9 +67,11 @@ def test_include(nodes):
         :include: User, Group
     """
     n = nodes[0]
+    print n, sadisp
     assert n['alt'] is None
+    assert n['link'] is False
     assert n['render'] == 'plantuml'
-    assert n['module'] == 'myapp.model'
+    assert n['module'] == ['myapp.model', ]
     assert n['include'] == [u'User', u'Group']
 
 

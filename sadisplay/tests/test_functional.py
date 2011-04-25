@@ -76,6 +76,25 @@ def test_buildhtml_simple():
     assert u'Address' in content
 
 
+@with_runsphinx('html')
+def test_buildhtml_as_link():
+    """Generate simple HTML with link
+
+    .. sadisplay::
+        :module: model
+        :link:
+    """
+
+    files = glob.glob(os.path.join(_outdir, '_images', 'plantuml-*.png'))
+    assert len(files) == 1
+    assert '<a href="_images/plantuml' in readfile('index.html')
+
+    content = readfile(files[0])
+    assert u'Admin' in content
+    assert u'User' in content
+    assert u'Address' in content
+
+
 @with_runsphinx('latex')
 def test_buildlatex_simple():
     """Generate simple LaTeX

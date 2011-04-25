@@ -17,10 +17,19 @@ Install
 Usage
 -----
 
-::
+Render image::
 
     .. sadisplay::
-        :module: myapp.model
+        :module: myapp.model.user, myapp.model.post
+
+
+Render link to image (html only)::
+
+    .. sadisplay::
+        :module: myapp.model.user, myapp.model.post
+        :link:
+        :alt: My Schema
+
 
 .. _PlantUML: http://plantuml.sourceforge.net/
 .. _sphinxcontrib-plantuml: http://bitbucket.org/birkenfeld/sphinx-contrib

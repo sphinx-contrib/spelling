@@ -24,6 +24,7 @@ class SadisplayDirective(Directive):
     has_content = False
     option_spec = {
         'alt': directives.unchanged,
+        'link': directives.flag,
         'render': directives.unchanged,
         'module': directives.unchanged,
         'include': directives.unchanged,
@@ -32,10 +33,12 @@ class SadisplayDirective(Directive):
 
     def run(self):
         node = SaNode()
-        #node['uml'] = '\n'.join(self.content)
         node['alt'] = self.options.get('alt', None)
+        node['link'] = True if 'link' in self.options else False
         node['render'] = self.options.get('render', u'plantuml')
-        node['module'] = self.options.get('module', u'')
+
+        node['module'] = [m.strip() for m in self.options.get('module', u'') \
+                    .split(',')]
 
         def tolist(val):
             if val:
@@ -54,10 +57,13 @@ class SadisplayDirective(Directive):
 
 def render(self, node):
 
-    __import__(node['module'], globals(), locals(), [], -1)
-    module = sys.modules[node['module']]
+    all_names = []
 
-    all_names = [getattr(module, attr) for attr in dir(module)]
+    for module_name in node['module']:
+        __import__(module_name, globals(), locals(), [], -1)
+        module = sys.modules[module_name]
+
+        all_names += [getattr(module, attr) for attr in dir(module)]
 
     names = []
 
@@ -101,9 +107,15 @@ def html_visit(self, node):
         self.builder.warn(str(err))
         raise nodes.SkipNode
     self.body.append(self.starttag(node, 'p', CLASS='sadisplay'))
-    self.body.append('<img src="%s" alt="%s" />\n'
-                     % (self.encode(refname),
+
+    if node['link']:
+        template = '<a href="%s">%s</a>\n'
+    else:
+        template = '<img src="%s" alt="%s" />\n'
+
+    self.body.append(template % (self.encode(refname),
                         self.encode(node['alt'] or node['module'])))
+
     self.body.append('</p>\n')
     raise nodes.SkipNode
 
