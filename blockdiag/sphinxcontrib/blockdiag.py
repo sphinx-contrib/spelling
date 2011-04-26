@@ -25,7 +25,7 @@ from sphinx.errors import SphinxError
 from sphinx.util.osutil import ensuredir, ENOENT, EPIPE
 from sphinx.util.compat import Directive
 
-from blockdiag_sphinxhelper import *
+from blockdiag_sphinxhelper import diagparser, builder, DiagramDraw
 
 
 class BlockdiagError(SphinxError):
@@ -153,11 +153,8 @@ def create_blockdiag(self, code, format, filename, options, prefix='blockdiag'):
 
     draw = None
     try:
-        DiagramNode.clear()
-        DiagramEdge.clear()
-        NodeGroup.clear()
-        tree = parse(tokenize(code))
-        screen = ScreenNodeBuilder.build(tree)
+        tree = diagparser.parse(diagparser.tokenize(code))
+        screen = builder.ScreenNodeBuilder.build(tree)
 
         antialias = self.builder.config.blockdiag_antialias
         draw = DiagramDraw.DiagramDraw(format, screen, filename, font=fontpath,
