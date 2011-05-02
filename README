@@ -65,6 +65,8 @@ List of extensions
 - plantuml: embed UML diagram by using PlantUML_
 - spelling: Spelling checker using PyEnchant_
 - sadisplay: display SqlAlchemy model sadisplay_
+- requirements: declare requirements wherever you need (e.g. in test
+  docstrings), mark statuses and collect them in a single list 
 
 .. _aafigure: http://docutils.sourceforge.net/sandbox/aafigure/
 
