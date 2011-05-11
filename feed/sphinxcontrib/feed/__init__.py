@@ -16,6 +16,7 @@ def setup(app):
     """
     from sphinx.application import Sphinx
     if not isinstance(app, Sphinx): return
+    app.add_config_value('feed_title', '', 'html')
     app.add_config_value('feed_base_url', '', 'html')
     app.add_config_value('feed_description', '', 'html')
     app.add_config_value('feed_filename', 'rss.xml', 'html')
@@ -93,8 +94,12 @@ def emit_feed(app, exc):
     global feed_entries
     import os.path
     
+    title = app.config.feed_title
+    if not title:
+        title = app.config.project
+
     feed_dict = {
-      'title': app.config.project,
+      'title': title,
       'link': app.config.feed_base_url,
       'feed_url': app.config.feed_base_url,
       'description': app.config.feed_description
