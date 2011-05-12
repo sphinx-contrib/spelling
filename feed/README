@@ -32,3 +32,6 @@ TODO
 * go from the irritating nose tests to the conventional and more debug-
   friendly unittests
 
+.. _ReST cheat sheet: http://docutils.sourceforge.net/docs/user/rst/cheatsheet.txt
+.. _Dan MacKinlay: http://livingthing.org/
+.. _Keegan Carruthers-Smith: http://people.cs.uct.ac.za/~ksmith/
