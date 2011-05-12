@@ -46,6 +46,7 @@ def test_feed():
     # see http://www.feedparser.org/
     f = feedparser.parse(rss_path)
     yield assert_equals, f.bozo, 0 #feedparser well-formedness detection. We want this.
+    yield assert_equals, f.feed['title'], 'Sphinx Syndicate Test Title'
     entries = f.entries
     yield assert_equals, entries[0].updated_parsed[0:6], (2001, 8, 11, 13, 0, 0)
     yield assert_equals, entries[0].title, "The latest blog post"
