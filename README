@@ -65,6 +65,7 @@ List of extensions
 - plantuml: embed UML diagram by using PlantUML_
 - spelling: Spelling checker using PyEnchant_
 - sadisplay: display SqlAlchemy model sadisplay_
+- blockdiag: embed block diagrams by using blockdiag_
 
 .. _aafigure: http://docutils.sourceforge.net/sandbox/aafigure/
 
@@ -89,6 +90,8 @@ List of extensions
 .. _PyEnchant: http://www.rfk.id.au/software/pyenchant/
 
 .. _sadisplay: http://bitbucket.org/estin/sadisplay/wiki/Home
+
+.. _blockdiag: http://blockdiag.com/
 
 
 For contributors
