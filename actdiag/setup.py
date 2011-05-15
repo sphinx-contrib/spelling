@@ -5,7 +5,27 @@ from setuptools import setup, find_packages
 long_desc = '''
 This package contains the actdiag Sphinx extension.
 
-.. add description here ..
+.. _Sphinx: http://sphinx.pocoo.org/
+.. _blockdiag: http://tk0miya.bitbucket.org/blockdiag/build/html/index.html
+
+This extension enable you to insert activity diagrams in your Sphinx document.
+Following code is sample::
+
+   .. actdiag::
+
+      diagram {
+        A -> B -> C -> D;
+
+        lane {
+          A; B;
+        }
+        lane {
+          C; D;
+        }
+      }
+
+
+This module needs actdiag_.
 '''
 
 requires = ['actdiag>=0.1.5', 'Sphinx>=0.6']
