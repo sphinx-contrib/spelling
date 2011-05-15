@@ -66,6 +66,7 @@ List of extensions
 - spelling: Spelling checker using PyEnchant_
 - sadisplay: display SqlAlchemy model sadisplay_
 - blockdiag: embed block diagrams by using blockdiag_
+- actdiag: embed block diagrams by using actdiag_
 
 .. _aafigure: http://docutils.sourceforge.net/sandbox/aafigure/
 
@@ -92,6 +93,8 @@ List of extensions
 .. _sadisplay: http://bitbucket.org/estin/sadisplay/wiki/Home
 
 .. _blockdiag: http://blockdiag.com/
+
+.. _actdiag: http://blockdiag.com/
 
 
 For contributors
