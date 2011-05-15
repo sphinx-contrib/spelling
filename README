@@ -66,6 +66,9 @@ List of extensions
 - spelling: Spelling checker using PyEnchant_
 - sadisplay: display SqlAlchemy model sadisplay_
 - blockdiag: embed block diagrams by using blockdiag_
+- seqdiag: embed sequence diagrams by using seqdiag_
+- actdiag: embed activity diagrams by using actdiag_
+- nwdiag: embed network diagrams by using nwdiag_
 - requirements: declare requirements wherever you need (e.g. in test
   docstrings), mark statuses and collect them in a single list 
 
@@ -94,6 +97,12 @@ List of extensions
 .. _sadisplay: http://bitbucket.org/estin/sadisplay/wiki/Home
 
 .. _blockdiag: http://blockdiag.com/
+
+.. _seqdiag: http://blockdiag.com/
+
+.. _actdiag: http://blockdiag.com/
+
+.. _nwdiag: http://blockdiag.com/
 
 
 For contributors
