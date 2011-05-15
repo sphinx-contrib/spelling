@@ -66,6 +66,8 @@ List of extensions
 - spelling: Spelling checker using PyEnchant_
 - sadisplay: display SqlAlchemy model sadisplay_
 - blockdiag: embed block diagrams by using blockdiag_
+- requirements: declare requirements wherever you need (e.g. in test
+  docstrings), mark statuses and collect them in a single list 
 
 .. _aafigure: http://docutils.sourceforge.net/sandbox/aafigure/
 
