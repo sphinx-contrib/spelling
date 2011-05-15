@@ -66,7 +66,8 @@ List of extensions
 - spelling: Spelling checker using PyEnchant_
 - sadisplay: display SqlAlchemy model sadisplay_
 - blockdiag: embed block diagrams by using blockdiag_
-- actdiag: embed block diagrams by using actdiag_
+- actdiag: embed activity diagrams by using actdiag_
+- nwdiag: embed network diagrams by using nwdiag_
 
 .. _aafigure: http://docutils.sourceforge.net/sandbox/aafigure/
 
@@ -95,6 +96,8 @@ List of extensions
 .. _blockdiag: http://blockdiag.com/
 
 .. _actdiag: http://blockdiag.com/
+
+.. _nwdiag: http://blockdiag.com/
 
 
 For contributors
