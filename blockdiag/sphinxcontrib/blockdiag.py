@@ -180,8 +180,8 @@ def render_dot_html(self, node, code, options, prefix='blockdiag',
         # generate description table
         descriptions = []
         if 'desctable' in options:
-            for n in image.screen.nodes:
-                if n.description:
+            for n in image.diagram.traverse_nodes():
+                if hasattr(n, 'description') and n.description:
                     descriptions.append((n.id, n.numbered, n.description))
 
         # generate thumbnails
