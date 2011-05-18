@@ -27,11 +27,14 @@ RELEASE_SCRIPT = '''\
     $('.release_info').each(function() {
       var self = this, anchor = $('a', this);
       $.getJSON(anchor.attr('href') + '/json?callback=?', function(data) {
-        anchor.remove();
+          anchor.remove();
         var ul = $('<ul>').appendTo(self);
-        $u.each(data.urls, function(url) {
-          $('<li>').append($('<a>').attr('href', url.url).text(url.filename))
-                   .appendTo(ul);
+        $.each(data.urls, function(url_id) {
+          var url=data.urls[url_id];
+          var li=$('<li>');
+          li.appendTo(ul);
+          var a=$('<a>').attr('href', url.url).text(url.filename);
+          a.appendTo(li);
         });
       });
     });

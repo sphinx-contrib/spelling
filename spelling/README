@@ -1,3 +1,5 @@
+.. -*- mode: rst -*-
+
 =========================
  sphinxcontrib-spelling
 =========================
@@ -6,73 +8,29 @@ This package contains sphinxcontrb.spelling, a spelling checker for
 Sphinx-based documentation.  It uses PyEnchant_ to produce a report
 showing misspelled words.
 
-Installation
-============
+Refer to the `main documentation page
+<http://www.doughellmann.com/docs/sphinxcontrib.spelling/>`__ for
+installation and setup details.
 
-1. Follow the instructions on the PyEnchant_ site to install enchant and then PyEnchant.
-2. ``pip install sphinxcontrib-spelling``
-
-Configuration
-=============
-
-1. Add ``'sphinxcontrib.spelling'`` to the ``extensions`` list in ``conf.py``.
-
-  ::
-
-    extensions = [ 'sphinxcontrib.spelling' ]
-
-Configuration Options
----------------------
-
-``spelling_show_suggestions``
-  Boolean controlling whether suggestions for misspelled words are
-  printed.  Defaults to False.
-``spelling_lang``
-  String specifying the language, as understood by PyEnchant and
-  enchant.  Defaults to ``en_US`` for US English.
-``spelling_word_list_filename``
-  String specifying a file containing a list of words known to be
-  spelled correctly but that do not appear in the language dictionary
-  selected by ``spelling_lang``.  The file should contain one word per
-  line.  Refer to the `PyEnchant tutoral
-  <http://www.rfk.id.au/software/pyenchant/tutorial.html>`_ for
-  details.
-
-Running
+License
 =======
 
-To process a document with the spell checker, use ``sphinx-build`` and
-specify ``spelling`` as the builder name using the ``-b`` option.  The
-output includes the headings from the document and any misspelled
-words.  If suggestions are enabled, they are shown on the same line as
-the misspelling.
+Copyright Doug Hellmann, All Rights Reserved
 
-::
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted,
+provided that the above copyright notice appear in all copies and that
+both that copyright notice and this permission notice appear in
+supporting documentation, and that the name of Doug Hellmann not be used
+in advertising or publicity pertaining to distribution of the software
+without specific, written prior permission.
 
-  $ sphinx-build -b spelling source output
-  
-  virtualenvwrapper
-
-   Features
-   - "Plugin"
-
-   Introduction
-   - "plugins"
-
-   Details
-
-    Installation
-
-     Supported Shells
-     - "bitbucket"
-
-History
-=======
-
-0.2
-  Warn but otherwise ignore unknown node types.
-
-0.1
-  First public release.
+DOUG HELLMANN DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
+INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO
+EVENT SHALL DOUG HELLMANN BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+PERFORMANCE OF THIS SOFTWARE.
 
 .. _PyEnchant: http://www.rfk.id.au/software/pyenchant/

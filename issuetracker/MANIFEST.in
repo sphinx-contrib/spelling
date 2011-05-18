@@ -1,7 +1,8 @@
 include README
 include LICENSE
 include CHANGES.*
-include test_issuetracker.py
+include tox.ini
 recursive-include sphinxcontrib *.css
 recursive-include doc *.rst *.py Makefile
+recursive-include tests *.py
 prune doc/_build

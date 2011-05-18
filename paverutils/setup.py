@@ -22,8 +22,8 @@ setup(
     name=NAME,
     version=VERSION,
     url = 'http://www.doughellmann.com/projects/%s/' % NAME,
-    download_url = 'http://www.doughellmann.com/downloads/%s-%s.tar.gz' % \
-                    (NAME, VERSION),
+    #download_url = 'http://www.doughellmann.com/downloads/%s-%s.tar.gz' % \
+    #                (NAME, VERSION),
     license='BSD',
     author='Doug Hellmann',
     author_email='doug.hellmann@gmail.com',

@@ -60,6 +60,7 @@ def bbissue_role(name, rawtext, text, lineno, inliner, options={}, content=[]):
         prb = inliner.problematic(rawtext, rawtext, msg)
         return [prb], [msg]
     app = inliner.document.settings.env.app
+    #app.info('issue %r' % text)
     node = make_link_node(rawtext, app, 'issue', str(issue_num), options)
     return [node], []
 
@@ -79,7 +80,29 @@ def bbchangeset_role(name, rawtext, text, lineno, inliner, options={}, content=[
     :param content: The directive content for customization.
     """
     app = inliner.document.settings.env.app
+    #app.info('changeset %r' % text)
     node = make_link_node(rawtext, app, 'changeset', text, options)
+    return [node], []
+
+def bbuser_role(name, rawtext, text, lineno, inliner, options={}, content=[]):
+    """Link to a BitBucket user.
+
+    Returns 2 part tuple containing list of nodes to insert into the
+    document and a list of system messages.  Both are allowed to be
+    empty.
+
+    :param name: The role name used in the document.
+    :param rawtext: The entire markup snippet, with role.
+    :param text: The text marked with the role.
+    :param lineno: The line number where rawtext appears in the input.
+    :param inliner: The inliner instance that called us.
+    :param options: Directive options for customization.
+    :param content: The directive content for customization.
+    """
+    app = inliner.document.settings.env.app
+    #app.info('user link %r' % text)
+    ref = 'https://bitbucket.org/' + text
+    node = nodes.reference(rawtext, text, refuri=ref, **options)
     return [node], []
 
 
@@ -88,8 +111,10 @@ def setup(app):
     
     :param app: Sphinx application context.
     """
+    app.info('Initializing BitBucket plugin')
     app.add_role('bbissue', bbissue_role)
     app.add_role('bbchangeset', bbchangeset_role)
+    app.add_role('bbuser', bbuser_role)
     app.add_config_value('bitbucket_project_url', None, 'env')
     return
 

@@ -1,0 +1,13 @@
+.status {
+    padding: 0.2em 0.5ex; 
+    font-size: 0.8em; 
+    color: #eee; 
+    background: #aaa;
+    border-radius: 5px;
+    text-shadow: 0 0 2px white;
+}
+.status.undecided { background: OldLace; color: BurlyWood }
+.status.todo { background: NavajoWhite; color: Coral }
+.status.done { background: LightBlue; color: SteelBlue }
+.status.tested { background: YellowGreen; text-shadow: 0 0 2px ForestGreen }
+.status.wontfix { color: gray }
