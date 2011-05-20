@@ -140,18 +140,36 @@ def get_image_filename(self, code, format, options, prefix='nwdiag'):
     return relfn, outfn
 
 
+def get_fontpath(self):
+    fontpath = None
+    if self.builder.config.nwdiag_fontpath:
+        nwdiag_fontpath = self.builder.config.nwdiag_fontpath
+
+        if isinstance(nwdiag_fontpath, (str, unicode)):
+            nwdiag_fontpath = [nwdiag_fontpath]
+
+        for path in nwdiag_fontpath:
+            if os.path.isfile(path):
+                fontpath = path
+
+        if fontpath is None:
+            attrname = '_nwdiag_fontpath_warned'
+            if not hasattr(self.builder, attrname):
+                msg = ('nwdiag cannot load "%s" as truetype font, '
+                       'check the nwdiag_path setting' % fontpath)
+                self.builder.warn(msg)
+
+                setattr(self.builder, attrname, True)
+
+    return fontpath
+
+
 def create_nwdiag(self, code, format, filename, options, prefix='nwdiag'):
     """
     Render nwdiag code into a PNG output file.
     """
-    fontpath = self.builder.config.nwdiag_fontpath
-    if fontpath and not hasattr(self.builder, '_nwdiag_fontpath_warned'):
-        if not os.path.isfile(fontpath):
-            self.builder.warn('nwdiag cannot load "%s" as truetype font, '
-                              'check the nwdiag_path setting' % fontpath)
-            self.builder._nwdiag_fontpath_warned = True
-
     draw = None
+    fontpath = get_fontpath(self)
     try:
         tree = diagparser.parse(diagparser.tokenize(code))
         screen = builder.ScreenNodeBuilder.build(tree)
