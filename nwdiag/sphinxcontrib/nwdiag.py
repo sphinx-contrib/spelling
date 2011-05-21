@@ -200,7 +200,7 @@ def render_dot_html(self, node, code, options, prefix='nwdiag',
         if 'desctable' in options:
             for n in image.diagram.nodes:
                 if n.description:
-                    descriptions.append((n.id, n.numbered, n.description))
+                    descriptions.append((n.id, n.numbered, n.address.values(), n.description))
 
         # generate thumbnails
         image_size = image.drawer.image.size
@@ -243,9 +243,9 @@ def render_dot_html(self, node, code, options, prefix='nwdiag',
         self.body.append('<table border="1" class="docutils">')
         self.body.append('<thead valign="bottom">')
         if numbered:
-            self.body.append('<tr><th class="head">No</th><th class="head">Name</th><th class="head">Description</th></tr>')
+            self.body.append('<tr><th class="head">No</th><th class="head">Name</th><th class="head">Address</th><th class="head">Description</th></tr>')
         else:
-            self.body.append('<tr><th class="head">Name</th><th class="head">Description</th></tr>')
+            self.body.append('<tr><th class="head">Name</th><th class="head">Address</th><th class="head">Description</th></tr>')
         self.body.append('</thead>')
         self.body.append('<tbody valign="top">')
 
@@ -266,7 +266,7 @@ def render_dot_html(self, node, code, options, prefix='nwdiag',
             descriptions.sort(cmp_number)
 
         for desc in descriptions:
-            id, number, text = desc
+            id, number, address, text = desc
             self.body.append('<tr>')
             if numbered:
                 if number is not None:
@@ -274,6 +274,7 @@ def render_dot_html(self, node, code, options, prefix='nwdiag',
                 else:
                     self.body.append('<td></td>')
             self.body.append('<td>%s</td>' % id)
+            self.body.append('<td>%s</td>' % "<br />".join(address))
             self.body.append('<td>%s</td>' % text)
             self.body.append('</tr>')
 
