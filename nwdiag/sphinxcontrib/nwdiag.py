@@ -198,7 +198,7 @@ def render_dot_html(self, node, code, options, prefix='nwdiag',
         # generate description table
         descriptions = []
         if 'desctable' in options:
-            for n in image.screen.nodes:
+            for n in image.diagram.nodes:
                 if n.description:
                     descriptions.append((n.id, n.numbered, n.description))
 
