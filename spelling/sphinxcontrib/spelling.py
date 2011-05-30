@@ -260,7 +260,7 @@ class SpellingBuilder(Builder):
 
     def write_doc(self, docname, doctree):
         self.checker.push_filters(self.env.spelling_document_filters[docname])
-        
+
         for node in doctree.traverse(docutils.nodes.Text):
             if node.tagname == '#text' and  node.parent.tagname in TEXT_NODES:
 

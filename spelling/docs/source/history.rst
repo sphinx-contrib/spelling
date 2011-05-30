@@ -2,7 +2,7 @@
  Release History
 =================
 
-trunk
+1.1
 
   - Add an option treat the names of packages on PyPI as spelled
     properly.
