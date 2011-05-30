@@ -2,7 +2,7 @@
 help:
 	@echo "sdist          - Source distribution"
 	@echo "html           - HTML documentation"
-	@echo "spelling       - Check spelling of documentation'
+	@echo "spelling       - Check spelling of documentation"
 	@echo "upload         - upload a new release to PyPI"
 	@echo "installwebsite - deploy web version of docs"
 	@echo "develop        - install development version"
