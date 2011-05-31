@@ -2,6 +2,7 @@ from fsdict import FSDict
 import feedgenerator
 from urllib import quote_plus
 import os.path
+import directives
 
 #global
 feed_entries = None

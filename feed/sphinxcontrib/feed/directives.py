@@ -111,6 +111,5 @@ class Latest(Directive):
         ret.append(wrappernode)
         return ret
 
-
-directives.register_directive('toctree', TocTree)
+directives.register_directive('latest', Latest)
 

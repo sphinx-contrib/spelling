@@ -3,7 +3,7 @@ Welcome to Sphinx Feed <Test>'s documentation!
 
 Contents:
 
-.. toctree::
+.. latest::
     :maxdepth: 2
     
     B_latest
