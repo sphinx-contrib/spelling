@@ -5,11 +5,10 @@ Contents:
 
 .. latest::
     :maxdepth: 2
+    :glob:
     
-    B_latest
-    A_older
-    C_most_aged
-
+    *
+    
 Indices and tables
 ==================
 
