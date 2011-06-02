@@ -1,0 +1,242 @@
+.. sphinxcontrib-httpdomain documentation master file, created by
+   sphinx-quickstart on Thu Jun  2 13:27:52 2011.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+.. module:: sphinxcontrib.httpdomain
+
+:mod:`sphinxcontrib.httpdomain` --- Documenting RESTful HTTP APIs
+=================================================================
+
+This contrib extension, :mod:`sphinxcontrib.httpdomain`, provides a Sphinx
+domain for describing RESTful HTTP APIs.
+
+In order to use it, add :mod:`sphinxcontrib.httpdomain` into
+:data:`extensions` list of your Sphinx configuration file (:file:`conf.py`):
+
+.. sourcecode:: py
+
+   extensions = ['sphinxcontrib.httpdomain']
+
+
+Basic usage
+-----------
+
+There are several provided :ref:`directives <directives>` that describe
+HTTP resources.
+
+.. sourcecode:: rst
+
+   .. http:get:: /users/(int:user_id)/posts/(tag)
+
+      The posts tagged with `tag` that the user (`user_id`) wrote.
+
+      :query sort: one of ``hit``, ``created-at``
+      :query offset: offset number. default is 0
+      :query limit: limit number. default is 30
+      :statuscode 200: no error
+      :statuscode 404: there's no user
+
+will be rendered as:
+
+    .. http:get:: /users/(int:user_id)/posts/(tag)
+
+       The posts tagged with `tag` that the user (`user_id`) wrote.
+
+       :query sort: one of ``hit``, ``created-at``
+       :query offset: offset number. default is 0
+       :query limit: limit number. default is 30
+       :statuscode 200: no error
+       :statuscode 404: there's no user
+
+Of course, :ref:`roles <roles>` that refer the directives as well.
+For example:
+
+.. sourcecode:: rst
+
+   :http:get:`/users/(int:user_id)/posts/(tag)`
+
+will render like:
+
+    :http:get:`/users/(int:user_id)/posts/(tag)`
+
+
+.. _directives:
+
+Directives
+----------
+
+.. rst:directive:: .. http:options:: path
+
+   Describes a HTTP resource's :http:method:`OPTIONS` method.
+   It can also be referred by :rst:role:`http:options` role.
+
+.. rst:directive:: .. http:head:: path
+
+   Describes a HTTP resource's :http:method:`HEAD` method.
+   It can also be referred by :rst:role:`http:head` role.
+
+.. rst:directive:: .. http:post:: path
+
+   Describes a HTTP resource's :http:method:`POST` method.
+   It can also be referred by :rst:role:`http:post` role.
+
+.. rst:directive:: .. http:get:: path
+
+   Describes a HTTP resource's :http:method:`GET` method.
+   It can also be referred by :rst:role:`http:get` role.
+
+.. rst:directive:: .. http:put:: path
+
+   Describes a HTTP resource's :http:method:`PUT` method.
+   It can also be referred by :rst:role:`http:put` role.
+
+.. rst:directive:: .. http:delete:: path
+
+   Describes a HTTP resource's :http:method:`DELETE` method.
+   It can also be referred by :rst:role:`http:delete` role.
+
+.. rst:directive:: .. http:trace:: path
+
+   Describes a HTTP resource's :http:method:`TRACE` method.
+   It can also be referred by :rst:role:`http:trace` role.
+
+
+.. _resource-fields:
+
+Resource Fields
+---------------
+
+Inside HTTP resource description directives like :rst:dir:`get`,
+reStructuredText field lists with these fields are recognized and formatted
+nicely:
+
+``param``, ``parameter``, ``arg``, ``argument``
+   Description of URL parameter.
+
+``queryparameter``, ``queryparam``, ``qparam``, ``query``
+   Description of parameter passed by request query string.
+
+``formparameter``, ``formparam``, ``fparam``, ``form``
+   Description of parameter passed by request content body, encoded in
+   :mimetype:`application/x-www-form-urlencoded` or
+   :mimetype:`multipart/form-data`.
+
+``statuscode``, ``status``, ``code``
+   Description of response status code.
+
+For example:
+
+.. sourcecode:: rst
+
+   .. http:post:: /posts/(int:post_id)
+
+      Replies a comment to the post.
+
+      :param post_id: post's unique id
+      :type post_id: int
+      :form email: author email address
+      :form body: comment body
+      :status 302: and then redirects to :http:get:`/posts/(int:post_id)`
+      :status 400: when form parameters are missing
+
+It will render like this:
+
+    .. http:post:: /posts/(int:post_id)
+
+       Replies a comment to the post.
+
+       :param post_id: post's unique id
+       :type post_id: int
+       :form email: author email address
+       :form body: comment body
+       :status 302: and then redirects to :http:get:`/posts/(int:post_id)`
+       :status 400: when form parameters are missing
+
+
+.. _roles:
+
+Roles
+-----
+
+.. rst:role:: http:options
+
+   Refers to the :rst:dir:`http:options` directive.
+
+.. rst:role:: http:head
+
+   Refers to the :rst:dir:`http:head` directive.
+
+.. rst:role:: http:post
+
+   Refers to the :rst:dir:`http:post` directive.
+
+.. rst:role:: http:get
+
+   Refers to the :rst:dir:`http:get` directive.
+
+.. rst:role:: http:put
+
+   Refers to the :rst:dir:`http:put` directive.
+
+.. rst:role:: http:delete
+
+   Refers to the :rst:dir:`http:delete` directive.
+
+.. rst:role:: http:trace
+
+   Refers to the :rst:dir:`http:trace` directive.
+
+.. rst:role:: http:statuscode
+
+   A reference to a HTTP status code. The text "`code` `Status Name`" is
+   generated; in the HTML output, this text is a hyperlink to a web reference
+   of the specified status code.
+
+   For example:
+
+   .. sourcecode:: rst
+
+      - :http:statuscode:`404`
+      - :http:statuscode:`200 Oll Korrect`
+
+   will be rendered as:
+
+       - :http:statuscode:`404`
+       - :http:statuscode:`200 Oll Korrect`
+
+.. rst:role:: http:method
+
+   A reference to a HTTP method (also known as *verb*). In the HTML output,
+   this text is a hyperlink to a web reference of the specified HTTP method.
+
+   For example:
+
+   .. sourcecode:: rst
+
+      It accepts :http:method:`post` only.
+
+   It will render like this:
+
+       It accepts :http:method:`post` only.
+
+.. rst:role:: mimetype
+
+   Exactly it doesn't belong to HTTP domain, but standard domain. It refers
+   to the MIME type like :mimetype:`text/html`.
+
+.. rst:role:: mailheader
+
+   Similar to :rst:role:`mimetype` role, it doesn't belong to HTTP domain,
+   but standard domain. It refers to the HTTP request/response header field
+   like :mailheader:`Content-Type`.
+
+
+Author and License
+------------------
+
+The :mod:`sphinxcontrib.httpdomain`, a part of :mod:`sphinxcontrib`, is
+written by `Hong Minhee`_ and distributed under BSD license.
+
+.. _Hong Minhee: http://dahlia.kr/
+
