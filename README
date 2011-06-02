@@ -42,6 +42,7 @@ List of extensions
 - context: a builder for ConTeXt.
 - feed: an extension for creating syndication feeds from your site content
 - gnuplot: produces images using gnuplot_ language.
+- httpdomain: a domain for documenting RESTful HTTP APIs.
 - lilypond: an extension inserting music scripts from Lilypond_ in PNG format.
 - mscgen: embed mscgen-formatted MSC (Message Sequence Chart)s.
 - paverutils: an alternate integration of Sphinx with Paver_.
