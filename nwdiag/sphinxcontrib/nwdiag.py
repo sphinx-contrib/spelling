@@ -140,18 +140,36 @@ def get_image_filename(self, code, format, options, prefix='nwdiag'):
     return relfn, outfn
 
 
+def get_fontpath(self):
+    fontpath = None
+    if self.builder.config.nwdiag_fontpath:
+        nwdiag_fontpath = self.builder.config.nwdiag_fontpath
+
+        if isinstance(nwdiag_fontpath, (str, unicode)):
+            nwdiag_fontpath = [nwdiag_fontpath]
+
+        for path in nwdiag_fontpath:
+            if os.path.isfile(path):
+                fontpath = path
+
+        if fontpath is None:
+            attrname = '_nwdiag_fontpath_warned'
+            if not hasattr(self.builder, attrname):
+                msg = ('nwdiag cannot load "%s" as truetype font, '
+                       'check the nwdiag_path setting' % fontpath)
+                self.builder.warn(msg)
+
+                setattr(self.builder, attrname, True)
+
+    return fontpath
+
+
 def create_nwdiag(self, code, format, filename, options, prefix='nwdiag'):
     """
     Render nwdiag code into a PNG output file.
     """
-    fontpath = self.builder.config.nwdiag_fontpath
-    if fontpath and not hasattr(self.builder, '_nwdiag_fontpath_warned'):
-        if not os.path.isfile(fontpath):
-            self.builder.warn('nwdiag cannot load "%s" as truetype font, '
-                              'check the nwdiag_path setting' % fontpath)
-            self.builder._nwdiag_fontpath_warned = True
-
     draw = None
+    fontpath = get_fontpath(self)
     try:
         tree = diagparser.parse(diagparser.tokenize(code))
         screen = builder.ScreenNodeBuilder.build(tree)
@@ -180,9 +198,9 @@ def render_dot_html(self, node, code, options, prefix='nwdiag',
         # generate description table
         descriptions = []
         if 'desctable' in options:
-            for n in image.screen.nodes:
+            for n in image.diagram.nodes:
                 if n.description:
-                    descriptions.append((n.id, n.numbered, n.description))
+                    descriptions.append((n.id, n.numbered, n.address.values(), n.description))
 
         # generate thumbnails
         image_size = image.drawer.image.size
@@ -225,9 +243,9 @@ def render_dot_html(self, node, code, options, prefix='nwdiag',
         self.body.append('<table border="1" class="docutils">')
         self.body.append('<thead valign="bottom">')
         if numbered:
-            self.body.append('<tr><th class="head">No</th><th class="head">Name</th><th class="head">Description</th></tr>')
+            self.body.append('<tr><th class="head">No</th><th class="head">Name</th><th class="head">Address</th><th class="head">Description</th></tr>')
         else:
-            self.body.append('<tr><th class="head">Name</th><th class="head">Description</th></tr>')
+            self.body.append('<tr><th class="head">Name</th><th class="head">Address</th><th class="head">Description</th></tr>')
         self.body.append('</thead>')
         self.body.append('<tbody valign="top">')
 
@@ -248,7 +266,7 @@ def render_dot_html(self, node, code, options, prefix='nwdiag',
             descriptions.sort(cmp_number)
 
         for desc in descriptions:
-            id, number, text = desc
+            id, number, address, text = desc
             self.body.append('<tr>')
             if numbered:
                 if number is not None:
@@ -256,6 +274,7 @@ def render_dot_html(self, node, code, options, prefix='nwdiag',
                 else:
                     self.body.append('<td></td>')
             self.body.append('<td>%s</td>' % id)
+            self.body.append('<td>%s</td>' % "<br />".join(address))
             self.body.append('<td>%s</td>' % text)
             self.body.append('</tr>')
 

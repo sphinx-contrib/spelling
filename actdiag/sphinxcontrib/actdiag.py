@@ -140,18 +140,36 @@ def get_image_filename(self, code, format, options, prefix='actdiag'):
     return relfn, outfn
 
 
+def get_fontpath(self):
+    fontpath = None
+    if self.builder.config.actdiag_fontpath:
+        actdiag_fontpath = self.builder.config.actdiag_fontpath
+
+        if isinstance(actdiag_fontpath, (str, unicode)):
+            actdiag_fontpath = [actdiag_fontpath]
+
+        for path in actdiag_fontpath:
+            if os.path.isfile(path):
+                fontpath = path
+
+        if fontpath is None:
+            attrname = '_actdiag_fontpath_warned'
+            if not hasattr(self.builder, attrname):
+                msg = ('actdiag cannot load "%s" as truetype font, '
+                       'check the actdiag_path setting' % fontpath)
+                self.builder.warn(msg)
+
+                setattr(self.builder, attrname, True)
+
+    return fontpath
+
+
 def create_actdiag(self, code, format, filename, options, prefix='actdiag'):
     """
     Render actdiag code into a PNG output file.
     """
-    fontpath = self.builder.config.actdiag_fontpath
-    if fontpath and not hasattr(self.builder, '_actdiag_fontpath_warned'):
-        if not os.path.isfile(fontpath):
-            self.builder.warn('actdiag cannot load "%s" as truetype font, '
-                              'check the actdiag_path setting' % fontpath)
-            self.builder._actdiag_fontpath_warned = True
-
     draw = None
+    fontpath = get_fontpath(self)
     try:
         tree = diagparser.parse(diagparser.tokenize(code))
         screen = builder.ScreenNodeBuilder.build(tree)
@@ -180,7 +198,7 @@ def render_dot_html(self, node, code, options, prefix='actdiag',
         # generate description table
         descriptions = []
         if 'desctable' in options:
-            for n in image.screen.nodes:
+            for n in image.diagram.nodes:
                 if n.description:
                     descriptions.append((n.id, n.numbered, n.description))
 

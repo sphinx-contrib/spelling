@@ -25,7 +25,7 @@ requires = ['seqdiag>=0.3.3', 'Sphinx>=0.6']
 
 setup(
     name='sphinxcontrib-seqdiag',
-    version='0.1.0',
+    version='0.1.1',
     url='http://bitbucket.org/birkenfeld/sphinx-contrib',
     download_url='http://pypi.python.org/pypi/sphinxcontrib-seqdiag',
     license='BSD',

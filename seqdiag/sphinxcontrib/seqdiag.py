@@ -140,18 +140,36 @@ def get_image_filename(self, code, format, options, prefix='seqdiag'):
     return relfn, outfn
 
 
+def get_fontpath(self):
+    fontpath = None
+    if self.builder.config.seqdiag_fontpath:
+        seqdiag_fontpath = self.builder.config.seqdiag_fontpath
+
+        if isinstance(seqdiag_fontpath, (str, unicode)):
+            seqdiag_fontpath = [seqdiag_fontpath]
+
+        for path in seqdiag_fontpath:
+            if os.path.isfile(path):
+                fontpath = path
+
+        if fontpath is None:
+            attrname = '_seqdiag_fontpath_warned'
+            if not hasattr(self.builder, attrname):
+                msg = ('seqdiag cannot load "%s" as truetype font, '
+                       'check the seqdiag_path setting' % fontpath)
+                self.builder.warn(msg)
+
+                setattr(self.builder, attrname, True)
+
+    return fontpath
+
+
 def create_seqdiag(self, code, format, filename, options, prefix='seqdiag'):
     """
     Render seqdiag code into a PNG output file.
     """
-    fontpath = self.builder.config.seqdiag_fontpath
-    if fontpath and not hasattr(self.builder, '_seqdiag_fontpath_warned'):
-        if not os.path.isfile(fontpath):
-            self.builder.warn('seqdiag cannot load "%s" as truetype font, '
-                              'check the seqdiag_path setting' % fontpath)
-            self.builder._seqdiag_fontpath_warned = True
-
     draw = None
+    fontpath = get_fontpath(self)
     try:
         tree = diagparser.parse(diagparser.tokenize(code))
         screen = builder.ScreenNodeBuilder.build(tree)
@@ -180,7 +198,7 @@ def render_dot_html(self, node, code, options, prefix='seqdiag',
         # generate description table
         descriptions = []
         if 'desctable' in options:
-            for n in image.screen.nodes:
+            for n in image.diagram.nodes:
                 if n.description:
                     descriptions.append((n.id, n.numbered, n.description))
 

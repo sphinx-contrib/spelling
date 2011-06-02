@@ -140,18 +140,36 @@ def get_image_filename(self, code, format, options, prefix='blockdiag'):
     return relfn, outfn
 
 
+def get_fontpath(self):
+    fontpath = None
+    if self.builder.config.blockdiag_fontpath:
+        blockdiag_fontpath = self.builder.config.blockdiag_fontpath
+
+        if isinstance(blockdiag_fontpath, (str, unicode)):
+            blockdiag_fontpath = [blockdiag_fontpath]
+
+        for path in blockdiag_fontpath:
+            if os.path.isfile(path):
+                fontpath = path
+
+        if fontpath is None:
+            attrname = '_blockdiag_fontpath_warned'
+            if not hasattr(self.builder, attrname):
+                msg = ('blockdiag cannot load "%s" as truetype font, '
+                       'check the blockdiag_path setting' % fontpath)
+                self.builder.warn(msg)
+
+                setattr(self.builder, attrname, True)
+
+    return fontpath
+
+
 def create_blockdiag(self, code, format, filename, options, prefix='blockdiag'):
     """
     Render blockdiag code into a PNG output file.
     """
-    fontpath = self.builder.config.blockdiag_fontpath
-    if fontpath and not hasattr(self.builder, '_blockdiag_fontpath_warned'):
-        if not os.path.isfile(fontpath):
-            self.builder.warn('blockdiag cannot load "%s" as truetype font, '
-                              'check the blockdiag_path setting' % fontpath)
-            self.builder._blockdiag_fontpath_warned = True
-
     draw = None
+    fontpath = get_fontpath(self)
     try:
         tree = diagparser.parse(diagparser.tokenize(code))
         screen = builder.ScreenNodeBuilder.build(tree)
@@ -180,8 +198,8 @@ def render_dot_html(self, node, code, options, prefix='blockdiag',
         # generate description table
         descriptions = []
         if 'desctable' in options:
-            for n in image.screen.nodes:
-                if n.description:
+            for n in image.diagram.traverse_nodes():
+                if hasattr(n, 'description') and n.description:
                     descriptions.append((n.id, n.numbered, n.description))
 
         # generate thumbnails
