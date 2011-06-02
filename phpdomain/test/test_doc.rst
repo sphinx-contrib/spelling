@@ -192,6 +192,12 @@ Namespaced elements
 
        A constant in a namespace
 
+
+.. php:exception:: NamespaceException
+
+    This exception is in a namespace.
+
+
 .. php:class:: LibraryClass
 
     A class in a namespace
@@ -242,6 +248,7 @@ Namespaced elements
     An instance method
 
 
+
 Test Case - not including namespace
 -----------------------------------
 
@@ -277,6 +284,7 @@ Test Case - not including namespace
 
 :php:func:`LibraryInterface::instanceMethod`
 
+:php:exc:`NamespaceException`
 
 Test Case - global access
 -------------------------
@@ -304,6 +312,10 @@ Nested namespaces
 
 .. php:namespace:: LibraryName\SubPackage
 
+.. php:exception:: NestedNamespaceException
+
+    In a package
+
 .. php:class:: SubpackageClass
 
     A class in a subpackage
@@ -324,3 +336,5 @@ Test Case - Test subpackage links
 :php:interface:`SubpackageInterface`
 
 :php:class:`LibraryName\\SubPackage\\SubpackageInterface`
+
+:php:exc:`LibraryName\\SubPackage\\NestedNamespaceException`
