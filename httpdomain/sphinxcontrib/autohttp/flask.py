@@ -92,7 +92,7 @@ class AutoflaskDirective(Directive):
                 path == app.static_path + '/(path:filename)'):
                 continue
             view = app.view_functions[endpoint]
-            docstring = prepare_docstring(view.__doc__, True)
+            docstring = prepare_docstring(view.__doc__)
             if not docstring:
                 continue
             for line in http_directive(method, path, docstring):
