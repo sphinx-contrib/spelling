@@ -73,7 +73,9 @@ class AutoflaskDirective(Directive):
 
     has_content = True
     required_arguments = 1
-    option_spec = {'undoc-endpoints': str, 'undoc-static': str}
+    option_spec = {'undoc-endpoints': str,
+                   'undoc-static': str,
+                   'include-empty-docstring': str}
 
     @property
     def undoc_endpoints(self):
@@ -92,9 +94,10 @@ class AutoflaskDirective(Directive):
                 path == app.static_path + '/(path:filename)'):
                 continue
             view = app.view_functions[endpoint]
-            docstring = prepare_docstring(view.__doc__)
-            if not docstring:
+            docstring = view.__doc__ or ''
+            if not docstring and 'include-empty-docstring' not in self.options:
                 continue
+            docstring = prepare_docstring(docstring)
             for line in http_directive(method, path, docstring):
                 yield line
 

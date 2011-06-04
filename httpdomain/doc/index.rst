@@ -293,6 +293,10 @@ will be rendered as:
       Excludes a view function that serves static files, which is included
       in Flask by default.
 
+   ``include-empty-docstring``
+      View functions that don't have docstring (:attr:`__doc__`) are excluded
+      by default. If this flag option has given, they become included also.
+
 .. _Flask: http://flask.pocoo.org/
 
 
