@@ -12,11 +12,9 @@ This contrib extension, :mod:`sphinxcontrib.httpdomain`, provides a Sphinx
 domain for describing RESTful HTTP APIs.
 
 In order to use it, add :mod:`sphinxcontrib.httpdomain` into
-:data:`extensions` list of your Sphinx configuration file (:file:`conf.py`):
+:data:`extensions` list of your Sphinx configuration file (:file:`conf.py`)::
 
-.. sourcecode:: py
-
-   extensions = ['sphinxcontrib.httpdomain']
+    extensions = ['sphinxcontrib.httpdomain']
 
 
 Basic usage
@@ -232,11 +230,73 @@ Roles
    like :mailheader:`Content-Type`.
 
 
+.. module:: sphinxcontrib.autohttp.flask
+
+:mod:`sphinxcontrib.autohttp.flask` --- Exporting API reference from Flask app
+------------------------------------------------------------------------------
+
+It generates RESTful HTTP API reference documentation from a Flask_
+application's routing table, similar to :mod:`sphinx.ext.autodoc`.
+
+In order to use it, add :mod:`sphinxcontrib.autohttp.flask` into
+:data:`extensions` list of your Sphinx configuration (:file:`conf.py`) file::
+
+    extensions = ['sphinxcontrib.autohttp.flask']
+
+For example:
+
+.. sourcecode:: rst
+
+   .. autoflask:: autoflask_sampleapp:app
+      :undoc-static:
+
+will be rendered as:
+
+    .. autoflask:: autoflask_sampleapp:app
+       :undoc-static:
+
+.. rst:directive:: .. autoflask:: module:app
+
+   Generates HTTP API references from a Flask application. It takes an
+   import name, like::
+
+       your.webapplication.module:app
+
+   Colon character (``:``) separates module path and application variable.
+   Latter part can be more complex::
+
+       your.webapplication.module:create_app(config='default.cfg')
+
+   It's useful when a Flask application is created from the factory function
+   (:func:`create_app`, in the above example).
+
+   It takes several flag options as well.
+
+   ``undoc-entrypoints``
+      Excludes specified entrypoints from generated references.
+
+      For example:
+
+      .. sourcecode:: rst
+
+         .. autoflask:: yourwebapp:app
+            :undoc-entrypoints: admin, admin_login
+
+      will exclude :func:`admin`, :func:`admin_login` view functions.
+
+   ``undoc-static``
+      Excludes a view function that serves static files, which is included
+      in Flask by default.
+
+.. _Flask: http://flask.pocoo.org/
+
+
 Author and License
 ------------------
 
-The :mod:`sphinxcontrib.httpdomain`, a part of :mod:`sphinxcontrib`, is
-written by `Hong Minhee`_ and distributed under BSD license.
+The :mod:`sphinxcontrib.httpdomain` and :mod:`sphinxcontrib.autohttp`,
+parts of :mod:`sphinxcontrib`, are written by `Hong Minhee`_ and distributed
+under BSD license.
 
 .. _Hong Minhee: http://dahlia.kr/
 

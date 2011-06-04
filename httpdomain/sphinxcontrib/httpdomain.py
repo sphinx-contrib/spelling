@@ -267,7 +267,11 @@ class HTTPIndex(Index):
         for method, routes in self.domain.routes.iteritems():
             for path, info in routes.iteritems():
                 letter = path.split('/', 2)
-                entries = content.setdefault('/' + letter[1], [])
+                try:
+                    first_letter = letter[1]
+                except IndexError:
+                    first_letter = letter[0]
+                entries = content.setdefault('/' + first_letter, [])
                 entries.append([
                     method.upper() + ' ' + path, 0, info[0],
                     http_resource_anchor(method, path), '', '', info[1]
