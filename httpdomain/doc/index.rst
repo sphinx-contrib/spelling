@@ -277,15 +277,15 @@ will be rendered as:
 
    It takes several flag options as well.
 
-   ``undoc-entrypoints``
-      Excludes specified entrypoints from generated references.
+   ``undoc-endpoints``
+      Excludes specified endpoints from generated references.
 
       For example:
 
       .. sourcecode:: rst
 
          .. autoflask:: yourwebapp:app
-            :undoc-entrypoints: admin, admin_login
+            :undoc-endpoints: admin, admin_login
 
       will exclude :func:`admin`, :func:`admin_login` view functions.
 
