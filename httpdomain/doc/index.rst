@@ -11,6 +11,11 @@
 This contrib extension, :mod:`sphinxcontrib.httpdomain`, provides a Sphinx
 domain for describing RESTful HTTP APIs.
 
+.. seealso::
+
+   If your webapp is powered by Flask_? See :mod:`sphinxcontrib.autohttp.flask`
+   also.
+
 In order to use it, add :mod:`sphinxcontrib.httpdomain` into
 :data:`extensions` list of your Sphinx configuration file (:file:`conf.py`)::
 
