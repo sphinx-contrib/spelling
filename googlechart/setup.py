@@ -3,7 +3,7 @@
 from setuptools import setup, find_packages
 
 long_desc = '''
-This package contains the googlechart Sphinx extension.
+This package contains the `Google Chart`_ Sphinx extension.
 
 .. _Google Chart: http://code.google.com/intl/ja/apis/chart/
 
@@ -16,6 +16,8 @@ Following code is sample::
       cat: 80
       rabbit: 40
 
+
+See more examples and output images in http://packages.python.org/sphinxcontrib-googlechart/ .
 
 This module needs internet connection.
 
