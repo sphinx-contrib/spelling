@@ -30,7 +30,10 @@ def import_object(import_name):
     module_name, expr = import_name.split(':', 1)
     mod = __import__(module_name)
     mod = reduce(getattr, module_name.split('.')[1:], mod)
-    return eval(expr, __builtins__.__dict__, mod.__dict__)
+    globals = __builtins__
+    if not isinstance(globals, dict):
+        globals = globals.__dict__
+    return eval(expr, globals, mod.__dict__)
 
 
 def http_directive(method, path, content):
