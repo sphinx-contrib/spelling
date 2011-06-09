@@ -191,7 +191,7 @@ Directive
       car.color: 0000ff
 
 
-.. describe:: .. verticalbarchart::
+.. describe:: .. vertical_barchart::
 
    This directive insert a barchart into the generated document.
    barchart directive takes code block as source script.
@@ -235,7 +235,7 @@ Directive
       car.color: 0000ff
 
 
-.. describe:: .. verticalbargraph::
+.. describe:: .. vertical_bargraph::
 
    This directive insert a barchart into the generated document.
    barchart directive takes code block as source script.
