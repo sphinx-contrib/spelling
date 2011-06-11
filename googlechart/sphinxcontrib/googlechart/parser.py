@@ -153,6 +153,35 @@ class _Chart(object):
 
         return colors
 
+    @property
+    def axes(self):
+        axes = []
+
+        exist = False
+        for key in self._order:
+            key += ".axis"
+
+            if key in self._items:
+                exist = True
+                axes.append(self._items[key])
+
+        if not exist:
+            axes = []
+
+        return axes
+
+    @property
+    def axis_labels(self):
+        labels = {}
+
+        for i, key in enumerate(self._order):
+            key += ".axis_label"
+
+            if key in self._items:
+                labels[i] = self._items[key]
+
+        return labels
+
 
 def parse_string(code):
     tree = parse(tokenize(code))

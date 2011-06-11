@@ -67,7 +67,16 @@ class GoogleChart(object):
         colors = ",".join(chart.colors)
         labels = "|".join(chart.labels)
 
-        return dict(chd=data, chdl=labels, chco=colors)
+        axes = ",".join(n[0] for n in chart.axes)
+        _labels = ([str(i) + ":"] + n for i, n in chart.axis_labels.items())
+        axis_labels = "|".join("|".join(n) for n in _labels)
+
+        params = dict(chd=data, chdl=labels, chco=colors)
+        if chart.axes:
+            params['chxt'] = axes
+            params['chxl'] = axis_labels
+
+        return params
 
     def _url_for_linechart_xy(self, chart):
         series = []
@@ -76,14 +85,40 @@ class GoogleChart(object):
         colors = ",".join(chart.colors)
         labels = "|".join(chart.labels)
 
-        return dict(chd=data, chdl=labels, chco=colors)
+        axes = []
+        if chart.axes:
+            axes = ",".join(chart.axes[0])
+
+        _labels = []
+        if chart.axis_labels:
+            _labels = chart.axis_labels[0]
+
+        if _labels and isinstance(_labels[0], tuple):
+            _labels = ([str(i) + ":"] + list(n) for i, n in enumerate(_labels))
+        axis_labels = "|".join("|".join(n) for n in _labels)
+
+        params = dict(chd=data, chdl=labels, chco=colors)
+        if chart.axes:
+            params['chxt'] = axes
+            params['chxl'] = axis_labels
+
+        return params
 
     def _url_for_barchart(self, chart):
         data = "t:" + "|".join(",".join(n) for n in chart.items)
         colors = ",".join(chart.colors)
         labels = "|".join(chart.labels)
 
-        return dict(chd=data, chdl=labels, chco=colors)
+        axes = ",".join(n[0] for n in chart.axes)
+        _labels = ([str(i) + ":"] + n for i, n in chart.axis_labels.items())
+        axis_labels = "|".join("|".join(n) for n in _labels)
+
+        params = dict(chd=data, chdl=labels, chco=colors)
+        if chart.axes:
+            params['chxt'] = axes
+            params['chxl'] = axis_labels
+
+        return params
 
     def _url_for_venndiagram(self, chart):
         data = "t:" + ",".join(chart.items.next())
@@ -98,7 +133,24 @@ class GoogleChart(object):
     def _url_for_spotchart(self, chart):
         data = "t:" + "|".join(",".join(n) for n in zip(*chart.items.next()))
 
-        return dict(chd=data)
+        axes = []
+        if chart.axes:
+            axes = ",".join(chart.axes[0])
+
+        _labels = []
+        if chart.axis_labels:
+            _labels = chart.axis_labels[0]
+
+        if _labels and isinstance(_labels[0], tuple):
+            _labels = ([str(i) + ":"] + list(n) for i, n in enumerate(_labels))
+        axis_labels = "|".join("|".join(n) for n in _labels)
+
+        params = dict(chd=data)
+        if chart.axes:
+            params['chxt'] = axes
+            params['chxl'] = axis_labels
+
+        return params
 
     def _url_for_graphviz(self):
         _type = self.options.get('type', 'dot')
