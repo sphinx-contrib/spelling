@@ -304,19 +304,56 @@ add ``sphinxcontrib.googlechart.graphviz`` module to extention option.
    # Enabled extensions
    extensions = ['sphinxcontrib.googlechart', 'sphinxcontrib.googlechart.graphviz']
 
-Examples::
+.. describe:: .. graphviz:: [filename]
+
+   This directive insert a graphviz graph into the generated document.
+   graphviz directive takes filename argument or code block as source script.
+
+   Examples::
+
+      .. graphviz:: external.dot
+
+      .. graphviz::
+
+         digraph {
+           A -> B;
+         }
 
    .. graphviz::
 
       digraph {
-         A -> B;
+        A -> B;
       }
 
-.. graphviz::
+.. describe:: .. graph:: [graph_id]
 
-   digraph {
+   This directive insert a graphviz graph into the generated document.
+   graph directive takes graph_id argument and code block as source script.
+
+   Examples::
+
+      .. graph::
+
+         A -- B;
+
+   .. graph::
+
+      A -- B;
+
+.. describe:: .. digraph:: [graph_id]
+
+   This directive insert a graphviz digraph into the generated document.
+   digraph directive takes graph_id argument and code block as source script.
+
+   Examples::
+
+      .. digraph::
+
+         A -- B;
+
+   .. digraph::
+
       A -> B;
-   }
 
 
 Repository
