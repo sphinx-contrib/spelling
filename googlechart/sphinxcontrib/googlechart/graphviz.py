@@ -52,11 +52,31 @@ class GraphvizBase(Directive):
     codeheadings = None
 
     def run(self):
-        dotcode = '\n'.join(self.content)
-        if not dotcode.strip():
-            return [self.state_machine.reporter.warning(
-                'Ignoring "graphviz" directive without content.',
-                line=self.lineno)]
+        if self.arguments and not self.codeheadings:
+            document = self.state.document
+            if self.content:
+                return [document.reporter.warning(
+                    'graphviz directive cannot have both content and '
+                    'a filename argument', line=self.lineno)]
+            env = self.state.document.settings.env
+            rel_filename, filename = relfn2path(env, self.arguments[0])
+            env.note_dependency(rel_filename)
+            try:
+                fp = codecs.open(filename, 'r', 'utf-8')
+                try:
+                    dotcode = fp.read()
+                finally:
+                    fp.close()
+            except (IOError, OSError):
+                return [document.reporter.warning(
+                    'External graphviz file %r not found or reading '
+                    'it failed' % filename, line=self.lineno)]
+        else:
+            dotcode = '\n'.join(self.content)
+            if not dotcode.strip():
+                return [self.state_machine.reporter.warning(
+                    'Ignoring "graphviz" directive without content.',
+                    line=self.lineno)]
 
         if self.codeheadings:
             if self.arguments:
@@ -74,6 +94,23 @@ class GraphvizBase(Directive):
             node['options']['size'] = self.options['size']
 
         return [node]
+
+
+# compatibility to sphinx 1.0 (ported from sphinx trunk)
+def relfn2path(env, filename, docname=None):
+    if filename.startswith('/') or filename.startswith(os.sep):
+        rel_fn = filename[1:]
+    else:
+        docdir = os.path.dirname(env.doc2path(docname or env.docname,
+                                              base=None))
+        rel_fn = os.path.join(docdir, filename)
+    try:
+        return rel_fn, os.path.join(env.srcdir, rel_fn)
+    except UnicodeDecodeError:
+        # the source directory is a bytestring with non-ASCII characters;
+        # let's try to encode the rel_fn in the file system encoding
+        enc_rel_fn = rel_fn.encode(sys.getfilesystemencoding())
+        return rel_fn, os.path.join(env.srcdir, enc_rel_fn)
 
 
 class Graphviz(GraphvizBase):
