@@ -160,7 +160,7 @@ def get_image_filename(self, code, options, prefix='google_chart'):
     return relfn, outfn
 
 
-def create_google_chart(self, code, format, filename, options, prefix='google_chart'):
+def create_google_chart(self, code, filename, options, prefix='google_chart'):
     """
     Render google_chart code into a image file.
     """
@@ -181,7 +181,7 @@ def render_dot_html(self, node, code, options, prefix='google_chart',
     try:
         relfn, outfn = get_image_filename(self, code, options, prefix)
         if not os.path.isfile(outfn):
-            create_google_chart(self, code, format, outfn, options, prefix)
+            create_google_chart(self, code, outfn, options, prefix)
     except GoogleChartError, exc:
         self.builder.warn('dot code %r: ' % code + str(exc))
         raise nodes.SkipNode
@@ -207,7 +207,7 @@ def html_visit_google_chart(self, node):
 def render_dot_latex(self, node, code, options, prefix='google_chart'):
     try:
         fname, outfn = get_image_filename(self, code, options, prefix)
-        create_google_chart(self, code, format, outfn, options, prefix)
+        create_google_chart(self, code, outfn, options, prefix)
     except GoogleChartError, exc:
         self.builder.warn('dot code %r: ' % code + str(exc))
         raise nodes.SkipNode
