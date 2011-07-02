@@ -164,10 +164,13 @@ class GoogleChart(object):
         return params
 
     def save(self, filename):
-        fd = urllib.urlopen(self.url)
+        try:
+            fd = urllib.urlopen(self.url)
 
-        if fd.getcode() == 200:
-            open(filename, 'w').write(fd.read())
-        else:
+            if not hasattr(fd, 'getcode') or fd.getcode() == 200:
+                open(filename, 'w').write(fd.read())
+            else:
+                raise Exception()
+        except:
             msg = "google chart error: a malformed or illegal request"
             raise GoogleChartError(msg)
