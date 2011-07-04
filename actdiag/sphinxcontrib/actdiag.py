@@ -187,7 +187,7 @@ def render_dot_html(self, node, code, options, prefix='actdiag',
                     imgcls=None, alt=None):
     has_thumbnail = False
     try:
-        format = 'PNG'
+        format = self.builder.config.actdiag_html_image_format
         relfn, outfn = get_image_filename(self, code, format, options, prefix)
 
         image = create_actdiag(self, code, format, outfn, options, prefix)
@@ -318,4 +318,5 @@ def setup(app):
     app.add_directive('actdiag', Actdiag)
     app.add_config_value('actdiag_fontpath', None, 'html')
     app.add_config_value('actdiag_antialias', False, 'html')
+    app.add_config_value('actdiag_html_image_format', 'PNG', 'html')
     app.add_config_value('actdiag_tex_image_format', 'PNG', 'html')
