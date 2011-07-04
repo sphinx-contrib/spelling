@@ -187,7 +187,7 @@ def render_dot_html(self, node, code, options, prefix='nwdiag',
                     imgcls=None, alt=None):
     has_thumbnail = False
     try:
-        format = 'PNG'
+        format = self.builder.config.nwdiag_html_image_format
         relfn, outfn = get_image_filename(self, code, format, options, prefix)
 
         image = create_nwdiag(self, code, format, outfn, options, prefix)
@@ -319,4 +319,5 @@ def setup(app):
     app.add_directive('nwdiag', Nwdiag)
     app.add_config_value('nwdiag_fontpath', None, 'html')
     app.add_config_value('nwdiag_antialias', False, 'html')
+    app.add_config_value('nwdiag_html_image_format', 'PNG', 'html')
     app.add_config_value('nwdiag_tex_image_format', 'PNG', 'html')
