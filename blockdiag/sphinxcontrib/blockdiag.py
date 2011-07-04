@@ -187,7 +187,7 @@ def render_dot_html(self, node, code, options, prefix='blockdiag',
                     imgcls=None, alt=None):
     has_thumbnail = False
     try:
-        format = 'PNG'
+        format = self.builder.config.blockdiag_html_image_format
         relfn, outfn = get_image_filename(self, code, format, options, prefix)
 
         image = create_blockdiag(self, code, format, outfn, options, prefix)
@@ -318,4 +318,5 @@ def setup(app):
     app.add_directive('blockdiag', Blockdiag)
     app.add_config_value('blockdiag_fontpath', None, 'html')
     app.add_config_value('blockdiag_antialias', False, 'html')
+    app.add_config_value('blockdiag_html_image_format', 'PNG', 'html')
     app.add_config_value('blockdiag_tex_image_format', 'PNG', 'html')
