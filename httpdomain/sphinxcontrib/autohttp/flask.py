@@ -94,7 +94,7 @@ class AutoflaskDirective(Directive):
             if endpoint in self.undoc_endpoints:
                 continue
             if ('undoc-static' in self.options and endpoint == 'static' and
-                path == app.static_path + '/(path:filename)'):
+                path == app.static_url_path + '/(path:filename)'):
                 continue
             view = app.view_functions[endpoint]
             docstring = view.__doc__ or ''
