@@ -93,8 +93,12 @@ class AutoflaskDirective(Directive):
         for method, path, endpoint in get_routes(app):
             if endpoint in self.undoc_endpoints:
                 continue
+            try:
+                static_url_path = app.static_url_path # Flask 0.7 or higher
+            except AttributeError:
+                static_url_path = app.static_path # Flask 0.6 or under
             if ('undoc-static' in self.options and endpoint == 'static' and
-                path == app.static_url_path + '/(path:filename)'):
+                path == static_url_path + '/(path:filename)'):
                 continue
             view = app.view_functions[endpoint]
             docstring = view.__doc__ or ''
