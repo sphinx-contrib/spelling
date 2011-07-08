@@ -21,7 +21,7 @@ Installation
 
 This extension can be installed from the Python Package Index::
 
-   pip install sphinx-contrib.ansi
+   pip install sphinxcontrib-ansi
 
 Alternatively, you can clone the sphinx-contrib_ repository from BitBucket,
 and install the extension directly from the repository::
