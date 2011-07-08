@@ -66,6 +66,14 @@ CODE_CLASS_MAP = {
     35: 'magenta',
     36: 'cyan',
     37: 'white',
+    40: 'bg_black',
+    41: 'bg_red',
+    42: 'bg_green',
+    43: 'bg_yellow',
+    44: 'bg_blue',
+    45: 'bg_magenta',
+    46: 'bg_cyan',
+    47: 'bg_white',
     }
 
 
