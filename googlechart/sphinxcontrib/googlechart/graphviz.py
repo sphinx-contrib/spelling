@@ -167,7 +167,7 @@ def get_image_filename(self, code, options, prefix='graphviz'):
     return relfn, outfn
 
 
-def create_graphviz(self, code, format, filename, options, prefix='graphviz'):
+def create_graphviz(self, code, filename, options, prefix='graphviz'):
     """
     Render graphviz code into a image file.
     """
@@ -184,7 +184,7 @@ def render_dot_html(self, node, code, options, prefix='graphviz',
     try:
         relfn, outfn = get_image_filename(self, code, options, prefix)
         if not os.path.isfile(outfn):
-            create_graphviz(self, code, format, outfn, options, prefix)
+            create_graphviz(self, code, outfn, options, prefix)
     except GraphvizError, exc:
         self.builder.warn('dot code %r: ' % code + str(exc))
         raise nodes.SkipNode
@@ -210,7 +210,7 @@ def html_visit_graphviz(self, node):
 def render_dot_latex(self, node, code, options, prefix='graphviz'):
     try:
         fname, outfn = get_image_filename(self, code, options, prefix)
-        create_graphviz(self, code, format, outfn, options, prefix)
+        create_graphviz(self, code, outfn, options, prefix)
     except GraphvizError, exc:
         self.builder.warn('dot code %r: ' % code + str(exc))
         raise nodes.SkipNode
