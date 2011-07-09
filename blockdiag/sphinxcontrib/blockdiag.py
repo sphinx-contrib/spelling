@@ -257,7 +257,8 @@ def render_desctable(self, diagram, options):
     descriptions = []
     for n in diagram.diagram.traverse_nodes():
         if hasattr(n, 'description') and n.description:
-            descriptions.append((n.id, n.numbered, n.description))
+            label = n.label or n.id
+            descriptions.append((label, n.numbered, n.description))
     descriptions.sort(cmp_number)
 
     if descriptions:
