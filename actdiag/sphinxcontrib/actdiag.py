@@ -195,13 +195,6 @@ def render_dot_html(self, node, code, options, prefix='actdiag',
             image.draw()
             image.save()
 
-        # generate description table
-        descriptions = []
-        if 'desctable' in options:
-            for n in image.diagram.nodes:
-                if n.description:
-                    descriptions.append((n.id, n.numbered, n.description))
-
         # generate thumbnails
         image_size = image.drawer.image.size
         if 'maxwidth' in options and options['maxwidth'] < image_size[0]:
@@ -237,6 +230,36 @@ def render_dot_html(self, node, code, options, prefix='actdiag',
             self.body.append(imgtag_format %
                              (relfn, alt, image_size[0], image_size[1]))
 
+    render_desctable(self, image, options)
+
+    self.body.append('</p>\n')
+    raise nodes.SkipNode
+
+def render_desctable(self, diagram, options):
+    if 'desctable' not in options:
+         return
+
+    def cmp_number(a, b):
+        if a[1] and a[1].isdigit():
+            n1 = int(a[1])
+        else:
+            n1 = 65535
+
+        if b[1] and b[1].isdigit():
+            n2 = int(b[1])
+        else:
+            n2 = 65535
+
+        return cmp(n1, n2)
+
+    from xml.sax.saxutils import escape
+
+    descriptions = []
+    for n in diagram.diagram.traverse_nodes():
+        if hasattr(n, 'description') and n.description:
+            descriptions.append((n.id, n.numbered, n.description))
+    descriptions.sort(cmp_number)
+
     if descriptions:
         numbered = [x for x in descriptions if x[1]]
 
@@ -249,39 +272,20 @@ def render_dot_html(self, node, code, options, prefix='actdiag',
         self.body.append('</thead>')
         self.body.append('<tbody valign="top">')
 
-        if numbered:
-            def cmp_number(a, b):
-                if a[1]:
-                    n1 = int(a[1])
-                else:
-                    n1 = 0
-
-                if b[1]:
-                    n2 = int(b[1])
-                else:
-                    n2 = 0
-
-                return cmp(n1, n2)
-
-            descriptions.sort(cmp_number)
-
         for desc in descriptions:
             id, number, text = desc
             self.body.append('<tr>')
             if numbered:
                 if number is not None:
-                    self.body.append('<td>%s</td>' % number)
+                    self.body.append('<td>%s</td>' % escape(number))
                 else:
                     self.body.append('<td></td>')
-            self.body.append('<td>%s</td>' % id)
-            self.body.append('<td>%s</td>' % text)
+            self.body.append('<td>%s</td>' % escape(id))
+            self.body.append('<td>%s</td>' % escape(text))
             self.body.append('</tr>')
 
         self.body.append('</tbody>')
         self.body.append('</table>')
-
-    self.body.append('</p>\n')
-    raise nodes.SkipNode
 
 
 def html_visit_actdiag(self, node):
