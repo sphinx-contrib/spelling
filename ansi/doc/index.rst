@@ -26,7 +26,7 @@ This extension can be installed from the Python Package Index::
 Alternatively, you can clone the sphinx-contrib_ repository from BitBucket,
 and install the extension directly from the repository::
 
-   hg clone http://bitbucket.org/birkenfeld/sphinx-contrib
+   hg clone https://bitbucket.org/birkenfeld/sphinx-contrib
    cd sphinx-contrib/ansi
    python setup.py install
 
@@ -107,7 +107,7 @@ functionality (e.g. support for more attributes).  Patches are welcome!
 
 
 .. _`Sphinx`: http://sphinx.pocoo.org/
-.. _`sphinx-contrib`: http://bitbucket.org/birkenfeld/sphinx-contrib
-.. _`issue tracker`: http://bitbucket.org/birkenfeld/sphinx-contrib/issues
-.. _`black-on-white.css`: http://bitbucket.org/birkenfeld/sphinx-contrib/src/tip/ansi/sphinxcontrib/black-on-white.css
-.. _LICENSE: http://bitbucket.org/birkenfeld/sphinx-contrib/src/tip/LICENSE
+.. _`sphinx-contrib`: https://bitbucket.org/birkenfeld/sphinx-contrib
+.. _`issue tracker`: https://bitbucket.org/birkenfeld/sphinx-contrib/issues
+.. _`black-on-white.css`: https://bitbucket.org/birkenfeld/sphinx-contrib/src/tip/ansi/sphinxcontrib/black-on-white.css
+.. _LICENSE: https://bitbucket.org/birkenfeld/sphinx-contrib/src/tip/LICENSE
