@@ -209,6 +209,11 @@ def render_dot_html(self, node, code, options, prefix='actdiag',
                 image.save(toutfn, thumb_size)
             thumb_size = image.drawer.image.size
 
+    except UnicodeEncodeError, e:
+        msg = ("actdiag error: UnicodeEncodeError caught "
+               "(check your font settings)")
+        self.builder.warn(msg)
+        raise nodes.SkipNode
     except ActdiagError, exc:
         self.builder.warn('dot code %r: ' % code + str(exc))
         raise nodes.SkipNode
