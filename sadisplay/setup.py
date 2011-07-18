@@ -7,14 +7,13 @@ here = os.path.dirname(os.path.abspath(__file__))
 
 requires = [
     'Sphinx>=0.6',
-    'sadisplay',
-    'sphinxcontrib-plantuml'
+    'sadisplay>=0.3',
 ]
 
 
 setup(
     name='sphinxcontrib-sadisplay',
-    version='0.2',
+    version='0.3',
     url='http://bitbucket.org/birkenfeld/sphinx-contrib',
     download_url='http://pypi.python.org/pypi/sphinxcontrib-sadisplay',
     license='BSD',
@@ -26,7 +25,6 @@ setup(
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Console',
-        'Environment :: Web Environment',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',

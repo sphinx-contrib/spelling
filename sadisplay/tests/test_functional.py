@@ -42,7 +42,13 @@ def runsphinx(text, builder, confoverrides):
     app.build()
 
 
-def with_runsphinx(builder, confoverrides={'plantuml': _fakecmd}):
+def with_runsphinx(builder, confoverrides=None):
+    if confoverrides is None:
+        confoverrides = {
+            'plantuml': _fakecmd,
+            'graphviz': _fakecmd,
+        }
+
     def wrapfunc(func):
         def test():
             src = '\n'.join(l[4:] for l in func.__doc__.splitlines()[2:])
@@ -65,10 +71,9 @@ def test_buildhtml_simple():
     .. sadisplay::
         :module: model
     """
-
-    files = glob.glob(os.path.join(_outdir, '_images', 'plantuml-*.png'))
+    files = glob.glob(os.path.join(_outdir, '_images', 'sadisplay-*.png'))
     assert len(files) == 1
-    assert '<img src="_images/plantuml' in readfile('index.html')
+    assert '<img src="_images/sadisplay' in readfile('index.html')
 
     content = readfile(files[0])
     assert u'Admin' in content
@@ -84,15 +89,9 @@ def test_buildhtml_as_link():
         :module: model
         :link:
     """
-
-    files = glob.glob(os.path.join(_outdir, '_images', 'plantuml-*.png'))
+    files = glob.glob(os.path.join(_outdir, '_images', 'sadisplay-*.png'))
     assert len(files) == 1
-    assert '<a href="_images/plantuml' in readfile('index.html')
-
-    content = readfile(files[0])
-    assert u'Admin' in content
-    assert u'User' in content
-    assert u'Address' in content
+    assert '<a href="_images/sadisplay' in readfile('index.html')
 
 
 @with_runsphinx('latex')
@@ -103,10 +102,10 @@ def test_buildlatex_simple():
        :module: model
        :exclude: Admin
     """
-    files = glob.glob(os.path.join(_outdir, 'plantuml-*.png'))
+    files = glob.glob(os.path.join(_outdir, 'sadisplay-*.png'))
     assert len(files) == 1
-    assert r'\includegraphics{plantuml-' in \
-            readfile('plantuml_fixture.tex')
+    assert r'\includegraphics{sadisplay-' in \
+            readfile('sadisplay_fixture.tex')
 
     content = readfile(files[0])
     assert u'Admin' not in content

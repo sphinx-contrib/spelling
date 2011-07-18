@@ -1,11 +1,23 @@
 # -*- coding: utf-8 -*-
 import sys
-from sphinx.errors import SphinxWarning
+import os
+import subprocess
+
+try:
+    from hashlib import sha1
+except ImportError:  # Python<2.5
+    from sha import sha as sha1  # pyflakes:ignore
+
+from sphinx.errors import SphinxWarning, SphinxError, ExtensionError
 from sphinx.util.compat import Directive
 from docutils.parsers.rst import directives
 from docutils import nodes
-
 import sadisplay
+from sphinx.util.osutil import ensuredir, ENOENT
+
+
+class RendererError(SphinxError):
+    pass
 
 
 class SaNode(nodes.General, nodes.Element):
@@ -35,16 +47,14 @@ class SadisplayDirective(Directive):
         node = SaNode()
         node['alt'] = self.options.get('alt', None)
         node['link'] = True if 'link' in self.options else False
-        node['render'] = self.options.get('render', u'plantuml')
-
-        node['module'] = [m.strip() for m in self.options.get('module', u'') \
-                    .split(',')]
+        node['render'] = self.options.get('render', None)
 
         def tolist(val):
             if val:
                 return map(lambda i: i.strip(), val.split(','))
             return []
 
+        node['module'] = tolist(self.options.get('module', u''))
         node['include'] = tolist(self.options.get('include', None))
         node['exclude'] = tolist(self.options.get('exclude', None))
 
@@ -53,6 +63,56 @@ class SadisplayDirective(Directive):
                     both defined :include: and :exclude:')
 
         return [node]
+
+
+def generate_name(self, content):
+    key = sha1(content.encode('utf-8')).hexdigest()
+    fname = 'sadisplay-%s.png' % key
+    imgpath = getattr(self.builder, 'imgpath', None)
+    if imgpath:
+        return ('/'.join((self.builder.imgpath, fname)),
+                os.path.join(self.builder.outdir, '_images', fname))
+    else:
+        return fname, os.path.join(self.builder.outdir, fname)
+
+
+def generate_plantuml_args(self):
+    if isinstance(self.builder.config.plantuml, basestring):
+        args = [self.builder.config.plantuml]
+    else:
+        args = list(self.builder.config.plantuml)
+    args.extend('-pipe -charset utf-8'.split())
+    return args
+
+
+def generate_graphviz_args(self):
+    if isinstance(self.builder.config.graphviz, basestring):
+        args = [self.builder.config.graphviz]
+    else:
+        args = list(self.builder.config.graphviz)
+    return args
+
+
+def render_image(self, content, command):
+    refname, outfname = generate_name(self, content)
+    if os.path.exists(outfname):
+        return refname  # don't regenerate
+    ensuredir(os.path.dirname(outfname))
+    f = open(outfname, 'wb')
+    try:
+        try:
+            p = subprocess.Popen(command, stdout=f,
+                                 stdin=subprocess.PIPE, stderr=subprocess.PIPE)
+        except OSError, err:
+            if err.errno != ENOENT:
+                raise
+            raise RendererError('command %r cannot be run' % command)
+        serr = p.communicate(content.encode('utf-8'))[1]
+        if p.returncode != 0:
+            raise RendererError('error while running %r\n\n' % command + serr)
+        return refname
+    finally:
+        f.close()
 
 
 def render(self, node):
@@ -88,16 +148,16 @@ def render(self, node):
 
     desc = sadisplay.describe(names)
 
-    if node['render'] == u'plantuml':
+    render = node['render'] or self.builder.config.sadisplay_default_render
 
-        from sphinxcontrib import plantuml
-        plantuml_node = plantuml.plantuml()
-        plantuml_node['uml'] = sadisplay.plantuml(desc)
-        plantuml_node['alt'] = node['alt']
-        return plantuml.render_plantuml(self, plantuml_node)
+    if render == 'plantuml':
+        content = sadisplay.plantuml(desc)
+        command = generate_plantuml_args(self)
+    elif render == 'graphviz':
+        content = sadisplay.dot(desc)
+        command = generate_graphviz_args(self)
 
-    elif node['render'] == u'graphviz':
-        pass
+    return render_image(self, content, command)
 
 
 def html_visit(self, node):
@@ -131,6 +191,19 @@ def latex_visit(self, node):
 
 
 def setup(app):
+
+    try:
+        app.add_config_value('plantuml', False, False)
+    except ExtensionError:
+        pass
+
+    try:
+        app.add_config_value('graphviz', False, False)
+    except ExtensionError:
+        pass
+
+    app.add_config_value('sadisplay_default_render', 'graphviz', False)
+
     app.add_node(SaNode,
                  html=(html_visit, None),
                  latex=(latex_visit, None))
