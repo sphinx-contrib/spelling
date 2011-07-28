@@ -27,6 +27,7 @@ Details
    :maxdepth: 2
 
    install
+   customize
    run
    developers
    history

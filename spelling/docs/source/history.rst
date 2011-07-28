@@ -2,7 +2,12 @@
  Release History
 =================
 
-trunk
+1.1.1
+
+  - Fix initialization so the per-document filters work even if no
+    ``spelling`` directive is used.
+
+1.1
 
   - Add an option treat the names of packages on PyPI as spelled
     properly.

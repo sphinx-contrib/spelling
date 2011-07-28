@@ -2,6 +2,7 @@
 help:
 	@echo "sdist          - Source distribution"
 	@echo "html           - HTML documentation"
+	@echo "spelling       - Check spelling of documentation"
 	@echo "upload         - upload a new release to PyPI"
 	@echo "installwebsite - deploy web version of docs"
 	@echo "develop        - install development version"
@@ -20,6 +21,10 @@ upload: html
 .PHONY: html
 html:
 	(cd docs && $(MAKE) html)
+
+.PHONY: spelling
+spelling:
+	(cd docs && $(MAKE) spelling)
 
 installwebsite: html
 	(cd docs/build/html && rsync --rsh=ssh --archive --delete --verbose . www.doughellmann.com:/var/www/doughellmann/DocumentRoot/docs/sphinxcontrib.spelling/)

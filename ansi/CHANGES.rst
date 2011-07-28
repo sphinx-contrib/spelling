@@ -1,3 +1,9 @@
+0.6 (Jul 8, 2011)
+=================
+
+- Added support for background colors (thanks to James Rowe)
+
+
 0.5.1 (Jul 26, 2010)
 ====================
 

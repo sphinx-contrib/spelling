@@ -13,3 +13,4 @@ spelling/spelling_wordlist.txt
 syntax: glob
 */distribute-*.tar.gz
 .tox/
+.*.swp

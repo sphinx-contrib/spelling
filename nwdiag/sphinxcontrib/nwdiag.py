@@ -187,20 +187,13 @@ def render_dot_html(self, node, code, options, prefix='nwdiag',
                     imgcls=None, alt=None):
     has_thumbnail = False
     try:
-        format = 'PNG'
+        format = self.builder.config.nwdiag_html_image_format
         relfn, outfn = get_image_filename(self, code, format, options, prefix)
 
         image = create_nwdiag(self, code, format, outfn, options, prefix)
         if not os.path.isfile(outfn):
             image.draw()
             image.save()
-
-        # generate description table
-        descriptions = []
-        if 'desctable' in options:
-            for n in image.diagram.nodes:
-                if n.description:
-                    descriptions.append((n.id, n.numbered, n.address.values(), n.description))
 
         # generate thumbnails
         image_size = image.drawer.image.size
@@ -216,6 +209,11 @@ def render_dot_html(self, node, code, options, prefix='nwdiag',
                 image.save(toutfn, thumb_size)
             thumb_size = image.drawer.image.size
 
+    except UnicodeEncodeError, e:
+        msg = ("nwdiag error: UnicodeEncodeError caught "
+               "(check your font settings)")
+        self.builder.warn(msg)
+        raise nodes.SkipNode
     except NwdiagError, exc:
         self.builder.warn('dot code %r: ' % code + str(exc))
         raise nodes.SkipNode
@@ -237,6 +235,38 @@ def render_dot_html(self, node, code, options, prefix='nwdiag',
             self.body.append(imgtag_format %
                              (relfn, alt, image_size[0], image_size[1]))
 
+    render_desctable(self, image, options)
+
+    self.body.append('</p>\n')
+    raise nodes.SkipNode
+
+
+def render_desctable(self, diagram, options):
+    if 'desctable' not in options:
+         return
+
+    def cmp_number(a, b):
+        if a[1] and a[1].isdigit():
+            n1 = int(a[1])
+        else:
+            n1 = 65535
+
+        if b[1] and b[1].isdigit():
+            n2 = int(b[1])
+        else:
+            n2 = 65535
+
+        return cmp(n1, n2)
+
+    from xml.sax.saxutils import escape
+
+    descriptions = []
+    for n in diagram.diagram.traverse_nodes():
+        if hasattr(n, 'description') and n.description:
+            label = n.label or n.id
+            descriptions.append((label, n.numbered, n.address, n.description))
+    descriptions.sort(cmp_number)
+
     if descriptions:
         numbered = [x for x in descriptions if x[1]]
 
@@ -249,40 +279,21 @@ def render_dot_html(self, node, code, options, prefix='nwdiag',
         self.body.append('</thead>')
         self.body.append('<tbody valign="top">')
 
-        if numbered:
-            def cmp_number(a, b):
-                if a[1]:
-                    n1 = int(a[1])
-                else:
-                    n1 = 0
-
-                if b[1]:
-                    n2 = int(b[1])
-                else:
-                    n2 = 0
-
-                return cmp(n1, n2)
-
-            descriptions.sort(cmp_number)
-
         for desc in descriptions:
             id, number, address, text = desc
             self.body.append('<tr>')
             if numbered:
                 if number is not None:
-                    self.body.append('<td>%s</td>' % number)
+                    self.body.append('<td>%s</td>' % escape(number))
                 else:
                     self.body.append('<td></td>')
             self.body.append('<td>%s</td>' % id)
-            self.body.append('<td>%s</td>' % "<br />".join(address))
-            self.body.append('<td>%s</td>' % text)
+            self.body.append('<td>%s</td>' % "<br />".join(escape(v) for k, v in address.items()))
+            self.body.append('<td>%s</td>' % escape(text))
             self.body.append('</tr>')
 
         self.body.append('</tbody>')
         self.body.append('</table>')
-
-    self.body.append('</p>\n')
-    raise nodes.SkipNode
 
 
 def html_visit_nwdiag(self, node):
@@ -319,4 +330,5 @@ def setup(app):
     app.add_directive('nwdiag', Nwdiag)
     app.add_config_value('nwdiag_fontpath', None, 'html')
     app.add_config_value('nwdiag_antialias', False, 'html')
+    app.add_config_value('nwdiag_html_image_format', 'PNG', 'html')
     app.add_config_value('nwdiag_tex_image_format', 'PNG', 'html')

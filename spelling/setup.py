@@ -7,14 +7,14 @@ try:
     long_desc = f.read()
 finally:
     f.close()
-    
+
 requires = ['Sphinx>=0.6',
             #'PyEnchant>=1.6.5',
             ]
 
 setup(
     name='sphinxcontrib-spelling',
-    version='1.0',
+    version='1.1.1',
     url='http://bitbucket.org/birkenfeld/sphinx-contrib',
     license='BSD',
     author='Doug Hellmann',

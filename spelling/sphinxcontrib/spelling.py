@@ -36,6 +36,7 @@ from enchant.tokenize import (get_tokenizer, tokenize,
 
 # TODO - Words with multiple uppercase letters treated as classes and ignored
 
+
 class SpellingDirective(rst.Directive):
     """Custom directive for passing instructions to the spelling checker.
 
@@ -43,7 +44,7 @@ class SpellingDirective(rst.Directive):
 
        word1
        word2
-    
+
     """
 
     option_spec = {}
@@ -51,8 +52,6 @@ class SpellingDirective(rst.Directive):
 
     def run(self):
         env = self.state.document.settings.env
-        if not hasattr(env, 'spelling_document_filters'):
-            env.spelling_document_filters = collections.defaultdict(list)
         good_words = []
         for entry in self.content:
             if not entry:
@@ -219,6 +218,11 @@ class SpellingBuilder(Builder):
         self.docnames = []
         self.document_data = []
 
+        # Initialize the per-document filters
+        if not hasattr(self.env, 'spelling_document_filters'):
+            self.env.spelling_document_filters = collections.defaultdict(list)
+
+        # Initialize the global filters
         filters = [ ContractionFilter,
                     EmailFilter,
                     ]
@@ -260,7 +264,7 @@ class SpellingBuilder(Builder):
 
     def write_doc(self, docname, doctree):
         self.checker.push_filters(self.env.spelling_document_filters[docname])
-        
+
         for node in doctree.traverse(docutils.nodes.Text):
             if node.tagname == '#text' and  node.parent.tagname in TEXT_NODES:
 

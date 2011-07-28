@@ -1,0 +1,3 @@
+sphinx>=1.0
+lxml
+sphinxcontrib-issuetracker>=0.7

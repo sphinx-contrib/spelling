@@ -148,8 +148,8 @@ def render_lily(self, lily):
         return None, None
     stdout, stderr = p.communicate()
     if p.returncode != 0:
-        raise LilyExtError('lilypond exited with error:\n[stderr]\n%s\n'
-                           '[stdout]\n%s' % (stderr, stdout))
+        raise LilyExtError(u'lilypond exited with error:\n[stderr]\n%s\n'
+                           '[stdout]\n%s' % (stderr.decode('utf-8'), stdout.decode('utf-8')))
 
     shutil.copyfile(path.join(tempdir, 'music.png'), outfn)
     #Popen(['mogrify', '-trim', outfn], stdout=PIPE, stderr=PIPE)
@@ -181,10 +181,10 @@ def html_visit_lily(self, node):
     try:
         fname = render_lily(self, music)
     except LilyExtError, exc:
-        sm = nodes.system_message(str(exc), type='WARNING', level=2,
+        sm = nodes.system_message(unicode(exc), type='WARNING', level=2,
                                   backrefs=[], source=node['music'])
         sm.walkabout(self)
-        self.builder.warn('display lilypond %r: ' % node['music'] + str(exc))
+        self.builder.warn('display lilypond %r: ' % node['music'] + unicode(exc))
         raise nodes.SkipNode
     if fname is None:
         # something failed -- use text-only as a bad substitute
@@ -207,10 +207,10 @@ def html_visit_displaylily(self, node):
     try:
         fname = render_lily(self, music)
     except LilyExtError, exc:
-        sm = nodes.system_message(str(exc), type='WARNING', level=2,
+        sm = nodes.system_message(unicode(exc), type='WARNING', level=2,
                                   backrefs=[], source=node['music'])
         sm.walkabout(self)
-        self.builder.warn('inline lilypond %r: ' % node['music'] + str(exc))
+        self.builder.warn('inline lilypond %r: ' % node['music'] + unicode(exc))
         raise nodes.SkipNode
     self.body.append(self.starttag(node, 'div', CLASS='lily'))
     self.body.append('<p>')
