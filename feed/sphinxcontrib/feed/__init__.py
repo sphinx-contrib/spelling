@@ -32,31 +32,28 @@ def setup(app):
     app.add_config_value('feed_filename', 'rss.xml', 'html')
     
     app.connect('html-page-context', create_feed_item)
-    app.connect('html-page-context', inject_feed_url)
     app.connect('build-finished', emit_feed)
     app.connect('builder-inited', create_feed_container)
     app.connect('env-purge-doc', remove_dead_feed_item)
     
 def create_feed_container(app):
     """
-    create lazy filesystem stash for keeping RSS entry fragments, since we don't
-    want to store the entire site in the environment (in fact, even if we did,
-    it wasn't persisting for some reason.)
+    create lazy filesystem stash for keeping RSS entry fragments, since we
+    don't want to store the entire site in the environment (in fact, even if
+    we did, it wasn't persisting for some reason.)
     """
     global feed_entries
     rss_fragment_path = os.path.realpath(os.path.join(app.outdir, '..', 'rss_entry_fragments'))
     feed_entries = FSDict(work_dir=rss_fragment_path)
     app.builder.env.feed_url = app.config.feed_base_url + '/' + \
         app.config.feed_filename
-    
-def inject_feed_url(app, pagename, templatename, ctx, doctree):
-    #We like to provide our templates with a way to link to the rss output file
-    ctx['rss_link'] = app.builder.env.feed_url #app.config.feed_base_url + '/' + app.config.feed_filename
-    
+
 def create_feed_item(app, pagename, templatename, ctx, doctree):
     """
     Here we have access to nice HTML fragments to use in, say, an RSS feed.
     We serialize them to disk so that we get them preserved across builds.
+    
+    We also inject useful metadata into the context here.
     """
     global feed_entries
     from absolutify_urls import absolutify
@@ -66,12 +63,14 @@ def create_feed_item(app, pagename, templatename, ctx, doctree):
         return #don't index dateless articles
     try:
         pub_date = parse_date(metadata['date'])
+        app.builder.env.metadata.get(pagename, {})
     except ValueError, exc:
         #probably a nonsensical date
         app.builder.warn('date parse error: ' + str(exc) + ' in ' + pagename)
         return
-        
-    # title, link, description, author_email=None,
+    
+    # RSS item attributes, w/defaults:
+    #     title, link, description, author_email=None,
     #     author_name=None, author_link=None, pubdate=None, comments=None,
     #     unique_id=None, enclosure=None, categories=(), item_copyright=None,
     #     ttl=None,
@@ -85,7 +84,10 @@ def create_feed_item(app, pagename, templatename, ctx, doctree):
     }
     if 'author' in metadata:
         item['author'] = metadata['author']
-    feed_entries[nice_name(pagename, pub_date)] = item    
+    feed_entries[nice_name(pagename, pub_date)] = item
+    
+    #Now, useful variables to keep in context
+    ctx['rss_link'] = app.builder.env.feed_url 
 
 def remove_dead_feed_item(app, env, docname):
     """
