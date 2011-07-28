@@ -102,7 +102,6 @@ class Latest(Directive):
         # includefiles only entries that are documents
         subnode['includefiles'] = includefiles
         subnode['maxdepth'] = self.options.get('maxdepth', -1)
-        import pdb; pdb.set_trace()
         
         subnode['glob'] = glob
         subnode['hidden'] = 'hidden' in self.options
