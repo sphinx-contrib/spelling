@@ -88,6 +88,7 @@ def create_feed_item(app, pagename, templatename, ctx, doctree):
     
     #Now, useful variables to keep in context
     ctx['rss_link'] = app.builder.env.feed_url 
+    ctx['pub_date'] = pub_date
 
 def remove_dead_feed_item(app, env, docname):
     """
