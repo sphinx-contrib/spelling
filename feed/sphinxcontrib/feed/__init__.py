@@ -10,6 +10,15 @@ feed_entries = None
 #constant unlikely to occur in a docname and legal as a filename
 MAGIC_SEPARATOR = '---###---'
 
+def parse_date(datestring):
+    try:
+        parser = parse_date.parser
+    except AttributeError:
+        import dateutil.parser
+        parser = dateutil.parser.parser()
+        parse_date.parser = parser
+    return parser.parse(datestring)
+    
 def setup(app):
     """
     see: http://sphinx.pocoo.org/ext/appapi.html
@@ -50,15 +59,13 @@ def create_feed_item(app, pagename, templatename, ctx, doctree):
     We serialize them to disk so that we get them preserved across builds.
     """
     global feed_entries
-    import dateutil.parser
     from absolutify_urls import absolutify
-    date_parser = dateutil.parser.parser()
     metadata = app.builder.env.metadata.get(pagename, {})
     
     if 'date' not in metadata:
         return #don't index dateless articles
     try:
-        pub_date = date_parser.parse(metadata['date'])
+        pub_date = parse_date(metadata['date'])
     except ValueError, exc:
         #probably a nonsensical date
         app.builder.warn('date parse error: ' + str(exc) + ' in ' + pagename)
