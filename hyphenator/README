@@ -21,9 +21,12 @@ Because hyphenator.js is quite large, it is not included in the extension.
    The path can be absolute or relative; if it is relative, it is relative to
    the ``_static`` directory of the built docs.
 
+.. confval:: hyphenator_language
 
+   The hyphenator extension sets the language for hyphenator.js to the config
+   value "language". If this does not work you can set hyphenator_language in
+   your conf.py
+   (see: http://code.google.com/p/hyphenator/wiki/en_AddNewLanguage for
+   supported languages).
 
-
-
-
-.. hypenator.js: http://code.google.com/p/hyphenator/   
+.. _hypenator.js: http://code.google.com/p/hyphenator/
