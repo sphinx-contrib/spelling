@@ -73,6 +73,7 @@ List of extensions
 - requirements: declare requirements wherever you need (e.g. in test
   docstrings), mark statuses and collect them in a single list 
 - googlechart: embed charts by using Google Chart_
+- hyphenator: client-side hyphenation of HTML using hyphenator_
 
 .. _aafigure: http://docutils.sourceforge.net/sandbox/aafigure/
 
@@ -108,6 +109,7 @@ List of extensions
 
 .. _Google Chart: http://code.google.com/intl/ja/apis/chart/
 
+.. _hyphenator: http://code.google.com/p/hyphenator/
 
 For contributors
 ================
