@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import with_statement
+
 from setuptools import setup, find_packages
 
-long_desc = '''
-This package contains the hyphenator Sphinx extension.
 
-.. add description here ..
-'''
+with open('README') as stream:
+    long_desc = stream.read()
 
 requires = ['Sphinx>=0.6']
 
@@ -18,7 +18,7 @@ setup(
     license='BSD',
     author='bmu',
     author_email='diehose@freenet.de',
-    description='Sphinx "hyphenator" extension',
+    description='Sphinx hyphenator.js hyphenation extension',
     long_description=long_desc,
     zip_safe=False,
     classifiers=[
