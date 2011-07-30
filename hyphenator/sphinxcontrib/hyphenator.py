@@ -41,8 +41,6 @@ def builder_inited(app):
                                script_name)
     with open(script_path, "w") as script_file:
         script_file.write(start_script)
-    print app.confdir
-    print app.config.html_static_path
     app.add_javascript(script_name)
 
 
