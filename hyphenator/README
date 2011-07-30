@@ -1,0 +1,29 @@
+.. highlight:: rest
+
+sphinxcontrib-hyphenator
+========================
+
+This extension provides hyphenation for html documentation generated
+with sphinx_. It loads the JavaScript package hypenator.js_ to hyphenate
+documents on client side.
+
+Because hyphenator.js is quite large, it is not included in the extension.
+
+.. confval:: hyphenator_path
+
+   The path to the hyphenator.js file. 
+
+   Default value is http://hyphenator.googlecode.com/svn/trunk/
+   that loads the JavaScript from the project repository. If you want
+   Hyphenator to be available offline, you have to download it and set this
+   value to a different path.
+
+   The path can be absolute or relative; if it is relative, it is relative to
+   the ``_static`` directory of the built docs.
+
+
+
+
+
+
+.. hypenator.js: http://code.google.com/p/hyphenator/   
