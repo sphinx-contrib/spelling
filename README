@@ -38,6 +38,7 @@ List of extensions
 .. which does not support the full sphinx markup like. ..
 
 - aafig: render embeded ASCII art as nice images using aafigure_.
+- adadomain: an extension for Ada support (Sphinx 1.0 needed)
 - autorun: Execute code in a runblock directive.
 - context: a builder for ConTeXt.
 - feed: an extension for creating syndication feeds from your site content
