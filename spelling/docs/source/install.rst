@@ -1,6 +1,7 @@
 .. spelling::
 
    wikis
+   sphinxcontrib
 
 ==============
  Installation
