@@ -2,6 +2,17 @@
  Release History
 =================
 
+1.2
+
+  - Add the document name to the messages showing the contents of a
+    local dictionary created by the ``spelling`` directive.
+  - Add title nodes to the list of node types checked for
+    spelling. Resolves issue #17.
+  - Add test/test_wordlist.txt to the manifest so it is included in
+    the source distribution and the tests will pass. Resolves issue
+    #17.
+  - Documentation patch from Hank Gay.
+
 1.1.1
 
   - Fix initialization so the per-document filters work even if no

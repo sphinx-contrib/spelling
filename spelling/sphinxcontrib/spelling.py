@@ -52,13 +52,19 @@ class SpellingDirective(rst.Directive):
 
     def run(self):
         env = self.state.document.settings.env
+
+        # Initialize the per-document filters
+        if not hasattr(env, 'spelling_document_filters'):
+            env.spelling_document_filters = collections.defaultdict(list)
+            
         good_words = []
         for entry in self.content:
             if not entry:
                 continue
             good_words.extend(entry.split())
         if good_words:
-            env.app.info('Extending local dictionary with %s' % str(good_words))
+            env.app.info('Extending local dictionary for %s with %s' % (
+                    env.docname, str(good_words)))
             env.spelling_document_filters[env.docname].append(
                 IgnoreWordsFilterFactory(good_words)
                 )
@@ -205,6 +211,7 @@ TEXT_NODES = set([ 'block_quote',
                    'list_item',
                    'term',
                    'definition_list_item',
+                   'title',
                    ])
 
 

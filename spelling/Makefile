@@ -35,6 +35,7 @@ register:
 	python setup.py register
 
 # Testing
+.PHONY: test
 test:
 	tox
 
