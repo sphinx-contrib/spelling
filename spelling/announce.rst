@@ -1,5 +1,5 @@
 ============================
- sphinxcontrib.spelling 1.1
+ sphinxcontrib.spelling 1.2
 ============================
 
 What is sphinxcontrib.spelling?
@@ -8,15 +8,14 @@ What is sphinxcontrib.spelling?
 `sphinxcontrib.spelling`_ is a spelling checker for Sphinx_.  It uses
 PyEnchant_ to produce a report showing misspelled words.
 
-What's New in 1.1?
+What's New in 1.2?
 ==================
 
-This point update includes new filters to ignore words commonly
-encountered in software documentation and other writing about computer
-programs. These include Python language built-ins, importable modules,
-words that match the names of packages on the Python Package Index,
-CamelCase words, and acronyms. There is also a new ``spelling``
-directive for creating a local word list within a document.
+This update checks the spelling of document titles and section headers
+as well as the body of the document. It also fixes a packaging issue
+that prevented the tests from working when run directly from the sdist
+available on PyPI.
+
 
 .. _PyEnchant: http://www.rfk.id.au/software/pyenchant/
 
