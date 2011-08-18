@@ -27,6 +27,7 @@
 import pytest
 from mock import Mock
 from docutils import nodes
+from docutils.utils import Reporter
 
 from sphinx.addnodes import pending_xref
 from sphinxcontrib import issuetracker
@@ -57,6 +58,7 @@ def pytest_funcarg__doc(request):
     doc.settings = Mock(name='settings')
     doc.settings.language_code = ''
     doc.settings.env = request.getfuncargvalue('env')
+    doc.reporter = Reporter('face_source', 0, 0)
     return doc
 
 
