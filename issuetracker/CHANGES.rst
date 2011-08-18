@@ -1,6 +1,8 @@
 0.8 (in development)
 ====================
 
+- Use BitBucket API instead of scraping the BitBucket website
+
 
 0.7.2 (Mar 10, 2011)
 ====================
