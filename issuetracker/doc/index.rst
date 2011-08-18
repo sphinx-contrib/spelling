@@ -42,8 +42,8 @@ Add ``sphinxcontrib.issuetracker`` to the configuration value
    - ``github``: The issue tracker of https://github.com.  To use this issue
      tracker, either Python 2.6 or later must be used, or simplejson_ must be
      installed.
-   - ``bitbucket``: The issue tracker of https://bitbucket.org.  To use this
-     issue tracker, `lxml`_ 2.0 or newer must be installed.
+   - ``bitbucket``: The issue tracker of https://bitbucket.org.  Has the same
+     requirements as the ``github`` tracker.
    - ``launchpad``: The issue tracker of https://launchpad.net.  To use this
      issue tracker, launchpadlib_ must be installed.
    - ``google code``: The issue tracker of http://code.google.com.  To use

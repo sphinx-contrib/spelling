@@ -75,10 +75,15 @@ def get_github_issue_information(app, project, user, issue_id):
 
 
 def get_bitbucket_issue_information(app, project, user, issue_id):
-    from lxml.html import parse
+    try:
+        import json
+    except ImportError:
+        import simplejson as json
 
-    uri = BITBUCKET_URL % locals()
-    with closing(urllib.urlopen(uri)) as response:
+    show_issue = ('https://api.bitbucket.org/1.0/repositories/%(user)s/'
+                  '%(project)s/issues/%(issue_id)s/' % locals())
+
+    with closing(urllib.urlopen(show_issue)) as response:
         if response.getcode() == 404:
             return None
         elif response.getcode() != 200:
@@ -86,12 +91,10 @@ def get_bitbucket_issue_information(app, project, user, issue_id):
             app.warn('issue %s unavailable with code %s' %
                      (issue_id, response.getcode()))
             return None
-        tree = parse(response)
-    info = tree.getroot().cssselect('.issues-issue-infotable')[0]
-    is_new = info.cssselect('.issue-status-new')
-    is_open = info.cssselect('.issue-status-open')
-    return {'uri': uri, 'closed': not (is_open or is_new)}
+        issue = json.load(response)
 
+    return {'closed': issue['status'] not in ('new', 'open'),
+            'uri': BITBUCKET_URL % locals()}
 
 def get_debian_issue_information(app, project, user, issue_id):
     import debianbts
