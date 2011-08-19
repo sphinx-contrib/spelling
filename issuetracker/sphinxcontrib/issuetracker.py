@@ -52,9 +52,8 @@ from sphinx.util.console import bold
 
 
 GITHUB_URL = 'https://github.com/%(project)s/issues/%(issue_id)s'
-BITBUCKET_URL = ('https://bitbucket.org/%(project)s/issue/'
-                 '%(issue_id)s/')
-
+GITHUB_API_URL = ('https://github.com/api/v2/json/issues/show/'
+                  '%(project)s/%(issue_id)s')
 
 def get_github_issue_information(app, project, issue_id):
     try:
@@ -62,10 +61,7 @@ def get_github_issue_information(app, project, issue_id):
     except ImportError:
         import simplejson as json
 
-    show_issue = ('https://github.com/api/v2/json/issues/show/'
-                  '%(project)s/%(issue_id)s' % locals())
-
-    with closing(urllib.urlopen(show_issue)) as response:
+    with closing(urllib.urlopen(GITHUB_API_URL % locals())) as response:
         response = json.load(response)
     if 'error' in response:
         return None
@@ -74,16 +70,18 @@ def get_github_issue_information(app, project, issue_id):
             'uri': GITHUB_URL % locals()}
 
 
+BITBUCKET_URL = ('https://bitbucket.org/%(project)s/issue/'
+                 '%(issue_id)s/')
+BITBUCKET_API_URL = ('https://api.bitbucket.org/1.0/repositories/'
+                     '%(project)s/issues/%(issue_id)s/')
+
 def get_bitbucket_issue_information(app, project, issue_id):
     try:
         import json
     except ImportError:
         import simplejson as json
 
-    show_issue = ('https://api.bitbucket.org/1.0/repositories/'
-                  '%(project)s/issues/%(issue_id)s/' % locals())
-
-    with closing(urllib.urlopen(show_issue)) as response:
+    with closing(urllib.urlopen(BITBUCKET_API_URL % locals())) as response:
         if response.getcode() == 404:
             return None
         elif response.getcode() != 200:
@@ -95,6 +93,7 @@ def get_bitbucket_issue_information(app, project, issue_id):
 
     return {'closed': issue['status'] not in ('new', 'open'),
             'uri': BITBUCKET_URL % locals()}
+
 
 def get_debian_issue_information(app, project, issue_id):
     import debianbts
@@ -137,12 +136,15 @@ def get_launchpad_issue_information(app, project, issue_id):
     return {'uri': uri, 'closed': bool(task.date_closed)}
 
 
+GOOGLE_CODE_URL = ('http://code.google.com/p/%(project)s/issues/'
+                   'detail?id=%(issue_id)s')
+GOOGLE_CODE_API_URL = ('http://code.google.com/feeds/issues/p/'
+                       '%(project)s/issues/full/%(issue_id)s')
+
 def get_google_code_issue_information(app, project, issue_id):
     from xml.etree import cElementTree as etree
 
-    show_issue = ('http://code.google.com/feeds/issues/p/'
-                  '%(project)s/issues/full/%(issue_id)s' % locals())
-    with closing(urllib.urlopen(show_issue)) as response:
+    with closing(urllib.urlopen(GOOGLE_CODE_API_URL % locals())) as response:
         if response.getcode() == 404:
             return None
         elif response.getcode() != 200:
@@ -154,9 +156,8 @@ def get_google_code_issue_information(app, project, issue_id):
 
     state = tree.find(
         '{http://schemas.google.com/projecthosting/issues/2009}state')
-    uri = ('http://code.google.com/p/%(project)s/issues/'
-           'detail?id=%(issue_id)s' % locals())
-    return {'uri': uri, 'closed': state is not None and state.text == 'closed'}
+    return {'uri': GOOGLE_CODE_URL % locals(),
+            'closed': state is not None and state.text == 'closed'}
 
 
 BUILTIN_ISSUE_TRACKERS = {
