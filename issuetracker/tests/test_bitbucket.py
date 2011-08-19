@@ -28,9 +28,6 @@ import pytest
 from sphinxcontrib.issuetracker import get_bitbucket_issue_information
 
 
-pytest.importorskip('lxml')
-
-
 def test_get_bitbucket_issue_information_resolved():
     info = get_bitbucket_issue_information(None, 'sphinx', 'birkenfeld', '478')
     assert info == {'closed': True,
