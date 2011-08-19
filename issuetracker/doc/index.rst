@@ -64,15 +64,15 @@ Add ``sphinxcontrib.issuetracker`` to the configuration value
    The project inside the issue tracker or the project, to which the issue
    tracker belongs.  Defaults to the value of :confval:`project`.
 
-.. confval:: issuetracker_user
+   .. note::
 
-   The user account, to which the project belongs.  Required by the
-   following issue trackers:
+      In case of BitBucket and GitHub, the project name must include the name
+      of the user or organization, the project belongs to.  For instance, the
+      project name of Sphinx_ itself is not just ``sphinx``, but
+      ``birkenfeld/sphinx`` instead.
 
-   - ``github``
-   - ``bitbucket``
-
-   Can be left empty, if another issue trackers is used.
+   .. versionchanged:: 0.8
+      Project names must include the user name now.
 
 For instance, with the following configuration issue references in the
 documentation would refer to the `Sphinx issue tracker`_:
@@ -80,8 +80,7 @@ documentation would refer to the `Sphinx issue tracker`_:
 .. code-block:: python
 
    issuetracker = 'bitbucket'
-   issuetracker_user = 'birkenfeld'
-   issuetracker_project = 'sphinx'
+   issuetracker_user = 'birkenfeld/sphinx'
 
 Closed issues are detected and automatically struck through in HTML output.
 

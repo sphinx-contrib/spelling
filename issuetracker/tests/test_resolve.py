@@ -127,11 +127,11 @@ def test_event_emitted(app, resolve):
     app.emit_firstresult.return_value = {}
     resolve()
     app.emit_firstresult.assert_called_with(
-        'issuetracker-resolve-issue', 'issuetracker', 'foobar', '10')
+        'issuetracker-resolve-issue', 'issuetracker', '10')
 
 def test_event_emitted_other_project(app, resolve):
     app.emit_firstresult.return_value = {}
     app.config.issuetracker_project = 'spam with eggs'
     resolve()
     app.emit_firstresult.assert_called_with(
-        'issuetracker-resolve-issue', 'spam with eggs', 'foobar', '10')
+        'issuetracker-resolve-issue', 'spam with eggs', '10')

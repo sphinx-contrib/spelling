@@ -50,8 +50,7 @@ def test_lookup_cache_miss(app, lookup, cache, issue_id, issue_info):
     cache.get.assert_called_with(issue_id)
     cache.__setitem__.assert_called_with(issue_id, issue_info)
     app.emit_firstresult.assert_called_with(
-        'issuetracker-resolve-issue', app.config.project,
-        app.config.issuetracker_user, issue_id)
+        'issuetracker-resolve-issue', app.config.project, issue_id)
 
 
 def test_lookup_cache_hit(app, lookup, cache, issue_id, issue_info):

@@ -40,7 +40,7 @@ def pytest_funcarg__app(request):
 
 
 def test_get_launchpad_issue_information(app):
-    info = get_launchpad_issue_information(app, 'inkscape', None, '647789')
+    info = get_launchpad_issue_information(app, 'inkscape', '647789')
     assert info == {
         'closed': True,
         'uri': 'https://bugs.launchpad.net/bugs/647789'}

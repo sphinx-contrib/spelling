@@ -51,19 +51,19 @@ from sphinx.util.osutil import copyfile
 from sphinx.util.console import bold
 
 
-GITHUB_URL = 'https://github.com/%(user)s/%(project)s/issues/%(issue_id)s'
-BITBUCKET_URL = ('https://bitbucket.org/%(user)s/%(project)s/issue/'
+GITHUB_URL = 'https://github.com/%(project)s/issues/%(issue_id)s'
+BITBUCKET_URL = ('https://bitbucket.org/%(project)s/issue/'
                  '%(issue_id)s/')
 
 
-def get_github_issue_information(app, project, user, issue_id):
+def get_github_issue_information(app, project, issue_id):
     try:
         import json
     except ImportError:
         import simplejson as json
 
     show_issue = ('https://github.com/api/v2/json/issues/show/'
-                  '%(user)s/%(project)s/%(issue_id)s' % locals())
+                  '%(project)s/%(issue_id)s' % locals())
 
     with closing(urllib.urlopen(show_issue)) as response:
         response = json.load(response)
@@ -74,13 +74,13 @@ def get_github_issue_information(app, project, user, issue_id):
             'uri': GITHUB_URL % locals()}
 
 
-def get_bitbucket_issue_information(app, project, user, issue_id):
+def get_bitbucket_issue_information(app, project, issue_id):
     try:
         import json
     except ImportError:
         import simplejson as json
 
-    show_issue = ('https://api.bitbucket.org/1.0/repositories/%(user)s/'
+    show_issue = ('https://api.bitbucket.org/1.0/repositories/'
                   '%(project)s/issues/%(issue_id)s/' % locals())
 
     with closing(urllib.urlopen(show_issue)) as response:
@@ -96,7 +96,7 @@ def get_bitbucket_issue_information(app, project, user, issue_id):
     return {'closed': issue['status'] not in ('new', 'open'),
             'uri': BITBUCKET_URL % locals()}
 
-def get_debian_issue_information(app, project, user, issue_id):
+def get_debian_issue_information(app, project, issue_id):
     import debianbts
     try:
         # get the bug
@@ -112,7 +112,7 @@ def get_debian_issue_information(app, project, user, issue_id):
     return {'uri': uri, 'closed': bug.done}
 
 
-def get_launchpad_issue_information(app, project, user, issue_id):
+def get_launchpad_issue_information(app, project, issue_id):
     launchpad = getattr(app.env, 'issuetracker_launchpad', None)
     if not launchpad:
         from launchpadlib.launchpad import Launchpad
@@ -137,7 +137,7 @@ def get_launchpad_issue_information(app, project, user, issue_id):
     return {'uri': uri, 'closed': bool(task.date_closed)}
 
 
-def get_google_code_issue_information(app, project, user, issue_id):
+def get_google_code_issue_information(app, project, issue_id):
     from xml.etree import cElementTree as etree
 
     show_issue = ('http://code.google.com/feeds/issues/p/'
@@ -263,9 +263,8 @@ def lookup_issue_information(issue_id, app):
     info = cache.get(issue_id)
     if not info:
         project = app.config.issuetracker_project or app.config.project
-        user = app.config.issuetracker_user
-        info = app.emit_firstresult(
-            'issuetracker-resolve-issue', project, user, issue_id)
+        info = app.emit_firstresult('issuetracker-resolve-issue',
+                                    project, issue_id)
         cache[issue_id] = info
     return info
 
@@ -318,7 +317,6 @@ def setup(app):
     app.connect('builder-inited', auto_connect_builtin_issue_resolvers)
     app.add_config_value('issuetracker_issue_pattern',
                          re.compile(r'#(\d+)'), 'env')
-    app.add_config_value('issuetracker_user', None, 'env')
     app.add_config_value('issuetracker_project', None, 'env')
     app.add_config_value('issuetracker', None, 'env')
     app.connect('builder-inited', add_stylesheet)

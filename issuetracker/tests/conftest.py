@@ -32,7 +32,6 @@ def pytest_funcarg__config(request):
     config = Mock(name='config')
     config.project = 'issuetracker'
     config.issuetracker = 'spamtracker'
-    config.issuetracker_user = 'foobar'
     config.issuetracker_project = None
     config.issuetracker_issue_pattern = re.compile(r'#(\d+)')
     return config

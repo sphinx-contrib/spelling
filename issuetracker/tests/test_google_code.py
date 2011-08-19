@@ -29,21 +29,21 @@ from sphinxcontrib.issuetracker import get_google_code_issue_information
 
 
 def test_get_google_code_issue_information_fixed():
-    info = get_google_code_issue_information(None, 'pytox', None, '2')
+    info = get_google_code_issue_information(None, 'pytox', '2')
     assert info == {
         'closed': True,
         'uri': 'http://code.google.com/p/pytox/issues/detail?id=2'}
 
 
 def test_get_google_code_issue_information_invalid():
-    info = get_google_code_issue_information(None, 'pytox', None, '5')
+    info = get_google_code_issue_information(None, 'pytox', '5')
     assert info == {
         'closed': True,
         'uri': 'http://code.google.com/p/pytox/issues/detail?id=5'}
 
 
 def test_get_google_code_issue_information_wontfix():
-    info = get_google_code_issue_information(None, 'pytox', None, '6')
+    info = get_google_code_issue_information(None, 'pytox', '6')
     assert info == {
         'closed': True,
         'uri': 'http://code.google.com/p/pytox/issues/detail?id=6'}

@@ -28,6 +28,6 @@ from sphinxcontrib.issuetracker import get_github_issue_information
 
 
 def test_get_github_issue_information():
-    info = get_github_issue_information(None, 'pyudev', 'lunaryorn', '2')
+    info = get_github_issue_information(None, 'lunaryorn/pyudev', '2')
     assert info == {'closed': True,
                     'uri': 'https://github.com/lunaryorn/pyudev/issues/2'}
