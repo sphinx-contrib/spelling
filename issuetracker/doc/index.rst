@@ -14,7 +14,10 @@ The extension is available under the terms of the BSD license, see
 Installation
 ------------
 
-This extension can be installed from the Python Package Index::
+This extension needs Sphinx 1.0 and Python 2.6 or newer.  Python 3 is not (yet)
+supported.
+
+Use ``pip`` to install this extension straight from the Python Package Index:
 
    pip install sphinx-contrib.issuetracker
 
