@@ -304,7 +304,7 @@ def resolve_issue_references(app, doctree):
 
 def auto_connect_builtin_issue_resolvers(app):
     if app.config.issuetracker:
-        app.connect('issuetracker-resolve-issue',
+        app.connect(b'issuetracker-resolve-issue',
                     BUILTIN_ISSUE_TRACKERS[app.config.issuetracker.lower()])
 
 
@@ -331,13 +331,13 @@ def copy_stylesheet(app, exception):
 def setup(app):
     app.require_sphinx('1.0')
     app.add_transform(IssuesReferences)
-    app.add_event('issuetracker-resolve-issue')
-    app.connect('builder-inited', auto_connect_builtin_issue_resolvers)
+    app.add_event(b'issuetracker-resolve-issue')
+    app.connect(b'builder-inited', auto_connect_builtin_issue_resolvers)
     app.add_config_value('issuetracker_issue_pattern',
                          re.compile(r'#(\d+)'), 'env')
     app.add_config_value('issuetracker_project', None, 'env')
     app.add_config_value('issuetracker', None, 'env')
-    app.connect('builder-inited', add_stylesheet)
-    app.connect('builder-inited', init_cache)
-    app.connect('doctree-read', resolve_issue_references)
-    app.connect('build-finished', copy_stylesheet)
+    app.connect(b'builder-inited', add_stylesheet)
+    app.connect(b'builder-inited', init_cache)
+    app.connect(b'doctree-read', resolve_issue_references)
+    app.connect(b'build-finished', copy_stylesheet)
