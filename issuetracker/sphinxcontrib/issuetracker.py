@@ -62,10 +62,7 @@ GITHUB_URL = 'https://github.com/{project}/issues/{id}'
 GITHUB_API_URL = 'https://github.com/api/v2/json/issues/show/{project}/{id}'
 
 def get_github_issue_information(app, project, issue_id):
-    try:
-        import json
-    except ImportError:
-        import simplejson as json
+    import json
 
     issue_url = GITHUB_API_URL.format(project=project, id=issue_id)
     with closing(urllib.urlopen(issue_url)) as response:
@@ -82,10 +79,7 @@ BITBUCKET_API_URL = ('https://api.bitbucket.org/1.0/repositories/'
                      '{project}/issues/{id}/')
 
 def get_bitbucket_issue_information(app, project, issue_id):
-    try:
-        import json
-    except ImportError:
-        import simplejson as json
+    import json
 
     issue_url = BITBUCKET_API_URL.format(project=project, id=issue_id)
     with closing(urllib.urlopen(issue_url)) as response:
