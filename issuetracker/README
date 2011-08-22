@@ -15,8 +15,9 @@ Currently the following issue trackers are supported:
 - `Google Code <http://code.google.com>`_
 - `Debian BTS <http://bugs.debian.org>`_
 
-Furthermore this extension provides a simple API to add other issue
-trackers.
+A simple API is provided to add support for other issue trackers.  If you added
+support for a new tracker, please consider sending a patch to make your work
+available to other users of this extension.
 
 
 Installation
