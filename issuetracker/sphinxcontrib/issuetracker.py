@@ -58,8 +58,7 @@ from sphinx.util.console import bold
 Issue = namedtuple('Issue', 'id uri closed')
 
 
-GITHUB_URL = 'https://github.com/{project}/issues/{id}'
-GITHUB_API_URL = 'https://github.com/api/v2/json/issues/show/{project}/{id}'
+GITHUB_API_URL = 'https://api.github.com/repos/{project}/issues/{id}'
 
 def get_github_issue_information(app, project, issue_id):
     if '/' not in project:
@@ -70,14 +69,17 @@ def get_github_issue_information(app, project, issue_id):
 
     issue_url = GITHUB_API_URL.format(project=project, id=issue_id)
     with closing(urllib.urlopen(issue_url)) as response:
+        if response.getcode() == 404:
+            return None
+        elif response.getcode() != 200:
+            # warn about unexpected response code
+            app.warn('issue {0} unavailable with code {1}'.format(
+                issue_id, response.getcode()))
+            return None
         response = json.load(response)
-    if 'error' in response:
-        app.warn('issue {0} unavailable with error: {1}'.format(
-            issue_id, response['error']))
-        return None
 
-    return Issue(id=issue_id, closed=response['issue']['state'] == 'closed',
-                 uri=GITHUB_URL.format(project=project, id=issue_id))
+    return Issue(id=issue_id, closed=response['state'] == 'closed',
+                 uri=response['html_url'])
 
 
 BITBUCKET_URL = 'https://bitbucket.org/{project}/issue/{id}/'
