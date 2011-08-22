@@ -77,15 +77,17 @@ ISSUES = {
 
 
 MISSING_ISSUES = {
-    'bitbucket': {'no slash': ('sphinx', '10'),
+    'bitbucket': {'no slash': (
+        'sphinx', '10', 'username missing in project {0!r}'.format('sphinx')),
                   'non-existing project': ('lunar/foobar', '10'),
-                  'non-existing issue': (SPHINX, '10000000')},
+                  'non-existing issue': (SPHINX, '10000')},
     'debian': {'no such project': ('release.debian.org', '1')},
     'github': {'no slash': ('pyudev', '10'),
                'non-existing project': ('lunaryorn/foobar', '10'),
                'non-existing issue': ('lunaryorn/pyudev', '1000')},
     'google code': {'non-existing issue': ('pytox', '1000'),
-                    'non-existing project': ('foobar', '1')},
+                    'non-existing project': (
+                        'foobar', '1', 'issue 1 unavailable with code 403')},
     'launchpad': {}
 }
 
@@ -100,22 +102,33 @@ def pytest_generate_tests(metafunc):
         if not issues:
             continue
         for test_id in sorted(issues):
-            project, issue = issues[test_id]
+            if len(issues[test_id]) == 3:
+                project, issue, warning = issues[test_id]
+            else:
+                warning = None
+                project, issue = issues[test_id]
+            dependencies = TRACKER_DEPENDENCIES.get(tracker, [])
             args = dict(resolver=resolver, project=project, issue=issue,
-                        dependencies=TRACKER_DEPENDENCIES.get(tracker, []))
+                        warning=warning, dependencies=dependencies)
             metafunc.addcall(funcargs=args,
                              id='{0},{1}'.format(tracker,test_id))
 
 
-def test_resolver_existing_issue(app, resolver, project, issue, dependencies):
+def test_resolver_existing_issue(app, resolver, project, issue, warning,
+                                 dependencies):
     for dependency in dependencies:
         pytest.importorskip(dependency)
     resolved_issue = resolver(app, project, issue.id)
+    if warning is not None:
+        app.warn.assert_called_with(warning)
     assert resolved_issue == issue
 
 
-def test_resolver_missing_issue(app, resolver, project, issue, dependencies):
+def test_resolver_missing_issue(app, resolver, project, issue, warning,
+                                dependencies):
     for dependency in dependencies:
         pytest.importorskip(dependency)
     resolved_issue = resolver(app, project, issue)
+    if warning is not None:
+        app.warn.assert_called_with(warning)
     assert resolved_issue is None
