@@ -3,7 +3,9 @@
 
 - Use BitBucket API instead of scraping the BitBucket website
 - Removed ``issuetracker_user`` configuration value, GitHub and BitBucket
-  projects must include the username now.
+  projects must include the username now
+- Custom resolvers must return :class:`~sphinxcontrib.issuetracker.Issue`
+  objects instead of dictionaries now
 
 
 0.7.2 (Mar 10, 2011)
