@@ -20,13 +20,6 @@ This extension can be installed from the Python Package Index::
 
    pip install sphinx-contrib.issuetracker
 
-Alternatively, you can clone the sphinx-contrib_ repository from BitBucket,
-and install the extension directly from the repository::
-
-   hg clone https://bitbucket.org/birkenfeld/sphinx-contrib
-   cd sphinx-contrib/issuetracker
-   python setup.py install
-
 
 Configuration
 -------------
@@ -133,13 +126,15 @@ callback to the event :event:`issuetracker-resolve-issue`:
       ``True``, if the issue is closed, ``False`` otherwise.
 
 
-Contribution
-------------
+Contribution and Development
+----------------------------
 
-Please contact the author or create an issue in the `issue tracker`_ of the
-sphinx-contrib_ repository, if you have found any bugs or miss some
-functionality (e.g. integration of some other issue tracker).  Patches are
-welcome!
+Please report bugs and missing functionality (e.g. a tracker not being
+supported) to the `issue tracker`_.
+
+The source code of this extension is available in the sphinx-contrib_
+repository.  Feel free to clone this repository and add your changes to this
+extension.  Patches and pull requests are always welcome!
 
 
 .. include:: ../CREDITS
