@@ -68,6 +68,8 @@ def get_github_issue_information(app, project, issue_id):
     with closing(urllib.urlopen(issue_url)) as response:
         response = json.load(response)
     if 'error' in response:
+        app.warn('issue {0} unavailable with error: {1}'.format(
+            issue_id, response['error']))
         return None
 
     return Issue(id=issue_id, closed=response['issue']['state'] == 'closed',
