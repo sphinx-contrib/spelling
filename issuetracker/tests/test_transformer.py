@@ -24,6 +24,9 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
+from __future__ import (print_function, division, unicode_literals,
+                        absolute_import)
+
 import pytest
 from mock import Mock
 from docutils import nodes

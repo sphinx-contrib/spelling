@@ -24,7 +24,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-
 """
     sphinxcontrib.issuetracker
     ==========================
@@ -36,6 +35,10 @@
 
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
 """
+
+from __future__ import (print_function, division, unicode_literals,
+                        absolute_import)
+
 
 __version__ = '0.8'
 
