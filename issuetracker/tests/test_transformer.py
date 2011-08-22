@@ -42,7 +42,7 @@ def assert_text(node, text):
 def assert_xref(node, target):
     __tracebackhide__ = True
     assert isinstance(node, pending_xref)
-    assert_text(node[0], '#%s' % target)
+    assert_text(node[0], '#{0}'.format(target))
     assert node['reftype'] == 'issue'
     assert node['reftarget'] == target
 
@@ -114,4 +114,4 @@ class TestIssueReferences(object):
             transformer.apply()
         error = exc_info.value
         assert str(error) == ('issuetracker_issue_pattern must have '
-                              'exactly one group: %r' % ((u'#', u'1'),))
+                              'exactly one group: {0!r}'.format((u'#', u'1')))

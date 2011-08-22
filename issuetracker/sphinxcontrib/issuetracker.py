@@ -55,9 +55,8 @@ from sphinx.util.console import bold
 Issue = namedtuple('Issue', 'id uri closed')
 
 
-GITHUB_URL = 'https://github.com/%(project)s/issues/%(issue_id)s'
-GITHUB_API_URL = ('https://github.com/api/v2/json/issues/show/'
-                  '%(project)s/%(issue_id)s')
+GITHUB_URL = 'https://github.com/{project}/issues/{id}'
+GITHUB_API_URL = 'https://github.com/api/v2/json/issues/show/{project}/{id}'
 
 def get_github_issue_information(app, project, issue_id):
     try:
@@ -65,19 +64,19 @@ def get_github_issue_information(app, project, issue_id):
     except ImportError:
         import simplejson as json
 
-    with closing(urllib.urlopen(GITHUB_API_URL % locals())) as response:
+    issue_url = GITHUB_API_URL.format(project=project, id=issue_id)
+    with closing(urllib.urlopen(issue_url)) as response:
         response = json.load(response)
     if 'error' in response:
         return None
 
-    return Issue(id=issue_id, uri=GITHUB_URL % locals(),
-                 closed=response['issue']['state'] == 'closed')
+    return Issue(id=issue_id, closed=response['issue']['state'] == 'closed',
+                 uri=GITHUB_URL.format(project=project, id=issue_id))
 
 
-BITBUCKET_URL = ('https://bitbucket.org/%(project)s/issue/'
-                 '%(issue_id)s/')
+BITBUCKET_URL = 'https://bitbucket.org/{project}/issue/{id}/'
 BITBUCKET_API_URL = ('https://api.bitbucket.org/1.0/repositories/'
-                     '%(project)s/issues/%(issue_id)s/')
+                     '{project}/issues/{id}/')
 
 def get_bitbucket_issue_information(app, project, issue_id):
     try:
@@ -85,19 +84,22 @@ def get_bitbucket_issue_information(app, project, issue_id):
     except ImportError:
         import simplejson as json
 
-    with closing(urllib.urlopen(BITBUCKET_API_URL % locals())) as response:
+    issue_url = BITBUCKET_API_URL.format(project=project, id=issue_id)
+    with closing(urllib.urlopen(issue_url)) as response:
         if response.getcode() == 404:
             return None
         elif response.getcode() != 200:
             # warn about unexpected response code
-            app.warn('issue %s unavailable with code %s' %
-                     (issue_id, response.getcode()))
+            app.warn('issue {0} unavailable with code {1}'.format(
+                issue_id, response.getcode()))
             return None
         issue = json.load(response)
 
-    return Issue(id=issue_id, uri=BITBUCKET_URL % locals(),
-                 closed=issue['status'] not in ('new', 'open'))
+    return Issue(id=issue_id, closed=issue['status'] not in ('new', 'open'),
+                 uri=BITBUCKET_URL.format(project=project, id=issue_id))
 
+
+DEBIAN_URL = 'http://bugs.debian.org/cgi-bin/bugreport.cgi?bug={id}'
 
 def get_debian_issue_information(app, project, issue_id):
     import debianbts
@@ -111,9 +113,11 @@ def get_debian_issue_information(app, project, issue_id):
     if project not in (bug.package, bug.source):
         return None
 
-    uri = 'http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=%s' % issue_id
-    return Issue(id=issue_id, uri=uri, closed=bug.done)
+    return Issue(id=issue_id, closed=bug.done,
+                 uri=DEBIAN_URL.format(id=issue_id))
 
+
+LAUNCHPAD_URL = 'https://bugs.launchpad.net/bugs/{id}'
 
 def get_launchpad_issue_information(app, project, issue_id):
     launchpad = getattr(app.env, 'issuetracker_launchpad', None)
@@ -135,32 +139,33 @@ def get_launchpad_issue_information(app, project, issue_id):
         # no matching task found
         return None
 
-    uri = 'https://bugs.launchpad.net/bugs/%s' % issue_id
-    return Issue(id=issue_id, uri=uri, closed=bool(task.date_closed))
+    return Issue(id=issue_id, closed=bool(task.date_closed),
+                 uri=LAUNCHPAD_URL.format(id=issue_id))
 
 
-GOOGLE_CODE_URL = ('http://code.google.com/p/%(project)s/issues/'
-                   'detail?id=%(issue_id)s')
+GOOGLE_CODE_URL = 'http://code.google.com/p/{project}/issues/detail?id={id}'
 GOOGLE_CODE_API_URL = ('http://code.google.com/feeds/issues/p/'
-                       '%(project)s/issues/full/%(issue_id)s')
+                       '{project}/issues/full/{id}')
 
 def get_google_code_issue_information(app, project, issue_id):
     from xml.etree import cElementTree as etree
 
-    with closing(urllib.urlopen(GOOGLE_CODE_API_URL % locals())) as response:
+    issue_url = GOOGLE_CODE_API_URL.format(project=project, id=issue_id)
+    with closing(urllib.urlopen(issue_url)) as response:
         if response.getcode() == 404:
             return None
         elif response.getcode() != 200:
             # warn about unavailable issues
-            app.warn('issue %s unavailable with code %s' %
-                     (issue_id, response.getcode()))
+            app.warn('issue {0} unavailable with code {1}'.format(
+                issue_id, response.getcode()))
             return None
         tree = etree.parse(response)
 
     state = tree.find(
         '{http://schemas.google.com/projecthosting/issues/2009}state')
-    return Issue(id=issue_id, uri=GOOGLE_CODE_URL % locals(),
-                 closed=state is not None and state.text == 'closed')
+    closed = state is not None and state.text == 'closed'
+    return Issue(id=issue_id, closed=closed,
+                 uri=GOOGLE_CODE_URL.format(project=project, id=issue_id))
 
 
 BUILTIN_ISSUE_TRACKERS = {
@@ -199,7 +204,7 @@ class IssuesReferences(Transform):
                 if len(match.groups()) != 1:
                     raise ValueError(
                         'issuetracker_issue_pattern must have '
-                        'exactly one group: %r' % (match.groups(),))
+                        'exactly one group: {0!r}'.format(match.groups()))
                 # extract the text between the last issue reference and the
                 # current issue reference and put it into a new text node
                 head = text[last_issue_ref_end:match.start()]
