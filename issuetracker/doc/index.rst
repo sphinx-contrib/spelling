@@ -1,13 +1,11 @@
 :mod:`sphinxcontrib.issuetracker` -- Reference issues in issue trackers
-========================================================================
+=======================================================================
 
 .. module:: sphinxcontrib.issuetracker
    :synopsis: Parse issue references and link to the corresponding issues
 
-This extension for Sphinx_ 1.0 parses textual issue references like ``#10``,
-looks up the issue in the configured issue tracker, and includes a link to
-the issue.  References in inline literals and literal blocks (e.g. source code
-examples) are ignored.
+A Sphinx_ extension to turn textual issue ids like ``#10`` into real references
+to these issues in an issue tracker.
 
 The extension is available under the terms of the BSD license, see
 :doc:`license` for more information.
@@ -19,6 +17,21 @@ Installation
 This extension can be installed from the Python Package Index::
 
    pip install sphinx-contrib.issuetracker
+
+
+Operation
+---------
+
+After configuring the :confval:`tracker <issuetracker>` and the
+:confval:`project <issuetracker_project>`, this extension parses issue ids in
+all documents and turns the issue id into a reference to the issue.  Issues are
+searched in the configured tracker, issue ids which do not exist are ignored.
+Issue ids in ``inline literals`` or literal blocks are also ignored to not
+spoil code examples.
+
+The extension queries the tracker for information about each issue.  This
+information is used to mark closed issues.  Such issues are automatically
+struck through in HTML output.
 
 
 Configuration
@@ -66,8 +79,6 @@ documentation would refer to the `Sphinx issue tracker`_:
 
    issuetracker = 'bitbucket'
    issuetracker_project = 'birkenfeld/sphinx'
-
-Closed issues are detected and automatically struck through in HTML output.
 
 By default the extension looks for issue references starting with a single
 dash, like ``#10``.  You can however change the pattern, which is used to

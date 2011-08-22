@@ -4,8 +4,8 @@ sphinxcontrib-issuetracker
 
 http://packages.python.org/sphinxcontrib-issuetracker
 
-This Sphinx_ 1.0 extension parses textual issue references like ``#10`` and
-turns these into references into an issue tracker.
+A Sphinx_ extension to turn textual issue ids like ``#10`` into real references
+to these issues in an issue tracker.
 
 Currently the following issue trackers are supported:
 
