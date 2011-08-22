@@ -1,12 +1,19 @@
 0.8 (in development)
 ====================
 
+Incompatible changes
+--------------------
+
 - Require Python 2.6 or newer now
-- Use BitBucket API instead of scraping the BitBucket website
 - Removed ``issuetracker_user`` configuration value, GitHub and BitBucket
   projects must include the username now
 - Custom resolvers must return :class:`~sphinxcontrib.issuetracker.Issue`
   objects instead of dictionaries now
+
+Other changes
+-------------
+
+- Use BitBucket API instead of scraping the BitBucket website
 - Builtin ``debian`` tracker is fully supported now
 
 
