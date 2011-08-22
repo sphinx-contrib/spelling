@@ -27,7 +27,7 @@ from functools import partial
 
 import mock
 
-from sphinxcontrib.issuetracker import lookup_issue_information
+from sphinxcontrib.issuetracker import lookup_issue
 
 
 def pytest_funcarg__issue_id(request):
@@ -41,7 +41,7 @@ def pytest_funcarg__issue_info(request):
 def pytest_funcarg__lookup(request):
     app = request.getfuncargvalue('app')
     issue_id = request.getfuncargvalue('issue_id')
-    return partial(lookup_issue_information, issue_id, app)
+    return partial(lookup_issue, issue_id, app)
 
 
 def test_lookup_cache_miss(app, lookup, cache, issue_id, issue_info):

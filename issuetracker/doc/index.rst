@@ -100,32 +100,45 @@ find issue references:
 Customization
 -------------
 
-If you use an issue tracker, that is not supported by this extension, then set
+If you use an issue tracker that is not supported by this extension, then set
 :confval:`issuetracker` to ``None`` or leave it unset, and connect your own
-callback to the :event:`issuetracker-resolve-issue`:
+callback to the event :event:`issuetracker-resolve-issue`:
 
-.. event:: issuetracker-resolve-issue(app, project, user, issue_id)
+.. event:: issuetracker-resolve-issue(app, project, issue_id)
 
    Emitted if a issue reference is to be resolved.
 
-   ``app`` is the Sphinx application object.  ``project`` and ``user`` are
-   strings, describing the issuetracker project and username.  These are simply
-   the values, the user entered for :confval:`issuetracker_project` and
-   :confval:`issuetracker_user`.  ``issue_id`` is the issue id as string.
+   ``app`` is the Sphinx application object.  ``project`` is the issuetracker
+   project to query (see :confval:`issuetracker_project`).  ``issue_id`` is the
+   issue id as string.
 
-   Callbacks for this event must return a dictionary with issue information,
-   having the following keys:
+   A callback should return an :class:`Issue` object containing the resolved
+   issue, or ``None`` if it could not resolve the issue.  In the latter case
+   other resolvers connected to the event may be invoked by Sphinx.
 
-   - ``'uri'``: The URI to the issue web page
-   - ``'closed'``: ``True``, if the issue is closed.  If ``False`` or if the
-     key is missing, the issue is still open.
+.. class:: Issue
 
-   If ``'uri'`` is missing, the issue reference is not turned into a real
-   reference, but remains in plain text.
+   A :func:`~collections.namedtuple` providing issue information.
 
-   A callback can return ``None`` instead to indicate, that it cannot resolve
-   the issue.  Resolval is delegated to further callbacks, that might be
-   connected to the event.
+   .. attribute:: id
+
+      The issue id as string
+
+      If you are writing your own custom callback for
+      :event:`issuetracker-resolve-issue`, set this attribute to the
+      ``issue_id`` that was given as argument.
+
+   .. attribute:: uri
+
+      An URI providing information about this issue.
+
+      This URI is used as hyperlink target in the generated documentation.
+      Thus it should point to a webpage or something similar that provides
+      human-readable information about an issue.
+
+   .. attribute:: closed
+
+      ``True``, if the issue is closed, ``False`` otherwise.
 
 
 Contribution

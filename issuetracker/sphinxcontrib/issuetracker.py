@@ -42,6 +42,7 @@ __version__ = '0.8'
 import re
 import urllib
 from contextlib import closing
+from collections import namedtuple
 from os import path
 
 from docutils import nodes
@@ -49,6 +50,9 @@ from docutils.transforms import Transform
 from sphinx.addnodes import pending_xref
 from sphinx.util.osutil import copyfile
 from sphinx.util.console import bold
+
+
+Issue = namedtuple('Issue', 'id uri closed')
 
 
 GITHUB_URL = 'https://github.com/%(project)s/issues/%(issue_id)s'
@@ -66,8 +70,8 @@ def get_github_issue_information(app, project, issue_id):
     if 'error' in response:
         return None
 
-    return {'closed': response['issue']['state'] == 'closed',
-            'uri': GITHUB_URL % locals()}
+    return Issue(id=issue_id, uri=GITHUB_URL % locals(),
+                 closed=response['issue']['state'] == 'closed')
 
 
 BITBUCKET_URL = ('https://bitbucket.org/%(project)s/issue/'
@@ -91,8 +95,8 @@ def get_bitbucket_issue_information(app, project, issue_id):
             return None
         issue = json.load(response)
 
-    return {'closed': issue['status'] not in ('new', 'open'),
-            'uri': BITBUCKET_URL % locals()}
+    return Issue(id=issue_id, uri=BITBUCKET_URL % locals(),
+                 closed=issue['status'] not in ('new', 'open'))
 
 
 def get_debian_issue_information(app, project, issue_id):
@@ -108,7 +112,7 @@ def get_debian_issue_information(app, project, issue_id):
         return None
 
     uri = 'http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=%s' % issue_id
-    return {'uri': uri, 'closed': bug.done}
+    return Issue(id=issue_id, uri=uri, closed=bug.done)
 
 
 def get_launchpad_issue_information(app, project, issue_id):
@@ -132,8 +136,7 @@ def get_launchpad_issue_information(app, project, issue_id):
         return None
 
     uri = 'https://bugs.launchpad.net/bugs/%s' % issue_id
-    # if date_closed exists, we consider the bug as closed
-    return {'uri': uri, 'closed': bool(task.date_closed)}
+    return Issue(id=issue_id, uri=uri, closed=bool(task.date_closed))
 
 
 GOOGLE_CODE_URL = ('http://code.google.com/p/%(project)s/issues/'
@@ -156,8 +159,8 @@ def get_google_code_issue_information(app, project, issue_id):
 
     state = tree.find(
         '{http://schemas.google.com/projecthosting/issues/2009}state')
-    return {'uri': GOOGLE_CODE_URL % locals(),
-            'closed': state is not None and state.text == 'closed'}
+    return Issue(id=issue_id, uri=GOOGLE_CODE_URL % locals(),
+                 closed=state is not None and state.text == 'closed')
 
 
 BUILTIN_ISSUE_TRACKERS = {
@@ -228,46 +231,47 @@ class IssuesReferences(Transform):
             parent.replace(node, new_nodes)
 
 
-def make_issue_reference(issue_uri, content_node, is_closed=False):
+def make_issue_reference(content_node, issue):
     """
     Create a reference node for the given issue.
 
-    ``issue_uri`` is the uri of a web page describing the issue.  It must *not*
-    be a resource uri for a webservice of an issue tracker.  ``content_node``
-    is a docutils node, which is added as content of the created reference.  If
-    ``is_closed`` is ``True``, the issue is considered as closed, and the
-    reference node gets an additional class ``'issue-closed'``.
+    ``content_node`` is a docutils node which is supposed to be added as
+    content of the created reference.  ``issue`` is the :class:`Issue` which
+    the reference shall point to.
 
     Return a :class:`docutils.nodes.reference` for the issue.
     """
     reference = nodes.reference()
-    reference['refuri'] = issue_uri
-    if is_closed:
+    reference['refuri'] = issue.uri
+    if issue.closed:
         reference['classes'].append('issue-closed')
     reference['classes'].append('reference-issue')
     reference.append(content_node)
     return reference
 
 
-def lookup_issue_information(issue_id, app):
+def lookup_issue(issue_id, app):
     """
     Lookup information for the given issue.
 
-    The issue information is first searched in an internal cache.  On cache
-    miss, ``fallback_func`` is called to retrieve the issue information from
-    the issue tracker.  This information is than cached.
+    The issue information is first searched in an internal cache.  If it is not
+    found, the event ``issuetracker-resolve-issue`` is emitted.  The result of
+    this invocation is cached and returned.
 
     ``app`` is the sphinx application object.  ``issue_id`` is a string
     containing the issue id.
+
+    Return a :class:`Issue` object for the issue with the given ``issue_id``,
+    or ``None`` if the issue wasn't found.
     """
     cache = app.env.issuetracker_cache
-    info = cache.get(issue_id)
-    if not info:
+    issue = cache.get(issue_id)
+    if not issue:
         project = app.config.issuetracker_project or app.config.project
-        info = app.emit_firstresult('issuetracker-resolve-issue',
-                                    project, issue_id)
-        cache[issue_id] = info
-    return info
+        issue = app.emit_firstresult('issuetracker-resolve-issue',
+                                     project, issue_id)
+        cache[issue_id] = issue
+    return issue
 
 
 def resolve_issue_references(app, doctree):
@@ -276,12 +280,11 @@ def resolve_issue_references(app, doctree):
     """
     for node in doctree.traverse(pending_xref):
         if node['reftype'] == 'issue':
-            info = lookup_issue_information(node['reftarget'], app)
-            if (not info) or 'uri' not in info:
+            issue = lookup_issue(node['reftarget'], app)
+            if not issue:
                 new_node = node[0]
             else:
-                new_node = make_issue_reference(info['uri'], node[0],
-                                                info.get('closed'))
+                new_node = make_issue_reference(node[0], issue)
             node.replace_self(new_node)
 
 

@@ -28,7 +28,7 @@ from functools import partial
 from docutils import nodes
 from sphinx.addnodes import pending_xref
 
-from sphinxcontrib.issuetracker import resolve_issue_references
+from sphinxcontrib.issuetracker import Issue, resolve_issue_references
 
 
 def assert_cache_ignored(app):
@@ -95,42 +95,30 @@ def test_resolve_no_issue(app, resolve, doc, contnode, issue_id):
     assert_cache_visited(app, issue_id, None)
 
 
-def test_resolve_no_uri(app, resolve, doc, contnode, issue_id):
-    app.emit_firstresult.return_value = {'closed': True}
-    resolve()
-    assert doc[0] is contnode
-    assert_cache_visited(app, issue_id, {'closed': True})
-
-
 def test_resolve_open_issue(app, resolve, doc, contnode, issue_id):
-    app.emit_firstresult.return_value = {'uri': 'spam'}
+    issue = Issue(id=issue_id, closed=False, uri='spam')
+    app.emit_firstresult.return_value = issue
     resolve()
     assert_issue_reference(doc[0], 'spam', False)
-    assert_cache_visited(app, issue_id, {'uri': 'spam'})
-
-
-def test_resolve_open_issue_with_key(app, resolve, doc, contnode, issue_id):
-    app.emit_firstresult.return_value = {'uri': 'spam', 'closed': False}
-    resolve()
-    assert_issue_reference(doc[0], 'spam', False)
-    assert_cache_visited(app, issue_id, {'uri': 'spam', 'closed': False})
+    assert_cache_visited(app, issue_id, issue)
 
 
 def test_resolve_closed_issue(app, resolve, doc, contnode, issue_id):
-    app.emit_firstresult.return_value = {'uri': 'spam', 'closed': True}
+    issue = Issue(id=issue_id, closed=True, uri='spam')
+    app.emit_firstresult.return_value = issue
     resolve()
     assert_issue_reference(doc[0], 'spam', True)
-    assert_cache_visited(app, issue_id, {'uri': 'spam', 'closed': True})
+    assert_cache_visited(app, issue_id, issue)
 
 
 def test_event_emitted(app, resolve):
-    app.emit_firstresult.return_value = {}
+    app.emit_firstresult.return_value = None
     resolve()
     app.emit_firstresult.assert_called_with(
         'issuetracker-resolve-issue', 'issuetracker', '10')
 
 def test_event_emitted_other_project(app, resolve):
-    app.emit_firstresult.return_value = {}
+    app.emit_firstresult.return_value = None
     app.config.issuetracker_project = 'spam with eggs'
     resolve()
     app.emit_firstresult.assert_called_with(
