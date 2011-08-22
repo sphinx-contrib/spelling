@@ -80,7 +80,7 @@ documentation would refer to the `Sphinx issue tracker`_:
 .. code-block:: python
 
    issuetracker = 'bitbucket'
-   issuetracker_user = 'birkenfeld/sphinx'
+   issuetracker_project = 'birkenfeld/sphinx'
 
 Closed issues are detected and automatically struck through in HTML output.
 
