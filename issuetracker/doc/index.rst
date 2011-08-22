@@ -49,15 +49,7 @@ Add ``sphinxcontrib.issuetracker`` to the configuration value
    - ``google code``: The issue tracker of http://code.google.com.  To use
      this issue tracker, Python 2.5 or newer is required.
    - ``debian``: The Debian issue tracker at http://bugs.debian.org.  To use
-     this issue tracker, you need the debianbts_ module from (available as
-     ``python-debianbts`` in Debian package repositories).
-
-     .. warning::
-
-        The underlying ``debianbts`` module has serious quality issues
-        [#debianbts-problems]_.  Use at own risk, the code of this issue
-        tracker is unlikely to receive bug fixes and consequently might break
-        any time.
+     this issue tracker, debianbts_ and SOAPpy_ must be installed.
 
 .. confval:: issuetracker_project
 
@@ -153,18 +145,6 @@ welcome!
 .. include:: ../CREDITS
 
 
-.. rubric:: Footnotes
-
-.. [#debianbts-problems] ``debianbts`` does not provide a standard
-   distutils/setuptools installation script.  It is consequently not contained
-   in the package index, and hard to install on anything else then Debian and
-   Debian-based distributions.  And above all, it uses the outdated and
-   unmaintained SOAPpy library internally.  Patches, which replace
-   ``debianbts`` with some decent SOAP code (probably based on suds_) are
-   welcome.  Patches, which replace SOAP completely with some decent RPC
-   interface are even more welcome.
-
-
 .. toctree::
    :maxdepth: 2
    :hidden:
@@ -178,7 +158,8 @@ welcome!
 .. _lxml: http://lxml.de
 .. _simplejson: http://pypi.python.org/pypi/simplejson/
 .. _launchpadlib: http://pypi.python.org/pypi/launchpadlib/
-.. _debianbts: https://github.com/venthur/python-debianbts
+.. _debianbts: http://pypi.python.org/pypi/python-debianbts/
+.. _SOAPpy: http://pypi.python.org/pypi/SOAPpy/
 .. _suds: https://fedorahosted.org/suds/
 .. _sphinx-contrib: https://bitbucket.org/birkenfeld/sphinx-contrib
 .. _issue tracker: https://bitbucket.org/birkenfeld/sphinx-contrib/issues/

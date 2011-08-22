@@ -6,6 +6,7 @@
   projects must include the username now
 - Custom resolvers must return :class:`~sphinxcontrib.issuetracker.Issue`
   objects instead of dictionaries now
+- Builtin ``debian`` tracker is fully supported now
 
 
 0.7.2 (Mar 10, 2011)
