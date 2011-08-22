@@ -48,15 +48,11 @@ Add ``sphinxcontrib.issuetracker`` to the configuration value
    The issuetracker to use.  As of now, the following trackers are
    supported:
 
-   - ``github``: The issue tracker of https://github.com.  To use this issue
-     tracker, either Python 2.6 or later must be used, or simplejson_ must be
-     installed.
-   - ``bitbucket``: The issue tracker of https://bitbucket.org.  Has the same
-     requirements as the ``github`` tracker.
+   - ``github``: The issue tracker of https://github.com.
+   - ``bitbucket``: The issue tracker of https://bitbucket.org.
    - ``launchpad``: The issue tracker of https://launchpad.net.  To use this
      issue tracker, launchpadlib_ must be installed.
-   - ``google code``: The issue tracker of http://code.google.com.  To use
-     this issue tracker, Python 2.5 or newer is required.
+   - ``google code``: The issue tracker of http://code.google.com.
    - ``debian``: The Debian issue tracker at http://bugs.debian.org.  To use
      this issue tracker, debianbts_ and SOAPpy_ must be installed.
 
