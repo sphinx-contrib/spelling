@@ -43,8 +43,9 @@ def pytest_funcarg__issue_info(request):
 
 def pytest_funcarg__lookup(request):
     app = request.getfuncargvalue('app')
+    project = app.config.project
     issue_id = request.getfuncargvalue('issue_id')
-    return partial(lookup_issue, issue_id, app)
+    return partial(lookup_issue, app, project, issue_id)
 
 
 def test_lookup_cache_miss(app, lookup, cache, issue_id, issue_info):

@@ -68,6 +68,8 @@ def pytest_funcarg__refnode(request):
     refnode = pending_xref()
     refnode['reftype'] = 'issue'
     refnode['reftarget'] = request.getfuncargvalue('issue_id')
+    config = request.getfuncargvalue('config')
+    refnode['project'] = config.project
     refnode.append(request.getfuncargvalue('contnode'))
     return refnode
 
@@ -119,10 +121,3 @@ def test_event_emitted(app, resolve):
     resolve()
     app.emit_firstresult.assert_called_with(
         'issuetracker-resolve-issue', 'issuetracker', '10')
-
-def test_event_emitted_other_project(app, resolve):
-    app.emit_firstresult.return_value = None
-    app.config.issuetracker_project = 'spam with eggs'
-    resolve()
-    app.emit_firstresult.assert_called_with(
-        'issuetracker-resolve-issue', 'spam with eggs', '10')

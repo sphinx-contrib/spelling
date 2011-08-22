@@ -197,6 +197,7 @@ class IssuesReferences(Transform):
 
     def apply(self):
         config = self.document.settings.env.config
+        project = config.issuetracker_project or config.project
         issue_pattern = config.issuetracker_issue_pattern
         if isinstance(issue_pattern, basestring):
             issue_pattern = re.compile(issue_pattern)
@@ -230,6 +231,7 @@ class IssuesReferences(Transform):
                 refnode = pending_xref()
                 refnode['reftarget'] = issue_id
                 refnode['reftype'] = 'issue'
+                refnode['project'] = project
                 refnode.append(nodes.Text(issuetext))
                 new_nodes.append(refnode)
             if not new_nodes:
@@ -245,7 +247,7 @@ class IssuesReferences(Transform):
             parent.replace(node, new_nodes)
 
 
-def make_issue_reference(content_node, issue):
+def make_issue_reference(issue, content_node):
     """
     Create a reference node for the given issue.
 
@@ -264,7 +266,7 @@ def make_issue_reference(content_node, issue):
     return reference
 
 
-def lookup_issue(issue_id, app):
+def lookup_issue(app, project, issue_id):
     """
     Lookup information for the given issue.
 
@@ -281,7 +283,6 @@ def lookup_issue(issue_id, app):
     cache = app.env.issuetracker_cache
     issue = cache.get(issue_id)
     if not issue:
-        project = app.config.issuetracker_project or app.config.project
         issue = app.emit_firstresult('issuetracker-resolve-issue',
                                      project, issue_id)
         cache[issue_id] = issue
@@ -294,11 +295,11 @@ def resolve_issue_references(app, doctree):
     """
     for node in doctree.traverse(pending_xref):
         if node['reftype'] == 'issue':
-            issue = lookup_issue(node['reftarget'], app)
+            issue = lookup_issue(app, node['project'], node['reftarget'])
             if not issue:
                 new_node = node[0]
             else:
-                new_node = make_issue_reference(node[0], issue)
+                new_node = make_issue_reference(issue, node[0])
             node.replace_self(new_node)
 
 
