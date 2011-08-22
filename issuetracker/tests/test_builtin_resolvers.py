@@ -43,7 +43,7 @@ SPHINX = 'birkenfeld/sphinx'
 SPHINX_URL = 'https://bitbucket.org/{project}/issue/{{id}}/'.format(
     project=SPHINX)
 
-DEBIAN_URL = 'http://bugs.debian.org/cgi-bin/bugreport.cgi?={id}'
+DEBIAN_URL = 'http://bugs.debian.org/cgi-bin/bugreport.cgi?bug={id}'
 
 PYTOX_URL = 'http://code.google.com/p/pytox/issues/detail?id={id}'
 
@@ -57,9 +57,7 @@ ISSUES = {
                                     uri=SPHINX_URL.format(id='733')))},
     'debian': {
         'fixed': ('ldb-tools', Issue(id='584227', closed=True,
-                                     uri=DEBIAN_URL.format(id='584227'))),
-        'open': ('xul-ext-sync', Issue(id='600890', closed=False,
-                                       uri=DEBIAN_URL.format(id='600890')))},
+                                     uri=DEBIAN_URL.format(id='584227')))},
     'github': {
         'closed': ('lunaryorn/pyudev',
                    Issue(id='2', closed=True,

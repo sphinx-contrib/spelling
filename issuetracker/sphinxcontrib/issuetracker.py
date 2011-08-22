@@ -103,12 +103,12 @@ def get_debian_issue_information(app, project, issue_id):
     import debianbts
     try:
         # get the bug
-        bug = debianbts.get_status(debianbts.get_bugs("bugs", issue_id))[0]
+        bug = debianbts.get_status(issue_id)[0]
     except IndexError:
         return None
 
     # check if issue matches project
-    if project not in [bug.package, bug.source]:
+    if project not in (bug.package, bug.source):
         return None
 
     uri = 'http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=%s' % issue_id
