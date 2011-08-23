@@ -155,11 +155,12 @@ def pytest_funcarg__dependencies(request):
     return TRACKER_DEPENDENCIES.get(tracker, [])
 
 
-def test_builtin_resolver(app, issue, dependencies):
+def test_builtin_resolver(app, issue_id, issue, dependencies):
     for dependency in dependencies:
         pytest.importorskip(dependency)
     app.build()
     doctree = pytest.get_doctree_as_pyquery(app, 'index')
+    assert app.env.issuetracker_cache == {issue_id: issue}
     if not issue:
         assert not doctree.is_('reference')
     else:
@@ -170,7 +171,7 @@ def test_builtin_resolver(app, issue, dependencies):
         is_closed = 'issue-closed' in classes
         assert issue.closed == is_closed
         assert 'reference-issue' in classes
-        assert reference.text() == '#{0}'.format(issue.id)
+        assert reference.text() == '#{0}'.format(issue_id)
 
 
 @pytest.mark.confoverrides(issuetracker='github')
