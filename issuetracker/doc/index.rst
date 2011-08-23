@@ -93,6 +93,17 @@ find issue references:
    instead parse references like ``gh-10``.  The pattern must contain only a
    single group, which matches the issue id.
 
+Normally the issue id as found in the text will be used as reference text.
+However, you can also use the title of the issue as issue text:
+
+.. confval:: issuetracker_expandtitle
+
+   If ``True``, use the issue title instead of the issue id as reference text.
+   If an issue has no title, the issue id is used instead, just like if this
+   configuration key was ``False``.
+
+   Defaults to ``False``.
+
 
 Customization
 -------------

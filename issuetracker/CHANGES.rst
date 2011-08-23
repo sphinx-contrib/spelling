@@ -14,6 +14,7 @@ Incompatible changes
 Other changes
 -------------
 
+- Added :confval:`issuetracker_expandtitle`
 - Use BitBucket API instead of scraping the BitBucket website
 - Builtin ``debian`` tracker is fully supported now
 

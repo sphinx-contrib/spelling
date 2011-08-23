@@ -68,28 +68,29 @@ def test_no_issue(build_app, doctree):
         'An issue id in normal text #10 should be transformed'
 
 
-@pytest.mark.issue(id='10', closed=False, uri='spam')
+@pytest.mark.issue(id='10', title='Spam', uri='spam', closed=False)
 def test_open_issue(build_app, doctree, issue):
     assert build_app.env.issuetracker_cache == {'10': issue}
-    reference = doctree.find('reference')
-    assert len(reference) == 1
-    assert reference.attr.refuri == 'spam'
-    assert reference.attr.classes == 'reference-issue'
-    assert reference.text() == '#10'
+    reference = pytest.assert_issue_reference(doctree, issue)
     assert reference.parents('list_item').text() == \
         'An issue id in normal text #10 should be transformed'
 
 
-@pytest.mark.issue(id='10', closed=True, uri='eggs')
+@pytest.mark.issue(id='10', title='Eggs', uri='eggs', closed=True)
 def test_closed_issue(build_app, doctree, issue):
     assert build_app.env.issuetracker_cache == {'10': issue}
-    reference = doctree.find('reference')
-    assert len(reference) == 1
-    assert reference.attr.refuri == 'eggs'
-    assert reference.attr.classes == 'issue-closed reference-issue'
-    assert reference.text() == '#10'
+    reference = pytest.assert_issue_reference(doctree, issue)
     assert reference.parents('list_item').text() == \
         'An issue id in normal text #10 should be transformed'
+
+
+@pytest.mark.confoverrides(issuetracker_expandtitle=True)
+@pytest.mark.issue(id='10', title='Eggs', uri='eggs', closed=True)
+def test_closed_issue_with_title(build_app, doctree, issue):
+    assert build_app.env.issuetracker_cache == {'10': issue}
+    reference = pytest.assert_issue_reference(doctree, issue, title=True)
+    assert reference.parents('list_item').text() == \
+        'An issue id in normal text Eggs should be transformed'
 
 
 def test_event_emitted(build_app, resolve):

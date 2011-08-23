@@ -55,7 +55,7 @@ from sphinx.util.osutil import copyfile
 from sphinx.util.console import bold
 
 
-Issue = namedtuple('Issue', 'id uri closed')
+Issue = namedtuple('Issue', 'id title uri closed')
 
 class TrackerConfig(namedtuple('_TrackerConfig', 'project')):
 
@@ -115,7 +115,8 @@ def lookup_github_issue(app, tracker_config, issue_id):
     url = GITHUB_API_URL.format(tracker_config, issue_id)
     issue = fetch_issue(app, url, output_format='json')
     if issue:
-        return Issue(id=issue_id, closed=issue['state'] == 'closed',
+        closed = issue['state'] == 'closed'
+        return Issue(id=issue_id, title=issue['title'], closed=closed,
                      uri=issue['html_url'])
 
 
@@ -131,7 +132,7 @@ def lookup_bitbucket_issue(app, tracker_config, issue_id):
     if issue:
         closed = issue['status'] not in ('new', 'open')
         uri=BITBUCKET_URL.format(tracker_config, issue_id)
-        return Issue(id=issue_id, closed=closed, uri=uri)
+        return Issue(id=issue_id, title=issue['title'], closed=closed, uri=uri)
 
 
 DEBIAN_URL = 'http://bugs.debian.org/cgi-bin/bugreport.cgi?bug={0}'
@@ -148,7 +149,7 @@ def lookup_debian_issue(app, tracker_config, issue_id):
     if tracker_config.project not in (bug.package, bug.source):
         return None
 
-    return Issue(id=issue_id, closed=bug.done,
+    return Issue(id=issue_id, title=bug.subject, closed=bug.done,
                  uri=DEBIAN_URL.format(issue_id))
 
 
@@ -174,7 +175,7 @@ def lookup_launchpad_issue(app, tracker_config, issue_id):
         # no matching task found
         return None
 
-    return Issue(id=issue_id, closed=bool(task.date_closed),
+    return Issue(id=issue_id, title=task.title, closed=bool(task.date_closed),
                  uri=LAUNCHPAD_URL.format(issue_id))
 
 
@@ -186,10 +187,13 @@ def lookup_google_code_issue(app, tracker_config, issue_id):
     url = GOOGLE_CODE_API_URL.format(tracker_config, issue_id)
     issue = fetch_issue(app, url, output_format='xml')
     if issue:
-        state = issue.find(
-            '{http://schemas.google.com/projecthosting/issues/2009}state')
+        ISSUE_NS = '{http://schemas.google.com/projecthosting/issues/2009}'
+        ATOM_NS = '{http://www.w3.org/2005/Atom}'
+        state = issue.find('{0}state'.format(ISSUE_NS))
+        title_node = issue.find('{0}title'.format(ATOM_NS))
+        title = title_node.text if title_node is not None else None
         closed = state is not None and state.text == 'closed'
-        return Issue(id=issue_id, closed=closed,
+        return Issue(id=issue_id, title=title, closed=closed,
                      uri=GOOGLE_CODE_URL.format(tracker_config, issue_id))
 
 
@@ -250,6 +254,7 @@ class IssuesReferences(Transform):
                 refnode['reftarget'] = issue_id
                 refnode['reftype'] = 'issue'
                 refnode['trackerconfig'] = tracker_config
+                refnode['expandtitle'] = config.issuetracker_expandtitle
                 refnode.append(nodes.Text(issuetext))
                 new_nodes.append(refnode)
             if not new_nodes:
@@ -318,7 +323,11 @@ def resolve_issue_references(app, doctree):
             if not issue:
                 new_node = node[0]
             else:
-                new_node = make_issue_reference(issue, node[0])
+                if node['expandtitle'] and issue.title:
+                    content_node = nodes.Text(issue.title)
+                else:
+                    content_node = node[0]
+                new_node = make_issue_reference(issue, content_node)
             node.replace_self(new_node)
 
 
@@ -356,6 +365,7 @@ def setup(app):
     app.add_config_value('issuetracker_issue_pattern',
                          re.compile(r'#(\d+)'), 'env')
     app.add_config_value('issuetracker_project', None, 'env')
+    app.add_config_value('issuetracker_expandtitle', False, 'env')
     app.add_config_value('issuetracker', None, 'env')
     app.connect(b'builder-inited', add_stylesheet)
     app.connect(b'builder-inited', init_cache)

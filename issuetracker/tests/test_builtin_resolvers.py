@@ -49,38 +49,45 @@ PYTOX_URL = 'http://code.google.com/p/pytox/issues/detail?id={0}'
 
 ISSUES = {
     'bitbucket': {
-        'resolved': (SPHINX, Issue(id='478', closed=True,
-                                   uri=SPHINX_URL.format('478'))),
-        'invalid': (SPHINX, Issue(id='327', closed=True,
-                                  uri=SPHINX_URL.format('327'))),
-        'duplicate': (SPHINX, Issue(id='733', closed=True,
-                                    uri=SPHINX_URL.format('733'))),
+        'resolved': (SPHINX, Issue(
+            id='478', title='Adapt py:decorator from Python docs', closed=True,
+            uri=SPHINX_URL.format('478'))),
+        'invalid': (SPHINX, Issue(
+            id='327', title='Spaces at the end of console messages',
+            closed=True, uri=SPHINX_URL.format('327'))),
+        'duplicate': (SPHINX, Issue(
+            id='733', title='byte/str conversion fails on Python 3.2',
+            closed=True, uri=SPHINX_URL.format('733'))),
         'no project': (TrackerConfig('lunar/foobar'), '10'),
         'no issue': (SPHINX, '10000')},
     'debian': {
         'fixed': (TrackerConfig('ldb-tools'),
-                  Issue(id='584227', closed=True,
-                        uri=DEBIAN_URL.format('584227'))),
+                  Issue(id='584227', title='ldb-tools: missing ldb(7) manpage',
+                        closed=True, uri=DEBIAN_URL.format('584227'))),
         'no project': (TrackerConfig('release.debian.org'), '1')},
     'github': {
         'closed': (TrackerConfig('lunaryorn/pyudev'),
-                   Issue(id='2', closed=True,
+                   Issue(id='2', title=u'python 3 support', closed=True,
                          uri='https://github.com/lunaryorn/pyudev/issues/2')),
         'no project': (TrackerConfig('lunaryorn/foobar'), '10'),
         'no issue': (TrackerConfig('lunaryorn/pyudev'), '1000')},
     'google code': {
-        'fixed': (PYTOX, Issue(id='2', closed=True,
-                               uri=PYTOX_URL.format('2'))),
-        'invalid': (PYTOX, Issue(id='5', closed=True,
-                                 uri=PYTOX_URL.format('5'))),
-        'wontfix': (PYTOX, Issue(id='6', closed=True,
-                                 uri=PYTOX_URL.format('6'))),
+        'fixed': (PYTOX, Issue(
+            id='2', title='Hudson exists with SUCCESS status even if tox '
+            'failed with ERROR', closed=True, uri=PYTOX_URL.format('2'))),
+        'invalid': (PYTOX, Issue(
+            id='5', title='0.7: "error: File exists"', closed=True,
+            uri=PYTOX_URL.format('5'))),
+        'wontfix': (PYTOX, Issue(
+            id='6', title='Copy modules from site packages', closed=True,
+            uri=PYTOX_URL.format('6'))),
         'no issue': (PYTOX, '1000'),
         'no project': (TrackerConfig('foobar'), '1')},
     'launchpad': {
-        'closed': (TrackerConfig('inkscape'),
-                   Issue('647789', closed=True,
-                         uri='https://bugs.launchpad.net/bugs/647789'))},
+        'closed': (TrackerConfig('inkscape'), Issue(
+            '647789', title='tries to install file(s) outside of '
+            './configure\'s --prefix', closed=True,
+            uri='https://bugs.launchpad.net/bugs/647789'))},
 }
 
 
@@ -97,7 +104,8 @@ def pytest_funcarg__tracker(request):
     tracker, testname = request.param
     tracker_config = ISSUES[tracker][testname][0]
     request.applymarker(pytest.mark.confoverrides(
-        issuetracker=tracker, issuetracker_project=tracker_config.project))
+        issuetracker=tracker, issuetracker_project=tracker_config.project,
+        issuetracker_expandtitle=True))
     return tracker
 
 
@@ -164,14 +172,7 @@ def test_builtin_resolver(app, issue_id, issue, dependencies):
     if not issue:
         assert not doctree.is_('reference')
     else:
-        reference = doctree.find('reference')
-        assert len(reference) == 1
-        assert reference.attr.refuri == issue.uri
-        classes = reference.attr.classes.split(' ')
-        is_closed = 'issue-closed' in classes
-        assert issue.closed == is_closed
-        assert 'reference-issue' in classes
-        assert reference.text() == '#{0}'.format(issue_id)
+        pytest.assert_issue_reference(doctree, issue, title=True)
 
 
 @pytest.mark.confoverrides(issuetracker='github')

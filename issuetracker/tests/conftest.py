@@ -41,6 +41,22 @@ from sphinxcontrib.issuetracker import IssuesReferences
 TEST_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
 
+def assert_issue_reference(doctree, issue, title=False):
+    __tracebackhide__ = True
+    reference = doctree.find('reference')
+    assert len(reference) == 1
+    assert reference.attr.refuri == issue.uri
+    classes = reference.attr.classes.split(' ')
+    is_closed = 'issue-closed' in classes
+    assert 'reference-issue' in classes
+    assert issue.closed == is_closed
+    if title:
+        assert reference.text() == issue.title
+    else:
+        assert reference.text() == '#{0}'.format(issue.id)
+    return reference
+
+
 def get_doctree_as_xml(app, docname):
     return etree.fromstring(str(app.env.get_doctree(docname)))
 
@@ -52,7 +68,8 @@ def get_doctree_as_pyquery(app, docname):
 
 def pytest_namespace():
     return dict((f.__name__, f) for f in
-                (get_doctree_as_xml, get_doctree_as_pyquery))
+                (get_doctree_as_xml, get_doctree_as_pyquery,
+                 assert_issue_reference))
 
 
 def pytest_configure(config):
