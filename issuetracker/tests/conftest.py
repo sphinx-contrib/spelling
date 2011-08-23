@@ -26,32 +26,72 @@
 from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
-import re
+import os
 
-from mock import Mock, MagicMock
+import py
+from lxml import etree
+from pyquery import PyQuery
+from sphinx.application import Sphinx
+from sphinx.builders.html import StandaloneHTMLBuilder
+from sphinx.environment import SphinxStandaloneReader
 
-
-def pytest_funcarg__config(request):
-    config = Mock(name='config')
-    config.project = 'issuetracker'
-    config.issuetracker = 'spamtracker'
-    config.issuetracker_project = None
-    config.issuetracker_issue_pattern = re.compile(r'#(\d+)')
-    return config
+from sphinxcontrib.issuetracker import IssuesReferences
 
 
-def pytest_funcarg__cache(request):
-    cache = MagicMock(name='issue_cache')
-    # fake cache misses to always trigger a call to the fallback function
-    cache.get = Mock(name='issue_cache.get', return_value=None)
-    return cache
+TEST_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
+
+
+def get_doctree_as_xml(app, docname):
+    return etree.fromstring(str(app.env.get_doctree(docname)))
+
+
+def get_doctree_as_pyquery(app, docname):
+    tree = get_doctree_as_xml(app, docname)
+    return PyQuery(tree)
+
+
+def pytest_namespace():
+    return dict((f.__name__, f) for f in
+                (get_doctree_as_xml, get_doctree_as_pyquery))
+
+
+def pytest_configure(config):
+    config.srcdir = py.path.local(TEST_DIRECTORY).join('testdoc')
+
+
+def pytest_funcarg__srcdir(request):
+    return request.getfuncargvalue('pytestconfig').srcdir
+
+
+def pytest_funcarg__outdir(request):
+    tmpdir = request.getfuncargvalue('tmpdir')
+    return tmpdir.join('html')
+
+
+def pytest_funcarg__doctreedir(request):
+    tmpdir = request.getfuncargvalue('tmpdir')
+    return tmpdir.join('doctrees')
+
+
+def reset_global_state():
+    """
+    Remove global state setup by Sphinx.
+
+    Makes sure that we got a fresh test application for each test.
+    """
+    SphinxStandaloneReader.transforms.remove(IssuesReferences)
+    StandaloneHTMLBuilder.css_files.remove('_static/issuetracker.css')
 
 
 def pytest_funcarg__app(request):
-    app = Mock(name='application')
-    config = request.getfuncargvalue('config')
-    app.config = config
-    app.env = Mock('environment')
-    app.env.config = config
-    app.env.issuetracker_cache = request.getfuncargvalue('cache')
+    srcdir = request.getfuncargvalue('srcdir')
+    outdir = request.getfuncargvalue('outdir')
+    doctreedir = request.getfuncargvalue('doctreedir')
+    confoverrides = request.keywords.get('confoverrides')
+    if confoverrides:
+        confoverrides = confoverrides.kwargs
+    app = Sphinx(str(srcdir), str(srcdir), str(outdir), str(doctreedir),
+                 'html',confoverrides=confoverrides, status=None, warning=None,
+                 freshenv=True)
+    request.addfinalizer(reset_global_state)
     return app

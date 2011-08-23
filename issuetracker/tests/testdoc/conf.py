@@ -23,43 +23,25 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import (print_function, division, unicode_literals,
-                        absolute_import)
+"""
+    Test configuration.
 
-from functools import partial
+    .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
+"""
 
-import mock
+extensions = ['sphinxcontrib.issuetracker']
 
-from sphinxcontrib.issuetracker import lookup_issue
+source_suffix = '.rst'
 
+master_doc = 'index'
 
-def pytest_funcarg__issue_id(request):
-    return '10'
+project = u'issuetracker-test'
+copyright = u'2011, foo'
 
+version = '1'
+release = '1'
 
-def pytest_funcarg__issue_info(request):
-    return mock.sentinel.issue_info
+exclude_patterns = []
 
-
-def pytest_funcarg__lookup(request):
-    app = request.getfuncargvalue('app')
-    project = app.config.project
-    issue_id = request.getfuncargvalue('issue_id')
-    return partial(lookup_issue, app, project, issue_id)
-
-
-def test_lookup_cache_miss(app, lookup, cache, issue_id, issue_info):
-    app.emit_firstresult.return_value = issue_info
-    assert lookup() is issue_info
-    cache.get.assert_called_with(issue_id)
-    cache.__setitem__.assert_called_with(issue_id, issue_info)
-    app.emit_firstresult.assert_called_with(
-        'issuetracker-resolve-issue', app.config.project, issue_id)
-
-
-def test_lookup_cache_hit(app, lookup, cache, issue_id, issue_info):
-    cache.get.return_value = issue_info
-    assert lookup() is issue_info
-    cache.get.assert_called_with(issue_id)
-    assert not cache.__setitem__.called
-    assert not app.emit_firstresult.called
+pygments_style = 'sphinx'
+html_theme = 'default'

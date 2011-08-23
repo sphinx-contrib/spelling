@@ -28,7 +28,6 @@ from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
 import pytest
-from mock import Mock
 
 from sphinxcontrib.issuetracker import (Issue, BUILTIN_ISSUE_TRACKERS,
                                         TrackerConfig)
@@ -55,22 +54,29 @@ ISSUES = {
         'invalid': (SPHINX, Issue(id='327', closed=True,
                                   uri=SPHINX_URL.format('327'))),
         'duplicate': (SPHINX, Issue(id='733', closed=True,
-                                    uri=SPHINX_URL.format('733')))},
+                                    uri=SPHINX_URL.format('733'))),
+        'no project': (TrackerConfig('lunar/foobar'), '10'),
+        'no issue': (SPHINX, '10000')},
     'debian': {
         'fixed': (TrackerConfig('ldb-tools'),
                   Issue(id='584227', closed=True,
-                        uri=DEBIAN_URL.format('584227')))},
+                        uri=DEBIAN_URL.format('584227'))),
+        'no project': (TrackerConfig('release.debian.org'), '1')},
     'github': {
         'closed': (TrackerConfig('lunaryorn/pyudev'),
                    Issue(id='2', closed=True,
-                         uri='https://github.com/lunaryorn/pyudev/issues/2'))},
+                         uri='https://github.com/lunaryorn/pyudev/issues/2')),
+        'no project': (TrackerConfig('lunaryorn/foobar'), '10'),
+        'no issue': (TrackerConfig('lunaryorn/pyudev'), '1000')},
     'google code': {
         'fixed': (PYTOX, Issue(id='2', closed=True,
                                uri=PYTOX_URL.format('2'))),
         'invalid': (PYTOX, Issue(id='5', closed=True,
                                  uri=PYTOX_URL.format('5'))),
         'wontfix': (PYTOX, Issue(id='6', closed=True,
-                                 uri=PYTOX_URL.format('6')))},
+                                 uri=PYTOX_URL.format('6'))),
+        'no issue': (PYTOX, '1000'),
+        'no project': (TrackerConfig('foobar'), '1')},
     'launchpad': {
         'closed': (TrackerConfig('inkscape'),
                    Issue('647789', closed=True,
@@ -78,60 +84,102 @@ ISSUES = {
 }
 
 
-MISSING_ISSUES = {
-    'bitbucket': {'non-existing project': (TrackerConfig('lunar/foobar'), '10'),
-                  'non-existing issue': (SPHINX, '10000')},
-    'debian': {'no such project':
-               (TrackerConfig('release.debian.org'), '1')},
-    'github': {'non-existing project':
-               (TrackerConfig('lunaryorn/foobar'), '10'),
-               'non-existing issue':
-               (TrackerConfig('lunaryorn/pyudev'), '1000')},
-    'google code': {'non-existing issue': (PYTOX, '1000'),
-                    'non-existing project': (TrackerConfig('foobar'), '1')},
-    'launchpad': {}
-}
-
-
 def pytest_generate_tests(metafunc):
-    if not metafunc.function.__name__.startswith('test_resolver'):
+    if not metafunc.function == test_builtin_resolver:
         return
-    for tracker in sorted(BUILTIN_ISSUE_TRACKERS):
-        resolver = BUILTIN_ISSUE_TRACKERS[tracker]
-        if metafunc.function == test_resolver_missing_issue:
-            issues = MISSING_ISSUES.get(tracker)
-        else:
-            issues = ISSUES.get(tracker)
-        if not issues:
-            continue
-        for test_id in sorted(issues):
-            trackerconfig, issue = issues[test_id]
-            dependencies = TRACKER_DEPENDENCIES.get(tracker, [])
-            args = dict(resolver=resolver, trackerconfig=trackerconfig,
-                        issue=issue, dependencies=dependencies)
-            metafunc.addcall(funcargs=args,
-                             id='{0},{1}'.format(tracker,test_id))
+    for tracker, tests in ISSUES.iteritems():
+        for testname in tests:
+            metafunc.addcall(param=(tracker, testname),
+                             id='{0},{1}'.format(tracker, testname))
 
 
-def test_resolver_existing_issue(app, resolver, trackerconfig, issue,
-                                 dependencies):
+def pytest_funcarg__tracker(request):
+    tracker, testname = request.param
+    tracker_config = ISSUES[tracker][testname][0]
+    request.applymarker(pytest.mark.confoverrides(
+        issuetracker=tracker, issuetracker_project=tracker_config.project))
+    return tracker
+
+
+def pytest_funcarg__testname(request):
+    _, testname = request.param
+    return testname
+
+
+def pytest_funcarg__testdata(request):
+    tracker = request.getfuncargvalue('tracker')
+    testname = request.getfuncargvalue('testname')
+    return ISSUES[tracker][testname]
+
+
+def pytest_funcarg__issue_id(request):
+    testdata = request.getfuncargvalue('testdata')
+    _, issue = testdata
+    if isinstance(issue, basestring):
+        return issue
+    else:
+        return issue.id
+
+
+def pytest_funcarg__issue(request):
+    testdata = request.getfuncargvalue('testdata')
+    _, issue = testdata
+    if isinstance(issue, basestring):
+        return None
+    else:
+        return issue
+
+
+def pytest_funcarg__srcdir(request):
+    old_srcdir = request.getfuncargvalue('pytestconfig').srcdir
+    if not hasattr(request, 'param'):
+        # no change, if the test isn't parametrized
+        return old_srcdir
+    tmpdir = request.getfuncargvalue('tmpdir')
+    srcdir = tmpdir.join('src')
+    srcdir.ensure(dir=True)
+    old_srcdir.join('conf.py').copy(srcdir)
+    index = srcdir.join('index.rst')
+    tracker = request.getfuncargvalue('tracker')
+    issue_id = request.getfuncargvalue('issue_id')
+    index.write("""\
+Tracker test
+============
+
+Issue #{0} in tracker *{1}*""".format(issue_id, tracker))
+    return srcdir
+
+
+def pytest_funcarg__dependencies(request):
+    tracker = request.getfuncargvalue('tracker')
+    return TRACKER_DEPENDENCIES.get(tracker, [])
+
+
+def test_builtin_resolver(app, issue, dependencies):
     for dependency in dependencies:
         pytest.importorskip(dependency)
-    resolved_issue = resolver(app, trackerconfig, issue.id)
-    assert resolved_issue == issue
+    app.build()
+    doctree = pytest.get_doctree_as_pyquery(app, 'index')
+    if not issue:
+        assert not doctree.is_('reference')
+    else:
+        reference = doctree.find('reference')
+        assert len(reference) == 1
+        assert reference.attr.refuri == issue.uri
+        classes = reference.attr.classes.split(' ')
+        is_closed = 'issue-closed' in classes
+        assert issue.closed == is_closed
+        assert 'reference-issue' in classes
+        assert reference.text() == '#{0}'.format(issue.id)
 
 
-def test_resolver_missing_issue(app, resolver, trackerconfig, issue,
-                                dependencies):
-    for dependency in dependencies:
-        pytest.importorskip(dependency)
-    resolved_issue = resolver(app, trackerconfig, issue)
-    assert resolved_issue is None
-
-
-def test_github_bitbucket_missing_slash(app):
-    trackerconfig = TrackerConfig('foobar')
+@pytest.mark.confoverrides(issuetracker='github')
+def test_github_missing_slash(app):
     with pytest.raises(ValueError) as excinfo:
-        BUILTIN_ISSUE_TRACKERS['github'](app, trackerconfig, '10')
+        app.build()
+
+
+@pytest.mark.confoverrides(issuetracker='bitbucket')
+def test_bitbucket_missing_slash(app):
     with pytest.raises(ValueError) as excinfo:
-        BUILTIN_ISSUE_TRACKERS['bitbucket'](app, trackerconfig, '10')
+        app.build()

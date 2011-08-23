@@ -26,10 +26,10 @@
 from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
-from __future__ import (print_function, division, unicode_literals,
-                        absolute_import)
-
 import re
+
+
+BUILTIN_TRACKER_NAME_PATTERN = re.compile('lookup_(.*)_issue')
 
 import pytest
 
@@ -37,17 +37,14 @@ from sphinxcontrib import issuetracker
 
 
 def test_builtin_issue_trackers():
-    for tracker in ('github', 'bitbucket',
-                    'launchpad', 'google code', 'debian'):
-        assert tracker in issuetracker.BUILTIN_ISSUE_TRACKERS
-
-
-def test_auto_connect_builtin_issue_resolvers_known_tracker(app):
-    app.config.issuetracker = 'bitbucket'
-    issuetracker.connect_builtin_tracker(app)
-    app.connect.assert_called_with(
-        'issuetracker-resolve-issue',
-        issuetracker.lookup_bitbucket_issue)
+    trackers = dict(issuetracker.BUILTIN_ISSUE_TRACKERS)
+    for attr in dir(issuetracker):
+        match = BUILTIN_TRACKER_NAME_PATTERN.match(attr)
+        if match:
+            tracker_name = match.group(1).replace('_', ' ')
+            assert tracker_name in trackers
+            trackers.pop(tracker_name)
+    assert not trackers
 
 
 def test_auto_connect_builtin_issue_resolvers_unknown_tracker(app):
@@ -56,30 +53,11 @@ def test_auto_connect_builtin_issue_resolvers_unknown_tracker(app):
         issuetracker.connect_builtin_tracker(app)
 
 
-def test_auto_connect_builtin_issue_resolvers_no_tracker(app):
-    app.config.issuetracker = None
-    issuetracker.connect_builtin_tracker(app)
-    assert not app.connect.called
-
-
 def test_add_stylesheet(app):
-    issuetracker.add_stylesheet(app)
-    app.add_stylesheet.assert_called_with('issuetracker.css')
+    from sphinx.builders.html import StandaloneHTMLBuilder
+    assert '_static/issuetracker.css' in StandaloneHTMLBuilder.css_files
 
 
-def test_setup(app):
-    issuetracker.setup(app)
-    app.require_sphinx.assert_called_with('1.0')
-    app.add_transform.assert_called_with(issuetracker.IssuesReferences)
-    app.add_event.assert_called_with('issuetracker-resolve-issue')
-    assert app.connect.call_args_list == [
-        (('builder-inited',
-          issuetracker.connect_builtin_tracker), {}),
-        (('builder-inited', issuetracker.add_stylesheet), {}),
-        (('builder-inited', issuetracker.init_cache), {}),
-        (('doctree-read', issuetracker.resolve_issue_references), {}),
-        (('build-finished', issuetracker.copy_stylesheet), {})]
-    assert app.add_config_value.call_args_list == [
-        (('issuetracker_issue_pattern', re.compile(r'#(\d+)'), 'env'), {}),
-        (('issuetracker_project', None, 'env'), {}),
-        (('issuetracker', None, 'env'), {})]
+def test_transform_added(app):
+    from sphinx.environment import SphinxStandaloneReader
+    assert issuetracker.IssuesReferences in SphinxStandaloneReader.transforms

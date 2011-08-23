@@ -36,86 +36,10 @@ from sphinx.addnodes import pending_xref
 from sphinxcontrib import issuetracker
 
 
-def assert_text(node, text):
-    __tracebackhide__ = True
-    assert isinstance(node, nodes.Text)
-    assert node.astext() == text
-
-
-def assert_xref(node, target):
-    __tracebackhide__ = True
-    assert isinstance(node, pending_xref)
-    assert_text(node[0], '#{0}'.format(target))
-    assert node['reftype'] == 'issue'
-    assert node['trackerconfig'] == issuetracker.TrackerConfig('issuetracker')
-    assert node['reftarget'] == target
-
-
-def pytest_funcarg__env(request):
-    env = Mock(name='environment')
-    env.config = request.getfuncargvalue('config')
-    return env
-
-
-def pytest_funcarg__doc(request):
-    doc = nodes.paragraph()
-    doc.settings = Mock(name='settings')
-    doc.settings.language_code = ''
-    doc.settings.env = request.getfuncargvalue('env')
-    doc.reporter = Reporter('face_source', 0, 0)
-    return doc
-
-
-class TestIssueReferences(object):
-
-    def transform(self, doc):
-        transformer = issuetracker.IssuesReferences(doc)
-        transformer.apply()
-
-    def test_reference_in_paragraph(self, doc):
-        doc.append(nodes.Text('Transformed #1 inside a normal paragraph'))
-        self.transform(doc)
-        assert_text(doc[0], 'Transformed ')
-        assert_xref(doc[1], '1')
-        assert_text(doc[2], ' inside a normal paragraph')
-
-    def test_reference_in_emphasis(self, doc):
-        em = nodes.emphasis()
-        em.append(nodes.Text('Transformed #2 inside emphasis'))
-        doc.append(em)
-        self.transform(doc)
-        assert_text(em[0], 'Transformed ')
-        assert_xref(em[1], '2')
-        assert_text(em[2], ' inside emphasis')
-
-    def test_reference_in_literal(self, doc):
-        lit = nodes.literal()
-        text = 'Not transformed #3 inside inline literal'
-        lit.append(nodes.Text(text))
-        doc.append(lit)
-        self.transform(doc)
-        assert_text(lit[0], text)
-
-    def test_reference_in_literal_block(self, doc):
-        block = nodes.literal_block()
-        text = 'Not transformed #4 inside literal block'
-        block.append(nodes.Text(text))
-        doc.append(block)
-        self.transform(doc)
-        assert_text(block[0], text)
-
-    def test_invalid_reference(self, doc):
-        text = 'Not transformed #abc inside a normal paragraph'
-        doc.append(nodes.Text(text))
-        self.transform(doc)
-        assert_text(doc[0], text)
-
-    def test_too_many_groups(self, doc, config):
-        doc.append(nodes.Text('example reference #1'))
-        config.issuetracker_issue_pattern = r'(#)(\d+)'
-        transformer = issuetracker.IssuesReferences(doc)
-        with pytest.raises(ValueError) as exc_info:
-            transformer.apply()
-        error = exc_info.value
-        assert str(error) == ('issuetracker_issue_pattern must have '
-                              'exactly one group: {0!r}'.format((u'#', u'1')))
+@pytest.mark.confoverrides(issuetracker_issue_pattern=r'(#)(\d+)')
+def test_too_many_groups(app):
+    with pytest.raises(ValueError) as excinfo:
+        app.build()
+    error = excinfo.value
+    assert str(error) == ('issuetracker_issue_pattern must have '
+                          'exactly one group: {0!r}'.format((u'#', u'10')))

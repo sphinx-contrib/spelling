@@ -26,99 +26,71 @@
 from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
-from functools import partial
+import pytest
+from mock import Mock
 
-from docutils import nodes
-from sphinx.addnodes import pending_xref
-
-from sphinxcontrib.issuetracker import (Issue, resolve_issue_references,
-                                        TrackerConfig)
-
-
-def assert_cache_ignored(app):
-    cache = app.env.issuetracker_cache
-    assert not cache.get.called
-    assert not cache.__setitem__.called
-
-
-def assert_cache_visited(app, issue_id, issue_info):
-    cache = app.env.issuetracker_cache
-    cache.get.assert_called_with(issue_id)
-    cache.__setitem__.assert_called_with(issue_id, issue_info)
-
-
-def assert_issue_reference(node, uri, is_closed):
-    assert isinstance(node, nodes.reference)
-    assert node['refuri'] == uri
-    assert 'reference-issue' in node['classes']
-    if is_closed:
-        assert 'issue-closed' in node['classes']
-    else:
-        assert 'issue-closed' not in node['classes']
-
-
-def pytest_funcarg__issue_id(request):
-    return '10'
-
-
-def pytest_funcarg__contnode(request):
-    return nodes.Text('#{0}'.format(request.getfuncargvalue('issue_id')))
-
-
-def pytest_funcarg__refnode(request):
-    refnode = pending_xref()
-    refnode['reftype'] = 'issue'
-    refnode['reftarget'] = request.getfuncargvalue('issue_id')
-    config = request.getfuncargvalue('config')
-    refnode['trackerconfig'] = TrackerConfig(config.project)
-    refnode.append(request.getfuncargvalue('contnode'))
-    return refnode
-
-
-def pytest_funcarg__doc(request):
-    doc = nodes.paragraph()
-    doc.append(request.getfuncargvalue('refnode'))
-    return doc
+from sphinxcontrib.issuetracker import TrackerConfig, Issue
 
 
 def pytest_funcarg__resolve(request):
     app = request.getfuncargvalue('app')
-    doc = request.getfuncargvalue('doc')
-    return partial(resolve_issue_references, app, doc)
+    resolve = Mock(name='resolve', return_value=None)
+    app.connect(b'issuetracker-resolve-issue', resolve)
+    return resolve
 
 
-def test_resolve_unknown_reftype(app, resolve, refnode, doc):
-    refnode['reftype'] = 'spam'
-    resolve()
-    assert isinstance(doc[0], pending_xref)
-    assert_cache_ignored(app)
+def pytest_funcarg__issue(request):
+    issue = request.keywords.get('issue')
+    if issue:
+        return Issue(**issue.kwargs)
+    return None
 
 
-def test_resolve_no_issue(app, resolve, doc, contnode, issue_id):
-    app.emit_firstresult.return_value = None
-    resolve()
-    assert doc[0] is contnode
-    assert_cache_visited(app, issue_id, None)
+def pytest_funcarg__build_app(request):
+    app = request.getfuncargvalue('app')
+    issue = request.getfuncargvalue('issue')
+    resolve = request.getfuncargvalue('resolve')
+    resolve.return_value = issue
+    app.build()
+    return app
 
 
-def test_resolve_open_issue(app, resolve, doc, contnode, issue_id):
-    issue = Issue(id=issue_id, closed=False, uri='spam')
-    app.emit_firstresult.return_value = issue
-    resolve()
-    assert_issue_reference(doc[0], 'spam', False)
-    assert_cache_visited(app, issue_id, issue)
+def pytest_funcarg__doctree(request):
+    build_app = request.getfuncargvalue('build_app')
+    doctree = pytest.get_doctree_as_pyquery(build_app, 'index')
+    return doctree
 
 
-def test_resolve_closed_issue(app, resolve, doc, contnode, issue_id):
-    issue = Issue(id=issue_id, closed=True, uri='spam')
-    app.emit_firstresult.return_value = issue
-    resolve()
-    assert_issue_reference(doc[0], 'spam', True)
-    assert_cache_visited(app, issue_id, issue)
+def test_resolve_no_issue(build_app, doctree):
+    assert build_app.env.issuetracker_cache == {'10': None}
+    assert not doctree.is_('reference')
 
 
-def test_event_emitted(app, resolve):
-    app.emit_firstresult.return_value = None
-    resolve()
-    app.emit_firstresult.assert_called_with(
-        'issuetracker-resolve-issue', TrackerConfig('issuetracker'), '10')
+@pytest.mark.issue(id='10', closed=False, uri='spam')
+def test_resolve_open_issue(build_app, doctree, issue):
+    assert build_app.env.issuetracker_cache == {'10': issue}
+    reference = doctree.find('reference')
+    assert len(reference) == 1
+    assert reference.attr.refuri == 'spam'
+    assert reference.attr.classes == 'reference-issue'
+    assert reference.text() == '#10'
+    assert reference.parents('list_item').text() == \
+        'An issue id in normal text #10 should be transformed'
+
+
+@pytest.mark.issue(id='10', closed=True, uri='eggs')
+def test_resolve_closed_issue(build_app, doctree, issue):
+    assert build_app.env.issuetracker_cache == {'10': issue}
+    reference = doctree.find('reference')
+    assert len(reference) == 1
+    assert reference.attr.refuri == 'eggs'
+    assert reference.attr.classes == 'issue-closed reference-issue'
+    assert reference.text() == '#10'
+    assert reference.parents('list_item').text() == \
+        'An issue id in normal text #10 should be transformed'
+
+
+def test_event_emitted(build_app, resolve):
+    assert resolve.call_count == 1
+    resolve.assert_called_with(
+        build_app, TrackerConfig.from_sphinx_config(build_app.config), '10')
