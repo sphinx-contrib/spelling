@@ -66,7 +66,9 @@ Add ``sphinxcontrib.issuetracker`` to the configuration value
       In case of BitBucket and GitHub, the project name must include the name
       of the user or organization, the project belongs to.  For instance, the
       project name of Sphinx_ itself is not just ``sphinx``, but
-      ``birkenfeld/sphinx`` instead.
+      ``birkenfeld/sphinx`` instead.  If the user name is missing, a
+      :exc:`~exceptions.ValueError` will be raised when an issue is to be
+      resolved the first time.
 
    .. versionchanged:: 0.8
       Project names must include the user name now.
