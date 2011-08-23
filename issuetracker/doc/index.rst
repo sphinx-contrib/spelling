@@ -99,17 +99,29 @@ If you use an issue tracker that is not supported by this extension, then set
 :confval:`issuetracker` to ``None`` or leave it unset, and connect your own
 callback to the event :event:`issuetracker-resolve-issue`:
 
-.. event:: issuetracker-resolve-issue(app, project, issue_id)
+.. event:: issuetracker-resolve-issue(app, tracker_config, issue_id)
 
    Emitted if a issue reference is to be resolved.
 
-   ``app`` is the Sphinx application object.  ``project`` is the issuetracker
-   project to query (see :confval:`issuetracker_project`).  ``issue_id`` is the
-   issue id as string.
+   ``app`` is the Sphinx application object.  ``tracker_config`` is the
+   issuetracker configuration as :class:`TrackerConfig` object.  ``issue_id``
+   is the issue id as string.
 
    A callback should return an :class:`Issue` object containing the resolved
    issue, or ``None`` if it could not resolve the issue.  In the latter case
    other resolvers connected to the event may be invoked by Sphinx.
+
+   .. versionchanged:: 0.8
+      Replaced ``project`` argument with ``tracker_config``
+
+.. class:: TrackerConfig
+
+   A :func:`~collections.namedtuple` providing tracker configuration to
+   callbacks.
+
+   .. attribute:: project
+
+      The project name as string
 
 .. class:: Issue
 
