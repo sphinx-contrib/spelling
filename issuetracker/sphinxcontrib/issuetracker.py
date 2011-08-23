@@ -60,7 +60,7 @@ Issue = namedtuple('Issue', 'id uri closed')
 
 GITHUB_API_URL = 'https://api.github.com/repos/{project}/issues/{id}'
 
-def get_github_issue_information(app, project, issue_id):
+def lookup_github_issue(app, project, issue_id):
     if '/' not in project:
         app.warn('username missing in project {0!r}'.format(project))
         return None
@@ -86,7 +86,7 @@ BITBUCKET_URL = 'https://bitbucket.org/{project}/issue/{id}/'
 BITBUCKET_API_URL = ('https://api.bitbucket.org/1.0/repositories/'
                      '{project}/issues/{id}/')
 
-def get_bitbucket_issue_information(app, project, issue_id):
+def lookup_bitbucket_issue(app, project, issue_id):
     if '/' not in project:
         app.warn('username missing in project {0!r}'.format(project))
         return None
@@ -110,7 +110,7 @@ def get_bitbucket_issue_information(app, project, issue_id):
 
 DEBIAN_URL = 'http://bugs.debian.org/cgi-bin/bugreport.cgi?bug={id}'
 
-def get_debian_issue_information(app, project, issue_id):
+def lookup_debian_issue(app, project, issue_id):
     import debianbts
     try:
         # get the bug
@@ -128,7 +128,7 @@ def get_debian_issue_information(app, project, issue_id):
 
 LAUNCHPAD_URL = 'https://bugs.launchpad.net/bugs/{id}'
 
-def get_launchpad_issue_information(app, project, issue_id):
+def lookup_launchpad_issue(app, project, issue_id):
     launchpad = getattr(app.env, 'issuetracker_launchpad', None)
     if not launchpad:
         from launchpadlib.launchpad import Launchpad
@@ -156,7 +156,7 @@ GOOGLE_CODE_URL = 'http://code.google.com/p/{project}/issues/detail?id={id}'
 GOOGLE_CODE_API_URL = ('http://code.google.com/feeds/issues/p/'
                        '{project}/issues/full/{id}')
 
-def get_google_code_issue_information(app, project, issue_id):
+def lookup_google_code_issue(app, project, issue_id):
     from xml.etree import cElementTree as etree
 
     issue_url = GOOGLE_CODE_API_URL.format(project=project, id=issue_id)
@@ -178,11 +178,11 @@ def get_google_code_issue_information(app, project, issue_id):
 
 
 BUILTIN_ISSUE_TRACKERS = {
-    'github': get_github_issue_information,
-    'bitbucket': get_bitbucket_issue_information,
-    'debian': get_debian_issue_information,
-    'launchpad': get_launchpad_issue_information,
-    'google code': get_google_code_issue_information,
+    'github': lookup_github_issue,
+    'bitbucket': lookup_bitbucket_issue,
+    'debian': lookup_debian_issue,
+    'launchpad': lookup_launchpad_issue,
+    'google code': lookup_google_code_issue,
     }
 
 
@@ -303,7 +303,7 @@ def resolve_issue_references(app, doctree):
             node.replace_self(new_node)
 
 
-def auto_connect_builtin_issue_resolvers(app):
+def connect_builtin_tracker(app):
     if app.config.issuetracker:
         app.connect(b'issuetracker-resolve-issue',
                     BUILTIN_ISSUE_TRACKERS[app.config.issuetracker.lower()])
@@ -333,7 +333,7 @@ def setup(app):
     app.require_sphinx('1.0')
     app.add_transform(IssuesReferences)
     app.add_event(b'issuetracker-resolve-issue')
-    app.connect(b'builder-inited', auto_connect_builtin_issue_resolvers)
+    app.connect(b'builder-inited', connect_builtin_tracker)
     app.add_config_value('issuetracker_issue_pattern',
                          re.compile(r'#(\d+)'), 'env')
     app.add_config_value('issuetracker_project', None, 'env')

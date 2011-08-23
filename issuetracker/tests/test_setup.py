@@ -44,21 +44,21 @@ def test_builtin_issue_trackers():
 
 def test_auto_connect_builtin_issue_resolvers_known_tracker(app):
     app.config.issuetracker = 'bitbucket'
-    issuetracker.auto_connect_builtin_issue_resolvers(app)
+    issuetracker.connect_builtin_tracker(app)
     app.connect.assert_called_with(
         'issuetracker-resolve-issue',
-        issuetracker.get_bitbucket_issue_information)
+        issuetracker.lookup_bitbucket_issue)
 
 
 def test_auto_connect_builtin_issue_resolvers_unknown_tracker(app):
     app.config.issuetracker = 'spamtracker'
     with pytest.raises(KeyError):
-        issuetracker.auto_connect_builtin_issue_resolvers(app)
+        issuetracker.connect_builtin_tracker(app)
 
 
 def test_auto_connect_builtin_issue_resolvers_no_tracker(app):
     app.config.issuetracker = None
-    issuetracker.auto_connect_builtin_issue_resolvers(app)
+    issuetracker.connect_builtin_tracker(app)
     assert not app.connect.called
 
 
@@ -74,7 +74,7 @@ def test_setup(app):
     app.add_event.assert_called_with('issuetracker-resolve-issue')
     assert app.connect.call_args_list == [
         (('builder-inited',
-          issuetracker.auto_connect_builtin_issue_resolvers), {}),
+          issuetracker.connect_builtin_tracker), {}),
         (('builder-inited', issuetracker.add_stylesheet), {}),
         (('builder-inited', issuetracker.init_cache), {}),
         (('doctree-read', issuetracker.resolve_issue_references), {}),
