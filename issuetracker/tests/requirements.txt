@@ -1,6 +1,10 @@
 sphinx>=1.0.7
+
 launchpadlib
-mock>=0.7
-pytest>=2.0
 SOAPpy>=0.12.5
 python-debianbts>=1.10
+
+mock>=0.7
+pytest>=2.0
+lxml>=2.1
+pyquery>=1.0
