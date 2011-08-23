@@ -188,9 +188,11 @@ BUILTIN_ISSUE_TRACKERS = {
 
 class IssuesReferences(Transform):
     """
-    Transform plain text issue numbers (e.g. #10) into ``pending_xref``
-    nodes, which are then resolved through the sphinx reference resolving
-    mechanism.
+    Parse and transform issue ids in a document.
+
+    Issue ids are parsed in text nodes and transformed into
+    :class:`~sphinx.addnodes.pending_xref` nodes for further processing in
+    later stages of the build.
     """
 
     default_priority = 999
@@ -268,14 +270,14 @@ def make_issue_reference(issue, content_node):
 
 def lookup_issue(app, project, issue_id):
     """
-    Lookup information for the given issue.
+    Lookup the given issue.
 
-    The issue information is first searched in an internal cache.  If it is not
-    found, the event ``issuetracker-resolve-issue`` is emitted.  The result of
-    this invocation is cached and returned.
+    The issue is first looked up in an internal cache.  If it is not found, the
+    event ``issuetracker-resolve-issue`` is emitted.  The result of this
+    invocation is then cached and returned.
 
-    ``app`` is the sphinx application object.  ``issue_id`` is a string
-    containing the issue id.
+    ``app`` is the sphinx application object.  ``project`` is the project name
+    as string.  ``issue_id`` is a string containing the issue id.
 
     Return a :class:`Issue` object for the issue with the given ``issue_id``,
     or ``None`` if the issue wasn't found.
