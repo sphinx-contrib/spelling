@@ -61,13 +61,13 @@ def pytest_funcarg__doctree(request):
     return doctree
 
 
-def test_resolve_no_issue(build_app, doctree):
+def test_no_issue(build_app, doctree):
     assert build_app.env.issuetracker_cache == {'10': None}
     assert not doctree.is_('reference')
 
 
 @pytest.mark.issue(id='10', closed=False, uri='spam')
-def test_resolve_open_issue(build_app, doctree, issue):
+def test_open_issue(build_app, doctree, issue):
     assert build_app.env.issuetracker_cache == {'10': issue}
     reference = doctree.find('reference')
     assert len(reference) == 1
@@ -79,7 +79,7 @@ def test_resolve_open_issue(build_app, doctree, issue):
 
 
 @pytest.mark.issue(id='10', closed=True, uri='eggs')
-def test_resolve_closed_issue(build_app, doctree, issue):
+def test_closed_issue(build_app, doctree, issue):
     assert build_app.env.issuetracker_cache == {'10': issue}
     reference = doctree.find('reference')
     assert len(reference) == 1
