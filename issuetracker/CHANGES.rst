@@ -9,6 +9,7 @@ Incompatible changes
   projects must include the username now
 - Custom resolvers must return :class:`~sphinxcontrib.issuetracker.Issue`
   objects instead of dictionaries now
+- Signature of :event:`issuetracker-resolve-issue` changed
 
 Other changes
 -------------
