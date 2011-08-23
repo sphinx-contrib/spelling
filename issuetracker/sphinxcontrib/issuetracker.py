@@ -30,8 +30,8 @@
 
     Integration with isse trackers.
 
-    Replace textual issue references (like #1) with a real reference to the
-    corresponding issue on bitbucket.
+    Replace textual issue ids (like #1) with a reference to the
+    corresponding issue in an issue tracker.
 
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
 """
