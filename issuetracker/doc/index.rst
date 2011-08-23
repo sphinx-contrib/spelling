@@ -17,7 +17,7 @@ Installation
 This extension needs Sphinx 1.0 and Python 2.6 or newer.  Python 3 is not (yet)
 supported.
 
-Use ``pip`` to install this extension straight from the Python Package Index:
+Use ``pip`` to install this extension straight from the Python Package Index::
 
    pip install sphinx-contrib.issuetracker
 
