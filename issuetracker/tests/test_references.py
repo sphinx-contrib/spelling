@@ -64,6 +64,8 @@ def pytest_funcarg__doctree(request):
 def test_no_issue(build_app, doctree):
     assert build_app.env.issuetracker_cache == {'10': None}
     assert not doctree.is_('reference')
+    assert doctree.find('list_item').eq(0).text() == \
+        'An issue id in normal text #10 should be transformed'
 
 
 @pytest.mark.issue(id='10', closed=False, uri='spam')
