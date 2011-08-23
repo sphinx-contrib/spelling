@@ -87,7 +87,8 @@ MISSING_ISSUES = {
                'non-existing issue': ('lunaryorn/pyudev', '1000')},
     'google code': {'non-existing issue': ('pytox', '1000'),
                     'non-existing project': (
-                        'foobar', '1', 'issue 1 unavailable with code 403')},
+                        'foobar', '1',
+                        'http://code.google.com/feeds/issues/p/foobar/issues/full/1 unavailable with code 403')},
     'launchpad': {}
 }
 

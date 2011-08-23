@@ -58,57 +58,72 @@ from sphinx.util.console import bold
 Issue = namedtuple('Issue', 'id uri closed')
 
 
-GITHUB_API_URL = 'https://api.github.com/repos/{project}/issues/{id}'
+def fetch_issue(app, url, output_format=None):
+    """
+    Fetch issue data from a web service or website.
+
+    ``app`` is the sphinx application object.  ``url`` is the url of the issue.
+    ``output_format`` is the format of the data retrieved from the given
+    ``url``.  If set, it must be either ``'json'`` or ``'xml'``.
+
+    Return the raw data retrieved from url, if ``output_format`` is unset.  If
+    ``output_format`` is ``'xml'``, return a ElementTree document.  If
+    ``output_format`` is ``'json'``, return the object parsed from JSON
+    (typically a dictionary).  Return ``None``, if ``url`` returned a status
+    code other than 200.
+    """
+    if output_format not in ('json', 'xml'):
+        raise ValueError(output_format)
+
+    with closing(urllib.urlopen(url)) as response:
+        if response.getcode() == 404:
+            return None
+        elif response.getcode() != 200:
+            # warn about unexpected response code
+            app.warn('{0} unavailable with code {1}'.format(
+                url, response.getcode()))
+            return None
+        if output_format == 'json':
+            import json
+            return json.load(response)
+        elif output_format == 'xml':
+            from xml.etree import cElementTree as etree
+            return etree.parse(response)
+        else:
+            return response
+
+
+GITHUB_API_URL = 'https://api.github.com/repos/{0}/issues/{1}'
 
 def lookup_github_issue(app, project, issue_id):
     if '/' not in project:
         app.warn('username missing in project {0!r}'.format(project))
         return None
 
-    import json
-
-    issue_url = GITHUB_API_URL.format(project=project, id=issue_id)
-    with closing(urllib.urlopen(issue_url)) as response:
-        if response.getcode() == 404:
-            return None
-        elif response.getcode() != 200:
-            # warn about unexpected response code
-            app.warn('issue {0} unavailable with code {1}'.format(
-                issue_id, response.getcode()))
-            return None
-        response = json.load(response)
-
-    return Issue(id=issue_id, closed=response['state'] == 'closed',
-                 uri=response['html_url'])
+    url = GITHUB_API_URL.format(project, issue_id)
+    issue = fetch_issue(app, url, output_format='json')
+    if issue:
+        return Issue(id=issue_id, closed=issue['state'] == 'closed',
+                     uri=issue['html_url'])
 
 
-BITBUCKET_URL = 'https://bitbucket.org/{project}/issue/{id}/'
-BITBUCKET_API_URL = ('https://api.bitbucket.org/1.0/repositories/'
-                     '{project}/issues/{id}/')
+BITBUCKET_URL = 'https://bitbucket.org/{0}/issue/{1}/'
+BITBUCKET_API_URL = 'https://api.bitbucket.org/1.0/repositories/{0}/issues/{1}/'
 
 def lookup_bitbucket_issue(app, project, issue_id):
     if '/' not in project:
         app.warn('username missing in project {0!r}'.format(project))
         return None
 
-    import json
-
-    issue_url = BITBUCKET_API_URL.format(project=project, id=issue_id)
-    with closing(urllib.urlopen(issue_url)) as response:
-        if response.getcode() == 404:
-            return None
-        elif response.getcode() != 200:
-            # warn about unexpected response code
-            app.warn('issue {0} unavailable with code {1}'.format(
-                issue_id, response.getcode()))
-            return None
-        issue = json.load(response)
-
-    return Issue(id=issue_id, closed=issue['status'] not in ('new', 'open'),
-                 uri=BITBUCKET_URL.format(project=project, id=issue_id))
+    url = BITBUCKET_API_URL.format(project, issue_id)
+    issue = fetch_issue(app, url, output_format='json')
+    if issue:
+        closed = issue['status'] not in ('new', 'open')
+        uri=BITBUCKET_URL.format(project, issue_id)
+        return Issue(id=issue_id, closed=closed, uri=uri)
 
 
-DEBIAN_URL = 'http://bugs.debian.org/cgi-bin/bugreport.cgi?bug={id}'
+DEBIAN_URL = 'http://bugs.debian.org/cgi-bin/bugreport.cgi?bug={0}'
 
 def lookup_debian_issue(app, project, issue_id):
     import debianbts
@@ -123,10 +138,10 @@ def lookup_debian_issue(app, project, issue_id):
         return None
 
     return Issue(id=issue_id, closed=bug.done,
-                 uri=DEBIAN_URL.format(id=issue_id))
+                 uri=DEBIAN_URL.format(issue_id))
 
 
-LAUNCHPAD_URL = 'https://bugs.launchpad.net/bugs/{id}'
+LAUNCHPAD_URL = 'https://bugs.launchpad.net/bugs/{0}'
 
 def lookup_launchpad_issue(app, project, issue_id):
     launchpad = getattr(app.env, 'issuetracker_launchpad', None)
@@ -149,32 +164,22 @@ def lookup_launchpad_issue(app, project, issue_id):
         return None
 
     return Issue(id=issue_id, closed=bool(task.date_closed),
-                 uri=LAUNCHPAD_URL.format(id=issue_id))
+                 uri=LAUNCHPAD_URL.format(issue_id))
 
 
-GOOGLE_CODE_URL = 'http://code.google.com/p/{project}/issues/detail?id={id}'
+GOOGLE_CODE_URL = 'http://code.google.com/p/{0}/issues/detail?id={1}'
 GOOGLE_CODE_API_URL = ('http://code.google.com/feeds/issues/p/'
-                       '{project}/issues/full/{id}')
+                       '{0}/issues/full/{1}')
 
 def lookup_google_code_issue(app, project, issue_id):
-    from xml.etree import cElementTree as etree
-
-    issue_url = GOOGLE_CODE_API_URL.format(project=project, id=issue_id)
-    with closing(urllib.urlopen(issue_url)) as response:
-        if response.getcode() == 404:
-            return None
-        elif response.getcode() != 200:
-            # warn about unavailable issues
-            app.warn('issue {0} unavailable with code {1}'.format(
-                issue_id, response.getcode()))
-            return None
-        tree = etree.parse(response)
-
-    state = tree.find(
-        '{http://schemas.google.com/projecthosting/issues/2009}state')
-    closed = state is not None and state.text == 'closed'
-    return Issue(id=issue_id, closed=closed,
-                 uri=GOOGLE_CODE_URL.format(project=project, id=issue_id))
+    url = GOOGLE_CODE_API_URL.format(project, issue_id)
+    issue = fetch_issue(app, url, output_format='xml')
+    if issue:
+        state = issue.find(
+            '{http://schemas.google.com/projecthosting/issues/2009}state')
+        closed = state is not None and state.text == 'closed'
+        return Issue(id=issue_id, closed=closed,
+                     uri=GOOGLE_CODE_URL.format(project, issue_id))
 
 
 BUILTIN_ISSUE_TRACKERS = {
