@@ -57,6 +57,13 @@ from sphinx.util.console import bold
 
 Issue = namedtuple('Issue', 'id uri closed')
 
+class TrackerConfig(namedtuple('_TrackerConfig', 'project')):
+
+    @classmethod
+    def from_sphinx_config(cls, config):
+        project = config.issuetracker_project or config.project
+        return cls(project)
+
 
 def fetch_issue(app, url, output_format=None):
     """
@@ -93,39 +100,43 @@ def fetch_issue(app, url, output_format=None):
             return response
 
 
-GITHUB_API_URL = 'https://api.github.com/repos/{0}/issues/{1}'
+def check_project_with_username(tracker_config):
+    if '/' not in tracker_config.project:
+        raise ValueError(
+            'username missing in tracker_config {0.project!r}'.format(
+                tracker_config))
 
-def lookup_github_issue(app, project, issue_id):
-    if '/' not in project:
-        app.warn('username missing in project {0!r}'.format(project))
-        return None
 
-    url = GITHUB_API_URL.format(project, issue_id)
+GITHUB_API_URL = 'https://api.github.com/repos/{0.project}/issues/{1}'
+
+def lookup_github_issue(app, tracker_config, issue_id):
+    check_project_with_username(tracker_config)
+
+    url = GITHUB_API_URL.format(tracker_config, issue_id)
     issue = fetch_issue(app, url, output_format='json')
     if issue:
         return Issue(id=issue_id, closed=issue['state'] == 'closed',
                      uri=issue['html_url'])
 
 
-BITBUCKET_URL = 'https://bitbucket.org/{0}/issue/{1}/'
-BITBUCKET_API_URL = 'https://api.bitbucket.org/1.0/repositories/{0}/issues/{1}/'
+BITBUCKET_URL = 'https://bitbucket.org/{0.project}/issue/{1}/'
+BITBUCKET_API_URL = ('https://api.bitbucket.org/1.0/repositories/'
+                     '{0.project}/issues/{1}/')
 
-def lookup_bitbucket_issue(app, project, issue_id):
-    if '/' not in project:
-        app.warn('username missing in project {0!r}'.format(project))
-        return None
+def lookup_bitbucket_issue(app, tracker_config, issue_id):
+    check_project_with_username(tracker_config)
 
-    url = BITBUCKET_API_URL.format(project, issue_id)
+    url = BITBUCKET_API_URL.format(tracker_config, issue_id)
     issue = fetch_issue(app, url, output_format='json')
     if issue:
         closed = issue['status'] not in ('new', 'open')
-        uri=BITBUCKET_URL.format(project, issue_id)
+        uri=BITBUCKET_URL.format(tracker_config, issue_id)
         return Issue(id=issue_id, closed=closed, uri=uri)
 
 
 DEBIAN_URL = 'http://bugs.debian.org/cgi-bin/bugreport.cgi?bug={0}'
 
-def lookup_debian_issue(app, project, issue_id):
+def lookup_debian_issue(app, tracker_config, issue_id):
     import debianbts
     try:
         # get the bug
@@ -134,7 +145,7 @@ def lookup_debian_issue(app, project, issue_id):
         return None
 
     # check if issue matches project
-    if project not in (bug.package, bug.source):
+    if tracker_config.project not in (bug.package, bug.source):
         return None
 
     return Issue(id=issue_id, closed=bug.done,
@@ -143,7 +154,7 @@ def lookup_debian_issue(app, project, issue_id):
 
 LAUNCHPAD_URL = 'https://bugs.launchpad.net/bugs/{0}'
 
-def lookup_launchpad_issue(app, project, issue_id):
+def lookup_launchpad_issue(app, tracker_config, issue_id):
     launchpad = getattr(app.env, 'issuetracker_launchpad', None)
     if not launchpad:
         from launchpadlib.launchpad import Launchpad
@@ -157,7 +168,7 @@ def lookup_launchpad_issue(app, project, issue_id):
         return None
 
     for task in bug.bug_tasks:
-        if task.bug_target_name == project:
+        if task.bug_target_name == tracker_config.project:
             break
     else:
         # no matching task found
@@ -167,19 +178,19 @@ def lookup_launchpad_issue(app, project, issue_id):
                  uri=LAUNCHPAD_URL.format(issue_id))
 
 
-GOOGLE_CODE_URL = 'http://code.google.com/p/{0}/issues/detail?id={1}'
+GOOGLE_CODE_URL = 'http://code.google.com/p/{0.project}/issues/detail?id={1}'
 GOOGLE_CODE_API_URL = ('http://code.google.com/feeds/issues/p/'
-                       '{0}/issues/full/{1}')
+                       '{0.project}/issues/full/{1}')
 
-def lookup_google_code_issue(app, project, issue_id):
-    url = GOOGLE_CODE_API_URL.format(project, issue_id)
+def lookup_google_code_issue(app, tracker_config, issue_id):
+    url = GOOGLE_CODE_API_URL.format(tracker_config, issue_id)
     issue = fetch_issue(app, url, output_format='xml')
     if issue:
         state = issue.find(
             '{http://schemas.google.com/projecthosting/issues/2009}state')
         closed = state is not None and state.text == 'closed'
         return Issue(id=issue_id, closed=closed,
-                     uri=GOOGLE_CODE_URL.format(project, issue_id))
+                     uri=GOOGLE_CODE_URL.format(tracker_config, issue_id))
 
 
 BUILTIN_ISSUE_TRACKERS = {
@@ -204,7 +215,7 @@ class IssuesReferences(Transform):
 
     def apply(self):
         config = self.document.settings.env.config
-        project = config.issuetracker_project or config.project
+        tracker_config = TrackerConfig.from_sphinx_config(config)
         issue_pattern = config.issuetracker_issue_pattern
         if isinstance(issue_pattern, basestring):
             issue_pattern = re.compile(issue_pattern)
@@ -238,7 +249,7 @@ class IssuesReferences(Transform):
                 refnode = pending_xref()
                 refnode['reftarget'] = issue_id
                 refnode['reftype'] = 'issue'
-                refnode['project'] = project
+                refnode['trackerconfig'] = tracker_config
                 refnode.append(nodes.Text(issuetext))
                 new_nodes.append(refnode)
             if not new_nodes:
@@ -273,7 +284,7 @@ def make_issue_reference(issue, content_node):
     return reference
 
 
-def lookup_issue(app, project, issue_id):
+def lookup_issue(app, tracker_config, issue_id):
     """
     Lookup the given issue.
 
@@ -281,8 +292,9 @@ def lookup_issue(app, project, issue_id):
     event ``issuetracker-resolve-issue`` is emitted.  The result of this
     invocation is then cached and returned.
 
-    ``app`` is the sphinx application object.  ``project`` is the project name
-    as string.  ``issue_id`` is a string containing the issue id.
+    ``app`` is the sphinx application object.  ``tracker_config`` is the
+    :class:`TrackerConfig` object representing the issue tracker configuration.
+    ``issue_id`` is a string containing the issue id.
 
     Return a :class:`Issue` object for the issue with the given ``issue_id``,
     or ``None`` if the issue wasn't found.
@@ -291,7 +303,7 @@ def lookup_issue(app, project, issue_id):
     issue = cache.get(issue_id)
     if not issue:
         issue = app.emit_firstresult('issuetracker-resolve-issue',
-                                     project, issue_id)
+                                     tracker_config, issue_id)
         cache[issue_id] = issue
     return issue
 
@@ -302,7 +314,7 @@ def resolve_issue_references(app, doctree):
     """
     for node in doctree.traverse(pending_xref):
         if node['reftype'] == 'issue':
-            issue = lookup_issue(app, node['project'], node['reftarget'])
+            issue = lookup_issue(app, node['trackerconfig'], node['reftarget'])
             if not issue:
                 new_node = node[0]
             else:

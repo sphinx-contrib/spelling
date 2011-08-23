@@ -47,7 +47,7 @@ def assert_xref(node, target):
     assert isinstance(node, pending_xref)
     assert_text(node[0], '#{0}'.format(target))
     assert node['reftype'] == 'issue'
-    assert node['project'] == 'issuetracker'
+    assert node['trackerconfig'] == issuetracker.TrackerConfig('issuetracker')
     assert node['reftarget'] == target
 
 

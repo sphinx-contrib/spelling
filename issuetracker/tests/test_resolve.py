@@ -31,7 +31,8 @@ from functools import partial
 from docutils import nodes
 from sphinx.addnodes import pending_xref
 
-from sphinxcontrib.issuetracker import Issue, resolve_issue_references
+from sphinxcontrib.issuetracker import (Issue, resolve_issue_references,
+                                        TrackerConfig)
 
 
 def assert_cache_ignored(app):
@@ -69,7 +70,7 @@ def pytest_funcarg__refnode(request):
     refnode['reftype'] = 'issue'
     refnode['reftarget'] = request.getfuncargvalue('issue_id')
     config = request.getfuncargvalue('config')
-    refnode['project'] = config.project
+    refnode['trackerconfig'] = TrackerConfig(config.project)
     refnode.append(request.getfuncargvalue('contnode'))
     return refnode
 
@@ -120,4 +121,4 @@ def test_event_emitted(app, resolve):
     app.emit_firstresult.return_value = None
     resolve()
     app.emit_firstresult.assert_called_with(
-        'issuetracker-resolve-issue', 'issuetracker', '10')
+        'issuetracker-resolve-issue', TrackerConfig('issuetracker'), '10')
