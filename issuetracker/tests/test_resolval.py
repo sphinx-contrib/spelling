@@ -39,13 +39,6 @@ def pytest_funcarg__resolve(request):
     return resolve
 
 
-def pytest_funcarg__issue(request):
-    issue = request.keywords.get('issue')
-    if issue:
-        return Issue(**issue.kwargs)
-    return None
-
-
 def pytest_funcarg__content(request):
     issue = request.getfuncargvalue('issue')
     issue_id = issue.id if issue else '10'
@@ -72,20 +65,20 @@ def test_no_issue(build_app, doctree):
     assert not doctree.is_('reference')
 
 
-@pytest.mark.issue(id='10', title='Spam', url='spam', closed=False)
+@pytest.mark.with_issue(id='10', title='Spam', url='spam', closed=False)
 def test_open_issue(build_app, doctree, issue):
     assert build_app.env.issuetracker_cache == {'10': issue}
     reference = pytest.assert_issue_reference(doctree, issue)
 
 
-@pytest.mark.issue(id='10', title='Eggs', url='eggs', closed=True)
+@pytest.mark.with_issue(id='10', title='Eggs', url='eggs', closed=True)
 def test_closed_issue(build_app, doctree, issue):
     assert build_app.env.issuetracker_cache == {'10': issue}
     reference = pytest.assert_issue_reference(doctree, issue)
 
 
 @pytest.mark.confoverrides(issuetracker_expandtitle=True)
-@pytest.mark.issue(id='10', title='Eggs', url='eggs', closed=True)
+@pytest.mark.with_issue(id='10', title='Eggs', url='eggs', closed=True)
 def test_closed_issue_with_title(build_app, doctree, issue):
     assert build_app.env.issuetracker_cache == {'10': issue}
     reference = pytest.assert_issue_reference(doctree, issue, title=True)

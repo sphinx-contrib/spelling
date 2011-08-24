@@ -36,7 +36,7 @@ from sphinx.application import Sphinx
 from sphinx.builders.html import StandaloneHTMLBuilder
 from sphinx.environment import SphinxStandaloneReader
 
-from sphinxcontrib.issuetracker import IssuesReferences
+from sphinxcontrib.issuetracker import Issue, IssuesReferences
 
 
 TEST_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
@@ -134,3 +134,10 @@ def pytest_funcarg__app(request):
                  freshenv=True)
     request.addfinalizer(reset_global_state)
     return app
+
+
+def pytest_funcarg__issue(request):
+    issue_marker = request.keywords.get('with_issue')
+    if issue_marker:
+        return Issue(*issue_marker.args, **issue_marker.kwargs)
+    return None
