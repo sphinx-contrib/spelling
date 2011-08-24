@@ -133,7 +133,7 @@ class ScopedProjectTrackerTest(TrackerTest):
 
     @pytest.mark.with_content('#10')
     @pytest.mark.confoverrides(issuetracker_project='eggs')
-    def test_project_missing_slash(self, app):
+    def test_project_missing_username(self, app):
         with pytest.raises(ValueError) as excinfo:
             app.build()
 
