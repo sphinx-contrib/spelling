@@ -89,10 +89,10 @@ def pytest_funcarg__content(request):
     The content for the test document as string.
 
     By default, the content is taken from the argument of the ``with_content``
-    marker.  If no such marker exists, the content is build from the id of the
-    issue returned by the ``issue`` funcarg by prepending a dash before the id.
+    marker.  If no such marker exists, the content is build from the id
+    returned by the ``issue_id`` funcargby prepending a dash before the id.
     The issue id ``'10'`` will thus produce the content ``'#10'``.  If the
-    ``issue`` funcarg returns ``None``, a :exc:`~exceptions.ValueError` is
+    ``issue_id`` funcarg returns ``None``, a :exc:`~exceptions.ValueError` is
     raised eventually.
 
     Test modules may override this funcarg to add their own content.
@@ -101,9 +101,9 @@ def pytest_funcarg__content(request):
     if content_mark:
         return content_mark.args[0]
     else:
-        issue = request.getfuncargvalue('issue')
-        if issue:
-            return '#{0}'.format(issue.id)
+        issue_id = request.getfuncargvalue('issue_id')
+        if issue_id:
+            return '#{0}'.format(issue_id)
     raise ValueError('no content provided')
 
 
@@ -201,6 +201,22 @@ def pytest_funcarg__issue(request):
     if issue_marker:
         return Issue(*issue_marker.args, **issue_marker.kwargs)
     return None
+
+
+def pytest_funcarg__issue_id(request):
+    """
+    The issue id for the current test, or ``None``, if no issue id is to be
+    used.
+
+    The issue id is taken from the ``id`` attribute of the issue returned by
+    the ``issue`` funcarg.  If the ``issue`` funcarg returns ``None``, this
+    funcarg also returns ``None``.
+    """
+    issue = request.getfuncargvalue('issue')
+    if issue:
+        return issue.id
+    else:
+        return None
 
 
 def pytest_funcarg__mock_resolver(request):

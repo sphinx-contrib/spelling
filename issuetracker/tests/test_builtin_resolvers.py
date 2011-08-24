@@ -107,14 +107,6 @@ def pytest_funcarg__issue(request):
         return issue
 
 
-def pytest_funcarg__content(request):
-    issue_id = request.getfuncargvalue('issue_id')
-    if issue_id is None:
-        # return default content
-        return request.getfuncargvalue('content')
-    return '#{0}'.format(issue_id)
-
-
 class TrackerTest(object):
 
     name = None
