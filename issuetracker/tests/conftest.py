@@ -70,43 +70,27 @@ def assert_issue_reference(doctree, issue, title=False):
     return reference
 
 
-def get_doctree_as_xml(app, docname):
+def get_index_doctree(app):
     """
-    Get the doctree of the given ``docname`` as XML.
+    Get the doctree of the index document processed by the given ``app`` as
+    XML.
 
-    ``app`` is the sphinx application from which to get the
-    doctree. ``docname`` is the document name as string.
-
-    Return a lxml document representing the doctree.
-    """
-    return etree.fromstring(str(app.env.get_doctree(docname)))
-
-
-def get_doctree_as_pyquery(app, docname):
-    """
-    Get the doctree of the given ``docname`` as :class:`~pyquery.PyQuery`
-    object.
-
-    ``app`` is the sphinx application from which to get the
-    doctree. ``docname`` is the document name as string.
+    ``app`` is the sphinx application from which to get the doctree.
 
     Return a :class:`~pyquery.PyQuery` object representing the doctree.
     """
-    tree = get_doctree_as_xml(app, docname)
-    return PyQuery(tree)
+    return PyQuery(str(app.env.get_doctree('index')), parser='xml')
 
 
 def pytest_namespace():
     """
     Add the following functions to the pytest namespace:
 
+    - :func:`get_index_doctree`
     - :func:`assert_issue_reference`
-    - :func:`get_doctree_as_xml`
-    - :func:`get_doctree_as_pyquery`
     """
     return dict((f.__name__, f) for f in
-                (get_doctree_as_xml, get_doctree_as_pyquery,
-                 assert_issue_reference))
+                (get_index_doctree, assert_issue_reference))
 
 
 def pytest_configure(config):
@@ -140,6 +124,23 @@ def pytest_funcarg__content(request):
         if issue_id:
             return '#{0}'.format(issue_id)
     raise ValueError('no content provided')
+
+
+def pytest_funcarg__doctree(request):
+    """
+    The doctree of the parsed and processed ``content`` as
+    :class:`~pyquery.PyQuery` object.
+
+    .. note::
+
+       This funcarg automatically builds the application to create the doctree.
+       This happens *before* test execution!  If you need to build inside the
+       test, build manually and use :func:`get_index_doctree()` to get the
+       doctree afterwards.
+    """
+    app = request.getfuncargvalue('app')
+    app.build()
+    return pytest.get_index_doctree(app)
 
 
 def pytest_funcarg__srcdir(request):

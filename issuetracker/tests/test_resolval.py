@@ -32,30 +32,8 @@ from sphinxcontrib.issuetracker import TrackerConfig, Issue
 
 
 def pytest_funcarg__app(request):
-    """
-    A *built* sphinx application with a mocked resolver.
-
-    Overrides the global ``app`` funcarg to directly build the application.
-    The application is build with a mocked resolver as returned by the
-    ``mock_resolver`` funcarg.
-    """
-    # setup a mock resolver
-    request.getfuncargvalue('mock_resolver')
-    app = request.getfuncargvalue('app')
-    app.build()
-    return app
-
-
-def pytest_funcarg__doctree(request):
-    """
-    The doctree of the built document as :class:`~pyquery.PyQuery` object.
-
-    The doctree is converted into XML, parsed with lxml and then wrapped in a
-    :class:`~pyquery.PyQuery` object for easy traversal and querying.
-    """
-    app = request.getfuncargvalue('app')
-    doctree = pytest.get_doctree_as_pyquery(app, 'index')
-    return doctree
+    request.applymarker(pytest.mark.mock_resolver)
+    return request.getfuncargvalue('app')
 
 
 @pytest.mark.with_content('#10')
@@ -95,6 +73,7 @@ def test_closed_issue_with_title(app, doctree, issue):
     pytest.assert_issue_reference(doctree, issue, title=True)
 
 
+@pytest.mark.build_app
 @pytest.mark.with_content('#10')
 def test_event_emitted(app, mock_resolver):
     """
@@ -105,6 +84,7 @@ def test_event_emitted(app, mock_resolver):
         app, TrackerConfig.from_sphinx_config(app.config), '10')
 
 
+@pytest.mark.build_app
 @pytest.mark.with_content('#10 #10 #11 #11')
 @pytest.mark.with_issue(id='10', title='Eggs', closed=True, url='eggs')
 def test_event_emitted_only_once(app, mock_resolver, issue):
