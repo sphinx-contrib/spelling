@@ -84,6 +84,9 @@ def pytest_configure(config):
 
 
 def pytest_funcarg__content(request):
+    content_mark = request.keywords.get('with_content')
+    if content_mark:
+        return content_mark.args[0]
     templatedir = request.getfuncargvalue('pytestconfig').srcdir
     return templatedir.join('index.rst').read()
 
