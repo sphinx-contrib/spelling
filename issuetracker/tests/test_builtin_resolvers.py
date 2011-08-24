@@ -249,7 +249,7 @@ class TestJira(TrackerTest):
 
     confoverrides = dict(issuetracker_issue_pattern=r'#([A-Z]+-\d+)')
 
-    @pytest.mark.with_content("""#FOO-15""")
+    @pytest.mark.with_content('#FOO-15')
     def test_no_url(self, app):
         with pytest.raises(ValueError) as excinfo:
             app.build()
