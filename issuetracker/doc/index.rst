@@ -55,8 +55,17 @@ Add ``sphinxcontrib.issuetracker`` to the configuration value
    - ``google code``: The issue tracker of http://code.google.com.
    - ``debian``: The Debian issue tracker at http://bugs.debian.org.  To use
      this issue tracker, debianbts_ and SOAPpy_ must be installed.
-   - ``jira``: A Jira_ instance.  Use :confval:`issuetracker_url` to configure
-     the Jira instance to use.
+   - ``jira``: A Jira_ instance.  With this issue tracker
+     :confval:`issuetracker_url` must be set to the base url of the Jira
+     instance to use::
+
+        issuetracker = 'jira'
+        issuetracker_project = 'Sherpa'
+        issuetracker_url = 'https://studio.atlassian.com'
+
+     If :confval:`issuetracker_url` is unset or empty, a
+     :class:`~exceptions.ValueError` is raised when resolving the first issue
+     reference.
 
      .. versionadded:: 0.8
 

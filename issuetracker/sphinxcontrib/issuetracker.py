@@ -223,6 +223,8 @@ JIRA_API_URL = ('{0.url}/si/jira.issueviews:issue-xml/{1}/{1}.xml?'
                 'field=link&field=resolution&field=summary&field=project')
 
 def lookup_jira_issue(app, tracker_config, issue_id):
+    if not tracker_config.url:
+        raise ValueError('URL required')
     # protected jira trackers may require cookie processing
     from cookielib import CookieJar
     cookies = CookieJar()
