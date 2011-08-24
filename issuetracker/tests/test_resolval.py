@@ -27,16 +27,8 @@ from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
 import pytest
-from mock import Mock
 
 from sphinxcontrib.issuetracker import TrackerConfig, Issue
-
-
-def pytest_funcarg__resolve(request):
-    app = request.getfuncargvalue('app')
-    resolve = Mock(name='resolve', return_value=None)
-    app.connect(b'issuetracker-resolve-issue', resolve)
-    return resolve
 
 
 def pytest_funcarg__content(request):
@@ -46,10 +38,9 @@ def pytest_funcarg__content(request):
 
 
 def pytest_funcarg__build_app(request):
+    # setup a mock resolver
+    request.getfuncargvalue('mock_resolver')
     app = request.getfuncargvalue('app')
-    issue = request.getfuncargvalue('issue')
-    resolve = request.getfuncargvalue('resolve')
-    resolve.return_value = issue
     app.build()
     return app
 
@@ -84,7 +75,7 @@ def test_closed_issue_with_title(build_app, doctree, issue):
     reference = pytest.assert_issue_reference(doctree, issue, title=True)
 
 
-def test_event_emitted(build_app, resolve):
-    assert resolve.call_count == 1
-    resolve.assert_called_with(
+def test_event_emitted(build_app, mock_resolver):
+    assert mock_resolver.call_count == 1
+    mock_resolver.assert_called_with(
         build_app, TrackerConfig.from_sphinx_config(build_app.config), '10')

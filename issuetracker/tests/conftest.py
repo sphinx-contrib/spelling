@@ -30,6 +30,7 @@ import os
 
 import pytest
 import py.path
+from mock import Mock
 from lxml import etree
 from pyquery import PyQuery
 from sphinx.application import Sphinx
@@ -141,3 +142,11 @@ def pytest_funcarg__issue(request):
     if issue_marker:
         return Issue(*issue_marker.args, **issue_marker.kwargs)
     return None
+
+
+def pytest_funcarg__mock_resolver(request):
+    issue = request.getfuncargvalue('issue')
+    lookup_mock_issue = Mock(name='lookup_mock_issue', return_value=issue)
+    app = request.getfuncargvalue('app')
+    app.connect(b'issuetracker-resolve-issue', lookup_mock_issue)
+    return lookup_mock_issue
