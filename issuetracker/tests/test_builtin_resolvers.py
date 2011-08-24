@@ -54,24 +54,33 @@ def pytest_funcarg__tracker_config(request):
         return None
     testname = getattr(request, 'param', None)
     if testname is None:
-        config = cls.default_tracker_config
+        return cls.default_tracker_config
     else:
-        config = cls.tracker_config.get(testname, cls.default_tracker_config)
-    if config:
-        pytest.update_confoverrides(
-            request, issuetracker_project=config.project,
-            issuetracker_url=config.url)
-    return config
+        return cls.tracker_config.get(testname, cls.default_tracker_config)
 
 
 def pytest_funcarg__tracker(request):
-    tracker = request.cls.name
-    pytest.update_confoverrides(request, issuetracker=tracker,
-                                issuetracker_expandtitle=True,
-                                **request.cls.confoverrides)
-    # apply tracker configuration
-    request.getfuncargvalue('tracker_config')
-    return tracker
+    if not request.cls:
+        return None
+    return request.cls.name
+
+
+def pytest_funcarg__confoverrides(request):
+    # configure tracker and enable title expansion to test the title retrieval
+    # of builtin trackers, too
+    tracker = request.getfuncargvalue('tracker')
+    confoverrides = dict(issuetracker=tracker, issuetracker_expandtitle=True)
+    tracker_config = request.getfuncargvalue('tracker_config')
+    if tracker_config:
+        # bring tracker configuration in
+        confoverrides.update(issuetracker_project=tracker_config.project,
+                             issuetracker_url=tracker_config.url)
+    # bring test-class specific overrides in
+    if request.cls:
+        confoverrides.update(request.cls.confoverrides)
+    # add overrides from the test itself
+    confoverrides.update(request.getfuncargvalue('confoverrides'))
+    return confoverrides
 
 
 def pytest_funcarg__testname(request):
@@ -99,7 +108,6 @@ def pytest_funcarg__issue(request):
 
 
 def pytest_funcarg__content(request):
-    tracker = request.getfuncargvalue('tracker')
     issue_id = request.getfuncargvalue('issue_id')
     if issue_id is None:
         # return default content
