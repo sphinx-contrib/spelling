@@ -44,6 +44,17 @@ TEST_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
 
 def assert_issue_reference(doctree, issue, title=False):
+    """
+    pytest helper which asserts that the given ``doctree`` contains a single
+    reference, which references the given ``issue``.
+
+    If ``title`` is ``True``, it is expected that the reference text is the
+    issue title, otherwise (the default) it is expected that the reference text
+    is the issue id.
+
+    Return the reference node.  Raise :exc:`~exceptions.AssertionError` if the
+    ``doctree`` doesn't contain a reference to the given ``issue``.
+    """
     __tracebackhide__ = True
     reference = doctree.find('reference')
     assert len(reference) == 1
@@ -60,15 +71,39 @@ def assert_issue_reference(doctree, issue, title=False):
 
 
 def get_doctree_as_xml(app, docname):
+    """
+    Get the doctree of the given ``docname`` as XML.
+
+    ``app`` is the sphinx application from which to get the
+    doctree. ``docname`` is the document name as string.
+
+    Return a lxml document representing the doctree.
+    """
     return etree.fromstring(str(app.env.get_doctree(docname)))
 
 
 def get_doctree_as_pyquery(app, docname):
+    """
+    Get the doctree of the given ``docname`` as :class:`~pyquery.PyQuery`
+    object.
+
+    ``app`` is the sphinx application from which to get the
+    doctree. ``docname`` is the document name as string.
+
+    Return a :class:`~pyquery.PyQuery` object representing the doctree.
+    """
     tree = get_doctree_as_xml(app, docname)
     return PyQuery(tree)
 
 
 def pytest_namespace():
+    """
+    Add the following functions to the pytest namespace:
+
+    - :func:`assert_issue_reference`
+    - :func:`get_doctree_as_xml`
+    - :func:`get_doctree_as_pyquery`
+    """
     return dict((f.__name__, f) for f in
                 (get_doctree_as_xml, get_doctree_as_pyquery,
                  assert_issue_reference))
