@@ -29,100 +29,61 @@ from __future__ import (print_function, division, unicode_literals,
 
 import pytest
 
-from sphinxcontrib.issuetracker import (Issue, BUILTIN_ISSUE_TRACKERS,
-                                        TrackerConfig)
+from sphinxcontrib.issuetracker import Issue, TrackerConfig
 
+try:
+    import debianbts
+except ImportError:
+    debianbts = None
 
-TRACKER_DEPENDENCIES = {
-    'debian': ['debianbts'],
-    'launchpad': ['launchpadlib'],
-}
-
-
-SPHINX = TrackerConfig('birkenfeld/sphinx')
-SPHINX_URL = 'https://bitbucket.org/birkenfeld/sphinx/issue/{0}/'
-
-DEBIAN_URL = 'http://bugs.debian.org/cgi-bin/bugreport.cgi?bug={0}'
-
-PYTOX = TrackerConfig('pytox')
-PYTOX_URL = 'http://code.google.com/p/pytox/issues/detail?id={0}'
-
-ISSUES = {
-    'bitbucket': {
-        'resolved': (SPHINX, Issue(
-            id='478', title='Adapt py:decorator from Python docs', closed=True,
-            uri=SPHINX_URL.format('478'))),
-        'invalid': (SPHINX, Issue(
-            id='327', title='Spaces at the end of console messages',
-            closed=True, uri=SPHINX_URL.format('327'))),
-        'duplicate': (SPHINX, Issue(
-            id='733', title='byte/str conversion fails on Python 3.2',
-            closed=True, uri=SPHINX_URL.format('733'))),
-        'no project': (TrackerConfig('lunar/foobar'), '10'),
-        'no issue': (SPHINX, '10000')},
-    'debian': {
-        'fixed': (TrackerConfig('ldb-tools'),
-                  Issue(id='584227', title='ldb-tools: missing ldb(7) manpage',
-                        closed=True, uri=DEBIAN_URL.format('584227'))),
-        'no project': (TrackerConfig('release.debian.org'), '1')},
-    'github': {
-        'closed': (TrackerConfig('lunaryorn/pyudev'),
-                   Issue(id='2', title=u'python 3 support', closed=True,
-                         uri='https://github.com/lunaryorn/pyudev/issues/2')),
-        'no project': (TrackerConfig('lunaryorn/foobar'), '10'),
-        'no issue': (TrackerConfig('lunaryorn/pyudev'), '1000')},
-    'google code': {
-        'fixed': (PYTOX, Issue(
-            id='2', title='Hudson exists with SUCCESS status even if tox '
-            'failed with ERROR', closed=True, uri=PYTOX_URL.format('2'))),
-        'invalid': (PYTOX, Issue(
-            id='5', title='0.7: "error: File exists"', closed=True,
-            uri=PYTOX_URL.format('5'))),
-        'wontfix': (PYTOX, Issue(
-            id='6', title='Copy modules from site packages', closed=True,
-            uri=PYTOX_URL.format('6'))),
-        'no issue': (PYTOX, '1000'),
-        'no project': (TrackerConfig('foobar'), '1')},
-    'launchpad': {
-        'closed': (TrackerConfig('inkscape'), Issue(
-            '647789', title='tries to install file(s) outside of '
-            './configure\'s --prefix', closed=True,
-            uri='https://bugs.launchpad.net/bugs/647789'))},
-}
+try:
+    import launchpadlib
+except ImportError:
+    launchpadlib = None
 
 
 def pytest_generate_tests(metafunc):
-    if not metafunc.function == test_builtin_resolver:
-        return
-    for tracker, tests in sorted(ISSUES.iteritems()):
-        for testname in sorted(tests):
-            metafunc.addcall(param=(tracker, testname),
-                             id='{0},{1}'.format(tracker, testname))
+    if 'issue' in metafunc.funcargnames:
+        for testname in sorted(metafunc.cls.issues):
+            metafunc.addcall(id=testname, param=testname)
+
+
+def pytest_funcarg__tracker_config(request):
+    cls = request.cls
+    if cls is None:
+        return None
+    testname = getattr(request, 'param', None)
+    if testname is None:
+        return cls.default_tracker_config
+    else:
+        return cls.tracker_config.get(testname, cls.default_tracker_config)
 
 
 def pytest_funcarg__tracker(request):
-    tracker, testname = request.param
-    tracker_config = ISSUES[tracker][testname][0]
-    request.applymarker(pytest.mark.confoverrides(
-        issuetracker=tracker, issuetracker_project=tracker_config.project,
-        issuetracker_expandtitle=True))
+    tracker_config = request.getfuncargvalue('tracker_config')
+    if tracker_config is None:
+        return
+    tracker = request.cls.name
+    confoverrides = dict(issuetracker=tracker,
+                         issuetracker_project=tracker_config.project,
+                         issuetracker_expandtitle=True)
+    confoverrides.update(request.cls.confoverrides)
+    if 'confoverrides' in request.keywords:
+        marker = request.keywords['confoverrides']
+        confoverrides.update(marker.kwargs)
+    request.applymarker(pytest.mark.confoverrides(**confoverrides))
     return tracker
 
 
 def pytest_funcarg__testname(request):
-    _, testname = request.param
-    return testname
-
-
-def pytest_funcarg__testdata(request):
-    tracker = request.getfuncargvalue('tracker')
-    testname = request.getfuncargvalue('testname')
-    return ISSUES[tracker][testname]
+    return getattr(request, 'param', None)
 
 
 def pytest_funcarg__issue_id(request):
-    testdata = request.getfuncargvalue('testdata')
-    _, issue = testdata
+    testname = request.getfuncargvalue('testname')
+    if not testname:
+        return None
+    issue = request.cls.issues[testname]
     if isinstance(issue, basestring):
         return issue
     else:
@@ -130,58 +91,141 @@ def pytest_funcarg__issue_id(request):
 
 
 def pytest_funcarg__issue(request):
-    testdata = request.getfuncargvalue('testdata')
-    _, issue = testdata
+    testname = request.getfuncargvalue('testname')
+    issue = request.cls.issues[testname]
     if isinstance(issue, basestring):
         return None
     else:
         return issue
 
 
-def pytest_funcarg__srcdir(request):
-    old_srcdir = request.getfuncargvalue('pytestconfig').srcdir
-    if not hasattr(request, 'param'):
-        # no change, if the test isn't parametrized
-        return old_srcdir
-    tmpdir = request.getfuncargvalue('tmpdir')
-    srcdir = tmpdir.join('src')
-    srcdir.ensure(dir=True)
-    old_srcdir.join('conf.py').copy(srcdir)
-    index = srcdir.join('index.rst')
+def pytest_funcarg__content(request):
     tracker = request.getfuncargvalue('tracker')
     issue_id = request.getfuncargvalue('issue_id')
-    index.write("""\
+    if issue_id is None:
+        # return default content
+        return request.getfuncargvalue('content')
+    return ("""\
 Tracker test
 ============
 
 Issue #{0} in tracker *{1}*""".format(issue_id, tracker))
-    return srcdir
 
 
-def pytest_funcarg__dependencies(request):
-    tracker = request.getfuncargvalue('tracker')
-    return TRACKER_DEPENDENCIES.get(tracker, [])
+class TrackerTest(object):
 
+    name = None
 
-def test_builtin_resolver(app, issue_id, issue, dependencies):
-    for dependency in dependencies:
-        pytest.importorskip(dependency)
-    app.build()
-    doctree = pytest.get_doctree_as_pyquery(app, 'index')
-    assert app.env.issuetracker_cache == {issue_id: issue}
-    if not issue:
-        assert not doctree.is_('reference')
-    else:
-        pytest.assert_issue_reference(doctree, issue, title=True)
+    default_tracker_config = None
 
+    tracker_config = {}
 
-@pytest.mark.confoverrides(issuetracker='github')
-def test_github_missing_slash(app):
-    with pytest.raises(ValueError) as excinfo:
+    issues = {}
+
+    confoverrides = {}
+
+    def test_lookup(self, app, issue_id, issue):
         app.build()
+        doctree = pytest.get_doctree_as_pyquery(app, 'index')
+        assert app.env.issuetracker_cache == {issue_id: issue}
+        if not issue:
+            assert not doctree.is_('reference')
+        else:
+            pytest.assert_issue_reference(doctree, issue, title=True)
 
 
-@pytest.mark.confoverrides(issuetracker='bitbucket')
-def test_bitbucket_missing_slash(app):
-    with pytest.raises(ValueError) as excinfo:
-        app.build()
+class ScopedProjectTrackerTest(TrackerTest):
+
+    @pytest.mark.confoverrides(issuetracker_project='eggs')
+    def test_project_missing_slash(self, app):
+        with pytest.raises(ValueError) as excinfo:
+            app.build()
+
+
+class TestBitBucket(ScopedProjectTrackerTest):
+
+    name = 'bitbucket'
+
+    default_tracker_config = TrackerConfig('birkenfeld/sphinx')
+
+    tracker_config = {'no project': TrackerConfig('lunar/foobar')}
+
+    SPHINX_URL = 'https://bitbucket.org/birkenfeld/sphinx/issue/{0}/'
+    issues = {
+        'resolved': Issue(id='478', closed=True, uri=SPHINX_URL.format('478'),
+                           title='Adapt py:decorator from Python docs'),
+        'invalid': Issue(id='327', closed=True, uri=SPHINX_URL.format('327'),
+                         title='Spaces at the end of console messages'),
+        'duplicate': Issue(id='733', closed=True, uri=SPHINX_URL.format('733'),
+                           title='byte/str conversion fails on Python 3.2'),
+        'no project': '10',
+        'no issue': '10000'
+    }
+
+
+class TestGitHub(ScopedProjectTrackerTest):
+
+    name = 'github'
+
+    default_tracker_config = TrackerConfig('lunaryorn/pyudev')
+
+    tracker_config = {'no project': TrackerConfig('lunaryorn/foobar')}
+
+    issues = {
+        'closed': Issue(id='2', title=u'python 3 support', closed=True,
+                        uri='https://github.com/lunaryorn/pyudev/issues/2'),
+        'no project': '10',
+        'no issue': '1000',
+    }
+
+
+class TestGoogleCode(TrackerTest):
+
+    name = 'google code'
+
+    default_tracker_config = TrackerConfig('pytox')
+
+    tracker_config = {'no project': TrackerConfig('foobar')}
+
+    PYTOX_URL = 'http://code.google.com/p/pytox/issues/detail?id={0}'
+    issues = {
+        'fixed': Issue(id='2', closed=True, uri=PYTOX_URL.format('2'),
+                       title='Hudson exists with SUCCESS status even if tox '
+                       'failed with ERROR'),
+        'invalid': Issue(id='5', title='0.7: "error: File exists"',
+                         closed=True, uri=PYTOX_URL.format('5')),
+        'wontfix': Issue(id='6', title='Copy modules from site packages',
+                         closed=True, uri=PYTOX_URL.format('6')),
+        'no issue': '1000',
+        'no project': '1',
+    }
+
+
+class TestDebian(TrackerTest):
+    pytestmark = pytest.mark.skipif(b'debianbts is None')
+
+    name = 'debian'
+
+    tracker_config = {'fixed': TrackerConfig('ldb-tools'),
+                      'no project': TrackerConfig('release.debian.org')}
+
+    DEBIAN_URL = 'http://bugs.debian.org/cgi-bin/bugreport.cgi?bug={0}'
+    issues = {
+        'fixed': Issue(id='584227', title='ldb-tools: missing ldb(7) manpage',
+                       closed=True, uri=DEBIAN_URL.format('584227')),
+        'no project': '1',
+    }
+
+
+class TestLaunchpad(TrackerTest):
+    pytestmark = pytest.mark.skipif(b'launchpadlib is None')
+
+    name = 'launchpad'
+
+    default_tracker_config = TrackerConfig('inkscape')
+
+    issues = {
+        'closed': Issue('647789', title='tries to install file(s) outside of '
+                        './configure\'s --prefix', closed=True,
+                        uri='https://bugs.launchpad.net/bugs/647789')
+    }
