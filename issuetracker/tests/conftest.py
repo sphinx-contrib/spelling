@@ -70,7 +70,8 @@ def get_doctree_as_pyquery(app, docname):
 def update_confoverrides(request, **confoverrides):
     overrides_mark = request.keywords.setdefault(
         'confoverrides', pytest.mark.confoverrides())
-    overrides_mark.kwargs.update(confoverrides)
+    confoverrides.update(overrides_mark.kwargs)
+    overrides_mark.kwargs = confoverrides
 
 
 def pytest_namespace():
