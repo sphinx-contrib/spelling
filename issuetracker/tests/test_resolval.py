@@ -103,3 +103,14 @@ def test_event_emitted(app, mock_resolver):
     assert mock_resolver.call_count == 1
     mock_resolver.assert_called_with(
         app, TrackerConfig.from_sphinx_config(app.config), '10')
+
+
+@pytest.mark.with_content('#10 #10 #11 #11')
+@pytest.mark.with_issue(id='10', title='Eggs', closed=True, url='eggs')
+def test_event_emitted_only_once(app, mock_resolver, issue):
+    """
+    Test that the resolval event is only emitted once for each issue id, and
+    that subsequent lookups hit the cache.
+    """
+    assert mock_resolver.call_count == 2
+    assert app.env.issuetracker_cache == {'10': issue, '11': None}
