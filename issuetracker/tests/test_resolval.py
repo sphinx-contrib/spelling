@@ -59,20 +59,20 @@ def test_no_issue(build_app, doctree):
 @pytest.mark.with_issue(id='10', title='Spam', url='spam', closed=False)
 def test_open_issue(build_app, doctree, issue):
     assert build_app.env.issuetracker_cache == {'10': issue}
-    reference = pytest.assert_issue_reference(doctree, issue)
+    pytest.assert_issue_reference(doctree, issue)
 
 
 @pytest.mark.with_issue(id='10', title='Eggs', url='eggs', closed=True)
 def test_closed_issue(build_app, doctree, issue):
     assert build_app.env.issuetracker_cache == {'10': issue}
-    reference = pytest.assert_issue_reference(doctree, issue)
+    pytest.assert_issue_reference(doctree, issue)
 
 
 @pytest.mark.confoverrides(issuetracker_expandtitle=True)
 @pytest.mark.with_issue(id='10', title='Eggs', url='eggs', closed=True)
 def test_closed_issue_with_title(build_app, doctree, issue):
     assert build_app.env.issuetracker_cache == {'10': issue}
-    reference = pytest.assert_issue_reference(doctree, issue, title=True)
+    pytest.assert_issue_reference(doctree, issue, title=True)
 
 
 def test_event_emitted(build_app, mock_resolver):
