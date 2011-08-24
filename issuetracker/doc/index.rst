@@ -117,6 +117,8 @@ However, you can also use the title of the issue as issue text:
 
    Defaults to ``False``.
 
+   .. versionadded:: 0.8
+
 
 Customization
 -------------
@@ -152,6 +154,8 @@ callback to the event :event:`issuetracker-resolve-issue`:
       ``None``, if there is no url configured for this tracker.  See
       :confval:`issuetracker_url`.
 
+   .. versionadded:: 0.8
+
 .. class:: Issue
 
    A :func:`~collections.namedtuple` providing issue information.
@@ -175,6 +179,8 @@ callback to the event :event:`issuetracker-resolve-issue`:
    .. attribute:: closed
 
       ``True``, if the issue is closed, ``False`` otherwise.
+
+   .. versionadded:: 0.8
 
 
 Contribution and Development
