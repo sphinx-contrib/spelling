@@ -208,6 +208,15 @@ def pytest_funcarg__app(request):
     to the directories given by the ``outdir`` and ``doctreedir`` funcargs.
     Additional configuration values can be inserted into this application
     through the ``confoverrides`` funcarg.
+
+    If the marker ``mock_resolver`` is attached to the current test, the
+    resolver callback returned by the ``mock_resolver`` funcarg is
+    automatically connected to the ``issuetracker-resolve-issue`` event in the
+    the created application.
+
+    If the marker ``build_app`` is attached to the current test, the app is
+    build before returning it.  Otherwise you need to build explicitly in order
+    to get the output.
     """
     srcdir = request.getfuncargvalue('srcdir')
     outdir = request.getfuncargvalue('outdir')
@@ -217,6 +226,11 @@ def pytest_funcarg__app(request):
                  'html',confoverrides=confoverrides, status=None, warning=None,
                  freshenv=True)
     request.addfinalizer(reset_global_state)
+    if 'mock_resolver' in request.keywords:
+        lookup_mock_issue = request.getfuncargvalue('mock_resolver')
+        app.connect(b'issuetracker-resolve-issue', lookup_mock_issue)
+    if 'build_app' in request.keywords:
+        app.build()
     return app
 
 
@@ -259,11 +273,9 @@ def pytest_funcarg__mock_resolver(request):
     A mocked callback for the ``issuetracker-resolve-issue`` event as
     :class:`~mock.Mock` object.
 
-    The callback is already connected to the ``issuetracker-resolve-issue``
-    event in the application provided by the ``app`` funcarg.  If the ``issue``
-    funcarg is not ``None``, the callback will return this issue if the issue
-    id given to the callback matches the id of this issue.  Otherwise it will
-    always return ``None``.
+    If the ``issue`` funcarg doesn't return ``None``, the callback will return
+    this issue if the issue id given to the callback matches the id of this
+    issue.  Otherwise it will always return ``None``.
     """
     lookup_mock_issue = Mock(name='lookup_mock_issue', return_value=None)
     issue = request.getfuncargvalue('issue')
@@ -271,6 +283,4 @@ def pytest_funcarg__mock_resolver(request):
         def lookup(app, tracker_config, issue_id):
             return issue if issue_id == issue.id else None
         lookup_mock_issue.side_effect = lookup
-    app = request.getfuncargvalue('app')
-    app.connect(b'issuetracker-resolve-issue', lookup_mock_issue)
     return lookup_mock_issue
