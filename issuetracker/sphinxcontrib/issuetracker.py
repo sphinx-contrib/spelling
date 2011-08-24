@@ -125,7 +125,7 @@ def fetch_issue(app, url, output_format=None, opener=None):
 def check_project_with_username(tracker_config):
     if '/' not in tracker_config.project:
         raise ValueError(
-            'username missing in tracker_config {0.project!r}'.format(
+            'username missing in project name: {0.project}'.format(
                 tracker_config))
 
 
