@@ -31,7 +31,6 @@ import os
 import pytest
 import py.path
 from mock import Mock
-from lxml import etree
 from pyquery import PyQuery
 from sphinx.application import Sphinx
 from sphinx.builders.html import StandaloneHTMLBuilder
