@@ -37,7 +37,7 @@ def pytest_funcarg__content(request):
     return '#{0}'.format(issue_id)
 
 
-def pytest_funcarg__build_app(request):
+def pytest_funcarg__app(request):
     # setup a mock resolver
     request.getfuncargvalue('mock_resolver')
     app = request.getfuncargvalue('app')
@@ -46,36 +46,36 @@ def pytest_funcarg__build_app(request):
 
 
 def pytest_funcarg__doctree(request):
-    build_app = request.getfuncargvalue('build_app')
-    doctree = pytest.get_doctree_as_pyquery(build_app, 'index')
+    app = request.getfuncargvalue('app')
+    doctree = pytest.get_doctree_as_pyquery(app, 'index')
     return doctree
 
 
-def test_no_issue(build_app, doctree):
-    assert build_app.env.issuetracker_cache == {'10': None}
+def test_no_issue(app, doctree):
+    assert app.env.issuetracker_cache == {'10': None}
     assert not doctree.is_('reference')
 
 
 @pytest.mark.with_issue(id='10', title='Spam', url='spam', closed=False)
-def test_open_issue(build_app, doctree, issue):
-    assert build_app.env.issuetracker_cache == {'10': issue}
+def test_open_issue(app, doctree, issue):
+    assert app.env.issuetracker_cache == {'10': issue}
     pytest.assert_issue_reference(doctree, issue)
 
 
 @pytest.mark.with_issue(id='10', title='Eggs', url='eggs', closed=True)
-def test_closed_issue(build_app, doctree, issue):
-    assert build_app.env.issuetracker_cache == {'10': issue}
+def test_closed_issue(app, doctree, issue):
+    assert app.env.issuetracker_cache == {'10': issue}
     pytest.assert_issue_reference(doctree, issue)
 
 
 @pytest.mark.confoverrides(issuetracker_expandtitle=True)
 @pytest.mark.with_issue(id='10', title='Eggs', url='eggs', closed=True)
-def test_closed_issue_with_title(build_app, doctree, issue):
-    assert build_app.env.issuetracker_cache == {'10': issue}
+def test_closed_issue_with_title(app, doctree, issue):
+    assert app.env.issuetracker_cache == {'10': issue}
     pytest.assert_issue_reference(doctree, issue, title=True)
 
 
-def test_event_emitted(build_app, mock_resolver):
+def test_event_emitted(app, mock_resolver):
     assert mock_resolver.call_count == 1
     mock_resolver.assert_called_with(
-        build_app, TrackerConfig.from_sphinx_config(build_app.config), '10')
+        app, TrackerConfig.from_sphinx_config(app.config), '10')
