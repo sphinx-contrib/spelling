@@ -31,12 +31,6 @@ import pytest
 from sphinxcontrib.issuetracker import TrackerConfig, Issue
 
 
-def pytest_funcarg__content(request):
-    issue = request.getfuncargvalue('issue')
-    issue_id = issue.id if issue else '10'
-    return '#{0}'.format(issue_id)
-
-
 def pytest_funcarg__app(request):
     # setup a mock resolver
     request.getfuncargvalue('mock_resolver')
@@ -51,6 +45,7 @@ def pytest_funcarg__doctree(request):
     return doctree
 
 
+@pytest.mark.with_content('#10')
 def test_no_issue(app, doctree):
     assert app.env.issuetracker_cache == {'10': None}
     assert not doctree.is_('reference')
@@ -75,6 +70,7 @@ def test_closed_issue_with_title(app, doctree, issue):
     pytest.assert_issue_reference(doctree, issue, title=True)
 
 
+@pytest.mark.with_content('#10')
 def test_event_emitted(app, mock_resolver):
     assert mock_resolver.call_count == 1
     mock_resolver.assert_called_with(

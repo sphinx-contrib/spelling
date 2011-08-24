@@ -87,9 +87,13 @@ def pytest_configure(config):
 
 def pytest_funcarg__content(request):
     content_mark = request.keywords.get('with_content')
-    if not content_mark:
-        raise ValueError('no content provided')
-    return content_mark.args[0]
+    if content_mark:
+        return content_mark.args[0]
+    else:
+        issue = request.getfuncargvalue('issue')
+        if issue:
+            return '#{0}'.format(issue.id)
+    raise ValueError('no content provided')
 
 
 def pytest_funcarg__srcdir(request):
