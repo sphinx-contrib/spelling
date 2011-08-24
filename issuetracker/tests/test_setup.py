@@ -49,6 +49,10 @@ def pytest_funcarg__content(request):
 
 
 def test_builtin_issue_trackers():
+    """
+    Test that all builtin issue trackers are really declared in the
+    BUILTIN_ISSUE_TRACKERS dict.
+    """
     trackers = dict(issuetracker.BUILTIN_ISSUE_TRACKERS)
     for attr in dir(issuetracker):
         match = BUILTIN_TRACKER_NAME_PATTERN.match(attr)
@@ -59,17 +63,26 @@ def test_builtin_issue_trackers():
     assert not trackers
 
 
-def test_auto_connect_builtin_issue_resolvers_unknown_tracker(app):
+def test_unknown_tracker(app):
+    """
+    Test that setting ``issuetracker`` to an unknown tracker fails.
+    """
     app.config.issuetracker = 'spamtracker'
     with pytest.raises(KeyError):
         issuetracker.connect_builtin_tracker(app)
 
 
 def test_add_stylesheet(app):
+    """
+    Test that the stylesheet is properly added.
+    """
     from sphinx.builders.html import StandaloneHTMLBuilder
     assert '_static/issuetracker.css' in StandaloneHTMLBuilder.css_files
 
 
 def test_transform_added(app):
+    """
+    Test that the transformer is properly added.
+    """
     from sphinx.environment import SphinxStandaloneReader
     assert issuetracker.IssuesReferences in SphinxStandaloneReader.transforms

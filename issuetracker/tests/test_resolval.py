@@ -60,18 +60,27 @@ def pytest_funcarg__doctree(request):
 
 @pytest.mark.with_content('#10')
 def test_no_issue(app, doctree):
+    """
+    Test that no reference is created if an issue could not be resolved.
+    """
     assert app.env.issuetracker_cache == {'10': None}
     assert not doctree.is_('reference')
 
 
 @pytest.mark.with_issue(id='10', title='Spam', url='spam', closed=False)
 def test_open_issue(app, doctree, issue):
+    """
+    Test resolval of an open issue.
+    """
     assert app.env.issuetracker_cache == {'10': issue}
     pytest.assert_issue_reference(doctree, issue)
 
 
 @pytest.mark.with_issue(id='10', title='Eggs', url='eggs', closed=True)
 def test_closed_issue(app, doctree, issue):
+    """
+    Test resolval of a closed issue.
+    """
     assert app.env.issuetracker_cache == {'10': issue}
     pytest.assert_issue_reference(doctree, issue)
 
@@ -79,12 +88,18 @@ def test_closed_issue(app, doctree, issue):
 @pytest.mark.confoverrides(issuetracker_expandtitle=True)
 @pytest.mark.with_issue(id='10', title='Eggs', url='eggs', closed=True)
 def test_closed_issue_with_title(app, doctree, issue):
+    """
+    Test resolval of an issue with title expansion enabled.
+    """
     assert app.env.issuetracker_cache == {'10': issue}
     pytest.assert_issue_reference(doctree, issue, title=True)
 
 
 @pytest.mark.with_content('#10')
 def test_event_emitted(app, mock_resolver):
+    """
+    Test that issue resolval emits the event with the right arguments.
+    """
     assert mock_resolver.call_count == 1
     mock_resolver.assert_called_with(
         app, TrackerConfig.from_sphinx_config(app.config), '10')

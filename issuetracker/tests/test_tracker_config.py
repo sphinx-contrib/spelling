@@ -44,22 +44,34 @@ def pytest_funcarg__content(request):
 
 
 def test_tracker_config_only_project():
+    """
+    Test TrackerConfig constructor with a project only.
+    """
     tracker_config = TrackerConfig('eggs')
     assert tracker_config.project == 'eggs'
 
 
 def test_tracker_config_project_and_url():
+    """
+    Test TrackerConfig constructor with a project and url.
+    """
     tracker_config = TrackerConfig('eggs', 'http://example.com')
     assert tracker_config.project == 'eggs'
     assert tracker_config.url == 'http://example.com'
 
 
 def test_tracker_config_trailing_slash():
-    tracker_config = TrackerConfig('eggs', 'http://example.com/')
+    """
+    Test that the constructor removes trailing slashes from the url.
+    """
+    tracker_config = TrackerConfig('eggs', 'http://example.com//')
     assert tracker_config.url == 'http://example.com'
 
 
 def test_tracker_config_equality():
+    """
+    Test equality and inequality of TrackerConfig objects.
+    """
     c = TrackerConfig
     assert c('eggs') == c('eggs')
     assert c('eggs') != c('spam')
@@ -71,7 +83,11 @@ def test_tracker_config_equality():
 
 @pytest.mark.confoverrides(
     project='eggs', issuetracker_url='http://example.com')
-def test_tracker_config_from_sphinx_config(app):
+def test_tracker_config_from_sphinx_config_implicit_project(app):
+    """
+    Test that TrackerConfig uses the Sphinx project name, if the issuetracker
+    project was not explicitly set.
+    """
     tracker_config = TrackerConfig.from_sphinx_config(app.config)
     assert tracker_config.project == 'eggs'
     assert tracker_config.url == 'http://example.com'
@@ -79,15 +95,23 @@ def test_tracker_config_from_sphinx_config(app):
 
 @pytest.mark.confoverrides(project='eggs', issuetracker_project='spam',
                            issuetracker_url='http://example.com')
-def test_tracker_config_from_sphinx_config_with_project(app):
+def test_tracker_config_from_sphinx_config_explicit_project(app):
+    """
+    Test that TrackerConfig uses the issuetracker project, if it was explicitly
+    set.
+    """
     tracker_config = TrackerConfig.from_sphinx_config(app.config)
     assert tracker_config.project == 'spam'
     assert tracker_config.url == 'http://example.com'
 
 
 @pytest.mark.confoverrides(
-    project='eggs', issuetracker_url='http://example.com/')
+    project='eggs', issuetracker_url='http://example.com//')
 def test_tracker_config_from_sphinx_config_trailing_slash(app):
+    """
+    Test that TrackerConfig strips trailing slashes when creating from sphinx
+    config, too.
+    """
     tracker_config = TrackerConfig.from_sphinx_config(app.config)
     assert tracker_config.project == 'eggs'
     assert tracker_config.url == 'http://example.com'

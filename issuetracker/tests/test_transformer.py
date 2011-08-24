@@ -33,6 +33,10 @@ import pytest
 @pytest.mark.with_content('ab')
 @pytest.mark.confoverrides(issuetracker_issue_pattern=r'(a)(b)')
 def test_too_many_groups(app):
+    """
+    Test that using an issue pattern with too many groups fails with an
+    understandable error message.
+    """
     with pytest.raises(ValueError) as excinfo:
         app.build()
     error = excinfo.value

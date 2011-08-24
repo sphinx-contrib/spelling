@@ -191,6 +191,9 @@ class TrackerTest(object):
     confoverrides = {}
 
     def test_lookup(self, app, issue_id, issue):
+        """
+        Test that this tracker correctly looks up an issue.
+        """
         app.build()
         doctree = pytest.get_doctree_as_pyquery(app, 'index')
         assert app.env.issuetracker_cache == {issue_id: issue}
@@ -212,6 +215,9 @@ class ScopedProjectTrackerTest(TrackerTest):
     @pytest.mark.with_content('#10')
     @pytest.mark.confoverrides(issuetracker_project='eggs')
     def test_project_missing_username(self, app):
+        """
+        Test that a project name without an username fails with a ValueError.
+        """
         with pytest.raises(ValueError) as excinfo:
             app.build()
         assert str(excinfo.value) == \
@@ -329,6 +335,10 @@ class TestJira(TrackerTest):
 
     @pytest.mark.with_content('#FOO-15')
     def test_no_url(self, app):
+        """
+        Test that the jira tracker fails with a ValueError, if no URL was
+        configured.
+        """
         with pytest.raises(ValueError) as excinfo:
             app.build()
         assert str(excinfo.value) == 'URL required'
