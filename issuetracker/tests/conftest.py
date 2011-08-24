@@ -123,13 +123,27 @@ def reset_global_state():
     StandaloneHTMLBuilder.css_files.remove('_static/issuetracker.css')
 
 
+def pytest_funcarg__confoverrides(request):
+    """
+    Configuration value overrides for the current test as dictionary, or
+    ``None``, if no overrides are to be used.
+
+    By default this funcarg takes the configuration overrides from the keyword
+    arguments of the ``confoverrides`` marker.  If the marker doesn't exist,
+    ``None`` is returned.
+
+    Test modules may override this funcarg to return custom ``confoverrides``.
+    """
+    confoverrides = request.keywords.get('confoverrides')
+    if confoverrides:
+        return confoverrides.kwargs
+
+
 def pytest_funcarg__app(request):
     srcdir = request.getfuncargvalue('srcdir')
     outdir = request.getfuncargvalue('outdir')
     doctreedir = request.getfuncargvalue('doctreedir')
-    confoverrides = request.keywords.get('confoverrides')
-    if confoverrides:
-        confoverrides = confoverrides.kwargs
+    confoverrides = request.getfuncargvalue('confoverrides')
     app = Sphinx(str(srcdir), str(srcdir), str(outdir), str(doctreedir),
                  'html',confoverrides=confoverrides, status=None, warning=None,
                  freshenv=True)
