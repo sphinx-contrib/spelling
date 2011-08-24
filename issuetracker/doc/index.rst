@@ -57,15 +57,8 @@ Add ``sphinxcontrib.issuetracker`` to the configuration value
      this issue tracker, debianbts_ and SOAPpy_ must be installed.
    - ``jira``: A Jira_ instance.  With this issue tracker
      :confval:`issuetracker_url` must be set to the base url of the Jira
-     instance to use::
-
-        issuetracker = 'jira'
-        issuetracker_project = 'Sherpa'
-        issuetracker_url = 'https://studio.atlassian.com'
-
-     If :confval:`issuetracker_url` is unset or empty, a
-     :class:`~exceptions.ValueError` is raised when resolving the first issue
-     reference.
+     instance to use.  Otherwise a :class:`~exceptions.ValueError` is raised
+     when resolving the first issue reference.
 
      .. versionadded:: 0.8
 
@@ -88,12 +81,13 @@ Add ``sphinxcontrib.issuetracker`` to the configuration value
 
 .. confval:: issuetracker_url
 
-   The base url of the issue tracker.  Required by all issue trackers which do
-   not only have a single instance, but many different instances on many
-   different sites.  Currently this is only ``jira``::
+   The base url of the issue tracker::
 
       issuetracker = 'jira'
       issuetracker_url = 'https://studio.atlassian.com'
+
+   Required by all issue trackers which do not only have a single instance, but
+   many different instances on many different sites.
 
    .. versionadded:: 0.8
 
