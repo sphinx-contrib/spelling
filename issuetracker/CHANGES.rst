@@ -14,11 +14,19 @@ Incompatible changes
 Other changes
 -------------
 
-- Added Jira_ support
-- Added :confval:`issuetracker_url`
-- Added :confval:`issuetracker_expandtitle`
-- Use BitBucket API instead of scraping the BitBucket website
-- Builtin ``debian`` tracker is fully supported now
+* General:
+
+  - Builtin ``debian`` tracker is fully supported now
+
+* New features:
+
+  - Added Jira_ support
+  - Added :confval:`issuetracker_url`
+  - Added :confval:`issuetracker_expandtitle`
+
+* Bugs fixes and improvements:
+
+  - Use BitBucket API instead of scraping the BitBucket website
 
 .. _jira: http://www.atlassian.com/software/jira/
 
