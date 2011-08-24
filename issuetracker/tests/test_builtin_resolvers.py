@@ -66,6 +66,7 @@ def pytest_funcarg__tracker(request):
     tracker = request.cls.name
     confoverrides = dict(issuetracker=tracker,
                          issuetracker_project=tracker_config.project,
+                         issuetracker_url=tracker_config.url,
                          issuetracker_expandtitle=True)
     confoverrides.update(request.cls.confoverrides)
     if 'confoverrides' in request.keywords:
@@ -229,3 +230,24 @@ class TestLaunchpad(TrackerTest):
                         './configure\'s --prefix', closed=True,
                         uri='https://bugs.launchpad.net/bugs/647789')
     }
+
+
+class TestJira(TrackerTest):
+
+    name = 'jira'
+
+    issues = {
+        'resolved': Issue('SHERPA-15', closed=True, title='Breadcrumbs and '
+                          'page title missing from admin screens',
+                          uri='https://studio.atlassian.com/browse/SHERPA-15'),
+        'open': Issue('PYO-84', closed=False,
+                      title='Implement LLSD login in pyogp',
+                      uri='https://jira.secondlife.com/browse/PYO-84'),
+    }
+
+    tracker_config = {
+        'resolved': TrackerConfig('Sherpa', 'https://studio.atlassian.com'),
+        'open': TrackerConfig('Pyogp', 'https://jira.secondlife.com'),
+    }
+
+    confoverrides = dict(issuetracker_issue_pattern=r'#([A-Z]+-\d+)')

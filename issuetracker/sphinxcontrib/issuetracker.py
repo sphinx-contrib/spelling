@@ -43,7 +43,7 @@ from __future__ import (print_function, division, unicode_literals,
 __version__ = '0.8'
 
 import re
-import urllib
+import urllib2
 from contextlib import closing
 from collections import namedtuple
 from os import path
@@ -57,21 +57,37 @@ from sphinx.util.console import bold
 
 Issue = namedtuple('Issue', 'id title uri closed')
 
-class TrackerConfig(namedtuple('_TrackerConfig', 'project')):
+_TrackerConfig = namedtuple('_TrackerConfig', 'project url')
+
+class TrackerConfig(object):
+    """
+    Issue tracker configuration.
+
+    This class provides configuration for trackers, and is passed as
+    ``tracker_config`` arguments to callbacks of
+    :event:`issuetracker-resolve-issue`.
+    """
 
     @classmethod
     def from_sphinx_config(cls, config):
         project = config.issuetracker_project or config.project
-        return cls(project)
+        url = config.issuetracker_url
+        return cls(project, url)
+
+    def __init__(self, project, url=None):
+        self.project = project
+        self.url = url.rstrip('/') if url else None
 
 
-def fetch_issue(app, url, output_format=None):
+def fetch_issue(app, url, output_format=None, opener=None):
     """
     Fetch issue data from a web service or website.
 
     ``app`` is the sphinx application object.  ``url`` is the url of the issue.
     ``output_format`` is the format of the data retrieved from the given
-    ``url``.  If set, it must be either ``'json'`` or ``'xml'``.
+    ``url``.  If set, it must be either ``'json'`` or ``'xml'``.  ``opener`` is
+    a :class:`urllib2.OpenerDirectory` object used to open the url.  If
+    ``None``, the global opener is used.
 
     Return the raw data retrieved from url, if ``output_format`` is unset.  If
     ``output_format`` is ``'xml'``, return a ElementTree document.  If
@@ -82,7 +98,12 @@ def fetch_issue(app, url, output_format=None):
     if output_format not in ('json', 'xml'):
         raise ValueError(output_format)
 
-    with closing(urllib.urlopen(url)) as response:
+    if opener:
+        urlopen = opener.open
+    else:
+        urlopen = urllib2.urlopen
+
+    with closing(urlopen(url)) as response:
         if response.getcode() == 404:
             return None
         elif response.getcode() != 200:
@@ -197,12 +218,37 @@ def lookup_google_code_issue(app, tracker_config, issue_id):
                      uri=GOOGLE_CODE_URL.format(tracker_config, issue_id))
 
 
+JIRA_API_URL = ('{0.url}/si/jira.issueviews:issue-xml/{1}/{1}.xml?'
+                # only request the required fields
+                'field=link&field=resolution&field=summary&field=project')
+
+def lookup_jira_issue(app, tracker_config, issue_id):
+    # protected jira trackers may require cookie processing
+    from cookielib import CookieJar
+    cookies = CookieJar()
+    cookie_opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookies))
+    issue = fetch_issue(app, JIRA_API_URL.format(tracker_config, issue_id),
+                        output_format='xml', opener=cookie_opener)
+    if issue:
+        project = issue.find('*/item/project').text
+        if project != tracker_config.project:
+            return None
+
+        uri = issue.find('*/item/link').text
+        state = issue.find('*/item/resolution').text
+        # summary contains the title without the issue id
+        title = issue.find('*/item/summary').text
+        closed = state.lower() != 'unresolved'
+        return Issue(id=issue_id, title=title, closed=closed, uri=uri)
+
+
 BUILTIN_ISSUE_TRACKERS = {
     'github': lookup_github_issue,
     'bitbucket': lookup_bitbucket_issue,
     'debian': lookup_debian_issue,
     'launchpad': lookup_launchpad_issue,
     'google code': lookup_google_code_issue,
+    'jira': lookup_jira_issue,
     }
 
 
@@ -365,6 +411,7 @@ def setup(app):
     app.add_config_value('issuetracker_issue_pattern',
                          re.compile(r'#(\d+)'), 'env')
     app.add_config_value('issuetracker_project', None, 'env')
+    app.add_config_value('issuetracker_url', None, 'env')
     app.add_config_value('issuetracker_expandtitle', False, 'env')
     app.add_config_value('issuetracker', None, 'env')
     app.connect(b'builder-inited', add_stylesheet)

@@ -55,6 +55,10 @@ Add ``sphinxcontrib.issuetracker`` to the configuration value
    - ``google code``: The issue tracker of http://code.google.com.
    - ``debian``: The Debian issue tracker at http://bugs.debian.org.  To use
      this issue tracker, debianbts_ and SOAPpy_ must be installed.
+   - ``jira``: A Jira_ instance.  Use :confval:`issuetracker_url` to configure
+     the Jira instance to use.
+
+     .. versionadded:: 0.8
 
 .. confval:: issuetracker_project
 
@@ -72,6 +76,17 @@ Add ``sphinxcontrib.issuetracker`` to the configuration value
 
    .. versionchanged:: 0.8
       Project names must include the user name now.
+
+.. confval:: issuetracker_url
+
+   The base url of the issue tracker.  Required by all issue trackers which do
+   not only have a single instance, but many different instances on many
+   different sites.  Currently this is only ``jira``::
+
+      issuetracker = 'jira'
+      issuetracker_url = 'https://studio.atlassian.com'
+
+   .. versionadded:: 0.8
 
 For instance, with the following configuration issue references in the
 documentation would refer to the `Sphinx issue tracker`_:
@@ -127,14 +142,17 @@ callback to the event :event:`issuetracker-resolve-issue`:
    .. versionchanged:: 0.8
       Replaced ``project`` argument with ``tracker_config``
 
-.. class:: TrackerConfig
-
-   A :func:`~collections.namedtuple` providing tracker configuration to
-   callbacks.
+.. autoclass:: TrackerConfig
 
    .. attribute:: project
 
       The project name as string
+
+   .. attribute:: url
+
+      The url of the issue tracker as string *without* any trailing slash, or
+      ``None``, if there is no url configured for this tracker.  See
+      :confval:`issuetracker_url`.
 
 .. class:: Issue
 
@@ -185,6 +203,7 @@ extension.  Patches and pull requests are always welcome!
 
 .. _Sphinx: http://sphinx.pocoo.org/
 .. _Sphinx issue tracker: https://bitbucket.org/birkenfeld/sphinx/issues/
+.. _jira: http://www.atlassian.com/software/jira/
 .. _lxml: http://lxml.de
 .. _simplejson: http://pypi.python.org/pypi/simplejson/
 .. _launchpadlib: http://pypi.python.org/pypi/launchpadlib/

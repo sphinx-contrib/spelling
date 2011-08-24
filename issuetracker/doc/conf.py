@@ -38,7 +38,8 @@ import issuetracker
 
 needs_sphinx = '1.0'
 
-extensions = ['sphinx.ext.intersphinx', 'sphinxcontrib.issuetracker']
+extensions = ['sphinx.ext.intersphinx', 'sphinx.ext.autodoc',
+              'sphinxcontrib.issuetracker']
 
 source_suffix = '.rst'
 master_doc = 'index'
