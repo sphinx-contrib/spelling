@@ -28,7 +28,7 @@ from __future__ import (print_function, division, unicode_literals,
 
 import os
 
-import py
+import py.path
 from lxml import etree
 from pyquery import PyQuery
 from sphinx.application import Sphinx
@@ -76,8 +76,20 @@ def pytest_configure(config):
     config.srcdir = py.path.local(TEST_DIRECTORY).join('testdoc')
 
 
+def pytest_funcarg__content(request):
+    templatedir = request.getfuncargvalue('pytestconfig').srcdir
+    return templatedir.join('index.rst').read()
+
+
 def pytest_funcarg__srcdir(request):
-    return request.getfuncargvalue('pytestconfig').srcdir
+    templatedir = request.getfuncargvalue('pytestconfig').srcdir
+    tmpdir = request.getfuncargvalue('tmpdir')
+    srcdir = tmpdir.join('src')
+    srcdir.ensure(dir=True)
+    templatedir.join('conf.py').copy(srcdir)
+    content = request.getfuncargvalue('content')
+    srcdir.join('index.rst').write(content)
+    return srcdir
 
 
 def pytest_funcarg__outdir(request):
