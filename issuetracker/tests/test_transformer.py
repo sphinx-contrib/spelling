@@ -28,12 +28,6 @@ from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
 import pytest
-from mock import Mock
-from docutils import nodes
-from docutils.utils import Reporter
-
-from sphinx.addnodes import pending_xref
-from sphinxcontrib import issuetracker
 
 
 @pytest.mark.with_content('ab')
