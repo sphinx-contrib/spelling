@@ -160,18 +160,16 @@ def reset_global_state():
 
 def pytest_funcarg__confoverrides(request):
     """
-    Configuration value overrides for the current test as dictionary, or
-    ``None``, if no overrides are to be used.
+    Configuration value overrides for the current test as dictionary.
 
     By default this funcarg takes the configuration overrides from the keyword
     arguments of the ``confoverrides`` marker.  If the marker doesn't exist,
-    ``None`` is returned.
+    an empty dictionary is returned.
 
     Test modules may override this funcarg to return custom ``confoverrides``.
     """
-    confoverrides = request.keywords.get('confoverrides')
-    if confoverrides:
-        return confoverrides.kwargs
+    confoverrides_marker = request.keywords.get('confoverrides')
+    return confoverrides_marker.kwargs if confoverrides_marker else {}
 
 
 def pytest_funcarg__app(request):
