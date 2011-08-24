@@ -190,12 +190,10 @@ class TrackerTest(object):
     #: confoverrides to use for tests defined in this class
     confoverrides = {}
 
-    def test_lookup(self, app, issue_id, issue):
+    def test_lookup(self, app, doctree, issue_id, issue):
         """
         Test that this tracker correctly looks up an issue.
         """
-        app.build()
-        doctree = pytest.get_doctree_as_pyquery(app, 'index')
         assert app.env.issuetracker_cache == {issue_id: issue}
         if not issue:
             assert not doctree.is_('reference')
