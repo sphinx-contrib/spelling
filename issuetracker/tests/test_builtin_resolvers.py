@@ -153,11 +153,11 @@ class TestBitBucket(ScopedProjectTrackerTest):
 
     SPHINX_URL = 'https://bitbucket.org/birkenfeld/sphinx/issue/{0}/'
     issues = {
-        'resolved': Issue(id='478', closed=True, uri=SPHINX_URL.format('478'),
+        'resolved': Issue(id='478', closed=True, url=SPHINX_URL.format('478'),
                            title='Adapt py:decorator from Python docs'),
-        'invalid': Issue(id='327', closed=True, uri=SPHINX_URL.format('327'),
+        'invalid': Issue(id='327', closed=True, url=SPHINX_URL.format('327'),
                          title='Spaces at the end of console messages'),
-        'duplicate': Issue(id='733', closed=True, uri=SPHINX_URL.format('733'),
+        'duplicate': Issue(id='733', closed=True, url=SPHINX_URL.format('733'),
                            title='byte/str conversion fails on Python 3.2'),
         'no project': '10',
         'no issue': '10000'
@@ -174,7 +174,7 @@ class TestGitHub(ScopedProjectTrackerTest):
 
     issues = {
         'closed': Issue(id='2', title=u'python 3 support', closed=True,
-                        uri='https://github.com/lunaryorn/pyudev/issues/2'),
+                        url='https://github.com/lunaryorn/pyudev/issues/2'),
         'no project': '10',
         'no issue': '1000',
     }
@@ -190,13 +190,13 @@ class TestGoogleCode(TrackerTest):
 
     PYTOX_URL = 'http://code.google.com/p/pytox/issues/detail?id={0}'
     issues = {
-        'fixed': Issue(id='2', closed=True, uri=PYTOX_URL.format('2'),
+        'fixed': Issue(id='2', closed=True, url=PYTOX_URL.format('2'),
                        title='Hudson exists with SUCCESS status even if tox '
                        'failed with ERROR'),
         'invalid': Issue(id='5', title='0.7: "error: File exists"',
-                         closed=True, uri=PYTOX_URL.format('5')),
+                         closed=True, url=PYTOX_URL.format('5')),
         'wontfix': Issue(id='6', title='Copy modules from site packages',
-                         closed=True, uri=PYTOX_URL.format('6')),
+                         closed=True, url=PYTOX_URL.format('6')),
         'no issue': '1000',
         'no project': '1',
     }
@@ -213,7 +213,7 @@ class TestDebian(TrackerTest):
     DEBIAN_URL = 'http://bugs.debian.org/cgi-bin/bugreport.cgi?bug={0}'
     issues = {
         'fixed': Issue(id='584227', title='ldb-tools: missing ldb(7) manpage',
-                       closed=True, uri=DEBIAN_URL.format('584227')),
+                       closed=True, url=DEBIAN_URL.format('584227')),
         'no project': '1',
     }
 
@@ -228,7 +228,7 @@ class TestLaunchpad(TrackerTest):
     issues = {
         'closed': Issue('647789', title='tries to install file(s) outside of '
                         './configure\'s --prefix', closed=True,
-                        uri='https://bugs.launchpad.net/bugs/647789')
+                        url='https://bugs.launchpad.net/bugs/647789')
     }
 
 
@@ -239,10 +239,10 @@ class TestJira(TrackerTest):
     issues = {
         'resolved': Issue('SHERPA-15', closed=True, title='Breadcrumbs and '
                           'page title missing from admin screens',
-                          uri='https://studio.atlassian.com/browse/SHERPA-15'),
+                          url='https://studio.atlassian.com/browse/SHERPA-15'),
         'open': Issue('PYO-84', closed=False,
                       title='Implement LLSD login in pyogp',
-                      uri='https://jira.secondlife.com/browse/PYO-84'),
+                      url='https://jira.secondlife.com/browse/PYO-84'),
     }
 
     tracker_config = {

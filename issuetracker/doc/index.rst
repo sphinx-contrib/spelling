@@ -169,11 +169,11 @@ callback to the event :event:`issuetracker-resolve-issue`:
       :event:`issuetracker-resolve-issue`, set this attribute to the
       ``issue_id`` that was given as argument.
 
-   .. attribute:: uri
+   .. attribute:: url
 
-      An URI providing information about this issue.
+      An URL providing information about this issue.
 
-      This URI is used as hyperlink target in the generated documentation.
+      This URL is used as hyperlink target in the generated documentation.
       Thus it should point to a webpage or something similar that provides
       human-readable information about an issue.
 

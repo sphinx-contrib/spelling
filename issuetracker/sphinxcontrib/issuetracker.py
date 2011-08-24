@@ -55,7 +55,7 @@ from sphinx.util.osutil import copyfile
 from sphinx.util.console import bold
 
 
-Issue = namedtuple('Issue', 'id title uri closed')
+Issue = namedtuple('Issue', 'id title url closed')
 
 _TrackerConfig = namedtuple('_TrackerConfig', 'project url')
 
@@ -133,12 +133,12 @@ GITHUB_API_URL = 'https://api.github.com/repos/{0.project}/issues/{1}'
 def lookup_github_issue(app, tracker_config, issue_id):
     check_project_with_username(tracker_config)
 
-    url = GITHUB_API_URL.format(tracker_config, issue_id)
-    issue = fetch_issue(app, url, output_format='json')
+    issue = fetch_issue(app, GITHUB_API_URL.format(tracker_config, issue_id),
+                        output_format='json')
     if issue:
         closed = issue['state'] == 'closed'
         return Issue(id=issue_id, title=issue['title'], closed=closed,
-                     uri=issue['html_url'])
+                     url=issue['html_url'])
 
 
 BITBUCKET_URL = 'https://bitbucket.org/{0.project}/issue/{1}/'
@@ -148,12 +148,12 @@ BITBUCKET_API_URL = ('https://api.bitbucket.org/1.0/repositories/'
 def lookup_bitbucket_issue(app, tracker_config, issue_id):
     check_project_with_username(tracker_config)
 
-    url = BITBUCKET_API_URL.format(tracker_config, issue_id)
-    issue = fetch_issue(app, url, output_format='json')
+    issue = fetch_issue(app, BITBUCKET_API_URL.format(tracker_config, issue_id),
+                        output_format='json')
     if issue:
         closed = issue['status'] not in ('new', 'open')
-        uri=BITBUCKET_URL.format(tracker_config, issue_id)
-        return Issue(id=issue_id, title=issue['title'], closed=closed, uri=uri)
+        url = BITBUCKET_URL.format(tracker_config, issue_id)
+        return Issue(id=issue_id, title=issue['title'], closed=closed, url=url)
 
 
 DEBIAN_URL = 'http://bugs.debian.org/cgi-bin/bugreport.cgi?bug={0}'
@@ -171,7 +171,7 @@ def lookup_debian_issue(app, tracker_config, issue_id):
         return None
 
     return Issue(id=issue_id, title=bug.subject, closed=bug.done,
-                 uri=DEBIAN_URL.format(issue_id))
+                 url=DEBIAN_URL.format(issue_id))
 
 
 LAUNCHPAD_URL = 'https://bugs.launchpad.net/bugs/{0}'
@@ -197,7 +197,7 @@ def lookup_launchpad_issue(app, tracker_config, issue_id):
         return None
 
     return Issue(id=issue_id, title=task.title, closed=bool(task.date_closed),
-                 uri=LAUNCHPAD_URL.format(issue_id))
+                 url=LAUNCHPAD_URL.format(issue_id))
 
 
 GOOGLE_CODE_URL = 'http://code.google.com/p/{0.project}/issues/detail?id={1}'
@@ -205,8 +205,8 @@ GOOGLE_CODE_API_URL = ('http://code.google.com/feeds/issues/p/'
                        '{0.project}/issues/full/{1}')
 
 def lookup_google_code_issue(app, tracker_config, issue_id):
-    url = GOOGLE_CODE_API_URL.format(tracker_config, issue_id)
-    issue = fetch_issue(app, url, output_format='xml')
+    issue = fetch_issue(app, GOOGLE_CODE_API_URL.format(
+        tracker_config, issue_id), output_format='xml')
     if issue:
         ISSUE_NS = '{http://schemas.google.com/projecthosting/issues/2009}'
         ATOM_NS = '{http://www.w3.org/2005/Atom}'
@@ -215,7 +215,7 @@ def lookup_google_code_issue(app, tracker_config, issue_id):
         title = title_node.text if title_node is not None else None
         closed = state is not None and state.text == 'closed'
         return Issue(id=issue_id, title=title, closed=closed,
-                     uri=GOOGLE_CODE_URL.format(tracker_config, issue_id))
+                     url=GOOGLE_CODE_URL.format(tracker_config, issue_id))
 
 
 JIRA_API_URL = ('{0.url}/si/jira.issueviews:issue-xml/{1}/{1}.xml?'
@@ -234,12 +234,12 @@ def lookup_jira_issue(app, tracker_config, issue_id):
         if project != tracker_config.project:
             return None
 
-        uri = issue.find('*/item/link').text
+        url = issue.find('*/item/link').text
         state = issue.find('*/item/resolution').text
         # summary contains the title without the issue id
         title = issue.find('*/item/summary').text
         closed = state.lower() != 'unresolved'
-        return Issue(id=issue_id, title=title, closed=closed, uri=uri)
+        return Issue(id=issue_id, title=title, closed=closed, url=url)
 
 
 BUILTIN_ISSUE_TRACKERS = {
@@ -327,7 +327,7 @@ def make_issue_reference(issue, content_node):
     Return a :class:`docutils.nodes.reference` for the issue.
     """
     reference = nodes.reference()
-    reference['refuri'] = issue.uri
+    reference['refuri'] = issue.url
     if issue.closed:
         reference['classes'].append('issue-closed')
     reference['classes'].append('reference-issue')

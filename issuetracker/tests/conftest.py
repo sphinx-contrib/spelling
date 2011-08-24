@@ -45,7 +45,7 @@ def assert_issue_reference(doctree, issue, title=False):
     __tracebackhide__ = True
     reference = doctree.find('reference')
     assert len(reference) == 1
-    assert reference.attr.refuri == issue.uri
+    assert reference.attr.refuri == issue.url
     classes = reference.attr.classes.split(' ')
     is_closed = 'issue-closed' in classes
     assert 'reference-issue' in classes
