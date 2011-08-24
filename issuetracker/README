@@ -14,6 +14,7 @@ Currently the following issue trackers are supported:
 - `Launchpad <https://launchpad.net>`_
 - `Google Code <http://code.google.com>`_
 - `Debian BTS <http://bugs.debian.org>`_
+- `Jira <http://www.atlassian.com/software/jira/>`_
 
 A simple API is provided to add support for other issue trackers.  If you added
 support for a new tracker, please consider sending a patch to make your work
