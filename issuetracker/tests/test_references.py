@@ -46,6 +46,12 @@ def pytest_funcarg__issue(request):
     return None
 
 
+def pytest_funcarg__content(request):
+    issue = request.getfuncargvalue('issue')
+    issue_id = issue.id if issue else '10'
+    return '#{0}'.format(issue_id)
+
+
 def pytest_funcarg__build_app(request):
     app = request.getfuncargvalue('app')
     issue = request.getfuncargvalue('issue')
@@ -64,24 +70,18 @@ def pytest_funcarg__doctree(request):
 def test_no_issue(build_app, doctree):
     assert build_app.env.issuetracker_cache == {'10': None}
     assert not doctree.is_('reference')
-    assert doctree.find('list_item').eq(0).text() == \
-        'An issue id in normal text #10 should be transformed'
 
 
 @pytest.mark.issue(id='10', title='Spam', url='spam', closed=False)
 def test_open_issue(build_app, doctree, issue):
     assert build_app.env.issuetracker_cache == {'10': issue}
     reference = pytest.assert_issue_reference(doctree, issue)
-    assert reference.parents('list_item').text() == \
-        'An issue id in normal text #10 should be transformed'
 
 
 @pytest.mark.issue(id='10', title='Eggs', url='eggs', closed=True)
 def test_closed_issue(build_app, doctree, issue):
     assert build_app.env.issuetracker_cache == {'10': issue}
     reference = pytest.assert_issue_reference(doctree, issue)
-    assert reference.parents('list_item').text() == \
-        'An issue id in normal text #10 should be transformed'
 
 
 @pytest.mark.confoverrides(issuetracker_expandtitle=True)
@@ -89,8 +89,6 @@ def test_closed_issue(build_app, doctree, issue):
 def test_closed_issue_with_title(build_app, doctree, issue):
     assert build_app.env.issuetracker_cache == {'10': issue}
     reference = pytest.assert_issue_reference(doctree, issue, title=True)
-    assert reference.parents('list_item').text() == \
-        'An issue id in normal text Eggs should be transformed'
 
 
 def test_event_emitted(build_app, resolve):

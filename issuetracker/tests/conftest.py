@@ -80,23 +80,22 @@ def pytest_namespace():
 
 
 def pytest_configure(config):
-    config.srcdir = py.path.local(TEST_DIRECTORY).join('testdoc')
+    config.confpy = py.path.local(TEST_DIRECTORY).join('conf.py')
 
 
 def pytest_funcarg__content(request):
     content_mark = request.keywords.get('with_content')
-    if content_mark:
-        return content_mark.args[0]
-    templatedir = request.getfuncargvalue('pytestconfig').srcdir
-    return templatedir.join('index.rst').read()
+    if not content_mark:
+        raise ValueError('no content provided')
+    return content_mark.args[0]
 
 
 def pytest_funcarg__srcdir(request):
-    templatedir = request.getfuncargvalue('pytestconfig').srcdir
     tmpdir = request.getfuncargvalue('tmpdir')
     srcdir = tmpdir.join('src')
     srcdir.ensure(dir=True)
-    templatedir.join('conf.py').copy(srcdir)
+    confpy = request.getfuncargvalue('pytestconfig').confpy
+    confpy.copy(srcdir)
     content = request.getfuncargvalue('content')
     srcdir.join('index.rst').write(content)
     return srcdir

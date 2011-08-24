@@ -36,10 +36,11 @@ from sphinx.addnodes import pending_xref
 from sphinxcontrib import issuetracker
 
 
-@pytest.mark.confoverrides(issuetracker_issue_pattern=r'(#)(\d+)')
+@pytest.mark.with_content('ab')
+@pytest.mark.confoverrides(issuetracker_issue_pattern=r'(a)(b)')
 def test_too_many_groups(app):
     with pytest.raises(ValueError) as excinfo:
         app.build()
     error = excinfo.value
     assert str(error) == ('issuetracker_issue_pattern must have '
-                          'exactly one group: {0!r}'.format((u'#', u'10')))
+                          'exactly one group: {0!r}'.format((u'a', u'b')))

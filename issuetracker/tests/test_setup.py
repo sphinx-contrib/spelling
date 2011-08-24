@@ -36,6 +36,12 @@ import pytest
 from sphinxcontrib import issuetracker
 
 
+def pytest_funcarg__content(request):
+    # no issue references are required by this test module, we just need some
+    # content
+    return 'dummy content'
+
+
 def test_builtin_issue_trackers():
     trackers = dict(issuetracker.BUILTIN_ISSUE_TRACKERS)
     for attr in dir(issuetracker):
