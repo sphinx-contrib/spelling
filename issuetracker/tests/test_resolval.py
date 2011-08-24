@@ -32,6 +32,13 @@ from sphinxcontrib.issuetracker import TrackerConfig, Issue
 
 
 def pytest_funcarg__app(request):
+    """
+    A *built* sphinx application with a mocked resolver.
+
+    Overrides the global ``app`` funcarg to directly build the application.
+    The application is build with a mocked resolver as returned by the
+    ``mock_resolver`` funcarg.
+    """
     # setup a mock resolver
     request.getfuncargvalue('mock_resolver')
     app = request.getfuncargvalue('app')
@@ -40,6 +47,12 @@ def pytest_funcarg__app(request):
 
 
 def pytest_funcarg__doctree(request):
+    """
+    The doctree of the built document as :class:`~pyquery.PyQuery` object.
+
+    The doctree is converted into XML, parsed with lxml and then wrapped in a
+    :class:`~pyquery.PyQuery` object for easy traversal and querying.
+    """
     app = request.getfuncargvalue('app')
     doctree = pytest.get_doctree_as_pyquery(app, 'index')
     return doctree

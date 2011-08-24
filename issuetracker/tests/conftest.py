@@ -82,10 +82,28 @@ def pytest_namespace():
 
 
 def pytest_configure(config):
+    """
+    Configure issue tracker tests.
+
+    Adds ``confpy`` attribute to ``config`` which provides the path to the test
+    ``conf.py`` file.
+    """
     config.confpy = py.path.local(TEST_DIRECTORY).join('conf.py')
 
 
 def pytest_funcarg__content(request):
+    """
+    The content for the test document as string.
+
+    By default, the content is taken from the argument of the ``with_content``
+    marker.  If no such marker exists, the content is build from the id of the
+    issue returned by the ``issue`` funcarg by prepending a dash before the id.
+    The issue id ``'10'`` will thus produce the content ``'#10'``.  If the
+    ``issue`` funcarg returns ``None``, a :exc:`~exceptions.ValueError` is
+    raised eventually.
+
+    Test modules may override this funcarg to add their own content.
+    """
     content_mark = request.keywords.get('with_content')
     if content_mark:
         return content_mark.args[0]
@@ -97,6 +115,13 @@ def pytest_funcarg__content(request):
 
 
 def pytest_funcarg__srcdir(request):
+    """
+    The Sphinx source directory for the current test as path.
+
+    This directory contains the standard test ``conf.py`` and a single document
+    named ``index.rst``.  The content of this document is the return value of
+    the ``content`` funcarg.
+    """
     tmpdir = request.getfuncargvalue('tmpdir')
     srcdir = tmpdir.join('src')
     srcdir.ensure(dir=True)
@@ -108,11 +133,17 @@ def pytest_funcarg__srcdir(request):
 
 
 def pytest_funcarg__outdir(request):
+    """
+    The Sphinx output directory for the current test as path.
+    """
     tmpdir = request.getfuncargvalue('tmpdir')
     return tmpdir.join('html')
 
 
 def pytest_funcarg__doctreedir(request):
+    """
+    The Sphinx doctree directory for the current test as path.
+    """
     tmpdir = request.getfuncargvalue('tmpdir')
     return tmpdir.join('doctrees')
 
@@ -144,6 +175,14 @@ def pytest_funcarg__confoverrides(request):
 
 
 def pytest_funcarg__app(request):
+    """
+    A Sphinx application for testing.
+
+    The app uses the source directory from the ``srcdir`` funcarg, and writes
+    to the directories given by the ``outdir`` and ``doctreedir`` funcargs.
+    Additional configuration values can be inserted into this application
+    through the ``confoverrides`` funcarg.
+    """
     srcdir = request.getfuncargvalue('srcdir')
     outdir = request.getfuncargvalue('outdir')
     doctreedir = request.getfuncargvalue('doctreedir')
@@ -156,6 +195,17 @@ def pytest_funcarg__app(request):
 
 
 def pytest_funcarg__issue(request):
+    """
+    An :class:`~sphinxcontrib.issuetracker.Issue` for the current test, or
+    ``None``, if no issue is to be used.
+
+    By default, this funcarg creates an issue from the arguments of the
+    ``with_issue`` marker, or returns ``None``, if there is no such marker on
+    the current test.
+
+    Test modules may override this funcarg to provide their own issues for
+    tests.
+    """
     issue_marker = request.keywords.get('with_issue')
     if issue_marker:
         return Issue(*issue_marker.args, **issue_marker.kwargs)
@@ -163,6 +213,13 @@ def pytest_funcarg__issue(request):
 
 
 def pytest_funcarg__mock_resolver(request):
+    """
+    A mocked callback for the ``issuetracker-resolve-issue`` event as
+    :class:`~mock.Mock` object.
+
+    The callback is already connected to the ``issuetracker-resolve-issue``
+    event in the application provided by the ``app`` funcarg.
+    """
     issue = request.getfuncargvalue('issue')
     lookup_mock_issue = Mock(name='lookup_mock_issue', return_value=issue)
     app = request.getfuncargvalue('app')

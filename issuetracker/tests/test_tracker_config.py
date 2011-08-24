@@ -33,7 +33,13 @@ from sphinxcontrib.issuetracker import TrackerConfig
 
 
 def pytest_funcarg__content(request):
-    # dummy content
+    """
+    Dummy content for this test module, overrides the global ``content``
+    funcarg.
+
+    This test module doesn't need issue references, but just configured sphinx
+    application to check creating tracker configs from sphinx config.
+    """
     return 'dummy content'
 
 

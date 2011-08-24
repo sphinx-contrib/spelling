@@ -37,8 +37,14 @@ from sphinxcontrib import issuetracker
 
 
 def pytest_funcarg__content(request):
-    # no issue references are required by this test module, we just need some
-    # content
+    """
+    Dummy content for this test module, overrides the global ``content``
+    funcarg.
+
+    This test module doesn't need issue references, but just a loaded and
+    ready-to-build sphinx application.  Thus the content doesn't matter, but
+    still a sphinx application needs some content to build.
+    """
     return 'dummy content'
 
 
