@@ -54,25 +54,23 @@ def pytest_funcarg__tracker_config(request):
         return None
     testname = getattr(request, 'param', None)
     if testname is None:
-        return cls.default_tracker_config
+        config = cls.default_tracker_config
     else:
-        return cls.tracker_config.get(testname, cls.default_tracker_config)
+        config = cls.tracker_config.get(testname, cls.default_tracker_config)
+    if config:
+        pytest.update_confoverrides(
+            request, issuetracker_project=config.project,
+            issuetracker_url=config.url)
+    return config
 
 
 def pytest_funcarg__tracker(request):
-    tracker_config = request.getfuncargvalue('tracker_config')
-    if tracker_config is None:
-        return
     tracker = request.cls.name
-    confoverrides = dict(issuetracker=tracker,
-                         issuetracker_project=tracker_config.project,
-                         issuetracker_url=tracker_config.url,
-                         issuetracker_expandtitle=True)
-    confoverrides.update(request.cls.confoverrides)
-    if 'confoverrides' in request.keywords:
-        marker = request.keywords['confoverrides']
-        confoverrides.update(marker.kwargs)
-    request.applymarker(pytest.mark.confoverrides(**confoverrides))
+    pytest.update_confoverrides(request, issuetracker=tracker,
+                                issuetracker_expandtitle=True,
+                                **request.cls.confoverrides)
+    # apply tracker configuration
+    request.getfuncargvalue('tracker_config')
     return tracker
 
 

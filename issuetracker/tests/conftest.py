@@ -28,6 +28,7 @@ from __future__ import (print_function, division, unicode_literals,
 
 import os
 
+import pytest
 import py.path
 from lxml import etree
 from pyquery import PyQuery
@@ -66,10 +67,16 @@ def get_doctree_as_pyquery(app, docname):
     return PyQuery(tree)
 
 
+def update_confoverrides(request, **confoverrides):
+    overrides_mark = request.keywords.setdefault(
+        'confoverrides', pytest.mark.confoverrides())
+    overrides_mark.kwargs.update(confoverrides)
+
+
 def pytest_namespace():
     return dict((f.__name__, f) for f in
                 (get_doctree_as_xml, get_doctree_as_pyquery,
-                 assert_issue_reference))
+                 assert_issue_reference, update_confoverrides))
 
 
 def pytest_configure(config):
