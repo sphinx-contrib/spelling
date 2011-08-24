@@ -140,7 +140,8 @@ callback to the event :event:`issuetracker-resolve-issue`:
    other resolvers connected to the event may be invoked by Sphinx.
 
    .. versionchanged:: 0.8
-      Replaced ``project`` argument with ``tracker_config``
+      Replaced ``project`` argument with ``tracker_config``, changed return
+      value from dictionary to :class:`Issue`
 
 .. autoclass:: TrackerConfig
 
