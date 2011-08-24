@@ -94,8 +94,8 @@ ISSUES = {
 def pytest_generate_tests(metafunc):
     if not metafunc.function == test_builtin_resolver:
         return
-    for tracker, tests in ISSUES.iteritems():
-        for testname in tests:
+    for tracker, tests in sorted(ISSUES.iteritems()):
+        for testname in sorted(tests):
             metafunc.addcall(param=(tracker, testname),
                              id='{0},{1}'.format(tracker, testname))
 
