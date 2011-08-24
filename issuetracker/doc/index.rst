@@ -89,9 +89,7 @@ Add ``sphinxcontrib.issuetracker`` to the configuration value
    .. versionadded:: 0.8
 
 For instance, with the following configuration issue references in the
-documentation would refer to the `Sphinx issue tracker`_:
-
-.. code-block:: python
+documentation would refer to the `Sphinx issue tracker`_::
 
    issuetracker = 'bitbucket'
    issuetracker_project = 'birkenfeld/sphinx'
