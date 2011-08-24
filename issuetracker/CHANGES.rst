@@ -27,6 +27,7 @@ Other changes
 * Bugs fixes and improvements:
 
   - Use BitBucket API instead of scraping the BitBucket website
+  - Cache failed issue lookups, too
 
 .. _jira: http://www.atlassian.com/software/jira/
 

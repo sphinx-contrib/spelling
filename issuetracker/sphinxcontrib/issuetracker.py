@@ -354,12 +354,11 @@ def lookup_issue(app, tracker_config, issue_id):
     or ``None`` if the issue wasn't found.
     """
     cache = app.env.issuetracker_cache
-    issue = cache.get(issue_id)
-    if not issue:
+    if issue_id not in cache:
         issue = app.emit_firstresult('issuetracker-resolve-issue',
                                      tracker_config, issue_id)
         cache[issue_id] = issue
-    return issue
+    return cache[issue_id]
 
 
 def resolve_issue_references(app, doctree):
