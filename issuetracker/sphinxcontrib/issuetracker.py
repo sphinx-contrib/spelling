@@ -103,22 +103,22 @@ def fetch_issue(app, url, output_format=None, opener=None):
     else:
         urlopen = urllib2.urlopen
 
-    with closing(urlopen(url)) as response:
-        if response.getcode() == 404:
-            return None
-        elif response.getcode() != 200:
-            # warn about unexpected response code
-            app.warn('{0} unavailable with code {1}'.format(
-                url, response.getcode()))
-            return None
-        if output_format == 'json':
-            import json
-            return json.load(response)
-        elif output_format == 'xml':
-            from xml.etree import cElementTree as etree
-            return etree.parse(response)
-        else:
-            return response
+    try:
+        with closing(urlopen(url)) as response:
+            if output_format == 'json':
+                import json
+                return json.load(response)
+            elif output_format == 'xml':
+                from xml.etree import cElementTree as etree
+                return etree.parse(response)
+            else:
+                return response
+    except urllib2.HTTPError as error:
+        if error.code != 404:
+            # 404 just says that the issue doesn't exist, but anything else is
+            # more serious and deserves a warning
+            app.warn('{0} unavailable with code {1}'.format(url, error.code))
+        return None
 
 
 def check_project_with_username(tracker_config):
