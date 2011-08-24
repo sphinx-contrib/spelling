@@ -59,7 +59,7 @@ Issue = namedtuple('Issue', 'id title url closed')
 
 _TrackerConfig = namedtuple('_TrackerConfig', 'project url')
 
-class TrackerConfig(object):
+class TrackerConfig(_TrackerConfig):
     """
     Issue tracker configuration.
 
@@ -68,15 +68,16 @@ class TrackerConfig(object):
     :event:`issuetracker-resolve-issue`.
     """
 
+    def __new__(cls, project, url=None):
+        if url:
+            url = url.rstrip('/')
+        return _TrackerConfig.__new__(cls, project, url)
+
     @classmethod
     def from_sphinx_config(cls, config):
         project = config.issuetracker_project or config.project
         url = config.issuetracker_url
         return cls(project, url)
-
-    def __init__(self, project, url=None):
-        self.project = project
-        self.url = url.rstrip('/') if url else None
 
 
 def fetch_issue(app, url, output_format=None, opener=None):
