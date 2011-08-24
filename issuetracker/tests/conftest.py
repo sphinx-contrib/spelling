@@ -225,10 +225,17 @@ def pytest_funcarg__mock_resolver(request):
     :class:`~mock.Mock` object.
 
     The callback is already connected to the ``issuetracker-resolve-issue``
-    event in the application provided by the ``app`` funcarg.
+    event in the application provided by the ``app`` funcarg.  If the ``issue``
+    funcarg is not ``None``, the callback will return this issue if the issue
+    id given to the callback matches the id of this issue.  Otherwise it will
+    always return ``None``.
     """
+    lookup_mock_issue = Mock(name='lookup_mock_issue', return_value=None)
     issue = request.getfuncargvalue('issue')
-    lookup_mock_issue = Mock(name='lookup_mock_issue', return_value=issue)
+    if issue:
+        def lookup(app, tracker_config, issue_id):
+            return issue if issue_id == issue.id else None
+        lookup_mock_issue.side_effect = lookup
     app = request.getfuncargvalue('app')
     app.connect(b'issuetracker-resolve-issue', lookup_mock_issue)
     return lookup_mock_issue
