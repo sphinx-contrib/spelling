@@ -29,6 +29,91 @@ from __future__ import (print_function, division, unicode_literals,
 
 import pytest
 
+from sphinxcontrib.issuetracker import Issue
+
+
+def pytest_funcarg__issue(request):
+    """
+    A dummy issue, just to trigger issue resolval so that transformations can
+    be seen in the output.
+    """
+    return Issue(id='10', title='Eggs', closed=False, url='eggs')
+
+
+def pytest_funcarg__app(request):
+    """
+    Adds the ``mock_resolver`` marker to the current test before creating the
+    ``app``.
+    """
+    request.applymarker(pytest.mark.mock_resolver)
+    return request.getfuncargvalue('app')
+
+
+@pytest.mark.with_content('#10')
+def test_transform_simple(doctree):
+    """
+    Test a simple transform with just an issue id.
+    """
+    assert doctree.is_('reference')
+
+
+@pytest.mark.with_content('before #10 after')
+def test_transform_leading_and_trailing_text(doctree, content):
+    """
+    Test that transformation leaves leading and trailing text intact.
+    """
+    assert doctree.is_('reference')
+    assert doctree.text() == content
+
+
+@pytest.mark.with_content('*#10* **#10**')
+def test_transform_inline_markup(doctree):
+    """
+    Test that issue ids inside inline markup like emphasis are transformed.
+    """
+    assert len(doctree.find('reference')) == 2
+    assert doctree.text() == '#10 #10'
+    assert doctree.find('reference').eq(0).parents('emphasis')
+    assert doctree.find('reference').eq(1).parents('strong')
+
+
+@pytest.mark.with_content('``#10``')
+def test_transform_literal(doctree):
+    """
+    Test that transformation leaves literals untouched.
+    """
+    assert not doctree.is_('reference')
+    literal = doctree.find('literal')
+    assert literal
+    assert literal.text() == '#10'
+
+
+@pytest.mark.with_content("""\
+spam::
+
+   eggs
+      #10""")
+def test_transform_literal_block(doctree):
+    """
+    Test that transformation leaves literal blocks untouched.
+    """
+    assert not doctree.is_('reference')
+    literal_block = doctree.find('literal_block')
+    assert literal_block
+    assert literal_block.text('eggs\n   #10')
+
+
+@pytest.mark.with_content("""\
+.. code-block:: python
+
+   eggs('#10')""")
+def test_transform_code_block(doctree, content):
+    assert not doctree.is_('reference')
+    literal_block = doctree.find('literal_block')
+    assert literal_block
+    assert literal_block.text("eggs('#10')")
+    assert literal_block.attr.language == 'python'
+
 
 @pytest.mark.with_content('ab')
 @pytest.mark.confoverrides(issuetracker_issue_pattern=r'(a)(b)')
