@@ -204,11 +204,8 @@ extension.  Patches and pull requests are always welcome!
 .. _Sphinx: http://sphinx.pocoo.org/
 .. _Sphinx issue tracker: https://bitbucket.org/birkenfeld/sphinx/issues/
 .. _jira: http://www.atlassian.com/software/jira/
-.. _lxml: http://lxml.de
-.. _simplejson: http://pypi.python.org/pypi/simplejson/
 .. _launchpadlib: http://pypi.python.org/pypi/launchpadlib/
 .. _debianbts: http://pypi.python.org/pypi/python-debianbts/
 .. _SOAPpy: http://pypi.python.org/pypi/SOAPpy/
-.. _suds: https://fedorahosted.org/suds/
 .. _sphinx-contrib: https://bitbucket.org/birkenfeld/sphinx-contrib
 .. _issue tracker: https://bitbucket.org/birkenfeld/sphinx-contrib/issues/
