@@ -43,12 +43,56 @@ except ImportError:
 
 
 def pytest_generate_tests(metafunc):
+    """
+    Generate tests.
+
+    Generate tests for all test functions with an ``issue`` argument by adding
+    calls for each tests in testname in the ``issues`` attribute of the test
+    class, the function is defined in.  The ``issues`` attribute is expected to
+    be a mapping from test names to Issue objects which this test is expected
+    to resolve to, or with issue ids as string, if the test is expected to be
+    unable to resolve the issue.
+    """
     if 'issue' in metafunc.funcargnames:
         for testname in sorted(metafunc.cls.issues):
             metafunc.addcall(id=testname, param=testname)
 
 
+def pytest_funcarg__testname(request):
+    """
+    The testname as string, or ``None``, if no testname is known.
+
+    This is the parameter added by the test generation hook, or ``None`` if no
+    parameter was set, because test generation didn't add a call for this test.
+    """
+    return getattr(request, 'param', None)
+
+
+def pytest_funcarg__tracker(request):
+    """
+    The tracker name as string, or ``None``, if no tracker is known.
+
+    The tracker name is taken from the ``name`` attribute of the class this
+    test is defined in.  If the test isn't defined in a class, ``None`` is
+    returned.
+    """
+    if not request.cls:
+        return None
+    return request.cls.name
+
+
 def pytest_funcarg__tracker_config(request):
+    """
+    The tracker configuration as ``TrackerConfig`` object, or ``None``, if
+    there is no tracker configuration.
+
+    Tracker configuration is taken from the class this test is defined in.  If
+    there is a ``testname`` for this test, the tracker config is taken from the
+    ``tracker_config`` map defined in the class, falling back to the
+    ``default_tracker_config`` defined in the class.  If there is no
+    ``testname``, the ``default_tracker_config`` is used right away.  If the
+    test isn't defined in a class, ``None`` is returned.
+    """
     cls = request.cls
     if cls is None:
         return None
@@ -59,13 +103,16 @@ def pytest_funcarg__tracker_config(request):
         return cls.tracker_config.get(testname, cls.default_tracker_config)
 
 
-def pytest_funcarg__tracker(request):
-    if not request.cls:
-        return None
-    return request.cls.name
-
-
 def pytest_funcarg__confoverrides(request):
+    """
+    Confoverrides for this test as dictionary.
+
+    Provides confoverrides for this test that include the tracker name and
+    tracker configuration (as returned by the ``tracker`` and
+    ``tracker_config`` funcargs).  The ``expandtitle`` setting is enabled.  The
+    global ``confoverrides`` are included, and overwrite any configuration key
+    set in this funcarg.
+    """
     # configure tracker and enable title expansion to test the title retrieval
     # of builtin trackers, too
     tracker = request.getfuncargvalue('tracker')
@@ -83,11 +130,14 @@ def pytest_funcarg__confoverrides(request):
     return confoverrides
 
 
-def pytest_funcarg__testname(request):
-    return getattr(request, 'param', None)
-
-
 def pytest_funcarg__issue_id(request):
+    """
+    The issue id of this test as string, or ``None``, if this test doesn't have
+    a ``testname``.
+
+    The issue id is taken from the issue defined in the ``issues`` attribute of
+    the class this test is defined in.
+    """
     testname = request.getfuncargvalue('testname')
     if not testname:
         return None
@@ -99,6 +149,13 @@ def pytest_funcarg__issue_id(request):
 
 
 def pytest_funcarg__issue(request):
+    """
+    The issue object for this test, or ``None``, if the test is expected to be
+    unable to resolve the issue.
+
+    The issue id is taken from the issue defined in the ``issues`` attribute of
+    the class this test is defined in.
+    """
     testname = request.getfuncargvalue('testname')
     issue = request.cls.issues[testname]
     if isinstance(issue, basestring):
@@ -108,15 +165,29 @@ def pytest_funcarg__issue(request):
 
 
 class TrackerTest(object):
+    """
+    Base class for tests for builtin issue trackers.
 
+    This class defines a single test which tests issue lookup.
+    """
+
+    #: the name of the issuetracker to use in this test
     name = None
 
+    #: the default tracker configuration
     default_tracker_config = None
 
+    #: test-specific tracker configuration
     tracker_config = {}
 
+    #: issues to test. the key is a descriptive name for the issue
+    #: (e.g. resolved, invalid or something the like of), the value is either a
+    #: plain string, in which case the test is expected to not resolve the
+    #: issue, or an ``Issue`` object, in which case the test is expected to
+    #: resolve the issue id to excately this issue object
     issues = {}
 
+    #: confoverrides to use for tests defined in this class
     confoverrides = {}
 
     def test_lookup(self, app, issue_id, issue):
@@ -130,6 +201,13 @@ class TrackerTest(object):
 
 
 class ScopedProjectTrackerTest(TrackerTest):
+    """
+    Base class for tests for issue trackers which use scoped project names
+    including the user name.
+
+    Defines an additional tests which tests for exceptions raised if the
+    username is missing.
+    """
 
     @pytest.mark.with_content('#10')
     @pytest.mark.confoverrides(issuetracker_project='eggs')
