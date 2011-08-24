@@ -197,26 +197,12 @@ def lookup_google_code_issue(app, tracker_config, issue_id):
                      uri=GOOGLE_CODE_URL.format(tracker_config, issue_id))
 
 
-JIRA_API_URL = 'http://{0.project}/si/jira.issueviews:issue-xml/{1}/{1}.xml'
-
-def lookup_jira_issue(app, tracker_config, issue_id):
-    issue = fetch_issue(app, JIRA_API_URL.format(tracker_config, issue_id),
-                        output_format='xml')
-    if issue:
-        uri = issue.find('*/item/link').text
-        state = issue.find('*/item/resolution').text
-        title = issue.find('*/item/title').text
-        closed = state.lower() != 'unresolved'
-        return Issue(id=issue_id, title=title, closed=closed, uri=uri)
-
-
 BUILTIN_ISSUE_TRACKERS = {
     'github': lookup_github_issue,
     'bitbucket': lookup_bitbucket_issue,
     'debian': lookup_debian_issue,
     'launchpad': lookup_launchpad_issue,
     'google code': lookup_google_code_issue,
-    'jira': lookup_jira_issue,
     }
 
 
