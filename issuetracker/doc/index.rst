@@ -57,8 +57,8 @@ Add ``sphinxcontrib.issuetracker`` to the configuration value
      this issue tracker, debianbts_ and SOAPpy_ must be installed.
    - ``jira``: A Jira_ instance.  With this issue tracker
      :confval:`issuetracker_url` must be set to the base url of the Jira
-     instance to use.  Otherwise a :class:`~exceptions.ValueError` is raised
-     when resolving the first issue reference.
+     instance to use.  Otherwise a :exc:`~exceptions.ValueError` is raised when
+     resolving the first issue reference.
 
      .. versionadded:: 0.8
 
