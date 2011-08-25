@@ -194,7 +194,7 @@ def lookup_launchpad_issue(app, tracker_config, issue_id):
         # no matching task found
         return None
 
-    return Issue(id=issue_id, title=task.title, closed=bool(task.date_closed),
+    return Issue(id=issue_id, title=bug.title, closed=bool(task.date_closed),
                  url=LAUNCHPAD_URL.format(issue_id))
 
 
