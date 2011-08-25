@@ -252,7 +252,7 @@ BUILTIN_ISSUE_TRACKERS = {
     }
 
 
-class IssuesReferences(Transform):
+class IssueReferences(Transform):
     """
     Parse and transform issue ids in a document.
 
@@ -393,7 +393,7 @@ def init_cache(app):
 
 def init_transformer(app):
     if app.config.issuetracker_plaintext_issues:
-        app.add_transform(IssuesReferences)
+        app.add_transform(IssueReferences)
 
 
 def copy_stylesheet(app, exception):

@@ -85,7 +85,7 @@ def test_transform_added(app):
     """
     Test that the transformer is properly added.
     """
-    assert issuetracker.IssuesReferences in SphinxStandaloneReader.transforms
+    assert issuetracker.IssueReferences in SphinxStandaloneReader.transforms
 
 
 @pytest.mark.confoverrides(issuetracker_plaintext_issues=False)
@@ -93,4 +93,4 @@ def test_transform_not_added(app):
     """
     Test that the transformer is not added if transformations are disabled.
     """
-    assert issuetracker.IssuesReferences not in SphinxStandaloneReader.transforms
+    assert issuetracker.IssueReferences not in SphinxStandaloneReader.transforms

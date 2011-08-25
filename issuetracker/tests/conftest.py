@@ -36,7 +36,7 @@ from sphinx.application import Sphinx
 from sphinx.builders.html import StandaloneHTMLBuilder
 from sphinx.environment import SphinxStandaloneReader
 
-from sphinxcontrib.issuetracker import Issue, IssuesReferences
+from sphinxcontrib.issuetracker import Issue, IssueReferences
 
 
 TEST_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
@@ -183,7 +183,7 @@ def reset_global_state():
     Makes sure that we got a fresh test application for each test.
     """
     try:
-        SphinxStandaloneReader.transforms.remove(IssuesReferences)
+        SphinxStandaloneReader.transforms.remove(IssueReferences)
     except ValueError:
         pass
     StandaloneHTMLBuilder.css_files.remove('_static/issuetracker.css')
