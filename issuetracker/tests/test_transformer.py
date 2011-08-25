@@ -49,6 +49,15 @@ def pytest_funcarg__app(request):
     return request.getfuncargvalue('app')
 
 
+@pytest.mark.confoverrides(issuetracker_plaintext_issues=False)
+@pytest.mark.with_content('#10')
+def test_transform_disabled(doctree):
+    """
+    Test that no reference is inserted if transforming is disabled.
+    """
+    assert not doctree.is_('reference')
+
+
 @pytest.mark.with_content('#10')
 def test_transform_simple(doctree):
     """

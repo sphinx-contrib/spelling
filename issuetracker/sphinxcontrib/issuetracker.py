@@ -391,6 +391,11 @@ def init_cache(app):
         app.env.issuetracker_cache = {}
 
 
+def init_transformer(app):
+    if app.config.issuetracker_plaintext_issues:
+        app.add_transform(IssuesReferences)
+
+
 def copy_stylesheet(app, exception):
     if app.builder.name != 'html' or exception:
         return
@@ -404,9 +409,9 @@ def copy_stylesheet(app, exception):
 
 def setup(app):
     app.require_sphinx('1.0')
-    app.add_transform(IssuesReferences)
     app.add_event(b'issuetracker-resolve-issue')
     app.connect(b'builder-inited', connect_builtin_tracker)
+    app.add_config_value('issuetracker_plaintext_issues', True, 'env')
     app.add_config_value('issuetracker_issue_pattern',
                          re.compile(r'#(\d+)'), 'env')
     app.add_config_value('issuetracker_project', None, 'env')
@@ -415,5 +420,6 @@ def setup(app):
     app.add_config_value('issuetracker', None, 'env')
     app.connect(b'builder-inited', add_stylesheet)
     app.connect(b'builder-inited', init_cache)
+    app.connect(b'builder-inited', init_transformer)
     app.connect(b'doctree-read', resolve_issue_references)
     app.connect(b'build-finished', copy_stylesheet)

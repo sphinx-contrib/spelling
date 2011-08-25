@@ -182,7 +182,10 @@ def reset_global_state():
 
     Makes sure that we got a fresh test application for each test.
     """
-    SphinxStandaloneReader.transforms.remove(IssuesReferences)
+    try:
+        SphinxStandaloneReader.transforms.remove(IssuesReferences)
+    except ValueError:
+        pass
     StandaloneHTMLBuilder.css_files.remove('_static/issuetracker.css')
 
 

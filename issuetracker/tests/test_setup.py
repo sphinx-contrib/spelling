@@ -32,6 +32,7 @@ import re
 BUILTIN_TRACKER_NAME_PATTERN = re.compile('lookup_(.*)_issue')
 
 import pytest
+from sphinx.environment import SphinxStandaloneReader
 
 from sphinxcontrib import issuetracker
 
@@ -84,5 +85,12 @@ def test_transform_added(app):
     """
     Test that the transformer is properly added.
     """
-    from sphinx.environment import SphinxStandaloneReader
     assert issuetracker.IssuesReferences in SphinxStandaloneReader.transforms
+
+
+@pytest.mark.confoverrides(issuetracker_plaintext_issues=False)
+def test_transform_not_added(app):
+    """
+    Test that the transformer is not added if transformations are disabled.
+    """
+    assert issuetracker.IssuesReferences not in SphinxStandaloneReader.transforms
