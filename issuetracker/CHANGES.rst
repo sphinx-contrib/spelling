@@ -1,6 +1,9 @@
 0.9 (in development)
 ====================
 
+- Fixed TypeError caused by ``launchpad`` issue tracker
+- Fixed issue title in ``launchpad`` issue tracker
+
 
 0.8 (2011 Aug, 24)
 ==================
