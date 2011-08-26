@@ -80,7 +80,7 @@ def get_index_doctree(app):
 
     Return a :class:`~pyquery.PyQuery` object representing the doctree.
     """
-    return PyQuery(str(app.env.get_doctree('index')), parser='xml')
+    return PyQuery(unicode(app.env.get_doctree('index')), parser='xml')
 
 
 def pytest_namespace():
