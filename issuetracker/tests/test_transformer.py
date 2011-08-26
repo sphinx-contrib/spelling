@@ -74,6 +74,16 @@ def test_transform_simple(doctree):
     assert doctree.is_('reference')
 
 
+@pytest.mark.with_content('#10')
+@pytest.mark.confoverrides(issuetracker_expandtitle=True)
+def test_transform_with_title(doctree):
+    """
+    Test title expansion.
+    """
+    assert doctree.is_('reference')
+    doctree.text() == 'Eggs'
+
+
 @pytest.mark.with_content('before #10 after')
 def test_transform_leading_and_trailing_text(doctree, content):
     """

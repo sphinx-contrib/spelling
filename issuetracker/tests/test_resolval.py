@@ -77,16 +77,6 @@ def test_closed_issue(app, doctree, issue):
     pytest.assert_issue_reference(doctree, issue)
 
 
-@pytest.mark.confoverrides(issuetracker_expandtitle=True)
-@pytest.mark.with_issue(id='10', title='Eggs', url='eggs', closed=True)
-def test_closed_issue_with_title(app, doctree, issue):
-    """
-    Test resolval of an issue with title expansion enabled.
-    """
-    assert app.env.issuetracker_cache == {'10': issue}
-    pytest.assert_issue_reference(doctree, issue, title=issue.title)
-
-
 @pytest.mark.build_app
 @pytest.mark.with_content('#10')
 def test_event_emitted(app, mock_resolver):
