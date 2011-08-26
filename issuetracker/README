@@ -4,8 +4,9 @@ sphinxcontrib-issuetracker
 
 http://packages.python.org/sphinxcontrib-issuetracker
 
-A Sphinx_ extension to turn textual issue ids like ``#10`` into real references
-to these issues in an issue tracker.
+A Sphinx_ extension to reference issues in issue trackers, either explicitly
+with an "issue" role or optionally implicitly by issue ids like ``#10`` in
+plaintext.
 
 Currently the following issue trackers are supported:
 
