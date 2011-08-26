@@ -50,6 +50,7 @@ from os import path
 
 from docutils import nodes
 from docutils.transforms import Transform
+from sphinx.roles import XRefRole
 from sphinx.addnodes import pending_xref
 from sphinx.util.osutil import copyfile
 from sphinx.util.console import bold
@@ -252,6 +253,24 @@ BUILTIN_ISSUE_TRACKERS = {
     }
 
 
+class IssueRole(XRefRole):
+    """
+    Standard Sphinx cross-referencing role to reference issues.
+
+    Supports standard Sphinx :ref:`cross-referencing syntax <xref-syntax>`.  An
+    explicit title is interpreted as :xref:`format string <formatstrings>`,
+    with the :class:`Issue` object of the referenced issue available by the
+    ``issue`` key.
+    """
+
+    innernodeclass = nodes.inline
+
+    def process_link(self, env, refnode, has_explicit_title, title, target):
+        # store the tracker config in the reference node
+        refnode['trackerconfig'] = TrackerConfig.from_sphinx_config(env.config)
+        return title, target
+
+
 class IssueReferences(Transform):
     """
     Parse and transform issue ids in a document.
@@ -411,15 +430,16 @@ def copy_stylesheet(app, exception):
 
 def setup(app):
     app.require_sphinx('1.0')
+    app.add_role('issue', IssueRole())
     app.add_event(b'issuetracker-resolve-issue')
     app.connect(b'builder-inited', connect_builtin_tracker)
     app.add_config_value('issuetracker_plaintext_issues', True, 'env')
     app.add_config_value('issuetracker_issue_pattern',
                          re.compile(r'#(\d+)'), 'env')
-    app.add_config_value('issuetracker_project', None, 'env')
-    app.add_config_value('issuetracker_url', None, 'env')
     app.add_config_value('issuetracker_expandtitle', False, 'env')
     app.add_config_value('issuetracker', None, 'env')
+    app.add_config_value('issuetracker_project', None, 'env')
+    app.add_config_value('issuetracker_url', None, 'env')
     app.connect(b'builder-inited', add_stylesheet)
     app.connect(b'builder-inited', init_cache)
     app.connect(b'builder-inited', init_transformer)
