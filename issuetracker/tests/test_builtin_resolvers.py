@@ -195,7 +195,7 @@ class TrackerTest(object):
     #: (e.g. resolved, invalid or something the like of), the value is either a
     #: plain string, in which case the test is expected to not resolve the
     #: issue, or an ``Issue`` object, in which case the test is expected to
-    #: resolve the issue id to excately this issue object
+    #: resolve the issue id to exactly this issue object
     issues = {}
 
     #: confoverrides to use for tests defined in this class
