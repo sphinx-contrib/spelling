@@ -42,14 +42,14 @@ from sphinxcontrib.issuetracker import Issue, IssueReferences
 TEST_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
 
-def assert_issue_reference(doctree, issue, title=False):
+def assert_issue_reference(doctree, issue, title=None):
     """
     pytest helper which asserts that the given ``doctree`` contains a single
     reference, which references the given ``issue``.
 
-    If ``title`` is ``True``, it is expected that the reference text is the
-    issue title, otherwise (the default) it is expected that the reference text
-    is the issue id.
+    If ``title`` is not ``None``, the reference title is expected to match the
+    given ``title``.  Otherwise (the default) it is expected that the reference
+    text is the issue id.
 
     Return the reference node.  Raise :exc:`~exceptions.AssertionError` if the
     ``doctree`` doesn't contain a reference to the given ``issue``.
@@ -65,7 +65,7 @@ def assert_issue_reference(doctree, issue, title=False):
     assert 'issue' in classes
     assert issue.closed == is_closed
     if title:
-        assert reference.text() == issue.title
+        assert reference.text() == title
     else:
         assert reference.text() == '#{0}'.format(issue.id)
     return reference

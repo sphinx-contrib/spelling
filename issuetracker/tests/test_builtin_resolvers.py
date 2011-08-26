@@ -209,7 +209,7 @@ class TrackerTest(object):
         if not issue:
             assert not doctree.is_('reference')
         else:
-            pytest.assert_issue_reference(doctree, issue, title=True)
+            pytest.assert_issue_reference(doctree, issue, title=issue.title)
 
 
 class ScopedProjectTrackerTest(TrackerTest):

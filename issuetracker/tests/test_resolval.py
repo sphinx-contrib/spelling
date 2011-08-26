@@ -84,7 +84,7 @@ def test_closed_issue_with_title(app, doctree, issue):
     Test resolval of an issue with title expansion enabled.
     """
     assert app.env.issuetracker_cache == {'10': issue}
-    pytest.assert_issue_reference(doctree, issue, title=True)
+    pytest.assert_issue_reference(doctree, issue, title=issue.title)
 
 
 @pytest.mark.build_app
