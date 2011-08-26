@@ -301,7 +301,8 @@ class IssueReferences(Transform):
                 refnode['reftype'] = 'issue'
                 refnode['trackerconfig'] = tracker_config
                 refnode['expandtitle'] = config.issuetracker_expandtitle
-                refnode.append(nodes.Text(issuetext))
+                refnode.append(nodes.inline(
+                    issuetext, issuetext, classes=['xref', 'issue']))
                 new_nodes.append(refnode)
             if not new_nodes:
                 # no issue references were found, move on to the next node
@@ -329,8 +330,7 @@ def make_issue_reference(issue, content_node):
     reference = nodes.reference()
     reference['refuri'] = issue.url
     if issue.closed:
-        reference['classes'].append('issue-closed')
-    reference['classes'].append('reference-issue')
+        content_node['classes'].append('closed')
     reference.append(content_node)
     return reference
 

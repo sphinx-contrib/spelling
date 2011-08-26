@@ -58,9 +58,11 @@ def assert_issue_reference(doctree, issue, title=False):
     reference = doctree.find('reference')
     assert len(reference) == 1
     assert reference.attr.refuri == issue.url
-    classes = reference.attr.classes.split(' ')
-    is_closed = 'issue-closed' in classes
-    assert 'reference-issue' in classes
+    content = reference.children('inline')
+    classes = content.attr.classes.split(' ')
+    is_closed = 'closed' in classes
+    assert 'xref' in classes
+    assert 'issue' in classes
     assert issue.closed == is_closed
     if title:
         assert reference.text() == issue.title

@@ -4,6 +4,8 @@
 - Added :confval:`issuetracker_plaintext_issues`
 - Fixed TypeError caused by ``launchpad`` issue tracker
 - Fixed issue title in ``launchpad`` issue tracker
+- Fixed CSS classes for issue references to be more compatible with Sphinx
+  themes
 
 
 0.8 (2011 Aug, 24)
