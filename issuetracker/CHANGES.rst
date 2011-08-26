@@ -1,7 +1,10 @@
 0.9 (in development)
 ====================
 
+- Removed :confval:`issuetracker_expandtitle`, use
+  ``issuetracker_title_template = '{issue.title}'`` instead
 - Added :rst:role:`issue` role for explicit issue references
+- Added :confval:`issuetracker_title_template`
 - Added :confval:`issuetracker_plaintext_issues`
 - Fixed TypeError caused by ``launchpad`` issue tracker
 - Fixed issue title in ``launchpad`` issue tracker

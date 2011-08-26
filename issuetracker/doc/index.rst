@@ -144,18 +144,21 @@ find issue references:
    instead parse references like ``gh-10``.  The pattern must contain only a
    single group, which matches the issue id.
 
-Normally the issue id as found in the text will be used as reference text.
-However, you can also use the title of the issue as issue text:
+Normally the reference title will be the whole issue id.  However you can also
+use a custom reference title:
 
-.. confval:: issuetracker_expandtitle
+.. confval:: issuetracker_title_template
 
-   If ``True``, use the issue title instead of the issue id as reference text.
-   If an issue has no title, the issue id is used instead, just like if this
-   configuration key was ``False``.
+   A `format string`_ template for the title of references created from
+   plaintext issue ids.  The format string gets the :class:`Issue` object
+   corresponding to the referenced issue in the ``issue`` key, you may use any
+   attributes of this object in your format string.  You can for instance
+   include the issue title and the issue id::
 
-   Defaults to ``False``.
+      issuetracker_title_template = '{issue.title} ({issue.id})'
 
-   .. versionadded:: 0.8
+   If unset, the whole text matched by :confval:`issuetracker_issue_pattern` is
+   used as reference title.
 
 
 Customization

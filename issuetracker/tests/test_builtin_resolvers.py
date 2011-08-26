@@ -120,14 +120,15 @@ def pytest_funcarg__confoverrides(request):
 
     Provides confoverrides for this test that include the tracker name and
     tracker configuration (as returned by the ``tracker`` and
-    ``tracker_config`` funcargs).  The ``expandtitle`` setting is enabled.  The
-    global ``confoverrides`` are included, and overwrite any configuration key
-    set in this funcarg.
+    ``tracker_config`` funcargs).  The ``title_template`` setting is set to
+    ``{issue.title}``.  The global ``confoverrides`` are included, and
+    overwrite any configuration key set in this funcarg.
     """
     # configure tracker and enable title expansion to test the title retrieval
     # of builtin trackers, too
     tracker = request.getfuncargvalue('tracker')
-    confoverrides = dict(issuetracker=tracker, issuetracker_expandtitle=True)
+    confoverrides = dict(issuetracker=tracker,
+                         issuetracker_title_template='{issue.title}')
     tracker_config = request.getfuncargvalue('tracker_config')
     if tracker_config:
         # bring tracker configuration in
