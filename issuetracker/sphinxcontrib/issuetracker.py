@@ -28,10 +28,10 @@
     sphinxcontrib.issuetracker
     ==========================
 
-    Integration with isse trackers.
+    Integration with issue trackers.
 
-    Replace textual issue ids (like #1) with a reference to the
-    corresponding issue in an issue tracker.
+    Provide explicit and (optionally) implicit (e.g. ``#10``) references to
+    issues in issue trackers.
 
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
 """
