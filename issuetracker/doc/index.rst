@@ -33,15 +33,15 @@ the :rst:role:`issue` role:
 .. rst:role:: issue
 
    Create a reference to the given issue.  This role understands the standard
-   :ref:`cross-referencing syntax <xref-syntax>` used by Sphinx.  An explicit
-   title given to this role is interpreted as `format string`_, which is
-   formatted with the :class:`Issue` object representing the referenced issue
-   available by the key ``issue``.  Use this feature to include information
-   about the referenced issue in the reference title.  For instance, you might
-   use ``:issue:`{issue.title} (#{issue.id}) <10>``` to use the title and the
-   id of the issue ``10`` as reference title.
+   :ref:`cross-referencing syntax <xref-syntax>` used by Sphinx.
 
-   .. _format string: http://docs.python.org/library/string.html#format-string-syntax
+   An explicit title given to this role is interpreted as `format string`_,
+   which is formatted with the :class:`Issue` object representing the
+   referenced issue available by the key ``issue``.  You may use any attribute
+   of the :class:`Issue` object in your format string.  Use this feature to
+   include information about the referenced issue in the reference title.  For
+   instance, you might use ``:issue:`{issue.title} (#{issue.id}) <10>``` to use
+   the title and the id of the issue ``10`` as reference title.
 
 The extension fetches information about referenced issues from the configured
 tracker, and so marks closed issues by striking them through in HTML output.
@@ -252,3 +252,4 @@ extension.  Patches and pull requests are always welcome!
 .. _SOAPpy: http://pypi.python.org/pypi/SOAPpy/
 .. _sphinx-contrib: https://bitbucket.org/birkenfeld/sphinx-contrib
 .. _issue tracker: https://bitbucket.org/birkenfeld/sphinx-contrib/issues/
+.. _format string: http://docs.python.org/library/string.html#format-string-syntax
