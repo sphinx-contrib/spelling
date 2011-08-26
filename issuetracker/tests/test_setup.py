@@ -23,6 +23,16 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+"""
+    test_setup
+    ==========
+
+    Test the setup procedure of the extension, make sure that everything is
+    installed at the proper place after the extension setup finished.
+
+    .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
+"""
+
 from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 

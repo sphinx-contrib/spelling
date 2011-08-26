@@ -23,6 +23,16 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+"""
+    test_resolval
+    =============
+
+    Test resolval of pending issue references.
+
+    .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
+"""
+
+
 from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 

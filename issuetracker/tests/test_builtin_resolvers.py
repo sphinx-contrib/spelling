@@ -23,6 +23,17 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+"""
+    test_builtin_resolvers
+    ======================
+
+    Test builtin issue resolvers.
+
+    These tests are mainly intended to make sure that changes to the extension
+    internals or to the public API of the issue trackers don't break resolval.
+
+    .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
+"""
 
 from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
