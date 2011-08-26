@@ -26,19 +26,43 @@ Operation
 ---------
 
 After configuring the :confval:`tracker <issuetracker>` and the
-:confval:`project <issuetracker_project>`, this extension parses issue ids in
-all documents and turns the issue id into a reference to the issue.  Issues are
-searched in the configured tracker, issue ids which do not exist are ignored.
-Issue ids in ``inline literals`` or literal blocks are also ignored to not
-spoil code examples.
+:confval:`project <issuetracker_project>` (and possibly the :confval:`tracker
+url <issuetracker_url>`), you can reference issues in the issue tracker with
+the :rst:role:`issue` role:
 
-The extension queries the tracker for information about each issue.  This
-information is used to mark closed issues.  Such issues are automatically
-struck through in HTML output.
+.. rst:role:: issue
+
+   Create a reference to the given issue.  This role understands the standard
+   :ref:`cross-referencing syntax <xref-syntax>` used by Sphinx.  An explicit
+   title given to this role is interpreted as `format string`_, which is
+   formatted with the :class:`Issue` object representing the referenced issue
+   available by the key ``issue``.  Use this feature to include information
+   about the referenced issue in the reference title.  For instance, you might
+   use ``:issue:`{issue.title} (#{issue.id}) <10>``` to use the title and the
+   id of the issue ``10`` as reference title.
+
+   .. _format string: http://docs.python.org/library/string.html#format-string-syntax
+
+The extension fetches information about referenced issues from the configured
+tracker, and so marks closed issues by striking them through in HTML output.
+Moreover you can use parts of this issue information (e.g. the issue title) in
+the reference title.
+
+Issue ids in plain text
+~~~~~~~~~~~~~~~~~~~~~~~
+
+If :confval:`issuetracker_plaintext_issues` is ``True``, this extension also
+searches for issue ids like ``#10`` in plain text and turns them into issue
+references.  Issue ids in literal text (e.g. inline literals or code blocks)
+are ignored.  The pattern used to extract issue ids from plain text can be
+configured using :confval:`issuetracker_issue_pattern`.
 
 
 Configuration
 -------------
+
+General configuration
+~~~~~~~~~~~~~~~~~~~~~
 
 Add ``sphinxcontrib.issuetracker`` to the configuration value
 :confval:`extensions` to enable this extensions and configure the extension:
@@ -96,6 +120,17 @@ documentation would refer to the `Sphinx issue tracker`_::
 
    issuetracker = 'bitbucket'
    issuetracker_project = 'birkenfeld/sphinx'
+
+
+Plaintext issues
+~~~~~~~~~~~~~~~~
+
+.. confval:: issuetracker_plaintext_issues
+
+   If ``True`` (the default) issue references are extracted from plain text by
+   turning issue ids like ``#10`` into references to the corresponding issue.
+   Issue ids in any kind of literal text (e.g. ``inline literals`` or code
+   blocks) are ignored.
 
 By default the extension looks for issue references starting with a single
 dash, like ``#10``.  You can however change the pattern, which is used to
