@@ -178,6 +178,19 @@ def pytest_funcarg__doctreedir(request):
     return tmpdir.join('doctrees')
 
 
+def pytest_funcarg__index_html_file(request):
+    """
+    Return the path of the ``index.html`` created by building.
+
+    This file contains the ``content`` rendered as HTML.  The ``app`` is build
+    by this funcarg to generate the ``index.html`` file.
+    """
+    app = request.getfuncargvalue('app')
+    app.build()
+    outdir = request.getfuncargvalue('outdir')
+    return outdir.join('index.html')
+
+
 def reset_global_state():
     """
     Remove global state setup by Sphinx.
