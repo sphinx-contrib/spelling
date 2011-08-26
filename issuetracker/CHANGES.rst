@@ -1,6 +1,7 @@
 0.9 (in development)
 ====================
 
+- Added :confval:`issuetracker_plaintext_issues`
 - Fixed TypeError caused by ``launchpad`` issue tracker
 - Fixed issue title in ``launchpad`` issue tracker
 
