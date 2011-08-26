@@ -300,7 +300,8 @@ class IssueReferences(Transform):
                 refnode['reftarget'] = issue_id
                 refnode['reftype'] = 'issue'
                 refnode['trackerconfig'] = tracker_config
-                refnode['expandtitle'] = config.issuetracker_expandtitle
+                if config.issuetracker_expandtitle:
+                    issuetext = '{issue.title}'
                 refnode.append(nodes.inline(
                     issuetext, issuetext, classes=['xref', 'issue']))
                 new_nodes.append(refnode)
@@ -365,15 +366,16 @@ def resolve_issue_references(app, doctree):
     for node in doctree.traverse(pending_xref):
         if node['reftype'] == 'issue':
             issue = lookup_issue(app, node['trackerconfig'], node['reftarget'])
+            content_node = node[0]
             if not issue:
-                new_node = node[0]
+                # create a simple text node if the issue wasn't found
+                node.replace_self(nodes.Text(content_node.astext()))
             else:
-                if node['expandtitle'] and issue.title:
-                    content_node = nodes.Text(issue.title)
-                else:
-                    content_node = node[0]
-                new_node = make_issue_reference(issue, content_node)
-            node.replace_self(new_node)
+                content_text = content_node[0]
+                new_content_text = nodes.Text(
+                    unicode(content_text).format(issue=issue))
+                content_node.replace(content_text, new_content_text)
+                node.replace_self(make_issue_reference(issue, content_node))
 
 
 def connect_builtin_tracker(app):
