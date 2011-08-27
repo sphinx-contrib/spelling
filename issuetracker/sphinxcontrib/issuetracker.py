@@ -191,14 +191,14 @@ def lookup_launchpad_issue(app, tracker_config, issue_id):
     except KeyError:
         return None
 
-    for task in bug.bug_tasks:
-        if task.bug_target_name == tracker_config.project:
-            break
-    else:
+    project_tasks = (task for task in bug.bug_tasks
+                     if task.bug_target_name == tracker_config.project)
+    task = next(project_tasks, None)
+    if not task:
         # no matching task found
         return None
 
-    return Issue(id=issue_id, title=bug.title, closed=bool(task.date_closed),
+    return Issue(id=issue_id, title=bug.title, closed=task.is_complete,
                  url=LAUNCHPAD_URL.format(issue_id))
 
 

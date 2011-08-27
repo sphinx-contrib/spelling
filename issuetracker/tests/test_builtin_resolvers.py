@@ -316,10 +316,18 @@ class TestLaunchpad(TrackerTest):
 
     default_tracker_config = TrackerConfig('inkscape')
 
+    tracker_config = {'wrong project': TrackerConfig('foo'),
+                      'invalid': TrackerConfig('launchpad')}
+
     issues = {
         'closed': Issue('647789', title='tries to install file(s) outside of '
                         './configure\'s --prefix', closed=True,
-                        url='https://bugs.launchpad.net/bugs/647789')
+                        url='https://bugs.launchpad.net/bugs/647789'),
+        'invalid': Issue('1000', closed=True,
+                         title='There are too many bug reports in Malone',
+                         url='https://bugs.launchpad.net/bugs/1000'),
+        'wrong project': '1000',
+        'no issue': '1000000',
     }
 
 
