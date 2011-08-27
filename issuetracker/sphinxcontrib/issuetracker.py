@@ -76,6 +76,9 @@ class TrackerConfig(_TrackerConfig):
 
     @classmethod
     def from_sphinx_config(cls, config):
+        """
+        Get tracker configuration from ``config``.
+        """
         project = config.issuetracker_project or config.project
         url = config.issuetracker_url
         return cls(project, url)
