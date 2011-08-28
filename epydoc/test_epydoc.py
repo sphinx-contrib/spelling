@@ -1,117 +1,264 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# Copyright (c) 2011, Sebastian Wiesner <lunaryorn@googlemail.com>
+# All rights reserved.
 
-from functools import partial
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
 
-from docutils import nodes
-from mock import Mock
+# 1. Redistributions of source code must retain the above copyright notice,
+#    this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
 
-from sphinxcontrib import epydoc
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
+from __future__ import (print_function, division, unicode_literals,
+                        absolute_import)
+
+import pytest
+from sphinx.application import Sphinx
+from sphinx.domains.python import PythonDomain
+
+pyquery = pytest.importorskip('pyquery')
+PyQuery = pyquery.PyQuery
 
 
-FILENAME_TEST_DATA = {
+#: conf.py contents for the test application
+CONF_PY = """\
+extensions = ['sphinxcontrib.epydoc']
+
+source_suffix = '.rst'
+
+master_doc = 'index'
+
+project = u'epydoc-test'
+copyright = u'2011, foo'
+
+version = '1'
+release = '1'
+
+exclude_patterns = []
+
+pygments_style = 'sphinx'
+html_theme = 'default'
+
+epydoc_mapping = {'http://eggs/': [r'eggs(\.|$)', r'chicken\.'],
+                  'http://spam/': [r'spam(\.|$)']}
+"""
+
+
+def pytest_funcarg__content(request):
+    """
+    Document content for the current test, extracted from the ``with_content``
+    marker.
+    """
+    content = request.keywords['with_content'].args[0]
+    return content
+
+
+def pytest_funcarg__srcdir(request):
+    """
+    Generated source directory for test Sphinx application.
+    """
+    tmpdir = request.getfuncargvalue('tmpdir')
+    srcdir = tmpdir.join('src')
+    srcdir.ensure(dir=True)
+    confpy = srcdir.join('conf.py')
+    confpy.write(CONF_PY)
+    content = request.getfuncargvalue('content')
+    srcdir.join('index.rst').write(content)
+    return srcdir
+
+
+def pytest_funcarg__outdir(request):
+    """
+    Output directory for current test.
+    """
+    tmpdir = request.getfuncargvalue('tmpdir')
+    return tmpdir.join('html')
+
+
+def pytest_funcarg__doctreedir(request):
+    """
+    The doctree directory for the current.
+    """
+    tmpdir = request.getfuncargvalue('tmpdir')
+    return tmpdir.join('doctrees')
+
+
+def pytest_funcarg__confoverrides(request):
+    """
+    Confoverrides for the current test as dict, extracted from the keyword
+    arguments to the ``confoverrides`` marker.
+    """
+    confoverrides_marker = request.keywords.get('confoverrides')
+    if confoverrides_marker:
+        return confoverrides_marker.kwargs
+    else:
+        return {}
+
+
+def pytest_funcarg__app(request):
+    """
+    *Built* Sphinx application for the current test.
+    """
+    srcdir = request.getfuncargvalue('srcdir')
+    outdir = request.getfuncargvalue('outdir')
+    doctreedir = request.getfuncargvalue('doctreedir')
+    confoverrides = request.getfuncargvalue('confoverrides')
+    app = Sphinx(str(srcdir), str(srcdir), str(outdir), str(doctreedir), 'html',
+                 status=None, warning=None, freshenv=None,
+                 confoverrides=confoverrides)
+    app.build()
+    return app
+
+
+def pytest_funcarg__doctree(request):
+    """
+    Doctree of the index document.
+    """
+    app = request.getfuncargvalue('app')
+    doctree = app.env.get_and_resolve_doctree('index', app.builder)
+    return PyQuery(unicode(doctree), parser='xml')
+
+
+FILENAME_TEST_CASES = {
     'class': {
         'Hello': 'Hello-class.html',
-        'world.Hello': 'world.Hello-class.html',
-        },
+        'world.Hello': 'world.Hello-class.html'},
     'module': {
         'hello': 'hello-module.html',
-        'hello.world': 'hello.world-module.html',
-        },
+        'hello.world': 'hello.world-module.html'},
     'function': {
         'hello.world': 'hello-module.html#world',
-        'hello.world.say': 'hello.world-module.html#say',
-        },
+        'hello.world.say': 'hello.world-module.html#say'},
     'method': {
         'hello.world': 'hello-class.html#world',
-        'hello.world.say': 'hello.world-class.html#say',
-        }
-    }
+        'hello.world.say': 'hello.world-class.html#say'}
+}
+
 
 for left, right in [('exception', 'class'), ('data', 'function'),
-                    ('attr', 'method')]:
-    FILENAME_TEST_DATA[left] = FILENAME_TEST_DATA[right]
+                    ('attribute', 'method'), ('staticmethod', 'method'),
+                    ('classmethod', 'method')]:
+    FILENAME_TEST_CASES[left] = FILENAME_TEST_CASES[right]
 
 
 def pytest_generate_tests(metafunc):
     if metafunc.function == test_filename_for_object:
-        for objtype, testcases in FILENAME_TEST_DATA.iteritems():
+        for objtype, testcases in FILENAME_TEST_CASES.iteritems():
             for name, expected in testcases.iteritems():
                 args = dict(objtype=objtype, name=name,
                             expected=expected)
-                id = '%s "%s"' % (objtype, name)
-                metafunc.addcall(funcargs=args, id=id)
-
-
-def pytest_funcarg__app(request):
-    app = Mock()
-    app.config.epydoc_mapping = {
-        'http://example.com/': [r'hello\..*']}
-    return app
-
-
-def pytest_funcarg__env(request):
-    env = Mock()
-    env.domains = {'py': Mock()}
-    return env
-
-
-def pytest_funcarg__node(request):
-    node = nodes.reference(text='foo')
-    node['refdomain'] = 'py'
-    node['reftype'] = 'method'
-    node['reftarget'] = 'hello.World.say'
-    return node
-
-
-def pytest_funcarg__resolve(request):
-    app = request.getfuncargvalue('app')
-    env = request.getfuncargvalue('env')
-    node = request.getfuncargvalue('node')
-    return partial(epydoc.resolve_reference_to_epydoc, app, env,
-                   node, node[0])
+                testid = '%s "%s"' % (objtype, name)
+                metafunc.addcall(funcargs=args, id=testid)
 
 
 def test_filename_for_object(objtype, name, expected):
-    assert epydoc.filename_for_object(objtype, name) == expected
+    from sphinxcontrib.epydoc import filename_for_object
+    assert filename_for_object(objtype, name) == expected
 
 
-def test_resolve_reference_to_epydoc_invalid_domain(resolve, node):
-    node['refdomain'] = 'foo'
-    assert resolve() is None
+# marker shortcuts
+with_content = pytest.mark.with_content
+confoverrides = pytest.mark.confoverrides
 
-def test_resolve_reference_to_epydoc_not_matching(resolve, node):
-    node['reftarget'] = 'foo.bar'
-    assert resolve() is None
 
-def test_resolve_reference_to_epydoc_ambiguous_objtype(
-    resolve, node, app, env):
-    env.domains['py'].objtypes_for_role.return_value = ('foo', 'bar')
-    assert resolve() is None
-    assert app.warn.called
-    app.warn.assert_called_with('ambiguous object types for %s, cannot '
-                                'resolve to epydoc' % node['reftarget'])
+@confoverrides(primary_domain='c')
+@with_content(':func:`eggs.foobar`')
+def test_no_py_domain(doctree):
+    """
+    Test that no reference is created for references outside the py domain.
+    """
+    assert not doctree.is_('reference')
 
-def test_resolve_reference_to_epydoc_success(resolve, node, env):
-    env.domains['py'].objtypes_for_role.return_value = ('method',)
-    new_node = resolve()
-    uri = 'http://example.com/hello.World-class.html#say'
-    assert new_node
-    assert new_node['class'] == 'external-xref'
-    assert new_node['refuri'] == uri
-    assert new_node['reftitle'] == 'Epydoc crossreference'
-    assert new_node[0] is node[0]
 
-def test_setup(app):
-    epydoc.setup(app)
-    app.add_config_value.assert_called_With('epydoc_mapping', {}, 'env')
-    app.connect.assert_called_with('missing-reference',
-                                   epydoc.resolve_reference_to_epydoc)
+@with_content(':func:`urllib.urlopen`')
+def test_no_pattern_matches(doctree):
+    """
+    Test that no reference is created if no epydoc mapping pattern matches.
+    """
+    assert not doctree.is_('reference')
+
+
+@with_content(':func:`eggs.foo` and :func:`spam.foo` and :func:`chicken.foo`')
+def test_all_patterns_considered(doctree):
+    """
+    Test that all patterns are tried in order to find epydoc references.
+    """
+    assert len(doctree.find('reference')) == 3
+
+
+def assert_reference(doctree, title, url):
+    __tracebackhide__ = True
+    reference = doctree.find('reference')
+    assert len(reference) == 1
+    assert reference.attr.refuri == url
+    assert reference.text() == title
+
+
+@with_content(':mod:`eggs`')
+def test_toplevel_module_reference(doctree):
+    assert_reference(doctree, 'eggs', 'http://eggs/eggs-module.html')
+
+
+@with_content(':mod:`eggs.spam`')
+def test_nested_module_reference(doctree):
+    assert_reference(doctree, 'eggs.spam', 'http://eggs/eggs.spam-module.html')
+
+
+@with_content(':func:`eggs.spam`')
+def test_function_reference(doctree):
+    assert_reference(doctree, 'eggs.spam()', 'http://eggs/eggs-module.html#spam')
+
+
+@with_content(':data:`eggs.SPAM`')
+def test_data_reference(doctree):
+    assert_reference(doctree, 'eggs.SPAM', 'http://eggs/eggs-module.html#SPAM')
+
+
+@with_content(':class:`eggs.Eggs`')
+def test_class_reference(doctree):
+    assert_reference(doctree, 'eggs.Eggs', 'http://eggs/eggs.Eggs-class.html')
+
+
+@with_content(':exc:`eggs.Eggs`')
+def test_exception_reference(doctree):
+    assert_reference(doctree, 'eggs.Eggs', 'http://eggs/eggs.Eggs-class.html')
+
+
+@with_content(':meth:`eggs.Eggs.spam`')
+def test_method_reference(doctree):
+    assert_reference(doctree, 'eggs.Eggs.spam()',
+                     'http://eggs/eggs.Eggs-class.html#spam')
+
+
+@with_content(':attr:`eggs.Eggs.spam`')
+def test_attribute_reference(doctree):
+    assert_reference(doctree, 'eggs.Eggs.spam',
+                     'http://eggs/eggs.Eggs-class.html#spam')
+
+
+@with_content(':func:`Reference to foo <eggs.foo>`')
+def test_with_explicit_title(doctree):
+    assert_reference(doctree, 'Reference to foo',
+                     'http://eggs/eggs-module.html#foo')
 
 
 def main():
-    import py
-    py.cmdline.pytest()
+    pytest.cmdline.main()
 
 
 if __name__ == '__main__':
