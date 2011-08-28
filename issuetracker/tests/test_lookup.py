@@ -43,10 +43,10 @@ from sphinxcontrib.issuetracker import TrackerConfig
 
 def pytest_funcarg__app(request):
     """
-    Adds the ``mock_resolver`` and ``build_app`` markers to the current test
+    Adds the ``mock_lookup`` and ``build_app`` markers to the current test
     before creating the ``app``.
     """
-    request.applymarker(pytest.mark.mock_resolver)
+    request.applymarker(pytest.mark.mock_lookup)
     request.applymarker(pytest.mark.build_app)
     return request.getfuncargvalue('app')
 
@@ -70,22 +70,22 @@ def test_lookup_missing_issue(cache):
 
 @pytest.mark.build_app
 @pytest.mark.with_content('#10')
-def test_event_emitted(app, mock_resolver):
+def test_event_emitted(app, mock_lookup):
     """
     Test that issue resolval emits the event with the right arguments.
     """
-    assert mock_resolver.call_count == 1
-    mock_resolver.assert_called_with(
+    assert mock_lookup.call_count == 1
+    mock_lookup.assert_called_with(
         app, TrackerConfig.from_sphinx_config(app.config), '10')
 
 
 @pytest.mark.build_app
 @pytest.mark.with_content('#10 #10 #11 #11')
 @pytest.mark.with_issue(id='10', title='Eggs', closed=True, url='eggs')
-def test_event_emitted_only_once(app, mock_resolver, issue):
+def test_event_emitted_only_once(app, mock_lookup, issue):
     """
     Test that the resolval event is only emitted once for each issue id, and
     that subsequent lookups hit the cache.
     """
-    assert mock_resolver.call_count == 2
+    assert mock_lookup.call_count == 2
     assert app.env.issuetracker_cache == {'10': issue, '11': None}

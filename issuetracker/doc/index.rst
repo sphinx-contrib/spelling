@@ -181,19 +181,20 @@ Customization
 
 If you use an issue tracker that is not supported by this extension, then set
 :confval:`issuetracker` to ``None`` or leave it unset, and connect your own
-callback to the event :event:`issuetracker-resolve-issue`:
+callback to the event :event:`issuetracker-lookup-issue`:
 
-.. event:: issuetracker-resolve-issue(app, tracker_config, issue_id)
+.. event:: issuetracker-lookup-issue(app, tracker_config, issue_id)
 
-   Emitted if a issue reference is to be resolved.
+   Emitted if the issue with the given ``issue_id`` should be looked up in the
+   issue tracker.  Issue tracker configured is provided by ``tracker_config``.
 
    ``app`` is the Sphinx application object.  ``tracker_config`` is the
    issuetracker configuration as :class:`TrackerConfig` object.  ``issue_id``
    is the issue id as string.
 
-   A callback should return an :class:`Issue` object containing the resolved
-   issue, or ``None`` if it could not resolve the issue.  In the latter case
-   other resolvers connected to the event may be invoked by Sphinx.
+   A callback should return an :class:`Issue` object containing the looked up
+   issue, or ``None`` if it could not find the issue.  In the latter case other
+   callbacks connected to this event are be invoked by Sphinx.
 
    .. versionchanged:: 0.8
       Replaced ``project`` argument with ``tracker_config``, changed return
@@ -222,7 +223,7 @@ callback to the event :event:`issuetracker-resolve-issue`:
       The issue id as string
 
       If you are writing your own custom callback for
-      :event:`issuetracker-resolve-issue`, set this attribute to the
+      :event:`issuetracker-lookup-issue`, set this attribute to the
       ``issue_id`` that was given as argument.
 
    .. attribute:: url

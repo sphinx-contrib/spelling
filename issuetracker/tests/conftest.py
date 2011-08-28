@@ -251,10 +251,9 @@ def pytest_funcarg__app(request):
     Additional configuration values can be inserted into this application
     through the ``confoverrides`` funcarg.
 
-    If the marker ``mock_resolver`` is attached to the current test, the
-    resolver callback returned by the ``mock_resolver`` funcarg is
-    automatically connected to the ``issuetracker-resolve-issue`` event in the
-    the created application.
+    If the marker ``mock_lookup`` is attached to the current test, the lookup
+    callback returned by the ``mock_lookup`` funcarg is automatically connected
+    to the ``issuetracker-lookup-issue`` event in the the created application.
 
     If the marker ``build_app`` is attached to the current test, the app is
     build before returning it.  Otherwise you need to build explicitly in order
@@ -268,9 +267,9 @@ def pytest_funcarg__app(request):
                  'html',confoverrides=confoverrides, status=None, warning=None,
                  freshenv=True)
     request.addfinalizer(reset_global_state)
-    if 'mock_resolver' in request.keywords:
-        lookup_mock_issue = request.getfuncargvalue('mock_resolver')
-        app.connect(b'issuetracker-resolve-issue', lookup_mock_issue)
+    if 'mock_lookup' in request.keywords:
+        lookup_mock_issue = request.getfuncargvalue('mock_lookup')
+        app.connect(b'issuetracker-lookup-issue', lookup_mock_issue)
     if 'build_app' in request.keywords:
         app.build()
     return app
@@ -310,9 +309,9 @@ def pytest_funcarg__issue_id(request):
         return None
 
 
-def pytest_funcarg__mock_resolver(request):
+def pytest_funcarg__mock_lookup(request):
     """
-    A mocked callback for the ``issuetracker-resolve-issue`` event as
+    A mocked callback for the ``issuetracker-lookup-issue`` event as
     :class:`~mock.Mock` object.
 
     If the ``issue`` funcarg doesn't return ``None``, the callback will return

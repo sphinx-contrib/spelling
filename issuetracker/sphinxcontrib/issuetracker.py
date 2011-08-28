@@ -66,7 +66,7 @@ class TrackerConfig(_TrackerConfig):
 
     This class provides configuration for trackers, and is passed as
     ``tracker_config`` arguments to callbacks of
-    :event:`issuetracker-resolve-issue`.
+    :event:`issuetracker-lookup-issue`.
     """
 
     def __new__(cls, project, url=None):
@@ -365,7 +365,7 @@ def lookup_issue(app, tracker_config, issue_id):
     Lookup the given issue.
 
     The issue is first looked up in an internal cache.  If it is not found, the
-    event ``issuetracker-resolve-issue`` is emitted.  The result of this
+    event ``issuetracker-lookup-issue`` is emitted.  The result of this
     invocation is then cached and returned.
 
     ``app`` is the sphinx application object.  ``tracker_config`` is the
@@ -377,7 +377,7 @@ def lookup_issue(app, tracker_config, issue_id):
     """
     cache = app.env.issuetracker_cache
     if issue_id not in cache:
-        issue = app.emit_firstresult('issuetracker-resolve-issue',
+        issue = app.emit_firstresult('issuetracker-lookup-issue',
                                      tracker_config, issue_id)
         cache[issue_id] = issue
     return cache[issue_id]
@@ -386,6 +386,13 @@ def lookup_issue(app, tracker_config, issue_id):
 def lookup_issues(app, doctree):
     """
     Lookup issues found in the given ``doctree``.
+
+    Each issue reference in the given ``doctree`` is looked up.  Each lookup
+    result is cached by mapping the referenced issue id to the looked up
+    :class:`Issue` object (an existing issue) or ``None`` (a missing issue).
+
+    The cache is available at ``app.env.issuetracker_cache`` and is pickled
+    along with the environment.
     """
     for node in doctree.traverse(pending_xref):
         if node['reftype'] == 'issue':
@@ -394,7 +401,28 @@ def lookup_issues(app, doctree):
 
 def resolve_issue_reference(app, env, node, contnode):
     """
-    Resolve an issue reference.
+    Resolve an issue reference and turn it into a real reference to the
+    corresponding issue.
+
+    ``app`` and ``env`` are the Sphinx application and environment
+    respectively.  ``node`` is a ``pending_xref`` node representing the missing
+    reference.  It is expected to have the following attributes:
+
+    - ``reftype``: The reference type
+    - ``trackerconfig``: The :class:`TrackerConfig`` to use for this node
+    - ``reftarget``: The issue id
+    - ``classes``: The node classes
+
+    References with a ``reftype`` other than ``'issue'`` are skipped by
+    returning ``None``.  Otherwise the new node is returned.
+
+    If the referenced issue was found, a real reference to this issue is
+    returned.  The text of this reference is formatted with the :class:`Issue`
+    object available in the ``issue`` key.  The reference title is set to the
+    issue title.  If the issue is closed, the class ``closed`` is added to the
+    new content node.
+
+    Otherwise, if the issue was not found, the content node is returned.
     """
     if node['reftype'] != 'issue':
         return None
@@ -413,7 +441,7 @@ def resolve_issue_reference(app, env, node, contnode):
 
 def connect_builtin_tracker(app):
     if app.config.issuetracker:
-        app.connect(b'issuetracker-resolve-issue',
+        app.connect(b'issuetracker-lookup-issue',
                     BUILTIN_ISSUE_TRACKERS[app.config.issuetracker.lower()])
 
 
@@ -445,7 +473,7 @@ def copy_stylesheet(app, exception):
 def setup(app):
     app.require_sphinx('1.0')
     app.add_role('issue', IssueRole())
-    app.add_event(b'issuetracker-resolve-issue')
+    app.add_event(b'issuetracker-lookup-issue')
     app.connect(b'builder-inited', connect_builtin_tracker)
     # general configuration
     app.add_config_value('issuetracker', None, 'env')

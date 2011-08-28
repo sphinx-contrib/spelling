@@ -47,9 +47,9 @@ QtWebKit = pytest.importorskip('PyQt4.QtWebKit')
 
 def pytest_funcarg__app(request):
     """
-    Application with mock resolver.
+    Application with mocked lookup.
     """
-    request.applymarker(pytest.mark.mock_resolver)
+    request.applymarker(pytest.mark.mock_lookup)
     return request.getfuncargvalue('app')
 
 

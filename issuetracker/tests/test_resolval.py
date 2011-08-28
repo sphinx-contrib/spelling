@@ -43,10 +43,10 @@ from sphinxcontrib.issuetracker import TrackerConfig, Issue
 
 def pytest_funcarg__app(request):
     """
-    Adds the ``mock_resolver`` marker to the current test before creating the
+    Adds the ``mock_lookup`` marker to the current test before creating the
     ``app``.
     """
-    request.applymarker(pytest.mark.mock_resolver)
+    request.applymarker(pytest.mark.mock_lookup)
     return request.getfuncargvalue('app')
 
 

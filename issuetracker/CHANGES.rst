@@ -6,6 +6,8 @@ Incompatible changes
 
 - Removed :confval:`issuetracker_expandtitle`, use
   ``issuetracker_title_template = '{issue.title}'`` instead
+- Renamed :event:`issuetracker-resolve-issue` to
+  :event:`issuetracker-lookup-issue`
 
 Other changes
 -------------
