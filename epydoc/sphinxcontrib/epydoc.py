@@ -91,5 +91,6 @@ def resolve_reference_to_epydoc(app, env, node, contnode):
 
 
 def setup(app):
+    app.require_sphinx('1.0')
     app.add_config_value('epydoc_mapping', {}, 'env')
     app.connect('missing-reference', resolve_reference_to_epydoc)

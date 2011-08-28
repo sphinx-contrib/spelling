@@ -5,7 +5,6 @@ from setuptools import setup, find_packages
 with open('README') as stream:
     long_desc = stream.read()
 
-requires = ['Sphinx>=0.6']
 
 setup(
     name='sphinxcontrib-epydoc',
@@ -32,6 +31,6 @@ setup(
     platforms='any',
     packages=find_packages(),
     include_package_data=True,
-    install_requires=requires,
+    install_requires=['Sphinx>=1.0'],
     namespace_packages=['sphinxcontrib'],
 )
