@@ -1,0 +1,5 @@
+Module ``sphinxcontrib.exceltable`` is an extension for Sphinx_, that adds support for including spreadsheets, or part
+of them, into Sphinx document.
+
+- Documentation: http://packages.pypi.python.org/sphinxcontrib.exceltable
+- Bugs: http://bitbucket.org/birkenfeld/sphinx-contrib/

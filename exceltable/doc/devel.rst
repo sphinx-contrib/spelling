@@ -3,24 +3,23 @@
 ===========
 Development
 ===========
-This section contains information for further development of the module.
+This section contains some information about module development - in a case you want to contribute to it.
+Which is welcome, btw.
+
+.. contents::
+   :local:
 
 .. index:: Building
 
 Building
 ========
-Python-based scription solution `Paver`_
-scripting tool solution is used to build and distribute the software. Since the package already
-contains the dependencies to Paver, the basic building can be done as follows
-
-  .. code-block:: bash
+Project uses distribute Since the package already
+contains the dependencies to Paver, the basic building can be done as follows::
 
      python setup.py bdist_egg sdist_src
 
 However, installation of the paver is strongly suggested. After installation,
-the documentation, building and packaging can be all in once:
-
-  .. code-block:: bash
+the documentation, building and packaging can be all in once::
 
      paver package
 
@@ -35,20 +34,27 @@ To build just the documentation, run::
 
 Testing
 =======
-The unit testing in Rusty is implemented by eating the own dog food: the latest
-version of extensions are always used to generate content the documentation. In
-addition to user documentation, there exists a separate test documentation that
-tries the different variations of the module usage.
+Project uses `nose`_ for unit testing, `coverage`_ for testing coverage reporting and `tox`_
+for compliance testing. To execute the tests, run:
 
-To run the tests (to generate the test documentation), run shell command:
+- Unittests: ``python setup.py test``
+- Compliance: ``tox``
 
-  .. code-block:: bash
+Project repository comes with ready-made configuration for both of the tools, which are used
+automatically.
 
-     python setup.py test
 
-     OR
+API
+====
+This section provides some further information about internals of the module:
 
-     paver test
+.. automodule:: sphinxcontrib.exceltable
+
+.. autoclass:: sphinxcontrib.exceltable.ExcelTableDirective
+
+.. autoclass:: sphinxcontrib.exceltable.ExcelTable
+
+.. automethod:: sphinxcontrib.exceltable.ExcelTable.create_table
 
 
 Licensing
@@ -58,4 +64,3 @@ commercial and open source usage:
 
     .. include:: ../LICENSE
 
-.. include:: global.rst

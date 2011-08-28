@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-
-:class:`XMLTableDirective` implements the ``exceltable`` -directive.
-
+:class:`ExcelTableDirective` implements the ``exceltable`` -directive.
 """
 __docformat__ = 'restructuredtext'
 __author__ = 'Juha Mustonen'
@@ -79,15 +77,10 @@ class DirectiveTemplate(Directive):
     Returns transformed path from the directive
     option/content
     """
-
-    print 'org path: %s' % path
-
     source = self.state_machine.input_lines.source(
       self.lineno - self.state_machine.input_offset - 1)
     source_dir = os.path.dirname(os.path.abspath(source))
     path = os.path.normpath(os.path.join(source_dir, path))
-
-    print 'chg path: %s' % path
 
     return utils.relative_path(None, path)
 
@@ -563,8 +556,7 @@ def setup(app):
   Extension setup, called by Sphinx
   """
 
-
-  # Sphinx 5 support
+  # Sphinx 0.5 support
   if '5' in sphinx.__version__.split('.'):
     app.add_directive('exceltable', ExcelTableDirective, 0, (0, 0, 0))
   else:

@@ -2,23 +2,20 @@
 
 from setuptools import setup, find_packages
 
-long_desc = '''
-This package contains the exceltable Sphinx extension.
-
-.. add description here ..
-'''
+with open('README') as stream:
+  long_desc = stream.read()
 
 requires = ['Sphinx>=0.6', 'xlrd']
 
 setup(
     name='sphinxcontrib-exceltable',
     version='0.1',
-    url='http://bitbucket.org/birkenfeld/sphinx-contrib',
+    url='http://packages.python.org/sphinxcontrib-exceltable',
     download_url='http://pypi.python.org/pypi/sphinxcontrib-exceltable',
     license='BSD',
     author='Juha Mustonen',
     author_email='juha.p.mustonen@gmail.com',
-    description='Sphinx "exceltable" extension',
+    description='Support for including Excel spreadsheets into Sphinx documents',
     long_description=long_desc,
     zip_safe=False,
     classifiers=[
