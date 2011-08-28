@@ -77,6 +77,6 @@ welcome!
 
 .. _`Sphinx`: http://sphinx.pocoo.org/
 .. _epydoc: http://epydoc.sourceforge.net/
-.. _`sphinx-contrib`: http://bitbucket.org/birkenfeld/sphinx-contrib
-.. _`issue tracker`: http://bitbucket.org/birkenfeld/sphinx-contrib/issues
-.. _LICENSE: http://bitbucket.org/birkenfeld/sphinx-contrib/src/tip/LICENSE
+.. _`sphinx-contrib`: https://bitbucket.org/birkenfeld/sphinx-contrib
+.. _`issue tracker`: https://bitbucket.org/birkenfeld/sphinx-contrib/issues
+.. _LICENSE: https://bitbucket.org/birkenfeld/sphinx-contrib/src/tip/LICENSE
