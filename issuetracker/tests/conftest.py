@@ -58,6 +58,7 @@ def assert_issue_reference(doctree, issue, title=None):
     reference = doctree.find('reference')
     assert len(reference) == 1
     assert reference.attr.refuri == issue.url
+    assert reference.attr.reftitle == issue.title
     content = reference.children('inline')
     classes = content.attr.classes.split(' ')
     is_closed = 'closed' in classes

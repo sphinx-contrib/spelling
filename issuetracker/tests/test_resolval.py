@@ -77,6 +77,15 @@ def test_closed_issue(app, doctree, issue):
     pytest.assert_issue_reference(doctree, issue)
 
 
+@pytest.mark.with_issue(id='10', title=None, url='eggs', closed=True)
+def test_issue_without_title(app, doctree, issue):
+    """
+    Test resolval of issues without title.
+    """
+    assert app.env.issuetracker_cache == {'10': issue}
+    pytest.assert_issue_reference(doctree, issue)
+
+
 @pytest.mark.build_app
 @pytest.mark.with_content('#10')
 def test_event_emitted(app, mock_resolver):

@@ -352,6 +352,8 @@ def make_issue_reference(issue, content_node):
     """
     reference = nodes.reference()
     reference['refuri'] = issue.url
+    if issue.title:
+        reference['reftitle'] = issue.title
     if issue.closed:
         content_node['classes'].append('closed')
     reference.append(content_node)

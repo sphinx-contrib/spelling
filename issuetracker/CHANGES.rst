@@ -15,6 +15,7 @@ Other changes
   - Added :rst:role:`issue` role for explicit issue references
   - Added :confval:`issuetracker_title_template`
   - Added :confval:`issuetracker_plaintext_issues`
+  - Use issue title as link title
 
 * Bug fixes and improvements:
 
