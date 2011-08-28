@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2010, Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (c) 2010, 2011, Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -46,14 +46,14 @@ def filename_for_object(objtype, name):
         objtype = 'class'
     if not (objtype == 'module' or objtype == 'class'):
         name, attribute = name.rsplit('.', 1)
-        anchor = '#%s' % attribute
+        anchor = '#{0}'.format(attribute)
         if objtype == 'function' or objtype == 'data':
             objtype = 'module'
         else:
             objtype = 'class'
     else:
         anchor = ''
-    return '%s-%s.html%s' % (name, objtype, anchor)
+    return '{0}-{1}.html{2}'.format(name, objtype, anchor)
 
 
 def resolve_reference_to_epydoc(app, env, node, contnode):
@@ -66,20 +66,15 @@ def resolve_reference_to_epydoc(app, env, node, contnode):
         return
 
     target = node['reftarget']
-    for baseurl, patterns in app.config.epydoc_mapping.iteritems():
-        # find a matching entry in the epydoc mapping
-        if any(re.match(p, target) for p in patterns):
-            break
-    else:
+
+    mapping = app.config.epydoc_mapping
+    matching_baseurls = (baseurl for baseurl in mapping if
+                         any(re.match(p, target) for p in mapping[baseurl]))
+    baseurl = next(matching_baseurls, None)
+    if not baseurl:
         return
 
-    objtypes = env.domains[domain].objtypes_for_role(node['reftype'])
-    objtype = objtypes[0]
-    if len(objtypes) > 1:
-        app.warn('ambiguous object types for %s, '
-                 'cannot resolve to epydoc' % target)
-        return
-
+    objtype = env.domains[domain].objtypes_for_role(node['reftype'])[0]
     uri = posixpath.join(baseurl, filename_for_object(objtype, target))
 
     newnode = nodes.reference('', '')
