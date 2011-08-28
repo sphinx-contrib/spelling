@@ -1,0 +1,10 @@
+<zoo>
+  <animal id="L353">
+    <name>Leo</name>
+    <species>Lion</species>
+  </animal>
+  <animal id="C665">
+    <name>Carl</name>
+    <species>Camel</species>
+  </animal>
+</zoo>
