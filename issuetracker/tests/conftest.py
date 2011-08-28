@@ -42,14 +42,26 @@ from sphinxcontrib.issuetracker import Issue, IssueReferences
 TEST_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
 
-def assert_issue_reference(doctree, issue, title=None):
+def assert_issue_pending_xref(doctree, issue_id, title):
+    """
+    pytest helper which assert that the given ``doctree`` contains a single
+    *pending* reference, which reference the given ``issue_id`` and has the
+    given ``title``.
+    """
+    __tracebackhide__ = True
+    xref = doctree.find('pending_xref')
+    assert xref.attr.reftarget == issue_id
+    assert xref.text() == title
+    content = xref.children('inline')
+    classes = content.attr.classes.split(' ')
+    assert classes == ['xref', 'issue']
+
+
+def assert_issue_xref(doctree, issue, title):
     """
     pytest helper which asserts that the given ``doctree`` contains a single
-    reference, which references the given ``issue``.
-
-    If ``title`` is not ``None``, the reference title is expected to match the
-    given ``title``.  Otherwise (the default) it is expected that the reference
-    text is the issue id.
+    *resolved* reference, which references the given ``issue`` and has the
+    given ``title``.
 
     Return the reference node.  Raise :exc:`~exceptions.AssertionError` if the
     ``doctree`` doesn't contain a reference to the given ``issue``.
@@ -65,23 +77,8 @@ def assert_issue_reference(doctree, issue, title=None):
     assert 'xref' in classes
     assert 'issue' in classes
     assert issue.closed == is_closed
-    if title:
-        assert reference.text() == title
-    else:
-        assert reference.text() == '#{0}'.format(issue.id)
+    assert reference.text() == title
     return reference
-
-
-def get_index_doctree(app):
-    """
-    Get the doctree of the index document processed by the given ``app`` as
-    XML.
-
-    ``app`` is the sphinx application from which to get the doctree.
-
-    Return a :class:`~pyquery.PyQuery` object representing the doctree.
-    """
-    return PyQuery(unicode(app.env.get_doctree('index')), parser='xml')
 
 
 def pytest_namespace():
@@ -89,10 +86,10 @@ def pytest_namespace():
     Add the following functions to the pytest namespace:
 
     - :func:`get_index_doctree`
-    - :func:`assert_issue_reference`
+    - :func:`assert_issue_xref`
     """
     return dict((f.__name__, f) for f in
-                (get_index_doctree, assert_issue_reference))
+                (assert_issue_xref, assert_issue_pending_xref))
 
 
 def pytest_configure(config):
@@ -128,23 +125,6 @@ def pytest_funcarg__content(request):
     raise ValueError('no content provided')
 
 
-def pytest_funcarg__doctree(request):
-    """
-    The doctree of the parsed and processed ``content`` as
-    :class:`~pyquery.PyQuery` object.
-
-    .. note::
-
-       This funcarg automatically builds the application to create the doctree.
-       This happens *before* test execution!  If you need to build inside the
-       test, build manually and use :func:`get_index_doctree()` to get the
-       doctree afterwards.
-    """
-    app = request.getfuncargvalue('app')
-    app.build()
-    return pytest.get_index_doctree(app)
-
-
 def pytest_funcarg__srcdir(request):
     """
     The Sphinx source directory for the current test as path.
@@ -177,6 +157,49 @@ def pytest_funcarg__doctreedir(request):
     """
     tmpdir = request.getfuncargvalue('tmpdir')
     return tmpdir.join('doctrees')
+
+
+def pytest_funcarg__doctree(request):
+    """
+    The transformed doctree of the ``content`` as :class:`~pyquery.PyQuery`
+    object.
+
+    .. note::
+
+       This funcarg builds the application before test execution.
+    """
+    app = request.getfuncargvalue('app')
+    app.build()
+    doctree = app.env.get_doctree('index')
+    return PyQuery(unicode(doctree), parser='xml')
+
+
+def pytest_funcarg__resolved_doctree(request):
+    """
+    The resolved doctree of the ``content`` as :class:`~pyquery.PyQuery`
+    object.
+
+    .. note::
+
+       This funcarg builds the application before test execution.
+    """
+    app = request.getfuncargvalue('app')
+    app.build()
+    doctree = app.env.get_and_resolve_doctree('index', app.builder)
+    return PyQuery(unicode(doctree), parser='xml')
+
+
+def pytest_funcarg__cache(request):
+    """
+    Return the issue tracker cache.
+
+    .. note::
+
+       This funcarg builds the application before test execution.
+    """
+    app = request.getfuncargvalue('app')
+    app.build()
+    return app.env.issuetracker_cache
 
 
 def pytest_funcarg__index_html_file(request):

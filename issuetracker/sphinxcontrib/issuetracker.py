@@ -383,23 +383,32 @@ def lookup_issue(app, tracker_config, issue_id):
     return cache[issue_id]
 
 
-def resolve_issue_references(app, doctree):
+def lookup_issues(app, doctree):
     """
-    Resolve all pending issue references in the given ``doctree``.
+    Lookup issues found in the given ``doctree``.
     """
     for node in doctree.traverse(pending_xref):
         if node['reftype'] == 'issue':
-            issue = lookup_issue(app, node['trackerconfig'], node['reftarget'])
-            content_node = node[0]
-            if not issue:
-                # create a simple text node if the issue wasn't found
-                node.replace_self(nodes.Text(content_node.astext()))
-            else:
-                content_text = content_node[0]
-                new_content_text = nodes.Text(
-                    unicode(content_text).format(issue=issue))
-                content_node.replace(content_text, new_content_text)
-                node.replace_self(make_issue_reference(issue, content_node))
+            lookup_issue(app, node['trackerconfig'], node['reftarget'])
+
+
+def resolve_issue_reference(app, env, node, contnode):
+    """
+    Resolve an issue reference.
+    """
+    if node['reftype'] != 'issue':
+        return None
+
+    issue = lookup_issue(app, node['trackerconfig'], node['reftarget'])
+    if not issue:
+        return contnode
+    else:
+        classes = contnode['classes']
+        conttext = unicode(contnode[0])
+        formatted_conttext = nodes.Text(conttext.format(issue=issue))
+        formatted_contnode = nodes.inline(conttext, formatted_conttext,
+                                          classes=classes)
+        return make_issue_reference(issue, formatted_contnode)
 
 
 def connect_builtin_tracker(app):
@@ -450,5 +459,6 @@ def setup(app):
     app.connect(b'builder-inited', add_stylesheet)
     app.connect(b'builder-inited', init_cache)
     app.connect(b'builder-inited', init_transformer)
-    app.connect(b'doctree-read', resolve_issue_references)
+    app.connect(b'doctree-read', lookup_issues)
+    app.connect(b'missing-reference', resolve_issue_reference)
     app.connect(b'build-finished', copy_stylesheet)

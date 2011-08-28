@@ -48,21 +48,12 @@ def pytest_funcarg__issue(request):
     return Issue(id='10', title='Eggs', closed=False, url='eggs')
 
 
-def pytest_funcarg__app(request):
-    """
-    Adds the ``mock_resolver`` marker to the current test before creating the
-    ``app``.
-    """
-    request.applymarker(pytest.mark.mock_resolver)
-    return request.getfuncargvalue('app')
-
-
 @pytest.mark.with_content(':issue:`10`')
 def test_simple(doctree, issue):
     """
     Test simple usage of the role.
     """
-    pytest.assert_issue_reference(doctree, issue, title='10')
+    pytest.assert_issue_pending_xref(doctree, '10', '10')
 
 
 @pytest.mark.with_content(':issue:`foo <10>`')
@@ -70,23 +61,7 @@ def test_with_title(doctree, issue):
     """
     Test role with an explicit title.
     """
-    pytest.assert_issue_reference(doctree, issue, title='foo')
-
-
-@pytest.mark.with_content(':issue:`{issue.title} (#{issue.id})<10>`')
-def test_with_formatted_title(doctree, issue):
-    """
-    Test role with a formatted title.
-    """
-    pytest.assert_issue_reference(doctree, issue, title='Eggs (#10)')
-
-
-@pytest.mark.with_content(':issue:`{{issue.title}} (#{issue.id}) <10>`')
-def test_with_escaped_formatted_title(doctree, issue):
-    """
-    Test role with escapes in formatting.
-    """
-    pytest.assert_issue_reference(doctree, issue, title='{issue.title} (#10)')
+    pytest.assert_issue_pending_xref(doctree, '10', 'foo')
 
 
 @pytest.mark.confoverrides(issuetracker_plaintext_issues=False)
@@ -95,4 +70,4 @@ def test_without_plaintext_issues(doctree, issue):
     """
     Test that the role still works even if plaintext issues are disabled.
     """
-    pytest.assert_issue_reference(doctree, issue, title='10')
+    pytest.assert_issue_pending_xref(doctree, '10', '10')

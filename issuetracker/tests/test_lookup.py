@@ -24,10 +24,10 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-    test_resolval
-    =============
+    test_lookup
+    ===========
 
-    Test resolval of pending issue references.
+    Test issue lookup.
 
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
 """
@@ -38,64 +38,54 @@ from __future__ import (print_function, division, unicode_literals,
 
 import pytest
 
-from sphinxcontrib.issuetracker import TrackerConfig, Issue
+from sphinxcontrib.issuetracker import TrackerConfig
 
 
 def pytest_funcarg__app(request):
     """
-    Adds the ``mock_resolver`` marker to the current test before creating the
-    ``app``.
+    Adds the ``mock_resolver`` and ``build_app`` markers to the current test
+    before creating the ``app``.
     """
     request.applymarker(pytest.mark.mock_resolver)
+    request.applymarker(pytest.mark.build_app)
     return request.getfuncargvalue('app')
 
 
 @pytest.mark.with_content('#10')
-def test_no_issue(app, resolved_doctree):
+@pytest.mark.with_issue(id='10', title='Eggs', closed=False, url='eggs')
+def test_lookup_existing_issue(cache, issue):
     """
-    Test that no reference is created if an issue could not be resolved.
+    Test resolval of an existing issue.
     """
-    assert not resolved_doctree.is_('reference')
+    assert cache == {'10': issue}
 
 
-@pytest.mark.with_issue(id='10', title='Spam', url='spam', closed=False)
-def test_open_issue(app, resolved_doctree, issue):
+@pytest.mark.with_content('#10')
+def test_lookup_missing_issue(cache):
     """
-    Test resolval of an open issue.
+    Test resolval of a missing issue.
     """
-    assert app.env.issuetracker_cache == {'10': issue}
-    pytest.assert_issue_xref(resolved_doctree, issue, '#10')
+    assert cache == {'10': None}
 
 
-@pytest.mark.with_issue(id='10', title='Eggs', url='eggs', closed=True)
-def test_closed_issue(app, resolved_doctree, issue):
+@pytest.mark.build_app
+@pytest.mark.with_content('#10')
+def test_event_emitted(app, mock_resolver):
     """
-    Test resolval of a closed issue.
+    Test that issue resolval emits the event with the right arguments.
     """
-    pytest.assert_issue_xref(resolved_doctree, issue, '#10')
+    assert mock_resolver.call_count == 1
+    mock_resolver.assert_called_with(
+        app, TrackerConfig.from_sphinx_config(app.config), '10')
 
 
-@pytest.mark.with_issue(id='10', title=None, url='eggs', closed=True)
-def test_issue_without_title(app, resolved_doctree, issue):
+@pytest.mark.build_app
+@pytest.mark.with_content('#10 #10 #11 #11')
+@pytest.mark.with_issue(id='10', title='Eggs', closed=True, url='eggs')
+def test_event_emitted_only_once(app, mock_resolver, issue):
     """
-    Test resolval of issues without title.
+    Test that the resolval event is only emitted once for each issue id, and
+    that subsequent lookups hit the cache.
     """
-    pytest.assert_issue_xref(resolved_doctree, issue, '#10')
-
-
-@pytest.mark.with_issue(id='10', title='Eggs', url='eggs', closed=True)
-@pytest.mark.with_content(':issue:`{issue.title} (#{issue.id})<10>`')
-def test_with_formatted_title(resolved_doctree, issue):
-    """
-    Test issue with format in title.
-    """
-    pytest.assert_issue_xref(resolved_doctree, issue, 'Eggs (#10)')
-
-
-@pytest.mark.with_issue(id='10', title=None, url='eggs', closed=True)
-@pytest.mark.with_content(':issue:`{{issue.title}} (#{issue.id}) <10>`')
-def test_with_escaped_formatted_title(resolved_doctree, issue):
-    """
-    Test issue with escaped formats in title.
-    """
-    pytest.assert_issue_xref(resolved_doctree, issue, '{issue.title} (#10)')
+    assert mock_resolver.call_count == 2
+    assert app.env.issuetracker_cache == {'10': issue, '11': None}

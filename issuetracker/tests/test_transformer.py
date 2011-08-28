@@ -48,22 +48,13 @@ def pytest_funcarg__issue(request):
     return Issue(id='10', title='Eggs', closed=False, url='eggs')
 
 
-def pytest_funcarg__app(request):
-    """
-    Adds the ``mock_resolver`` marker to the current test before creating the
-    ``app``.
-    """
-    request.applymarker(pytest.mark.mock_resolver)
-    return request.getfuncargvalue('app')
-
-
 @pytest.mark.confoverrides(issuetracker_plaintext_issues=False)
 @pytest.mark.with_content('#10')
 def test_transform_disabled(doctree):
     """
     Test that no reference is inserted if transforming is disabled.
     """
-    assert not doctree.is_('reference')
+    assert not doctree.is_('pending_xref')
 
 
 @pytest.mark.with_content('#10')
@@ -71,7 +62,7 @@ def test_transform_simple(doctree):
     """
     Test a simple transform with just an issue id.
     """
-    assert doctree.is_('reference')
+    pytest.assert_issue_pending_xref(doctree, '10', '#10')
 
 
 @pytest.mark.with_content('#10')
@@ -81,8 +72,8 @@ def test_transform_with_title_template(doctree):
     """
     Test transformation with title template.
     """
-    assert doctree.is_('reference')
-    assert doctree.text() == 'Eggs (#10)'
+    pytest.assert_issue_pending_xref(
+        doctree, '10', '{issue.title} (#{issue.id})')
 
 
 @pytest.mark.with_content('before #10 after')
@@ -90,7 +81,7 @@ def test_transform_leading_and_trailing_text(doctree, content):
     """
     Test that transformation leaves leading and trailing text intact.
     """
-    assert doctree.is_('reference')
+    pytest.assert_issue_pending_xref(doctree, '10', '#10')
     assert doctree.text() == content
 
 
@@ -99,10 +90,10 @@ def test_transform_inline_markup(doctree):
     """
     Test that issue ids inside inline markup like emphasis are transformed.
     """
-    assert len(doctree.find('reference')) == 2
-    assert doctree.text() == '#10 #10'
-    assert doctree.find('reference').eq(0).parents('emphasis')
-    assert doctree.find('reference').eq(1).parents('strong')
+    emphasis = doctree.find('emphasis')
+    pytest.assert_issue_pending_xref(emphasis, '10', '#10')
+    string = doctree.find('strong')
+    pytest.assert_issue_pending_xref(string, '10', '#10')
 
 
 @pytest.mark.with_content('``#10``')
@@ -110,7 +101,7 @@ def test_transform_literal(doctree):
     """
     Test that transformation leaves literals untouched.
     """
-    assert not doctree.is_('reference')
+    assert not doctree.is_('pending_xref')
     literal = doctree.find('literal')
     assert literal
     assert literal.text() == '#10'
@@ -125,7 +116,7 @@ def test_transform_literal_block(doctree):
     """
     Test that transformation leaves literal blocks untouched.
     """
-    assert not doctree.is_('reference')
+    assert not doctree.is_('pending_xref')
     literal_block = doctree.find('literal_block')
     assert literal_block
     assert literal_block.text('eggs\n   #10')
@@ -136,7 +127,7 @@ def test_transform_literal_block(doctree):
 
    eggs('#10')""")
 def test_transform_code_block(doctree, content):
-    assert not doctree.is_('reference')
+    assert not doctree.is_('pending_xref')
     literal_block = doctree.find('literal_block')
     assert literal_block
     assert literal_block.text("eggs('#10')")
