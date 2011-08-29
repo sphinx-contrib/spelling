@@ -1,6 +1,7 @@
 include README
 include LICENSE
-include CHANGES.*
+include CREDITS
+include CHANGES.rst
 include tox.ini
 recursive-include sphinxcontrib *.css
 recursive-include doc *.rst *.py Makefile
