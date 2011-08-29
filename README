@@ -57,6 +57,7 @@ List of extensions
 - traclinks: create TracLinks_ to a Trac_ instance from within Sphinx
 - issuetracker: link to different issue trackers
 - epydoc: cross-reference eypdoc generated documentation
+- exceltable: embed Excel spreadsheets into documents using exceltable_
 - pyqt4: markup for PyQt4 signals
 - doxylink: Link to external Doxygen-generated HTML documentation
 - ansi: parse ANSI color sequences inside documents
@@ -111,6 +112,8 @@ List of extensions
 .. _Google Chart: http://code.google.com/intl/ja/apis/chart/
 
 .. _hyphenator: http://code.google.com/p/hyphenator/
+
+.. _exceltable: http://packages.python.org/sphinxcontrib-exceltable/
 
 For contributors
 ================
