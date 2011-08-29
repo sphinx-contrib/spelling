@@ -3,9 +3,11 @@
 .*\.so
 build/
 dist/
+env/
 sphinx-contrib.egg-info/
 TAGS
 \.ropeproject/
+\.idea/
 ,*~
 .DS_Store
 spelling/spelling_wordlist.txt
@@ -13,4 +15,5 @@ spelling/spelling_wordlist.txt
 syntax: glob
 */distribute-*.tar.gz
 .tox/
+.coverage/
 .*.swp
