@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<countries>
+  <country id="finland">
+    <name>Finland</name>
+    <time>UTC+2</time>
+    <currency>euro</currency>
+  </country>
+  <country id="england">
+    <name>England</name>
+    <currency>pound</currency>
+    <time>UTC</time>
+  </country>
+</countries>
