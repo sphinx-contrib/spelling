@@ -43,6 +43,8 @@ the :rst:role:`issue` role:
    instance, you might use ``:issue:`{issue.title} (#{issue.id}) <10>``` to use
    the title and the id of the issue ``10`` as reference title.
 
+   .. versionadded:: 0.9
+
 Information about the issue (like the title) is retrieved from the configured
 issue tracker.  Aside of providing it for reference titles, the extension also
 uses this information to mark closed issues in HTML output by striking the
@@ -147,6 +149,8 @@ Plaintext issues
    Issue ids in any kind of literal text (e.g. ``inline literals`` or code
    blocks) are ignored.
 
+   .. versionadded:: 0.9
+
 By default the extension looks for issue references starting with a single
 dash, like ``#10``.  You can however change the pattern, which is used to
 find issue references:
@@ -175,6 +179,9 @@ use a custom reference title:
    If unset, the whole text matched by :confval:`issuetracker_issue_pattern` is
    used as reference title.
 
+   .. versionadded:: 0.9
+      Replaces :confval:`issuetracker_expandtitle`
+
 
 Customization
 -------------
@@ -199,6 +206,10 @@ callback to the event :event:`issuetracker-lookup-issue`:
    .. versionchanged:: 0.8
       Replaced ``project`` argument with ``tracker_config``, changed return
       value from dictionary to :class:`Issue`
+
+   .. versionchanged:: 0.9
+      Renamed from :event:`issuetracker-resolve-issue` to
+      :event:`issuetracker-lookup-issue`
 
 .. autoclass:: TrackerConfig
 
