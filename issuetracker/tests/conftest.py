@@ -92,14 +92,36 @@ def pytest_namespace():
                 (assert_issue_xref, assert_issue_pending_xref))
 
 
+def pytest_addoption(parser):
+    """
+    Add --offline and --fast options to test runner.
+    """
+    parser.addoption('--offline', action='store_true',
+                     help='Skip tests which require network connection')
+    parser.addoption('--fast', action='store_true',
+                     help='Skip slow tests, implies --offline')
+
+
 def pytest_configure(config):
     """
     Configure issue tracker tests.
 
-    Adds ``confpy`` attribute to ``config`` which provides the path to the test
-    ``conf.py`` file.
+    Evaluates ``--fast`` and ``--offline``, and adds ``confpy`` attribute to
+    ``config`` which provides the path to the test ``conf.py`` file.
     """
     config.confpy = py.path.local(TEST_DIRECTORY).join('conf.py')
+    config.run_fast = config.getvalue('fast')
+    config.run_offline = config.run_fast or config.getvalue('offline')
+
+
+def pytest_runtest_setup(item):
+    """
+    Evaluate ``needs_network`` and ``slow`` markers with respect to ``--offline`` and ``--fast``
+    """
+    if item.config.run_offline and 'needs_network' in item.keywords:
+        pytest.skip('network test in offline mode')
+    if item.config.run_fast and 'slow' in item.keywords:
+        pytest.skip('skipping slow test in fast mode')
 
 
 def pytest_funcarg__content(request):

@@ -37,12 +37,17 @@ from __future__ import (print_function, division, unicode_literals,
 
 import pytest
 
+
 sip = pytest.importorskip('sip')
 # no need for clumsy QString->unicode conversions, lets do that automatically
 sip.setapi('QString', 2)
 QtCore = pytest.importorskip('PyQt4.QtCore')
 QtGui = pytest.importorskip('PyQt4.QtGui')
 QtWebKit = pytest.importorskip('PyQt4.QtWebKit')
+
+
+# Qt application setup and rendering takes time, these tests are slow
+pytestmark = pytest.mark.slow
 
 
 def pytest_funcarg__app(request):

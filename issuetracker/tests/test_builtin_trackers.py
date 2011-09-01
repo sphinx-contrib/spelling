@@ -202,6 +202,7 @@ class TrackerTest(object):
     #: confoverrides to use for tests defined in this class
     confoverrides = {}
 
+    @pytest.mark.needs_network
     def test_lookup(self, cache, issue_id, issue):
         """
         Test that this tracker correctly looks up an issue.
