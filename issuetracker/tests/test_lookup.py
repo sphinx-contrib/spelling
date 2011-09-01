@@ -36,6 +36,8 @@
 from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
+import pickle
+
 import pytest
 
 from sphinxcontrib.issuetracker import TrackerConfig
@@ -66,6 +68,19 @@ def test_lookup_missing_issue(cache):
     Test resolval of a missing issue.
     """
     assert cache == {'10': None}
+
+
+@pytest.mark.build_app
+@pytest.mark.with_content('#10 #11')
+@pytest.mark.with_issue(id='10', title='Eggs', closed=True, url='eggs')
+def test_cache_pickled(cache, doctreedir, issue):
+    environment_file = doctreedir.join('environment.pickle')
+    with environment_file.open('rb') as source:
+        env = pickle.load(source)
+    # check that the pickled cache matches the real cache
+    assert env.issuetracker_cache == cache
+    # and check that it actually contains what it is supposed to contain
+    assert env.issuetracker_cache == {'10': issue, '11': None}
 
 
 @pytest.mark.build_app

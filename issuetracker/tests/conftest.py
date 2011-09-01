@@ -161,7 +161,7 @@ def pytest_funcarg__srcdir(request):
     confpy = request.getfuncargvalue('pytestconfig').confpy
     confpy.copy(srcdir)
     content = request.getfuncargvalue('content')
-    srcdir.join('index.rst').write(content)
+    srcdir.join('index.rst').write(content.encode('utf-8'), 'wb')
     return srcdir
 
 

@@ -85,6 +85,15 @@ def test_transform_leading_and_trailing_text(doctree, content):
     assert doctree.text() == content
 
 
+@pytest.mark.with_content('äöü #10 ß')
+def test_transform_non_ascii(doctree, content):
+    """
+    Test transformation with non-ascii characters.
+    """
+    pytest.assert_issue_pending_xref(doctree, '10', '#10')
+    assert doctree.text() == content
+
+
 @pytest.mark.with_content('*#10* **#10**')
 def test_transform_inline_markup(doctree):
     """
@@ -126,12 +135,23 @@ def test_transform_literal_block(doctree):
 .. code-block:: python
 
    eggs('#10')""")
-def test_transform_code_block(doctree, content):
+def test_transform_code_block(doctree):
     assert not doctree.is_('pending_xref')
     literal_block = doctree.find('literal_block')
     assert literal_block
-    assert literal_block.text("eggs('#10')")
+    assert literal_block.text() == "eggs('#10')"
     assert literal_block.attr.language == 'python'
+
+
+@pytest.mark.with_content("""\
+foo:
+
+>>> print('#10')""")
+def test_transform_doctest_block(doctree):
+    assert not doctree.is_('pending_xref')
+    doctest_block = doctree.find('doctest_block')
+    assert doctest_block
+    assert doctest_block.text() == "print('#10')"
 
 
 @pytest.mark.with_content('ab')

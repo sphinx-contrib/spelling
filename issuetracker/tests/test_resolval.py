@@ -99,3 +99,13 @@ def test_with_escaped_formatted_title(resolved_doctree, issue):
     Test issue with escaped formats in title.
     """
     pytest.assert_issue_xref(resolved_doctree, issue, '{issue.title} (#10)')
+
+
+@pytest.mark.with_issue(id='10', title='öäüß', url='eggs', closed=True)
+@pytest.mark.with_content(':issue:`{issue.title} <10>`')
+def test_non_ascii_title(resolved_doctree, issue):
+    """
+    Test issues with non-ascii titles.
+    """
+    pytest.assert_issue_xref(resolved_doctree, issue, 'öäüß')
+    assert resolved_doctree.text() == 'öäüß'
