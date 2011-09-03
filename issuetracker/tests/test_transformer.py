@@ -151,7 +151,7 @@ def test_transform_doctest_block(doctree):
     assert not doctree.is_('pending_xref')
     doctest_block = doctree.find('doctest_block')
     assert doctest_block
-    assert doctest_block.text() == "print('#10')"
+    assert doctest_block.text() == ">>> print('#10')"
 
 
 @pytest.mark.with_content('ab')
