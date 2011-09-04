@@ -31,15 +31,35 @@ import os
 import pytest
 import py.path
 from mock import Mock
-from pyquery import PyQuery
+from docutils import nodes
 from sphinx.application import Sphinx
 from sphinx.builders.html import StandaloneHTMLBuilder
 from sphinx.environment import SphinxStandaloneReader
+from sphinx.addnodes import pending_xref
 
 from sphinxcontrib.issuetracker import Issue, IssueReferences
 
 
-TEST_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
+#: test configuration
+CONF_PY = """\
+
+extensions = ['sphinxcontrib.issuetracker']
+
+source_suffix = '.rst'
+
+master_doc = 'index'
+
+project = u'issuetracker-test'
+copyright = u'2011, foo'
+
+version = '1'
+release = '1'
+
+exclude_patterns = []
+
+pygments_style = 'sphinx'
+html_theme = 'default'
+"""
 
 
 def assert_issue_pending_xref(doctree, issue_id, title):
@@ -49,12 +69,15 @@ def assert_issue_pending_xref(doctree, issue_id, title):
     given ``title``.
     """
     __tracebackhide__ = True
-    xref = doctree.find('pending_xref')
-    assert xref.attr.reftarget == issue_id
-    assert xref.text() == title
-    content = xref.children('inline')
-    classes = content.attr.classes.split(' ')
-    assert classes == ['xref', 'issue']
+    assert len(doctree.traverse(pending_xref)) == 1
+    xref = doctree.next_node(pending_xref)
+    assert xref
+    assert xref['reftarget'] == issue_id
+    assert xref.astext() == title
+    content = xref.next_node(nodes.inline)
+    assert content
+    classes = set(content['classes'])
+    assert classes == set(['xref', 'issue'])
 
 
 def assert_issue_xref(doctree, issue, title):
@@ -67,17 +90,19 @@ def assert_issue_xref(doctree, issue, title):
     ``doctree`` doesn't contain a reference to the given ``issue``.
     """
     __tracebackhide__ = True
-    reference = doctree.find('reference')
-    assert len(reference) == 1
-    assert reference.attr.refuri == issue.url
-    assert reference.attr.reftitle == issue.title
-    content = reference.children('inline')
-    classes = content.attr.classes.split(' ')
-    is_closed = 'closed' in classes
-    assert 'xref' in classes
-    assert 'issue' in classes
-    assert issue.closed == is_closed
-    assert reference.text() == title
+    assert len(doctree.traverse(nodes.reference)) == 1
+    reference = doctree.next_node(nodes.reference)
+    assert reference
+    assert reference['refuri'] == issue.url
+    assert reference.get('reftitle') == issue.title
+    assert reference.astext() == title
+    content = reference.next_node(nodes.inline)
+    assert content
+    classes = set(content['classes'])
+    expected_classes = set(['xref', 'issue'])
+    if issue.closed:
+        expected_classes.add('closed')
+    assert classes == expected_classes
     return reference
 
 
@@ -109,7 +134,6 @@ def pytest_configure(config):
     Evaluates ``--fast`` and ``--offline``, and adds ``confpy`` attribute to
     ``config`` which provides the path to the test ``conf.py`` file.
     """
-    config.confpy = py.path.local(TEST_DIRECTORY).join('conf.py')
     config.run_fast = config.getvalue('fast')
     config.run_offline = config.run_fast or config.getvalue('offline')
 
@@ -158,8 +182,7 @@ def pytest_funcarg__srcdir(request):
     tmpdir = request.getfuncargvalue('tmpdir')
     srcdir = tmpdir.join('src')
     srcdir.ensure(dir=True)
-    confpy = request.getfuncargvalue('pytestconfig').confpy
-    confpy.copy(srcdir)
+    srcdir.join('conf.py').write(CONF_PY.encode('utf-8'), 'wb')
     content = request.getfuncargvalue('content')
     srcdir.join('index.rst').write(content.encode('utf-8'), 'wb')
     return srcdir
@@ -183,8 +206,7 @@ def pytest_funcarg__doctreedir(request):
 
 def pytest_funcarg__doctree(request):
     """
-    The transformed doctree of the ``content`` as :class:`~pyquery.PyQuery`
-    object.
+    The transformed doctree of the ``content``.
 
     .. note::
 
@@ -192,14 +214,12 @@ def pytest_funcarg__doctree(request):
     """
     app = request.getfuncargvalue('app')
     app.build()
-    doctree = app.env.get_doctree('index')
-    return PyQuery(unicode(doctree), parser='xml')
+    return app.env.get_doctree('index')
 
 
 def pytest_funcarg__resolved_doctree(request):
     """
-    The resolved doctree of the ``content`` as :class:`~pyquery.PyQuery`
-    object.
+    The resolved doctree of the ``content``.
 
     .. note::
 
@@ -207,8 +227,7 @@ def pytest_funcarg__resolved_doctree(request):
     """
     app = request.getfuncargvalue('app')
     app.build()
-    doctree = app.env.get_and_resolve_doctree('index', app.builder)
-    return PyQuery(unicode(doctree), parser='xml')
+    return app.env.get_and_resolve_doctree('index', app.builder)
 
 
 def pytest_funcarg__cache(request):

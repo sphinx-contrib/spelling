@@ -36,6 +36,8 @@ from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
 import pytest
+from docutils import nodes
+from sphinx.addnodes import pending_xref
 
 from sphinxcontrib.issuetracker import Issue
 
@@ -54,7 +56,7 @@ def test_transform_disabled(doctree):
     """
     Test that no reference is inserted if transforming is disabled.
     """
-    assert not doctree.is_('pending_xref')
+    assert not doctree.next_node(pending_xref)
 
 
 @pytest.mark.with_content('#10')
@@ -82,7 +84,7 @@ def test_transform_leading_and_trailing_text(doctree, content):
     Test that transformation leaves leading and trailing text intact.
     """
     pytest.assert_issue_pending_xref(doctree, '10', '#10')
-    assert doctree.text() == content
+    assert doctree.astext() == content
 
 
 @pytest.mark.with_content('äöü #10 ß')
@@ -91,7 +93,7 @@ def test_transform_non_ascii(doctree, content):
     Test transformation with non-ascii characters.
     """
     pytest.assert_issue_pending_xref(doctree, '10', '#10')
-    assert doctree.text() == content
+    assert doctree.astext() == content
 
 
 @pytest.mark.with_content('*#10* **#10**')
@@ -99,10 +101,12 @@ def test_transform_inline_markup(doctree):
     """
     Test that issue ids inside inline markup like emphasis are transformed.
     """
-    emphasis = doctree.find('emphasis')
+    emphasis = doctree.next_node(nodes.emphasis)
+    assert emphasis
     pytest.assert_issue_pending_xref(emphasis, '10', '#10')
-    string = doctree.find('strong')
-    pytest.assert_issue_pending_xref(string, '10', '#10')
+    strong = doctree.next_node(nodes.strong)
+    assert strong
+    pytest.assert_issue_pending_xref(strong, '10', '#10')
 
 
 @pytest.mark.with_content('``#10``')
@@ -110,10 +114,10 @@ def test_transform_literal(doctree):
     """
     Test that transformation leaves literals untouched.
     """
-    assert not doctree.is_('pending_xref')
-    literal = doctree.find('literal')
+    assert not doctree.next_node(pending_xref)
+    literal = doctree.next_node(nodes.literal)
     assert literal
-    assert literal.text() == '#10'
+    assert literal.astext() == '#10'
 
 
 @pytest.mark.with_content("""\
@@ -125,10 +129,10 @@ def test_transform_literal_block(doctree):
     """
     Test that transformation leaves literal blocks untouched.
     """
-    assert not doctree.is_('pending_xref')
-    literal_block = doctree.find('literal_block')
+    assert not doctree.next_node(pending_xref)
+    literal_block = doctree.next_node(nodes.literal_block)
     assert literal_block
-    assert literal_block.text('eggs\n   #10')
+    assert literal_block.astext() == 'eggs\n   #10'
 
 
 @pytest.mark.with_content("""\
@@ -136,11 +140,11 @@ def test_transform_literal_block(doctree):
 
    eggs('#10')""")
 def test_transform_code_block(doctree):
-    assert not doctree.is_('pending_xref')
-    literal_block = doctree.find('literal_block')
+    assert not doctree.next_node(pending_xref)
+    literal_block = doctree.next_node(nodes.literal_block)
     assert literal_block
-    assert literal_block.text() == "eggs('#10')"
-    assert literal_block.attr.language == 'python'
+    assert literal_block.astext() == "eggs('#10')"
+    assert literal_block['language'] == 'python'
 
 
 @pytest.mark.with_content("""\
@@ -148,10 +152,10 @@ foo:
 
 >>> print('#10')""")
 def test_transform_doctest_block(doctree):
-    assert not doctree.is_('pending_xref')
-    doctest_block = doctree.find('doctest_block')
+    assert not doctree.next_node(pending_xref)
+    doctest_block = doctree.next_node(nodes.doctest_block)
     assert doctest_block
-    assert doctest_block.text() == ">>> print('#10')"
+    assert doctest_block.astext() == ">>> print('#10')"
 
 
 @pytest.mark.with_content('ab')

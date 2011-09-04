@@ -30,9 +30,7 @@ from __future__ import (print_function, division, unicode_literals,
 import pytest
 from sphinx.application import Sphinx
 from sphinx.domains.python import PythonDomain
-
-pyquery = pytest.importorskip('pyquery')
-PyQuery = pyquery.PyQuery
+from docutils import nodes
 
 
 #: conf.py contents for the test application
@@ -131,7 +129,7 @@ def pytest_funcarg__doctree(request):
     """
     app = request.getfuncargvalue('app')
     doctree = app.env.get_and_resolve_doctree('index', app.builder)
-    return PyQuery(unicode(doctree), parser='xml')
+    return doctree
 
 
 FILENAME_TEST_CASES = {
@@ -182,7 +180,7 @@ def test_no_py_domain(doctree):
     """
     Test that no reference is created for references outside the py domain.
     """
-    assert not doctree.is_('reference')
+    assert not doctree.traverse(nodes.reference)
 
 
 @with_content(':func:`urllib.urlopen`')
@@ -190,7 +188,7 @@ def test_no_pattern_matches(doctree):
     """
     Test that no reference is created if no epydoc mapping pattern matches.
     """
-    assert not doctree.is_('reference')
+    assert not doctree.traverse(nodes.reference)
 
 
 @with_content(':func:`eggs.foo` and :func:`spam.foo` and :func:`chicken.foo`')
@@ -198,15 +196,16 @@ def test_all_patterns_considered(doctree):
     """
     Test that all patterns are tried in order to find epydoc references.
     """
-    assert len(doctree.find('reference')) == 3
+    assert len(doctree.traverse(nodes.reference)) == 3
 
 
 def assert_reference(doctree, title, url):
     __tracebackhide__ = True
-    reference = doctree.find('reference')
-    assert len(reference) == 1
-    assert reference.attr.refuri == url
-    assert reference.text() == title
+    assert len(doctree.traverse(nodes.reference)) == 1
+    reference = doctree.next_node(nodes.reference)
+    assert reference
+    assert reference['refuri'] == url
+    assert reference.astext() == title
 
 
 @with_content(':mod:`eggs`')

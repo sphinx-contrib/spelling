@@ -37,6 +37,7 @@ from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
 import pytest
+from docutils import nodes
 
 from sphinxcontrib.issuetracker import TrackerConfig, Issue
 
@@ -51,11 +52,11 @@ def pytest_funcarg__app(request):
 
 
 @pytest.mark.with_content('#10')
-def test_no_issue(app, resolved_doctree):
+def test_no_issue(resolved_doctree):
     """
     Test that no reference is created if an issue could not be resolved.
     """
-    assert not resolved_doctree.is_('reference')
+    assert not resolved_doctree.next_node(nodes.reference)
 
 
 @pytest.mark.with_issue(id='10', title='Spam', url='spam', closed=False)
@@ -68,7 +69,7 @@ def test_open_issue(app, resolved_doctree, issue):
 
 
 @pytest.mark.with_issue(id='10', title='Eggs', url='eggs', closed=True)
-def test_closed_issue(app, resolved_doctree, issue):
+def test_closed_issue(resolved_doctree, issue):
     """
     Test resolval of a closed issue.
     """
@@ -76,7 +77,7 @@ def test_closed_issue(app, resolved_doctree, issue):
 
 
 @pytest.mark.with_issue(id='10', title=None, url='eggs', closed=True)
-def test_issue_without_title(app, resolved_doctree, issue):
+def test_issue_without_title(resolved_doctree, issue):
     """
     Test resolval of issues without title.
     """
@@ -108,4 +109,4 @@ def test_non_ascii_title(resolved_doctree, issue):
     Test issues with non-ascii titles.
     """
     pytest.assert_issue_xref(resolved_doctree, issue, 'öäüß')
-    assert resolved_doctree.text() == 'öäüß'
+    assert resolved_doctree.astext() == 'öäüß'
