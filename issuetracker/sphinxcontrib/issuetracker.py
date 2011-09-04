@@ -114,7 +114,7 @@ def fetch_issue(app, url, output_format=None, opener=None):
                 import json
                 return json.load(response)
             elif output_format == 'xml':
-                from xml.etree import cElementTree as etree
+                from xml.etree import ElementTree as etree
                 return etree.parse(response)
             else:
                 return response
