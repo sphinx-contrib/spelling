@@ -39,8 +39,8 @@ from __future__ import (print_function, division, unicode_literals,
 
 import sys
 import shlex
-from subprocess import Popen, CalledProcessError, PIPE, STDOUT
-from collections import defaultdict
+from subprocess import Popen, PIPE, STDOUT
+from collections import defaultdict, namedtuple
 
 from docutils import nodes
 from docutils.parsers import rst
@@ -86,33 +86,88 @@ class ProgramOutputDirective(rst.Directive):
         return [node]
 
 
+_Command = namedtuple('Command', 'command shell hide_standard_error')
+
+
+class Command(_Command): #pylint: disable=W0232
+    """
+    A command to be executed.
+    """
+
+    def __new__(cls, command, shell=False, hide_standard_error=False):
+        if isinstance(command, list):
+            command = tuple(command)
+        return _Command.__new__(cls, command, shell, hide_standard_error)
+
+    @classmethod
+    def from_program_output_node(cls, node):
+        """
+        Create a command from a :class:`program_output` node.
+        """
+        extraargs = node.get('extraargs', '')
+        command = (node['command'] + ' ' + extraargs).strip()
+        return cls(command, node['use_shell'], node['hide_standard_error'])
+
+    def execute(self):
+        """
+        Execute this command.
+
+        Return the :class:`~subprocess.Popen` object representing the running
+        command.
+        """
+        # pylint: disable=E1101
+        if isinstance(self.command, unicode):
+            command = self.command.encode(sys.getfilesystemencoding())
+        else:
+            command = self.command
+        if isinstance(command, basestring) and not self.shell:
+            command = shlex.split(command)
+        return Popen(command, shell=self.shell, stdout=PIPE,
+                     stderr=PIPE if self.hide_standard_error else STDOUT)
+
+    def get_output(self):
+        """
+        Get the output of this command.
+
+        Return a tuple ``(returncode, output)``.  ``returncode`` is the
+        integral return code of the process, ``output`` is the output as
+        unicode string, with final trailing spaces and new lines stripped.
+        """
+        process = self.execute()
+        output = process.communicate()[0].decode(
+            sys.getfilesystemencoding()).rstrip()
+        return process.returncode, output
+
+    def __str__(self):
+        # pylint: disable=E1101
+        if isinstance(self.command, tuple):
+            return repr(list(self.command))
+        return repr(self.command)
+
+
 class ProgramOutputCache(defaultdict): # pylint: disable=W0232
     """
-    :class:`collections.defaultdict` sub-class, which caches program output.
+    Execute command and cache their output.
 
-    If a program's output is not contained in this cache, the program is
-    executed, and its output is placed in the cache.
+    This class is a mapping.  Its keys are :class:`Command` objects represeting
+    command invocations.  Its values are tuples of the form ``(returncode,
+    output)``, where ``returncode`` is the integral return code of the command,
+    and ``output`` is the output as unicode string.
+
+    The first time, a key is retrieved from this object, the command is
+    invoked, and its result is cached.  Subsequent access to the same key
+    returns the cached value.
     """
 
-    def __missing__(self, key):
+    def __missing__(self, command):
         """
         Called, if a command was not found in the cache.
 
-        ``key`` is a triple of ``(cmd, shell, hide_stderr)``.  ``cmd`` is
-        the command tuple.  If ``shell`` is ``True``, the command is
-        executed in the shell, otherwise it is executed directly.  If
-        ``hide_stderr`` is ``True``, the standard error of the program is
-        discarded, otherwise it is included in the output.
+        ``command`` is an instance of :class:`Command`.
         """
-        cmd, shell, hide_stderr = key
-        proc = Popen(cmd, shell=shell, stdout=PIPE,
-                     stderr=PIPE if hide_stderr else STDOUT)
-        stdout = proc.communicate()[0].decode(
-            sys.getfilesystemencoding()).rstrip()
-        if proc.returncode != 0:
-            raise CalledProcessError(proc.returncode, cmd)
-        self[key] = stdout
-        return stdout
+        result = command.get_output()
+        self[command] = result
+        return result
 
 
 def run_programs(app, doctree):
@@ -134,23 +189,12 @@ def run_programs(app, doctree):
     cache = app.env.programoutput_cache
 
     for node in doctree.traverse(program_output):
-        command = node['command']
-        cmd_bytes = command.encode(sys.getfilesystemencoding())
+        command = Command.from_program_output_node(node)
+        returncode, output = cache[command]
 
-        extra_args = node.get('extraargs', '').encode(
-            sys.getfilesystemencoding())
-        if node['use_shell']:
-            cmd = cmd_bytes
-            if extra_args:
-                cmd += ' ' + extra_args
-        else:
-            cmd = shlex.split(cmd_bytes)
-            if extra_args:
-                cmd.extend(shlex.split(extra_args))
-            cmd = tuple(cmd)
-
-        cache_key = (cmd, node['use_shell'], node['hide_standard_error'])
-        output = cache[cache_key]
+        if returncode != 0:
+            app.warn('Command {0} failed with return code {1}'.format(
+                command, returncode))
 
         # replace lines with ..., if ellipsis is specified
         if 'strip_lines' in node:
@@ -161,7 +205,8 @@ def run_programs(app, doctree):
 
         if node['show_prompt']:
             tmpl = app.config.programoutput_prompt_template
-            output = tmpl % dict(command=command, output=output)
+            output = tmpl % dict(command=node['command'], output=output,
+                                 returncode=returncode)
 
         new_node = node_class(output, output)
         new_node['language'] = 'text'

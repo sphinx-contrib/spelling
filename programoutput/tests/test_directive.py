@@ -28,10 +28,12 @@ from __future__ import (print_function, division, unicode_literals,
 
 import os
 import sys
-from subprocess import CalledProcessError
 
 import pytest
+from sphinx.errors import SphinxWarning
 from docutils.nodes import literal_block
+
+from sphinxcontrib.programoutput import Command
 
 
 def assert_output(doctree, output):
@@ -42,11 +44,9 @@ def assert_output(doctree, output):
 
 
 def assert_cache(cache, cmd, output, use_shell=False,
-                 hide_standard_error=False):
-    if isinstance(cmd, list):
-        cmd = tuple(cmd)
-    cache_key = (cmd, use_shell, hide_standard_error)
-    assert cache[cache_key] == output
+                 hide_standard_error=False, returncode=0):
+    cache_key = Command(cmd, use_shell, hide_standard_error)
+    assert cache[cache_key] == (returncode, output)
 
 
 @pytest.mark.with_content('.. program-output:: echo eggs')
@@ -189,19 +189,19 @@ def test_ellipsis_start_and_negative_stop(doctree, cache):
 @pytest.mark.with_content("""\
 .. program-output:: python -c 'import sys; sys.exit(1)'""")
 def test_non_zero_return_code(app):
-    with pytest.raises(CalledProcessError) as excinfo:
+    with pytest.raises(SphinxWarning) as excinfo:
         app.build()
-    exc = excinfo.value
-    assert exc.cmd == ('python', '-c', 'import sys; sys.exit(1)')
-    assert exc.returncode == 1
+    exc_message = 'WARNING: Command {0!r} failed with return code {1}\n'.format(
+        "python -c 'import sys; sys.exit(1)'", 1)
+    assert str(excinfo.value) == exc_message
 
 
 @pytest.mark.with_content("""\
 .. program-output:: python -c 'import sys; sys.exit(1)'
    :shell:""")
 def test_shell_non_zero_return_code(app):
-    with pytest.raises(CalledProcessError) as excinfo:
+    with pytest.raises(SphinxWarning) as excinfo:
         app.build()
-    exc = excinfo.value
-    assert exc.cmd == "python -c 'import sys; sys.exit(1)'"
-    assert exc.returncode == 1
+    exc_message = 'WARNING: Command {0!r} failed with return code {1}\n'.format(
+        "python -c 'import sys; sys.exit(1)'", 1)
+    assert str(excinfo.value) == exc_message

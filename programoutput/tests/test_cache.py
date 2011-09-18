@@ -26,54 +26,50 @@
 from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
-from subprocess import CalledProcessError
-
 import pytest
 
-from sphinxcontrib.programoutput import ProgramOutputCache
+from sphinxcontrib.programoutput import ProgramOutputCache, Command
 
 
 def pytest_funcarg__cache(request): # pylint: disable=W0613
     return ProgramOutputCache()
 
 
-def test_simple(cache):
-    key = (('echo', 'spam'), False, False)
+def assert_cache(cache, cmd, output, returncode=0):
+    result = (returncode, output)
     assert not cache
-    assert cache[key] == 'spam'
-    assert cache == {key: 'spam'}
+    assert cache[cmd] == result
+    assert cache == {cmd: result}
+
+
+def test_simple(cache):
+    assert_cache(cache, Command(['echo', 'spam']), 'spam')
 
 
 def test_shell(cache):
-    key = ('echo spam', True, False)
-    assert not cache
-    assert cache[key] == 'spam'
-    assert cache == {key: 'spam'}
+    assert_cache(cache, Command('echo spam', shell=True), 'spam')
 
 
 def test_hidden_standard_error(cache):
-    key = (('python', '-c', 'import sys; sys.stderr.write("spam")'),
-           False, True)
-    assert not cache
-    assert cache[key] == ''
-    assert cache == {key: ''}
+    cmd = ['python', '-c', 'import sys; sys.stderr.write("spam")']
+    assert_cache(cache, Command(cmd, hide_standard_error=True), '')
 
 
 def test_nonzero_return_code(cache):
-    key = (('python', '-c', 'import sys; sys.exit(1)'), False, False)
-    assert not cache
-    with pytest.raises(CalledProcessError) as excinfo:
-        cache[key] # pylint: disable=W0104
-    assert not cache
-    exc = excinfo.value
-    assert exc.cmd == key[0]
-    assert exc.returncode == 1
+    cmd = ['python', '-c', 'import sys; sys.exit(1)']
+    assert_cache(cache, Command(cmd), '', returncode=1)
+
+
+def test_nonzero_return_code_shell(cache):
+    cmd = "python -c 'import sys; sys.exit(1)'"
+    assert_cache(cache, Command(cmd, shell=True), '', returncode=1)
 
 
 @pytest.mark.with_content('dummy content')
 def test_cache_pickled(app, doctreedir):
-    key = (('echo', 'spam'), False, False)
-    assert app.env.programoutput_cache[key] == 'spam'
+    cmd = Command(['echo', 'spam'])
+    result = (0, 'spam')
+    assert app.env.programoutput_cache[cmd] == result
     app.build()
     pickled_env = doctreedir.join('environment.pickle').load()
-    assert pickled_env.programoutput_cache == {key: 'spam'}
+    assert pickled_env.programoutput_cache == {cmd: result}

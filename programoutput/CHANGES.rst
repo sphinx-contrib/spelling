@@ -1,6 +1,9 @@
 0.5 (in development)
 ====================
 
+- Warn on unexpected return codes instead of raising
+  :exc:`~subprocess.CalledProcessError`
+
 
 0.4.1 (Mar 11, 2011)
 ====================
