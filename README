@@ -76,6 +76,7 @@ List of extensions
   docstrings), mark statuses and collect them in a single list 
 - googlechart: embed charts by using Google Chart_
 - hyphenator: client-side hyphenation of HTML using hyphenator_
+- youtube: embed videos from YouTube_
 
 .. _aafigure: http://docutils.sourceforge.net/sandbox/aafigure/
 
@@ -114,6 +115,8 @@ List of extensions
 .. _hyphenator: http://code.google.com/p/hyphenator/
 
 .. _exceltable: http://packages.python.org/sphinxcontrib-exceltable/
+
+.. _YouTube: http://www.youtube.com/
 
 For contributors
 ================
