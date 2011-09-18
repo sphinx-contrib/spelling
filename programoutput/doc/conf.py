@@ -34,8 +34,7 @@ import programoutput
 
 needs_sphinx = '1.0'
 
-extensions = ['sphinx.ext.intersphinx',
-              'sphinxcontrib.programoutput']
+extensions = ['sphinx.ext.intersphinx', 'sphinxcontrib.programoutput']
 
 source_suffix = '.rst'
 master_doc = 'index'
@@ -51,6 +50,7 @@ html_theme = 'default'
 html_static_path = []
 
 intersphinx_mapping = {
+    'python': ('http://docs.python.org', None),
     'ansi': ('http://packages.python.org/sphinxcontrib-ansi', None)}
 
 

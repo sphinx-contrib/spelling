@@ -1,6 +1,7 @@
 0.5 (in development)
 ====================
 
+- Require Python 2.6 now
 - Warn on unexpected return codes instead of raising
   :exc:`~subprocess.CalledProcessError`
 

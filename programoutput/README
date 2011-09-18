@@ -4,23 +4,24 @@ sphinxcontrib-programoutput
 
 http://packages.python.org/sphinxcontrib-programoutput
 
-This Sphinx_ 1.0 extension executes programs during the build step and
-includes their output into the documentation.  It supports the
-`sphinxcontrib-ansi`_ extension to turn colored output of programs in
-pretty-formatted HTML.
+Sphinx 1.0 extension to insert the output of arbitrary commands into documents.
+
+The extension is available under the terms of the BSD license, see LICENSE_ for
+details.
 
 
 Installation
 ------------
 
-This extension can be installed from the Python Package Index::
+This extension requires Sphinx_ 1.0 and Python 2.6.  It is available in the
+Python Package Index::
 
    pip install sphinxcontrib-programoutput
 
 Alternatively, you can clone the sphinx-contrib_ repository from BitBucket,
 and install the extension directly from the repository::
 
-   hg clone http://bitbucket.org/birkenfeld/sphinx-contrib
+   hg clone https://bitbucket.org/birkenfeld/sphinx-contrib
    cd sphinx-contrib/programoutput
    python setup.py install
 
@@ -32,6 +33,6 @@ Please refer to the documentation_ for further information.
 
 
 .. _`Sphinx`: http://sphinx.pocoo.org/latest
-.. _`sphinxcontrib-ansi`: http://packages.python.org/sphinxcontrib-ansi
-.. _`sphinx-contrib`: http://bitbucket.org/birkenfeld/sphinx-contrib
+.. _`sphinx-contrib`: https://bitbucket.org/birkenfeld/sphinx-contrib
 .. _documentation: http://packages.python.org/sphinxcontrib-programoutput
+.. _LICENSE: https://bitbucket.org/birkenfeld/sphinx-contrib/src/tip/LICENSE
