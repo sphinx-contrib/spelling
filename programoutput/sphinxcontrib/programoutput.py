@@ -82,7 +82,7 @@ class ProgramOutputDirective(rst.Directive):
         return [node]
 
 
-class ProgramOutputCache(defaultdict):
+class ProgramOutputCache(defaultdict): # pylint: disable=W0232
     """
     :class:`collections.defaultdict` sub-class, which caches program output.
 
