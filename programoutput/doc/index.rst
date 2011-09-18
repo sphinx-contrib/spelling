@@ -134,6 +134,25 @@ Remember to use ``shell`` carefully to avoid unintented interpretation of shell
 syntax!
 
 
+Error handling
+^^^^^^^^^^^^^^
+
+If an unexpected exit code (also known as *return code*) is returned by a
+command, it is considered to have failed.  In this case, a build warning is
+emitted to help you to detect misspelled commands or similar errors.  By
+default, a command is expected to exit with an exit code of 0, all other codes
+indicate an error.  In some cases however, it may be reasonable to demonstrate
+failed programs.  To avoid a (superfluous) warning in such a case, you can
+specify the expected return code of a command with the ``returncode`` option::
+
+   .. command-output:: python -c 'import sys; sys.exit(1)'
+      :returncode: 1
+
+The above command returns the exit code 1 (as given to :py:func:`sys.exit()`),
+but no warning will be emitted.  On the contrary, a warning will be emitted,
+should the command return 0!
+
+
 Reference
 ---------
 
@@ -166,6 +185,10 @@ Reference
    is replaced with a single ellipsis ``...``.  The ``ellipsis`` option only
    affects the immediate output of ``command``, but never any additional text
    inserted by option ``prompt``.
+
+   If the command does return an exit code different from the expected one, a
+   build warning is issued.  The expected return code defaults to 0, and can be
+   changed with the ``returncode`` option.
 
 .. directive:: command-output
 

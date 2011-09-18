@@ -44,7 +44,7 @@ from collections import defaultdict, namedtuple
 
 from docutils import nodes
 from docutils.parsers import rst
-from docutils.parsers.rst.directives import flag, unchanged
+from docutils.parsers.rst.directives import flag, unchanged, nonnegative_int
 
 
 __version__ = '0.5'
@@ -67,7 +67,8 @@ class ProgramOutputDirective(rst.Directive):
     required_arguments = 1
 
     option_spec = dict(shell=flag, prompt=flag, nostderr=flag,
-                       ellipsis=_slice, extraargs=unchanged)
+                       ellipsis=_slice, extraargs=unchanged,
+                       returncode=nonnegative_int)
 
     def run(self):
         node = program_output()
@@ -81,6 +82,7 @@ class ProgramOutputDirective(rst.Directive):
         node['hide_standard_error'] = 'nostderr' in self.options
         node['extraargs'] = self.options.get('extraargs', '')
         node['use_shell'] = 'shell' in self.options
+        node['returncode'] = self.options.get('returncode', 0)
         if 'ellipsis' in self.options:
             node['strip_lines'] = self.options['ellipsis']
         return [node]
@@ -192,9 +194,9 @@ def run_programs(app, doctree):
         command = Command.from_program_output_node(node)
         returncode, output = cache[command]
 
-        if returncode != 0:
-            app.warn('Command {0} failed with return code {1}'.format(
-                command, returncode))
+        if returncode != node['returncode']:
+            app.warn('Unexpected return code {0} from command {1}'.format(
+                returncode, command))
 
         # replace lines with ..., if ellipsis is specified
         if 'strip_lines' in node:

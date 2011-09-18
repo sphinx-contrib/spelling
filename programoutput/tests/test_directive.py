@@ -189,20 +189,29 @@ def test_ellipsis_start_and_negative_stop(doctree, cache):
 
 @pytest.mark.with_content("""\
 .. program-output:: python -c 'import sys; sys.exit(1)'""")
-def test_non_zero_return_code(app):
+def test_unexpected_return_code(app):
     with pytest.raises(SphinxWarning) as excinfo:
         app.build()
-    exc_message = 'WARNING: Command {0!r} failed with return code {1}\n'.format(
-        "python -c 'import sys; sys.exit(1)'", 1)
+    exc_message = 'WARNING: Unexpected return code 1 from command {0!r}\n'.format(
+        "python -c 'import sys; sys.exit(1)'")
     assert str(excinfo.value) == exc_message
 
 
 @pytest.mark.with_content("""\
 .. program-output:: python -c 'import sys; sys.exit(1)'
    :shell:""")
-def test_shell_non_zero_return_code(app):
+def test_shell_with_unexpected_return_code(app):
     with pytest.raises(SphinxWarning) as excinfo:
         app.build()
-    exc_message = 'WARNING: Command {0!r} failed with return code {1}\n'.format(
-        "python -c 'import sys; sys.exit(1)'", 1)
+    exc_message = 'WARNING: Unexpected return code 1 from command {0!r}\n'.format(
+        "python -c 'import sys; sys.exit(1)'")
     assert str(excinfo.value) == exc_message
+
+
+@pytest.mark.with_content("""\
+.. program-output:: python -c 'import sys; print("foo"); sys.exit(1)'
+   :returncode: 1""")
+def test_expected_non_zero_return_code(doctree, cache):
+    assert_output(doctree, 'foo')
+    assert_cache(cache, 'python -c \'import sys; print("foo"); sys.exit(1)\'',
+                 'foo', returncode=1)
