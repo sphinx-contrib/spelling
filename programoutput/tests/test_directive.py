@@ -46,13 +46,13 @@ def assert_output(doctree, output):
 def assert_cache(cache, cmd, output, use_shell=False,
                  hide_standard_error=False, returncode=0):
     cache_key = Command(cmd, use_shell, hide_standard_error)
-    assert cache[cache_key] == (returncode, output)
+    assert cache == {cache_key: (returncode, output)}
 
 
 @pytest.mark.with_content('.. program-output:: echo eggs')
 def test_simple(doctree, cache):
     assert_output(doctree, 'eggs')
-    assert_cache(cache, ['echo', 'eggs'], 'eggs')
+    assert_cache(cache, 'echo eggs', 'eggs')
 
 
 @pytest.mark.with_content("""\
@@ -64,7 +64,7 @@ def test_with_spaces(doctree, cache):
     single arguments.
     """
     assert_output(doctree, 'spam with eggs')
-    assert_cache(cache, ['python', '-c', 'print("spam with eggs")'],
+    assert_cache(cache, 'python -c \'print("spam with eggs")\'',
                  'spam with eggs')
 
 
@@ -72,7 +72,7 @@ def test_with_spaces(doctree, cache):
 def test_standard_error(doctree, cache):
     output = 'Python {0}.{1}.{2}'.format(*sys.version_info)
     assert_output(doctree, output)
-    assert_cache(cache, ['python', '-V'], output)
+    assert_cache(cache, 'python -V', output)
 
 
 @pytest.mark.with_content("""\
@@ -80,13 +80,13 @@ def test_standard_error(doctree, cache):
    :nostderr:""")
 def test_standard_error_disabled(doctree, cache):
     assert_output(doctree, '')
-    assert_cache(cache, ['python', '-V'], '', hide_standard_error=True)
+    assert_cache(cache, 'python -V', '', hide_standard_error=True)
 
 
 @pytest.mark.with_content('.. program-output:: echo "${VIRTUAL_ENV}"')
 def test_no_expansion_without_shell(doctree, cache):
     assert_output(doctree, '${VIRTUAL_ENV}')
-    assert_cache(cache, ['echo', '${VIRTUAL_ENV}'], '${VIRTUAL_ENV}')
+    assert_cache(cache, 'echo "${VIRTUAL_ENV}"', '${VIRTUAL_ENV}')
 
 
 @pytest.mark.with_content("""\
@@ -94,7 +94,7 @@ def test_no_expansion_without_shell(doctree, cache):
    :shell:""")
 def test_expansion_with_shell(doctree, cache):
     assert_output(doctree, os.environ['VIRTUAL_ENV'])
-    assert_cache(cache, 'echo ${VIRTUAL_ENV}', os.environ['VIRTUAL_ENV'],
+    assert_cache(cache, 'echo "${VIRTUAL_ENV}"', os.environ['VIRTUAL_ENV'],
                  use_shell=True)
 
 
@@ -105,7 +105,7 @@ def test_prompt(doctree, cache):
     assert_output(doctree, """\
 $ echo "spam with eggs"
 spam with eggs""")
-    assert_cache(cache, ['echo', 'spam with eggs'], 'spam with eggs')
+    assert_cache(cache, 'echo "spam with eggs"', 'spam with eggs')
 
 
 @pytest.mark.with_content('.. command-output:: echo "spam with eggs"')
@@ -113,7 +113,7 @@ def test_command(doctree, cache):
     assert_output(doctree, """\
 $ echo "spam with eggs"
 spam with eggs""")
-    assert_cache(cache, ['echo', 'spam with eggs'], 'spam with eggs')
+    assert_cache(cache, 'echo "spam with eggs"', 'spam with eggs')
 
 
 @pytest.mark.with_content('.. command-output:: echo spam')
@@ -121,7 +121,7 @@ spam with eggs""")
     programoutput_prompt_template='>> {command}\n<< {output}')
 def test_command_non_default_prompt(doctree, cache):
     assert_output(doctree, '>> echo spam\n<< spam')
-    assert_cache(cache, ['echo', 'spam'], 'spam')
+    assert_cache(cache, 'echo spam', 'spam')
 
 
 @pytest.mark.with_content("""\
@@ -129,7 +129,7 @@ def test_command_non_default_prompt(doctree, cache):
    :extraargs: with eggs""")
 def test_extraargs(doctree, cache):
     assert_output(doctree, 'spam with eggs')
-    assert_cache(cache, ['echo', 'spam', 'with', 'eggs'], 'spam with eggs')
+    assert_cache(cache, 'echo spam with eggs', 'spam with eggs')
 
 
 @pytest.mark.with_content('''\
@@ -148,7 +148,7 @@ def test_extraargs_with_shell(doctree, cache):
    :extraargs: with eggs""")
 def test_extraargs_with_prompt(doctree, cache):
     assert_output(doctree, '$ echo spam\nspam with eggs')
-    assert_cache(cache, ['echo', 'spam', 'with', 'eggs'], 'spam with eggs')
+    assert_cache(cache, 'echo spam with eggs', 'spam with eggs')
 
 
 @pytest.mark.with_content("""\
@@ -156,7 +156,7 @@ def test_extraargs_with_prompt(doctree, cache):
    :ellipsis: 2""")
 def test_ellipsis_stop_only(doctree, cache):
     assert_output(doctree, 'spam\nwith\n...')
-    assert_cache(cache, ['python', '-c', r'print("spam\nwith\neggs")'],
+    assert_cache(cache, 'python -c \'print("spam\\nwith\\neggs")\'',
                  'spam\nwith\neggs')
 
 
@@ -165,7 +165,7 @@ def test_ellipsis_stop_only(doctree, cache):
    :ellipsis: -2""")
 def test_ellipsis_negative_stop(doctree, cache):
     assert_output(doctree, 'spam\n...')
-    assert_cache(cache, ['python', '-c', r'print("spam\nwith\neggs")'],
+    assert_cache(cache, """python -c 'print("spam\\nwith\\neggs")'""",
                  'spam\nwith\neggs')
 
 
@@ -174,7 +174,7 @@ def test_ellipsis_negative_stop(doctree, cache):
    :ellipsis: 1, 2""")
 def test_ellipsis_start_and_stop(doctree, cache):
     assert_output(doctree, 'spam\n...\neggs')
-    assert_cache(cache, ['python', '-c', r'print("spam\nwith\neggs")'],
+    assert_cache(cache, """python -c 'print("spam\\nwith\\neggs")'""",
                  'spam\nwith\neggs')
 
 
@@ -183,7 +183,7 @@ def test_ellipsis_start_and_stop(doctree, cache):
    :ellipsis: 1, -1""")
 def test_ellipsis_start_and_negative_stop(doctree, cache):
     assert_output(doctree, 'spam\n...\neggs')
-    assert_cache(cache, ['python', '-c', r'print("spam\nwith\neggs")'],
+    assert_cache(cache, """python -c 'print("spam\\nwith\\neggs")'""",
                  'spam\nwith\neggs')
 
 
