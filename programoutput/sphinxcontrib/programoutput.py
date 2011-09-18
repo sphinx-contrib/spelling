@@ -207,7 +207,8 @@ def run_programs(app, doctree):
 
         if node['show_prompt']:
             tmpl = app.config.programoutput_prompt_template
-            output = tmpl.format(command=node['command'], output=output)
+            output = tmpl.format(command=node['command'], output=output,
+                                 returncode=returncode)
 
         new_node = node_class(output, output)
         new_node['language'] = 'text'

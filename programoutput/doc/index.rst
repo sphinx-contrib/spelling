@@ -214,6 +214,7 @@ This extension understands the following configuration options:
      directive, *without* any ``extraargs``.
    * ``output`` is the output of the command, after the ``ellipsis`` option has
      been applied.
+   * ``returncode`` is the return code of the command as integer.
 
 .. confval:: programoutput_use_ansi
 

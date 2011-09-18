@@ -215,3 +215,17 @@ def test_expected_non_zero_return_code(doctree, cache):
     assert_output(doctree, 'foo')
     assert_cache(cache, 'python -c \'import sys; print("foo"); sys.exit(1)\'',
                  'foo', returncode=1)
+
+
+@pytest.mark.with_content("""\
+.. command-output:: python -c 'import sys; sys.exit(1)'
+   :returncode: 1""")
+@pytest.mark.confoverrides(
+    programoutput_prompt_template='> {command}\n{output}\n[{returncode}]>')
+def test_prompt_with_return_code(doctree, cache):
+    assert_output(doctree, """\
+> python -c 'import sys; sys.exit(1)'
+
+[1]>""")
+    assert_cache(cache, "python -c 'import sys; sys.exit(1)'", '',
+                 returncode=1)

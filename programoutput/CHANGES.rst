@@ -5,6 +5,8 @@
 - Require Python 2.6 now
 - Added ``returncode`` option to :rst:dir:`program-output` (thanks to Jan-Marek
   Glogowski)
+- Support ``returncode`` formatting key in
+  :confval:`programoutput_prompt_template`
 - Warn on unexpected return codes instead of raising
   :exc:`~subprocess.CalledProcessError`
 
