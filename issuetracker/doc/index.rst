@@ -4,8 +4,7 @@
 .. module:: sphinxcontrib.issuetracker
    :synopsis: Parse issue references and link to the corresponding issues
 
-A Sphinx_ extension to turn textual issue ids like ``#10`` into real references
-to these issues in an issue tracker.
+A Sphinx_ extension to to reference issues in an issue tracker.
 
 The extension is available under the terms of the BSD license, see
 :doc:`license` for more information.
@@ -147,7 +146,11 @@ Plaintext issues
    If ``True`` (the default) issue references are extracted from plain text by
    turning issue ids like ``#10`` into references to the corresponding issue.
    Issue ids in any kind of literal text (e.g. ``inline literals`` or code
-   blocks) are ignored.
+   blocks) are ignored.  If ``False``, no issue references are created from
+   plain text.
+
+   Independently of this configuration value, you can always reference issues
+   explicitly with the :rst:role:`issue` role.
 
    .. versionadded:: 0.9
 
@@ -215,7 +218,7 @@ callback to the event :event:`issuetracker-lookup-issue`:
 
    .. attribute:: project
 
-      The project name as string
+      The project name as string.
 
    .. attribute:: url
 
@@ -231,15 +234,19 @@ callback to the event :event:`issuetracker-lookup-issue`:
 
    .. attribute:: id
 
-      The issue id as string
+      The issue id as string.
 
       If you are writing your own custom callback for
       :event:`issuetracker-lookup-issue`, set this attribute to the
       ``issue_id`` that was given as argument.
 
+   .. attribute:: title
+
+      The human readable title of this issue as string.
+
    .. attribute:: url
 
-      An URL providing information about this issue.
+      A string containing an URL for this issue.
 
       This URL is used as hyperlink target in the generated documentation.
       Thus it should point to a webpage or something similar that provides
