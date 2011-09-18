@@ -34,7 +34,8 @@
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
 """
 
-__version__ = '0.5'
+from __future__ import (print_function, division, unicode_literals,
+                        absolute_import)
 
 import sys
 import shlex
@@ -44,6 +45,9 @@ from collections import defaultdict
 from docutils import nodes
 from docutils.parsers import rst
 from docutils.parsers.rst.directives import flag, unchanged
+
+
+__version__ = '0.5'
 
 
 class program_output(nodes.Element):
@@ -182,5 +186,5 @@ def setup(app):
                          '$ %(command)s\n%(output)s', 'env')
     app.add_directive('program-output', ProgramOutputDirective)
     app.add_directive('command-output', ProgramOutputDirective)
-    app.connect('builder-inited', init_cache)
-    app.connect('doctree-read', run_programs)
+    app.connect(b'builder-inited', init_cache)
+    app.connect(b'doctree-read', run_programs)
