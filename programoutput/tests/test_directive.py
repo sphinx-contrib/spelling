@@ -117,7 +117,8 @@ spam with eggs""")
 
 
 @pytest.mark.with_content('.. command-output:: echo spam')
-@pytest.mark.confoverrides(programoutput_prompt_template='>> %(command)s\n<< %(output)s')
+@pytest.mark.confoverrides(
+    programoutput_prompt_template='>> {command}\n<< {output}')
 def test_command_non_default_prompt(doctree, cache):
     assert_output(doctree, '>> echo spam\n<< spam')
     assert_cache(cache, ['echo', 'spam'], 'spam')

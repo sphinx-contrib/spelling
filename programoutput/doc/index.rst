@@ -179,10 +179,18 @@ This extension understands the following configuration options:
 
 .. confval:: programoutput_prompt_template
 
-   A string with a template for the output of :dir:`command-output` and also
-   :dir:`program-output`, if the option ``prompt`` is given.  The default value
-   is ``'$ %(command)s\n%(output)s'``.  The key ``command`` is replaced with
-   the command, the key ``output`` with the output of this command.
+   A `format string`_ template for the output of the ``prompt`` option to
+   :dir:`command-output`.  Defaults to ``$ {command}\n{output}`` which renders
+   as follows:
+
+   .. command-output:: python -V
+
+   The following keys are provided to the format string:
+
+   * ``command`` is replaced with the literal command as given to the
+     directive, *without* any ``extraargs``.
+   * ``output`` is the output of the command, after the ``ellipsis`` option has
+     been applied.
 
 .. confval:: programoutput_use_ansi
 
@@ -212,7 +220,8 @@ welcome!
    changes.rst
 
 
-.. _`Sphinx`: http://sphinx.pocoo.org/
-.. _`sphinx-contrib`: https://bitbucket.org/birkenfeld/sphinx-contrib
-.. _`issue tracker`: https://bitbucket.org/birkenfeld/sphinx-contrib/issues
+.. _Sphinx: http://sphinx.pocoo.org/
+.. _sphinx-contrib: https://bitbucket.org/birkenfeld/sphinx-contrib
+.. _issue tracker: https://bitbucket.org/birkenfeld/sphinx-contrib/issues
 .. _LICENSE: https://bitbucket.org/birkenfeld/sphinx-contrib/src/tip/LICENSE
+.. _format string: http://docs.python.org/library/string.html#formatstrings

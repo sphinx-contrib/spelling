@@ -205,8 +205,7 @@ def run_programs(app, doctree):
 
         if node['show_prompt']:
             tmpl = app.config.programoutput_prompt_template
-            output = tmpl % dict(command=node['command'], output=output,
-                                 returncode=returncode)
+            output = tmpl.format(command=node['command'], output=output)
 
         new_node = node_class(output, output)
         new_node['language'] = 'text'
@@ -228,7 +227,7 @@ def init_cache(app):
 def setup(app):
     app.add_config_value('programoutput_use_ansi', False, 'env')
     app.add_config_value('programoutput_prompt_template',
-                         '$ %(command)s\n%(output)s', 'env')
+                         '$ {command}\n{output}', 'env')
     app.add_directive('program-output', ProgramOutputDirective)
     app.add_directive('command-output', ProgramOutputDirective)
     app.connect(b'builder-inited', init_cache)
