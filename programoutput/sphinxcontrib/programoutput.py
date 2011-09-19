@@ -72,6 +72,7 @@ class ProgramOutputDirective(rst.Directive):
 
     def run(self):
         node = program_output()
+        node.line = self.lineno
         node['command'] = self.arguments[0]
 
         if self.name == 'command-output':
@@ -192,27 +193,32 @@ def run_programs(app, doctree):
 
     for node in doctree.traverse(program_output):
         command = Command.from_program_output_node(node)
-        returncode, output = cache[command]
+        try:
+            returncode, output = cache[command]
+        except EnvironmentError as error:
+            error_message = 'Command {0} failed: {1}'.format(command, error)
+            error_node = doctree.reporter.error(error_message, base_node=node)
+            node.replace_self(error_node)
+        else:
+            if returncode != node['returncode']:
+                app.warn('Unexpected return code {0} from command {1}'.format(
+                    returncode, command))
 
-        if returncode != node['returncode']:
-            app.warn('Unexpected return code {0} from command {1}'.format(
-                returncode, command))
+            # replace lines with ..., if ellipsis is specified
+            if 'strip_lines' in node:
+                lines = output.splitlines()
+                start, stop = node['strip_lines']
+                lines[start:stop] = ['...']
+                output = '\n'.join(lines)
 
-        # replace lines with ..., if ellipsis is specified
-        if 'strip_lines' in node:
-            lines = output.splitlines()
-            start, stop = node['strip_lines']
-            lines[start:stop] = ['...']
-            output = '\n'.join(lines)
+            if node['show_prompt']:
+                tmpl = app.config.programoutput_prompt_template
+                output = tmpl.format(command=node['command'], output=output,
+                                     returncode=returncode)
 
-        if node['show_prompt']:
-            tmpl = app.config.programoutput_prompt_template
-            output = tmpl.format(command=node['command'], output=output,
-                                 returncode=returncode)
-
-        new_node = node_class(output, output)
-        new_node['language'] = 'text'
-        node.replace_self(new_node)
+            new_node = node_class(output, output)
+            new_node['language'] = 'text'
+            node.replace_self(new_node)
 
 
 def init_cache(app):

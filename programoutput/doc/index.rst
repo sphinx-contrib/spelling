@@ -131,7 +131,7 @@ Other shell features like process expansion consequently work, too::
    :shell:
 
 Remember to use ``shell`` carefully to avoid unintented interpretation of shell
-syntax!
+syntax and swallowing of fatal errors!
 
 
 Error handling
@@ -151,6 +151,17 @@ specify the expected return code of a command with the ``returncode`` option::
 The above command returns the exit code 1 (as given to :py:func:`sys.exit()`),
 but no warning will be emitted.  On the contrary, a warning will be emitted,
 should the command return 0!
+
+.. note::
+
+   Upon fatal errors which even prevent the execution of the command neither
+   return code nor command output are available.  In this case an error message
+   is inserted into the document instead.
+
+   If ``shell`` is set however, most of these fatal errors are handled by the
+   system shell and turned into return codes instead.  In this case the error
+   message will only appear in the output of the shell.  If you're using
+   ``shell``, double-check the output for errors.  Best avoid ``shell``, if possible.
 
 
 Reference

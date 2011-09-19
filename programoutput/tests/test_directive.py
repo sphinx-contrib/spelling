@@ -31,7 +31,7 @@ import sys
 
 import pytest
 from sphinx.errors import SphinxWarning
-from docutils.nodes import literal_block
+from docutils.nodes import literal_block, system_message
 
 from sphinxcontrib.programoutput import Command
 
@@ -229,3 +229,17 @@ def test_prompt_with_return_code(doctree, cache):
 [1]>""")
     assert_cache(cache, "python -c 'import sys; sys.exit(1)'", '',
                  returncode=1)
+
+
+@pytest.mark.with_content(".. program-output:: 'spam with eggs'")
+@pytest.mark.ignore_warnings
+def test_non_existing_executable(doctree, srcdir):
+    # check that a proper error message appears in the document
+    message = doctree.next_node(system_message)
+    assert message
+    srcfile = str(srcdir.join('index.rst'))
+    assert message['source'] == srcfile
+    assert message['line'] == 1
+    msgtemplate = ("{0}:1: (ERROR/3) Command {1!r} failed: "
+                   "[Errno 2] No such file or directory")
+    assert message.astext() == msgtemplate.format(srcfile, "'spam with eggs'")

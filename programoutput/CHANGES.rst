@@ -9,6 +9,8 @@
   :confval:`programoutput_prompt_template`
 - Warn on unexpected return codes instead of raising
   :exc:`~subprocess.CalledProcessError`
+- Turn fatal errors during command into document error messages instead of
+  crashing the build
 
 
 0.4.1 (Mar 11, 2011)

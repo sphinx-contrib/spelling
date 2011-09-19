@@ -108,9 +108,10 @@ def pytest_funcarg__app(request):
     outdir = request.getfuncargvalue('outdir')
     doctreedir = request.getfuncargvalue('doctreedir')
     confoverrides = request.getfuncargvalue('confoverrides')
+    warningiserror = 'ignore_warnings' not in request.keywords
     app = Sphinx(str(srcdir), str(srcdir), str(outdir), str(doctreedir), 'html',
-                 status=None, warning=None, freshenv=None, warningiserror=True,
-                 confoverrides=confoverrides)
+                 status=None, warning=None, freshenv=None,
+                 warningiserror=warningiserror, confoverrides=confoverrides)
     if 'build_app' in request.keywords:
         app.build()
     return app
