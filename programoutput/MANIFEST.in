@@ -1,6 +1,6 @@
 include README
 include LICENSE
 include CHANGES.*
-include test_programoutput.py
-recursive-include doc *.rst *.py Makefile
-prune doc/_build
+include tox.ini
+recursive-include doc *.rst *.py
+recursive-include tests *.py *.txt
