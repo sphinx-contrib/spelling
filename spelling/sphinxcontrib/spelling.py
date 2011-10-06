@@ -273,7 +273,7 @@ class SpellingBuilder(Builder):
         self.checker.push_filters(self.env.spelling_document_filters[docname])
 
         for node in doctree.traverse(docutils.nodes.Text):
-            if node.tagname == '#text' and  node.parent.tagname in TEXT_NODES:
+            if node.tagname == '#text' and node.parent and node.parent.tagname in TEXT_NODES:
 
                 # Figure out the line number for this node by climbing the
                 # tree until we find a node that has a line number.

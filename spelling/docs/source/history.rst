@@ -7,6 +7,10 @@
  Release History
 =================
 
+dev
+
+  - Handle text nodes without parents. (#19)
+
 1.2
 
   - Add the document name to the messages showing the contents of a
