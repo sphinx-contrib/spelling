@@ -196,7 +196,7 @@ def render_dot_html(self, node, code, options, prefix='nwdiag',
             image.save()
 
         # generate thumbnails
-        image_size = image.drawer.image.size
+        image_size = image.pagesize()
         if 'maxwidth' in options and options['maxwidth'] < image_size[0]:
             has_thumbnail = True
             thumb_prefix = prefix + '_thumb'
@@ -207,7 +207,6 @@ def render_dot_html(self, node, code, options, prefix='nwdiag',
             if not os.path.isfile(toutfn):
                 image.draw()
                 image.save(toutfn, thumb_size)
-            thumb_size = image.drawer.image.size
 
     except UnicodeEncodeError, e:
         msg = ("nwdiag error: UnicodeEncodeError caught "
