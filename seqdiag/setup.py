@@ -21,11 +21,11 @@ Following code is sample::
 This module needs seqdiag_.
 '''
 
-requires = ['seqdiag>=0.3.3', 'Sphinx>=0.6']
+requires = ['blockdiag>=0.9.3', 'seqdiag>=0.3.3', 'Sphinx>=0.6']
 
 setup(
     name='sphinxcontrib-seqdiag',
-    version='0.2.0',
+    version='0.2.1',
     url='http://bitbucket.org/birkenfeld/sphinx-contrib',
     download_url='http://pypi.python.org/pypi/sphinxcontrib-seqdiag',
     license='BSD',
