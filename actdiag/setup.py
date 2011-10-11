@@ -32,7 +32,7 @@ requires = ['blockdiag>=0.9.3', 'actdiag>=0.1.5', 'Sphinx>=0.6']
 
 setup(
     name='sphinxcontrib-actdiag',
-    version='0.2.1',
+    version='0.2.2',
     url='http://bitbucket.org/birkenfeld/sphinx-contrib',
     download_url='http://pypi.python.org/pypi/sphinxcontrib-actdiag',
     license='BSD',
