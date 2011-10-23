@@ -7,6 +7,7 @@ Contents:
    :maxdepth: 2
 
    test_doc
+   test_doc2
    
 Indices and tables
 ==================

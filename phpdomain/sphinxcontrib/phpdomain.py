@@ -165,7 +165,7 @@ class PhpObject(ObjectDescription):
                 modname = self.options.get(
                     'namespace', self.env.temp_data.get('php:namespace'))
 
-                if modname and 'php:in_class' in self.env.temp_data and not self.env.temp_data['php:in_class']:
+                if modname and not self.env.temp_data.get('php:in_class', False):
                     nodetext = modname + NS
                     signode += addnodes.desc_addname(nodetext, nodetext)
 
