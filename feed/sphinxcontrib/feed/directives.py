@@ -29,7 +29,9 @@ def int_or_nothing(argument):
 class Latest(Directive):
     """
     Directive to notify Sphinx about the hierarchical structure of the docs,
-    and to include a table-of-contents like tree in the current document.
+    and to include a table-of-contents-like tree in the current document.
+    
+    Originally absed on the `sphinx.directives.other.TocTree` class.
     """
     has_content = True
     required_arguments = 0
