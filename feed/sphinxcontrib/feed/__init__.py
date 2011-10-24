@@ -2,7 +2,10 @@ from fsdict import FSDict
 import feedgenerator
 from urllib import quote_plus
 import os.path
-import directives
+import feeddirectives
+import feedtransforms
+import feednodes
+from sphinx.addnodes import toctree
 
 #global
 feed_entries = None
@@ -31,11 +34,38 @@ def setup(app):
     app.add_config_value('feed_description', '', 'html')
     app.add_config_value('feed_filename', 'rss.xml', 'html')
     
+    #app.add_transform(feedtransforms.SortLastestTree)
+    app.add_node(feednodes.latesttree)
+    app.add_directive('latest', feeddirectives.Latest)
+    
     app.connect('html-page-context', create_feed_item)
     app.connect('build-finished', emit_feed)
     app.connect('builder-inited', create_feed_container)
     app.connect('env-purge-doc', remove_dead_feed_item)
-    
+    #app.connect('doctree-resolved', process_latest_toc)
+    app.connect('doctree-read', process_latest_toc)
+
+def process_latest_toc(app, doctree, docname=None):
+    env = app.builder.env
+    for node in doctree.traverse(feednodes.latesttree):
+        new_node = toctree()
+        import pdb; pdb.set_trace()
+
+        new_node['parent'] = node['parent']
+        # entries contains all entries (self references, external links etc.)
+        new_node['entries'] = node['entries']
+        # includefiles only entries that are documents
+        new_node['includefiles'] = node['includefiles']
+        new_node['maxdepth'] = node['maxdepth']
+        
+        new_node['glob'] = node['glob']
+        new_node['hidden'] = node['hidden']
+        new_node['numbered'] = node['numbered']
+        new_node['titlesonly'] = node['titlesonly']
+        
+        node.replace_self(new_node)
+        pass
+
 def create_feed_container(app):
     """
     create lazy filesystem stash for keeping RSS entry fragments, since we
@@ -63,7 +93,7 @@ def create_feed_item(app, pagename, templatename, ctx, doctree):
         return #don't index dateless articles
     try:
         pub_date = parse_date(metadata['date'])
-        app.builder.env.metadata.get(pagename, {})
+        metadata['pub_date'] = pub_date
     except ValueError, exc:
         #probably a nonsensical date
         app.builder.warn('date parse error: ' + str(exc) + ' in ' + pagename)
@@ -84,7 +114,8 @@ def create_feed_item(app, pagename, templatename, ctx, doctree):
     }
     if 'author' in metadata:
         item['author'] = metadata['author']
-    feed_entries[nice_name(pagename, pub_date)] = item
+        
+    feed_entries[dated_name(pagename, pub_date)] = item
     
     #Now, useful variables to keep in context
     ctx['rss_link'] = app.builder.env.feed_url 
@@ -131,10 +162,10 @@ def emit_feed(app, exc):
     feed.write(fp, 'utf-8')
     fp.close()
 
-def nice_name(docname, date):
+def dated_name(docname, date):
     """
-    we need convenient filenames which incorporate dates for ease of sorting and
-    guid for uniqueness, plus will work in the FS without inconvenient
+    we need convenient filenames which incorporate dates for ease of sorting
+    andguid for uniqueness, plus will work in the FS without inconvenient
     characters. NB, at the moment, hour of publication is ignored.
     """
     return quote_plus(MAGIC_SEPARATOR.join([date.isoformat(), docname]))

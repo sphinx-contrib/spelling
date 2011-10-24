@@ -14,11 +14,13 @@ import os
 from docutils import nodes
 from docutils.parsers.rst import Directive, directives
 
-from sphinx import addnodes
 from sphinx.locale import _
 from sphinx.util import url_re, docname_join
 from sphinx.util.nodes import explicit_title_re
 from sphinx.util.matching import patfilter
+
+from feednodes import latesttree
+
 
 def int_or_nothing(argument):
     if not argument:
@@ -31,7 +33,7 @@ class Latest(Directive):
     Directive to notify Sphinx about the hierarchical structure of the docs,
     and to include a table-of-contents-like tree in the current document.
     
-    Originally absed on the `sphinx.directives.other.TocTree` class.
+    Originally based on the `sphinx.directives.other.TocTree` class.
     """
     has_content = True
     required_arguments = 0
@@ -58,6 +60,7 @@ class Latest(Directive):
         all_docnames = env.found_docs.copy()
         # don't add the currently visited file in catch-all patterns
         all_docnames.remove(env.docname)
+        #the following logic is traight from TocTree
         for entry in self.content:
             if not entry:
                 continue
@@ -87,6 +90,7 @@ class Latest(Directive):
                     entries.append((title, docname))
                     includefiles.append(docname)
             else:
+                #For globs only, we differ from TocTree by sorting
                 patname = docname_join(env.docname, entry)
                 docnames = sorted(patfilter(all_docnames, patname))
                 for docname in docnames:
@@ -97,7 +101,8 @@ class Latest(Directive):
                     ret.append(self.state.document.reporter.warning(
                         'toctree glob pattern %r didn\'t match any documents'
                         % entry, line=self.lineno))
-        subnode = addnodes.toctree()
+        
+        subnode = latesttree()
         subnode['parent'] = env.docname
         # entries contains all entries (self references, external links etc.)
         subnode['entries'] = entries
