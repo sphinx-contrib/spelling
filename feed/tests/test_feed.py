@@ -89,18 +89,16 @@ class TestFeedStructure(unittest.TestCase):
     
         index_path  = os.path.join(app.outdir, 'index.html')
         soup = BeautifulSoup(open(index_path).read())
-        #latest_tree = soup.find('div', 'toctree-wrapper')
-        #latest_items = soup.findAll('li', 'toctree-l1')
-        #These will look like this:
-        # <div class="toctree-wrapper compound">
-        # <ul>
-        # <li class="toctree-l1"><a class="reference internal" href="B_latest.html">The latest blog post</a></li>
-        # <li class="toctree-l1"><a class="reference internal" href="A_older.html">An older blog post</a></li>
-        # <li class="toctree-l1"><a class="reference internal" href="C_most_aged.html">The oldest blog post</a></li>
-        # </ul>
-        # </div>
-        #self.assertEqual(latest_tree, 'weirdness')
-        # import pdb; pdb.set_trace()
+        latest_tree = soup.find('div', 'toctree-wrapper')
+        latest_items = latest_tree.findAll('li', 'toctree-l1')
+        actual_links = [entry.contents[0]['href'] for entry in latest_items]
+        ideal_links = [
+            u'B_latest.html',
+            u'A_older.html',
+            u'C_most_aged.html',
+        ]
+        self.assertListEqual(actual_links, ideal_links)
+
     
         app.cleanup()
         app2.cleanup()
