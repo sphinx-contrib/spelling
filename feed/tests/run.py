@@ -12,6 +12,7 @@
 
 import sys
 from os import path
+import unittest
 
 def run(bonus_args=[]):
     # always test the sphinxcontrib.feed package from this directory
@@ -21,27 +22,20 @@ def run(bonus_args=[]):
       path.pardir,
       'sphinxcontrib', 'feed'))
     )
-    try:
-        import nose
-    except ImportError:
-        print "The nose package is needed to run the sphinxcontrib.feed test suite."
-        sys.exit(1)
 
     try:
         import sphinx
     except ImportError:
         print "The sphinx package is needed to run the sphinxcontrib.feed test suite."
-
-    nose_argv = ['nosetests']
     
-
-    # Everything after '--' is passed to nose.
-    if '--' in sys.argv:
-        hyphen_pos = sys.argv.index('--')
-        nose_argv.extend(bonus_args + sys.argv[hyphen_pos + 1:])
-
+    import test_feed
+    
     print "Running sphinxcontrib.feed test suite..."
-    nose.run(argv=nose_argv)
+    
+    suite = unittest.TestLoader().loadTestsFromTestCase(
+      test_feed.TestFeedStructure
+    )
+    unittest.TextTestRunner(verbosity=2).run(suite)
 
 if __name__ == '__main__':
     run()

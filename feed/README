@@ -29,8 +29,6 @@ TODO
 
 * inject rel="alternate" RSS links into document header pointing to
   the RSS feed. For now you roll your own in the template
-* go from the irritating nose tests to the conventional and more debug-
-  friendly unittests
 * make the `latest` directive more useful
 * use sphinx-style documentation (!)
 
