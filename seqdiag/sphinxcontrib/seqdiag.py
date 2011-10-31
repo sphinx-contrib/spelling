@@ -203,7 +203,8 @@ def render_dot_html(self, node, code, options, prefix='seqdiag',
             trelfn, toutfn = get_image_filename(self, code, format,
                                                 options, thumb_prefix)
 
-            thumb_size = (options['maxwidth'], image_size[1])
+            ratio = float(options['maxwidth']) / image_size[0]
+            thumb_size = (options['maxwidth'], image_size[1] * ratio)
             if not os.path.isfile(toutfn):
                 image.filename = toutfn
                 image.draw()
