@@ -31,5 +31,3 @@ class Latest(TocTree):
         tocnode['by_pub_date'] = True
         return ret
 
-directives.register_directive('latest', Latest)
-

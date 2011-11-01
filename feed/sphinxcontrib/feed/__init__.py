@@ -2,7 +2,7 @@ from fsdict import FSDict
 import feedgenerator
 from urllib import quote_plus
 import os.path
-import feeddirectives
+from feeddirectives import Latest
 from sphinx.addnodes import toctree
 
 #global
@@ -27,6 +27,9 @@ def setup(app):
     """
     from sphinx.application import Sphinx
     if not isinstance(app, Sphinx): return
+    
+    app.add_directive('latest', Latest)
+    
     app.add_config_value('feed_title', '', 'html')
     app.add_config_value('feed_base_url', '', 'html')
     app.add_config_value('feed_description', '', 'html')
