@@ -78,7 +78,7 @@ List of extensions
 - youtube: embed videos from YouTube_
 - zopeext: provide an ``autointerface`` directive for using Zope interfaces.
 
-.. _aafigure: http://docutils.sourceforge.net/sandbox/aafigure/
+.. _aafigure: https://launchpad.net/aafigure
 
 .. _gnuplot: http://www.gnuplot.info/
 
