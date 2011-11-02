@@ -3,7 +3,13 @@ TODO
 =================================================================
 
 - create tests to verify handling of relative *image* links
-- ditch python nose for plain old, way more debugging-friendly unittests
-- create a toctree-like "latest" directive. note we can't simply subclass TocTree, or even simply copy it, since toctree nodes are very deep in sphinx and have specialist rendering. But we can duplicate some of the machinery. this need a custom directive, and also a toctree-like custom node (yet to come)
-  - http://sphinx.pocoo.org/latest/ext/tutorial.html
-  - shoudl this be restricted to titlesonly? - http://sphinx.pocoo.org/latest/markup/toctree.html
+- improve and document the toctree-like "latest" directive
+
+  - should this be restricted to titlesonly? - http://sphinx.pocoo.org/latest/markup/toctree.html
+  - support custom date format
+  - why are latest list entires marked as external references?
+  - make sorting by date optional
+  - make displaying date optional
+  - support microformats for date display
+  
+- write rss at the `html-collect-pages` event

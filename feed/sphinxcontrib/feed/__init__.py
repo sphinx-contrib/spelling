@@ -3,7 +3,10 @@ import feedgenerator
 from urllib import quote_plus
 import os.path
 from feeddirectives import Latest
+from feednodes import latest
 from sphinx.addnodes import toctree
+from docutils import nodes
+
 
 #global
 feed_entries = None
@@ -28,43 +31,77 @@ def setup(app):
     from sphinx.application import Sphinx
     if not isinstance(app, Sphinx): return
     
-    app.add_directive('latest', Latest)
-    
     app.add_config_value('feed_title', '', 'html')
     app.add_config_value('feed_base_url', '', 'html')
     app.add_config_value('feed_description', '', 'html')
     app.add_config_value('feed_filename', 'rss.xml', 'html')
     
-    #app.add_transform(feedtransforms.SortLastestTree)
-    app.add_directive('latest', feeddirectives.Latest)
+    app.add_directive('latest', Latest)
+    app.add_node(latest)
     
     app.connect('build-finished', emit_feed)
     app.connect('builder-inited', create_feed_container)
     app.connect('env-purge-doc', remove_dead_feed_item)
-    #app.connect('doctree-read', process_latest_toc)
-    app.connect('doctree-resolved', parse_article_date)
+    app.connect('env-purge-doc', purge_dates)
+    #I would like to parse dates here, but we aren't supplied the document name in the handler, so it's pointless
+    #app.connect('doctree-read', parse_article_date)
     app.connect('html-page-context', create_feed_item)
     app.connect('doctree-resolved', process_latest_toc)
 
-def process_latest_toc(app, doctree, docname=None):
+def purge_dates(app, env, docname):
+    if not hasattr(env, 'feed_pub_dates'):
+        return
+    try:
+        del(env.feed_pub_dates[docname])
+    except KeyError:
+        pass
+
+def process_latest_toc(app, doctree, fromdocname):
+    """We traverse the doctree looking for publication dates to build the
+    date-based ToC here. Since the ordering is ill-defined, from our
+    perspective, we parse all of them each time, but cache them in the
+    environment"""
+
     env = app.builder.env
+    cache_article_dates(env)
+        
     feed_pub_dates = getattr(env, 'feed_pub_dates', {})
-    for node in doctree.traverse(toctree):
-        #only handle Latest-type nodes
-        if not node.get('by_pub_date'): continue
+    
+    for node in doctree.traverse(latest):
         entries = node['entries']
         includefiles = node['includefiles']
         
         decorated_entries = [
           (feed_pub_dates.get(doc,{}), title, doc)
           for title, doc in entries]
-        decorated_entries.sort()
-        entries = [(title, doc) for date, title, doc in decorated_entries]
+        decorated_entries.sort(reverse=True)
         
-        #note that this doesn't seem to work - node['entries'] gets reset
-        # every time i acces it from a different callback
-        node['entries'] = entries
-        node['includefiles'] = [doc for date, title, doc in decorated_entries if doc in set(includefiles)]        
+        latest_list = nodes.bullet_list('')
+        
+        for date, title, docname in decorated_entries:
+            para = nodes.paragraph()
+            list_item = nodes.list_item('', para)
+            
+            if title is None:
+                title = env.titles.get(docname)
+                if title:
+                    title = title[0] #.astext()
+
+            # Create a reference
+            newnode = nodes.reference('', '')
+            innernode = title #nodes.emphasis(title, title)
+            newnode['refdocname'] = docname
+            newnode['refuri'] = app.builder.get_relative_uri(
+                fromdocname, docname)
+            newnode.append(innernode)
+            para += newnode
+            stringdate = date.strftime('%Y/%m/%d')
+            para += nodes.Text(stringdate, stringdate)
+
+            # Insert into the latestlist
+            latest_list.append(list_item)
+
+        node.replace_self(latest_list)
 
 def create_feed_container(app):
     """
@@ -78,29 +115,32 @@ def create_feed_container(app):
     app.builder.env.feed_url = app.config.feed_base_url + '/' + \
         app.config.feed_filename
 
-def get_date_for_article(env, docname):
-    metadata = env.metadata.get(docname, {})
+def cache_article_dates(env):
+    #This should only be run once, although currently it is run many times,
+    # wasting CPU cycles
+    
     if not hasattr(env, 'feed_pub_dates'):
         env.feed_pub_dates = {}
+
     feed_pub_dates = env.feed_pub_dates
+    
+    for docname, doc_metadata in env.metadata.iteritems():
+        doc_metadata = env.metadata.get(docname, {})
+        if 'date' not in doc_metadata:
+            continue #don't index dateless articles
+        try:
+            pub_date = parse_date(doc_metadata['date'])
+            feed_pub_dates[docname] = pub_date
+        except ValueError, exc:
+            #probably a nonsensical date
+            app.builder.warn('date parse error: ' + str(exc) + ' in ' + docname)
+
+def get_date_for_article(env, docname):
+    feed_pub_dates = env.feed_pub_dates
+
     if docname in feed_pub_dates:
         return feed_pub_dates[docname]
-    if 'date' not in metadata:
-        return #don't index dateless articles
-    try:
-        pub_date = parse_date(metadata['date'])
-        #this might not 
-        feed_pub_dates[docname] = pub_date
-        return pub_date
-    except ValueError, exc:
-        #probably a nonsensical date
-        app.builder.warn('date parse error: ' + str(exc) + ' in ' + docname)
-        return
-        
-def parse_article_date(app, doctree, docname=None):
-    env = app.builder.env
-    pub_date = get_date_for_article(env, docname)
-    
+  
 def create_feed_item(app, docname, templatename, ctx, doctree):
     """
     Here we have access to nice HTML fragments to use in, say, an RSS feed.
@@ -136,7 +176,6 @@ def create_feed_item(app, docname, templatename, ctx, doctree):
     #Now, useful variables to keep in context
     ctx['rss_link'] = app.builder.env.feed_url 
     ctx['pub_date'] = pub_date
-    
 
 def remove_dead_feed_item(app, env, docname):
     """

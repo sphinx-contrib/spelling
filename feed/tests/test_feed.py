@@ -89,16 +89,16 @@ class TestFeedStructure(unittest.TestCase):
     
         index_path  = os.path.join(app.outdir, 'index.html')
         soup = BeautifulSoup(open(index_path).read())
-        latest_tree = soup.find('div', 'toctree-wrapper')
-        latest_items = latest_tree.findAll('li', 'toctree-l1')
+        latest_tree = soup.find('div', 'latest-wrapper')
+        latest_items = latest_tree.findAll('li')
         actual_links = [entry.contents[0]['href'] for entry in latest_items]
         ideal_links = [
             u'B_latest.html',
             u'A_older.html',
             u'C_most_aged.html',
         ]
+        
         self.assertListEqual(actual_links, ideal_links)
-
-    
+        
         app.cleanup()
         app2.cleanup()
