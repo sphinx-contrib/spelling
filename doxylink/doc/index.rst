@@ -147,6 +147,6 @@ If you find any errors, bugs, crashes etc. then please let me know. You can cont
 	
 	Parallelise the calls to normalise() in parse_tag_file() using multiprocessing. Set up a pool of processes and pass in a queue of strings. Non-function calls will be done in the same way as present. For function calls, build up the information into a list of tuples, convert it into an appropriate Queue format and run it. Maybe even a multiprocessing.Pool.map could do the job. 
 
-:copyright: Copyright 2010 by Matt Williams
+:copyright: Copyright 2011 by Matt Williams
 :license: BSD, see LICENSE for details.
 
