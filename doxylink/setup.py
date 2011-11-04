@@ -9,7 +9,7 @@ requires = ['Sphinx>=0.6', 'pyparsing']
 
 setup(
     name='sphinxcontrib-doxylink',
-    version='1.1',
+    version='1.2',
 	url='http://packages.python.org/sphinxcontrib-doxylink',
     download_url='http://pypi.python.org/pypi/sphinxcontrib-doxylink',
     license='BSD',
@@ -26,7 +26,8 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
-        'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 3',
         'Topic :: Documentation',
         'Topic :: Utilities',
     ],
@@ -35,4 +36,6 @@ setup(
     include_package_data=True,
     install_requires=requires,
     namespace_packages=['sphinxcontrib'],
+	test_suite="tests",
+	use_2to3=True,
 )
