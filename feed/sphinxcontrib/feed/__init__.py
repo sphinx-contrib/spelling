@@ -96,6 +96,7 @@ def process_latest_toc(app, doctree, fromdocname):
                 fromdocname, docname)
             newnode.append(innernode)
             para += newnode
+            para += nodes.Text(' ', ' ')
             stringdate = date.strftime('%Y/%m/%d')
             para += nodes.Text(stringdate, stringdate)
 
