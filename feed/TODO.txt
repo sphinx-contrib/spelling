@@ -11,5 +11,6 @@ TODO
   - make sorting by date optional
   - make displaying date optional
   - support microformats for date display
+  - rather than ignoring undated articles, include them at the bottom of the list.
   
 - write rss at the `html-collect-pages` event

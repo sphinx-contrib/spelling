@@ -72,8 +72,9 @@ def process_latest_toc(app, doctree, fromdocname):
         includefiles = node['includefiles']
         
         decorated_entries = [
-          (feed_pub_dates.get(doc,{}), title, doc)
-          for title, doc in entries]
+          (feed_pub_dates.get(doc), title, doc)
+          for title, doc in entries
+          if doc in feed_pub_dates]
         decorated_entries.sort(reverse=True)
         
         latest_list = nodes.bullet_list('')
