@@ -25,85 +25,17 @@ from sphinx.errors import SphinxError
 from sphinx.util.osutil import ensuredir, ENOENT, EPIPE
 from sphinx.util.compat import Directive
 
-from seqdiag_sphinxhelper import diagparser, builder, DiagramDraw
+from seqdiag_sphinxhelper import diagparser, builder, DiagramDraw, SeqdiagDirective
+from seqdiag_sphinxhelper import seqdiag
 
 
 class SeqdiagError(SphinxError):
     category = 'Seqdiag error'
 
 
-class seqdiag(nodes.General, nodes.Element):
-    pass
-
-
-class Seqdiag(Directive):
-    """
-    Directive to insert arbitrary dot markup.
-    """
-    has_content = True
-    required_arguments = 0
-    optional_arguments = 1
-    final_argument_whitespace = False
-    option_spec = {
-        'alt': directives.unchanged,
-        'desctable': directives.flag,
-        'maxwidth': directives.nonnegative_int,
-    }
-
-    def run(self):
-        if self.arguments:
-            document = self.state.document
-            if self.content:
-                return [document.reporter.warning(
-                    'seqdiag directive cannot have both content and '
-                    'a filename argument', line=self.lineno)]
-            env = self.state.document.settings.env
-            rel_filename, filename = relfn2path(env, self.arguments[0])
-            env.note_dependency(rel_filename)
-            try:
-                fp = codecs.open(filename, 'r', 'utf-8')
-                try:
-                    dotcode = fp.read()
-                finally:
-                    fp.close()
-            except (IOError, OSError):
-                return [document.reporter.warning(
-                    'External seqdiag file %r not found or reading '
-                    'it failed' % filename, line=self.lineno)]
-        else:
-            dotcode = '\n'.join(self.content)
-            if not dotcode.strip():
-                return [self.state_machine.reporter.warning(
-                    'Ignoring "seqdiag" directive without content.',
-                    line=self.lineno)]
-
-        node = seqdiag()
-        node['code'] = dotcode
-        node['options'] = {}
-        if 'alt' in self.options:
-            node['alt'] = self.options['alt']
-        if 'maxwidth' in self.options:
-            node['options']['maxwidth'] = self.options['maxwidth']
-        if 'desctable' in self.options:
-            node['options']['desctable'] = self.options['desctable']
-        return [node]
-
-
-# compatibility to sphinx 1.0 (ported from sphinx trunk)
-def relfn2path(env, filename, docname=None):
-    if filename.startswith('/') or filename.startswith(os.sep):
-        rel_fn = filename[1:]
-    else:
-        docdir = os.path.dirname(env.doc2path(docname or env.docname,
-                                              base=None))
-        rel_fn = os.path.join(docdir, filename)
-    try:
-        return rel_fn, os.path.join(env.srcdir, rel_fn)
-    except UnicodeDecodeError:
-        # the source directory is a bytestring with non-ASCII characters;
-        # let's try to encode the rel_fn in the file system encoding
-        enc_rel_fn = rel_fn.encode(sys.getfilesystemencoding())
-        return rel_fn, os.path.join(env.srcdir, enc_rel_fn)
+class Seqdiag(SeqdiagDirective):
+    def node2image(self, node, diagram):
+        return node
 
 
 def get_image_filename(self, code, format, options, prefix='seqdiag'):
@@ -236,65 +168,8 @@ def render_dot_html(self, node, code, options, prefix='seqdiag',
             self.body.append(imgtag_format %
                              (relfn, alt, image_size[0], image_size[1]))
 
-    render_desctable(self, image, options)
-
     self.body.append('</p>\n')
     raise nodes.SkipNode
-
-
-def render_desctable(self, diagram, options):
-    if 'desctable' not in options:
-         return
-
-    def cmp_number(a, b):
-        if a[1] and a[1].isdigit():
-            n1 = int(a[1])
-        else:
-            n1 = 65535
-
-        if b[1] and b[1].isdigit():
-            n2 = int(b[1])
-        else:
-            n2 = 65535
-
-        return cmp(n1, n2)
-
-    from xml.sax.saxutils import escape
-
-    descriptions = []
-    for n in diagram.diagram.traverse_nodes():
-        if hasattr(n, 'description') and n.description:
-            label = n.label or n.id
-            descriptions.append((label, n.numbered, n.description))
-    descriptions.sort(cmp_number)
-
-
-    if descriptions:
-        numbered = [x for x in descriptions if x[1]]
-
-        self.body.append('<table border="1" class="docutils">')
-        self.body.append('<thead valign="bottom">')
-        if numbered:
-            self.body.append('<tr><th class="head">No</th><th class="head">Name</th><th class="head">Description</th></tr>')
-        else:
-            self.body.append('<tr><th class="head">Name</th><th class="head">Description</th></tr>')
-        self.body.append('</thead>')
-        self.body.append('<tbody valign="top">')
-
-        for desc in descriptions:
-            id, number, text = desc
-            self.body.append('<tr>')
-            if numbered:
-                if number is not None:
-                    self.body.append('<td>%s</td>' % escape(number))
-                else:
-                    self.body.append('<td></td>')
-            self.body.append('<td>%s</td>' % escape(id))
-            self.body.append('<td>%s</td>' % escape(text))
-            self.body.append('</tr>')
-
-        self.body.append('</tbody>')
-        self.body.append('</table>')
 
 
 def html_visit_seqdiag(self, node):
@@ -324,6 +199,26 @@ def latex_visit_seqdiag(self, node):
     render_dot_latex(self, node, node['code'], node['options'])
 
 
+def on_doctree_resolved(self, doctree, docname):
+    if self.builder.name in ('html', 'latex'):
+        return
+
+    for node in doctree.traverse(seqdiag):  
+        code = node['code']
+        prefix = 'seqdiag'
+        format = 'PNG'
+        options = node['options']
+        relfn, outfn = get_image_filename(self, code, format, options, prefix)
+
+        image = create_seqdiag(self, code, format, outfn, options, prefix)
+        if not os.path.isfile(outfn):
+            image.draw()
+            image.save()
+
+        image = nodes.image(uri=outfn)
+        node.parent.replace(node, image)
+
+
 def setup(app):
     app.add_node(seqdiag,
                  html=(html_visit_seqdiag, None),
@@ -333,3 +228,4 @@ def setup(app):
     app.add_config_value('seqdiag_antialias', False, 'html')
     app.add_config_value('seqdiag_html_image_format', 'PNG', 'html')
     app.add_config_value('seqdiag_tex_image_format', 'PNG', 'html')
+    app.connect("doctree-resolved", on_doctree_resolved)
