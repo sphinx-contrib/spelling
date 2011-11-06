@@ -6,7 +6,7 @@ long_desc = '''
 This package contains the blockdiag Sphinx extension.
 
 .. _Sphinx: http://sphinx.pocoo.org/
-.. _blockdiag: http://tk0miya.bitbucket.org/blockdiag/build/html/index.html
+.. _blockdiag: http://blockdiag.com/en/blockdiag/
 
 This extension enable you to insert block diagrams in your Sphinx document.
 Following code is sample::
@@ -22,7 +22,7 @@ Following code is sample::
 This module needs blockdiag_.
 '''
 
-requires = ['blockdiag>=1.0.0', 'Sphinx>=0.6']
+requires = ['blockdiag>=1.0.1', 'Sphinx>=0.6']
 
 setup(
     name='sphinxcontrib-blockdiag',

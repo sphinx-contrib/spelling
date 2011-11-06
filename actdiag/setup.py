@@ -6,7 +6,7 @@ long_desc = '''
 This package contains the actdiag Sphinx extension.
 
 .. _Sphinx: http://sphinx.pocoo.org/
-.. _blockdiag: http://tk0miya.bitbucket.org/blockdiag/build/html/index.html
+.. _actdiag: http://blockdiag.com/en/actdiag/
 
 This extension enable you to insert activity diagrams in your Sphinx document.
 Following code is sample::
@@ -28,11 +28,11 @@ Following code is sample::
 This module needs actdiag_.
 '''
 
-requires = ['blockdiag>=0.9.3', 'actdiag>=0.1.5', 'Sphinx>=0.6']
+requires = ['blockdiag>=1.0.1', 'actdiag>=0.2.3', 'Sphinx>=0.6']
 
 setup(
     name='sphinxcontrib-actdiag',
-    version='0.2.3',
+    version='0.3.0',
     url='http://bitbucket.org/birkenfeld/sphinx-contrib',
     download_url='http://pypi.python.org/pypi/sphinxcontrib-actdiag',
     license='BSD',

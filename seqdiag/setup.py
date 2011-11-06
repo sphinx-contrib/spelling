@@ -6,7 +6,7 @@ long_desc = '''
 This package contains the seqdiag Sphinx extension.
 
 .. _Sphinx: http://sphinx.pocoo.org/
-.. _seqdiag: http://tk0miya.bitbucket.org/seqdiag/build/html/index.html
+.. _seqdiag: http://blockdiag.com/en/seqdiag/
 
 This extension enable you to insert sequence diagrams in your Sphinx document.
 Following code is sample::
@@ -21,11 +21,11 @@ Following code is sample::
 This module needs seqdiag_.
 '''
 
-requires = ['blockdiag>=0.9.3', 'seqdiag>=0.3.3', 'Sphinx>=0.6']
+requires = ['blockdiag>=1.0.1', 'seqdiag>=0.6.3', 'Sphinx>=0.6']
 
 setup(
     name='sphinxcontrib-seqdiag',
-    version='0.2.3',
+    version='0.3.0',
     url='http://bitbucket.org/birkenfeld/sphinx-contrib',
     download_url='http://pypi.python.org/pypi/sphinxcontrib-seqdiag',
     license='BSD',
