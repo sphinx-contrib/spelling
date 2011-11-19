@@ -25,8 +25,10 @@ from sphinx.errors import SphinxError
 from sphinx.util.osutil import ensuredir, ENOENT, EPIPE
 from sphinx.util.compat import Directive
 
-from seqdiag_sphinxhelper import diagparser, builder, DiagramDraw, SeqdiagDirective
-from seqdiag_sphinxhelper import seqdiag
+from seqdiag_sphinxhelper import command, diagparser, builder, DiagramDraw
+from seqdiag_sphinxhelper import collections, FontMap
+from seqdiag_sphinxhelper import seqdiag, SeqdiagDirective
+namedtuple = collections.namedtuple
 
 
 class SeqdiagError(SphinxError):
@@ -72,28 +74,38 @@ def get_image_filename(self, code, format, options, prefix='seqdiag'):
     return relfn, outfn
 
 
-def get_fontpath(self):
-    fontpath = None
-    if self.builder.config.seqdiag_fontpath:
-        seqdiag_fontpath = self.builder.config.seqdiag_fontpath
+def get_fontmap(self):
+    try:
+        fontmappath = self.builder.config.seqdiag_fontmap
+        fontmap = FontMap(fontmappath)
+    except:
+        attrname = '_seqdiag_fontmap_warned'
+        if not hasattr(self.builder, attrname):
+            msg = ('seqdiag cannot load "%s" as fontmap file, '
+                   'check the seqdiag_fontmap setting' % fontmappath)
+            self.builder.warn(msg)
+            setattr(self.builder, attrname, True)
 
-        if isinstance(seqdiag_fontpath, (str, unicode)):
-            seqdiag_fontpath = [seqdiag_fontpath]
+        fontmap = FontMap(None)
 
-        for path in seqdiag_fontpath:
-            if os.path.isfile(path):
-                fontpath = path
+    try:
+        fontpath = self.builder.config.seqdiag_fontpath
+        if isinstance(fontpath, (str, unicode)):
+            fontpath = [fontpath]
 
-        if fontpath is None:
-            attrname = '_seqdiag_fontpath_warned'
-            if not hasattr(self.builder, attrname):
-                msg = ('seqdiag cannot load "%s" as truetype font, '
-                       'check the seqdiag_path setting' % fontpath)
-                self.builder.warn(msg)
+        if fontpath:
+            config = namedtuple('Config', 'font')(fontpath)
+            _fontpath = command.detectfont(config)
+            fontmap.set_default_font(_fontpath)
+    except:
+        attrname = '_seqdiag_fontpath_warned'
+        if not hasattr(self.builder, attrname):
+            msg = ('seqdiag cannot load "%s" as truetype font, '
+                   'check the seqdiag_fontpath setting' % fontpath)
+            self.builder.warn(msg)
+            setattr(self.builder, attrname, True)
 
-                setattr(self.builder, attrname, True)
-
-    return fontpath
+    return fontmap
 
 
 def create_seqdiag(self, code, format, filename, options, prefix='seqdiag'):
@@ -101,13 +113,13 @@ def create_seqdiag(self, code, format, filename, options, prefix='seqdiag'):
     Render seqdiag code into a PNG output file.
     """
     draw = None
-    fontpath = get_fontpath(self)
+    fontmap = get_fontmap(self)
     try:
         tree = diagparser.parse(diagparser.tokenize(code))
         screen = builder.ScreenNodeBuilder.build(tree)
 
         antialias = self.builder.config.seqdiag_antialias
-        draw = DiagramDraw.DiagramDraw(format, screen, filename, font=fontpath,
+        draw = DiagramDraw.DiagramDraw(format, screen, filename, fontmap=fontmap,
                                        antialias=antialias)
     except Exception, e:
         raise SeqdiagError('seqdiag error:\n%s\n' % e)
@@ -225,6 +237,7 @@ def setup(app):
                  latex=(latex_visit_seqdiag, None))
     app.add_directive('seqdiag', Seqdiag)
     app.add_config_value('seqdiag_fontpath', None, 'html')
+    app.add_config_value('seqdiag_fontmap', None, 'html')
     app.add_config_value('seqdiag_antialias', False, 'html')
     app.add_config_value('seqdiag_html_image_format', 'PNG', 'html')
     app.add_config_value('seqdiag_tex_image_format', 'PNG', 'html')

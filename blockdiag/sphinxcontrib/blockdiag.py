@@ -25,8 +25,10 @@ from sphinx.errors import SphinxError
 from sphinx.util.osutil import ensuredir, ENOENT, EPIPE
 from sphinx.util.compat import Directive
 
-from blockdiag_sphinxhelper import diagparser, builder, DiagramDraw, BlockdiagDirective
-from blockdiag_sphinxhelper import blockdiag
+from blockdiag_sphinxhelper import command, diagparser, builder, DiagramDraw
+from blockdiag_sphinxhelper import collections, FontMap
+from blockdiag_sphinxhelper import blockdiag, BlockdiagDirective
+namedtuple = collections.namedtuple
 
 
 class BlockdiagError(SphinxError):
@@ -72,28 +74,38 @@ def get_image_filename(self, code, format, options, prefix='blockdiag'):
     return relfn, outfn
 
 
-def get_fontpath(self):
-    fontpath = None
-    if self.builder.config.blockdiag_fontpath:
-        blockdiag_fontpath = self.builder.config.blockdiag_fontpath
+def get_fontmap(self):
+    try:
+        fontmappath = self.builder.config.blockdiag_fontmap
+        fontmap = FontMap(fontmappath)
+    except:
+        attrname = '_blockdiag_fontmap_warned'
+        if not hasattr(self.builder, attrname):
+            msg = ('blockdiag cannot load "%s" as fontmap file, '
+                   'check the blockdiag_fontmap setting' % fontmappath)
+            self.builder.warn(msg)
+            setattr(self.builder, attrname, True)
 
-        if isinstance(blockdiag_fontpath, (str, unicode)):
-            blockdiag_fontpath = [blockdiag_fontpath]
+        fontmap = FontMap(None)
 
-        for path in blockdiag_fontpath:
-            if os.path.isfile(path):
-                fontpath = path
+    try:
+        fontpath = self.builder.config.blockdiag_fontpath
+        if isinstance(fontpath, (str, unicode)):
+            fontpath = [fontpath]
 
-        if fontpath is None:
-            attrname = '_blockdiag_fontpath_warned'
-            if not hasattr(self.builder, attrname):
-                msg = ('blockdiag cannot load "%s" as truetype font, '
-                       'check the blockdiag_path setting' % fontpath)
-                self.builder.warn(msg)
+        if fontpath:
+            config = namedtuple('Config', 'font')(fontpath)
+            _fontpath = command.detectfont(config)
+            fontmap.set_default_font(_fontpath)
+    except:
+        attrname = '_blockdiag_fontpath_warned'
+        if not hasattr(self.builder, attrname):
+            msg = ('blockdiag cannot load "%s" as truetype font, '
+                   'check the blockdiag_fontpath setting' % fontpath)
+            self.builder.warn(msg)
+            setattr(self.builder, attrname, True)
 
-                setattr(self.builder, attrname, True)
-
-    return fontpath
+    return fontmap
 
 
 def create_blockdiag(self, code, format, filename, options, prefix='blockdiag'):
@@ -101,13 +113,13 @@ def create_blockdiag(self, code, format, filename, options, prefix='blockdiag'):
     Render blockdiag code into a PNG output file.
     """
     draw = None
-    fontpath = get_fontpath(self)
+    fontmap = get_fontmap(self)
     try:
         tree = diagparser.parse(diagparser.tokenize(code))
         screen = builder.ScreenNodeBuilder.build(tree)
 
         antialias = self.builder.config.blockdiag_antialias
-        draw = DiagramDraw.DiagramDraw(format, screen, filename, font=fontpath,
+        draw = DiagramDraw.DiagramDraw(format, screen, filename, fontmap=fontmap,
                                        antialias=antialias)
     except Exception, e:
         raise BlockdiagError('blockdiag error:\n%s\n' % e)
@@ -225,6 +237,7 @@ def setup(app):
                  latex=(latex_visit_blockdiag, None))
     app.add_directive('blockdiag', Blockdiag)
     app.add_config_value('blockdiag_fontpath', None, 'html')
+    app.add_config_value('blockdiag_fontmap', None, 'html')
     app.add_config_value('blockdiag_antialias', False, 'html')
     app.add_config_value('blockdiag_html_image_format', 'PNG', 'html')
     app.add_config_value('blockdiag_tex_image_format', 'PNG', 'html')

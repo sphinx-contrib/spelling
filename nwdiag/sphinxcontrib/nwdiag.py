@@ -25,8 +25,10 @@ from sphinx.errors import SphinxError
 from sphinx.util.osutil import ensuredir, ENOENT, EPIPE
 from sphinx.util.compat import Directive
 
-from nwdiag_sphinxhelper import diagparser, builder, DiagramDraw, NwdiagDirective
-from nwdiag_sphinxhelper import nwdiag
+from nwdiag_sphinxhelper import command, diagparser, builder, DiagramDraw
+from nwdiag_sphinxhelper import collections, FontMap
+from nwdiag_sphinxhelper import nwdiag, NwdiagDirective
+namedtuple = collections.namedtuple
 
 
 class NwdiagError(SphinxError):
@@ -72,28 +74,38 @@ def get_image_filename(self, code, format, options, prefix='nwdiag'):
     return relfn, outfn
 
 
-def get_fontpath(self):
-    fontpath = None
-    if self.builder.config.nwdiag_fontpath:
-        nwdiag_fontpath = self.builder.config.nwdiag_fontpath
+def get_fontmap(self):
+    try:
+        fontmappath = self.builder.config.nwdiag_fontmap
+        fontmap = FontMap(fontmappath)
+    except:
+        attrname = '_nwdiag_fontmap_warned'
+        if not hasattr(self.builder, attrname):
+            msg = ('nwdiag cannot load "%s" as fontmap file, '
+                   'check the nwdiag_fontmap setting' % fontmappath)
+            self.builder.warn(msg)
+            setattr(self.builder, attrname, True)
 
-        if isinstance(nwdiag_fontpath, (str, unicode)):
-            nwdiag_fontpath = [nwdiag_fontpath]
+        fontmap = FontMap(None)
 
-        for path in nwdiag_fontpath:
-            if os.path.isfile(path):
-                fontpath = path
+    try:
+        fontpath = self.builder.config.nwdiag_fontpath
+        if isinstance(fontpath, (str, unicode)):
+            fontpath = [fontpath]
 
-        if fontpath is None:
-            attrname = '_nwdiag_fontpath_warned'
-            if not hasattr(self.builder, attrname):
-                msg = ('nwdiag cannot load "%s" as truetype font, '
-                       'check the nwdiag_path setting' % fontpath)
-                self.builder.warn(msg)
+        if fontpath:
+            config = namedtuple('Config', 'font')(fontpath)
+            _fontpath = command.detectfont(config)
+            fontmap.set_default_font(_fontpath)
+    except:
+        attrname = '_nwdiag_fontpath_warned'
+        if not hasattr(self.builder, attrname):
+            msg = ('nwdiag cannot load "%s" as truetype font, '
+                   'check the nwdiag_fontpath setting' % fontpath)
+            self.builder.warn(msg)
+            setattr(self.builder, attrname, True)
 
-                setattr(self.builder, attrname, True)
-
-    return fontpath
+    return fontmap
 
 
 def create_nwdiag(self, code, format, filename, options, prefix='nwdiag'):
@@ -101,13 +113,13 @@ def create_nwdiag(self, code, format, filename, options, prefix='nwdiag'):
     Render nwdiag code into a PNG output file.
     """
     draw = None
-    fontpath = get_fontpath(self)
+    fontmap = get_fontmap(self)
     try:
         tree = diagparser.parse(diagparser.tokenize(code))
         screen = builder.ScreenNodeBuilder.build(tree)
 
         antialias = self.builder.config.nwdiag_antialias
-        draw = DiagramDraw.DiagramDraw(format, screen, filename, font=fontpath,
+        draw = DiagramDraw.DiagramDraw(format, screen, filename, fontmap=fontmap,
                                        antialias=antialias)
     except Exception, e:
         raise NwdiagError('nwdiag error:\n%s\n' % e)
@@ -225,6 +237,7 @@ def setup(app):
                  latex=(latex_visit_nwdiag, None))
     app.add_directive('nwdiag', Nwdiag)
     app.add_config_value('nwdiag_fontpath', None, 'html')
+    app.add_config_value('nwdiag_fontmap', None, 'html')
     app.add_config_value('nwdiag_antialias', False, 'html')
     app.add_config_value('nwdiag_html_image_format', 'PNG', 'html')
     app.add_config_value('nwdiag_tex_image_format', 'PNG', 'html')

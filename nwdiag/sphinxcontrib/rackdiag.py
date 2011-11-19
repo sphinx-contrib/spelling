@@ -25,8 +25,10 @@ from sphinx.errors import SphinxError
 from sphinx.util.osutil import ensuredir, ENOENT, EPIPE
 from sphinx.util.compat import Directive
 
-from rackdiag_sphinxhelper import diagparser, builder, DiagramDraw, RackdiagDirective
-from rackdiag_sphinxhelper import rackdiag
+from rackdiag_sphinxhelper import command, diagparser, builder, DiagramDraw
+from rackdiag_sphinxhelper import collections, FontMap
+from rackdiag_sphinxhelper import rackdiag, RackdiagDirective
+namedtuple = collections.namedtuple
 
 
 class RackdiagError(SphinxError):
@@ -72,28 +74,38 @@ def get_image_filename(self, code, format, options, prefix='rackdiag'):
     return relfn, outfn
 
 
-def get_fontpath(self):
-    fontpath = None
-    if self.builder.config.rackdiag_fontpath:
-        rackdiag_fontpath = self.builder.config.rackdiag_fontpath
+def get_fontmap(self):
+    try:
+        fontmappath = self.builder.config.rackdiag_fontmap
+        fontmap = FontMap(fontmappath)
+    except:
+        attrname = '_rackdiag_fontmap_warned'
+        if not hasattr(self.builder, attrname):
+            msg = ('rackdiag cannot load "%s" as fontmap file, '
+                   'check the rackdiag_fontmap setting' % fontmappath)
+            self.builder.warn(msg)
+            setattr(self.builder, attrname, True)
 
-        if isinstance(rackdiag_fontpath, (str, unicode)):
-            rackdiag_fontpath = [rackdiag_fontpath]
+        fontmap = FontMap(None)
 
-        for path in rackdiag_fontpath:
-            if os.path.isfile(path):
-                fontpath = path
+    try:
+        fontpath = self.builder.config.rackdiag_fontpath
+        if isinstance(fontpath, (str, unicode)):
+            fontpath = [fontpath]
 
-        if fontpath is None:
-            attrname = '_rackdiag_fontpath_warned'
-            if not hasattr(self.builder, attrname):
-                msg = ('rackdiag cannot load "%s" as truetype font, '
-                       'check the rackdiag_path setting' % fontpath)
-                self.builder.warn(msg)
+        if fontpath:
+            config = namedtuple('Config', 'font')(fontpath)
+            _fontpath = command.detectfont(config)
+            fontmap.set_default_font(_fontpath)
+    except:
+        attrname = '_rackdiag_fontpath_warned'
+        if not hasattr(self.builder, attrname):
+            msg = ('rackdiag cannot load "%s" as truetype font, '
+                   'check the rackdiag_fontpath setting' % fontpath)
+            self.builder.warn(msg)
+            setattr(self.builder, attrname, True)
 
-                setattr(self.builder, attrname, True)
-
-    return fontpath
+    return fontmap
 
 
 def create_rackdiag(self, code, format, filename, options, prefix='rackdiag'):
@@ -101,13 +113,13 @@ def create_rackdiag(self, code, format, filename, options, prefix='rackdiag'):
     Render rackdiag code into a PNG output file.
     """
     draw = None
-    fontpath = get_fontpath(self)
+    fontmap = get_fontmap(self)
     try:
         tree = diagparser.parse(diagparser.tokenize(code))
         screen = builder.ScreenNodeBuilder.build(tree)
 
         antialias = self.builder.config.rackdiag_antialias
-        draw = DiagramDraw.DiagramDraw(format, screen, filename, font=fontpath,
+        draw = DiagramDraw.DiagramDraw(format, screen, filename, fontmap=fontmap,
                                        antialias=antialias)
     except Exception, e:
         raise RackdiagError('rackdiag error:\n%s\n' % e)
@@ -225,6 +237,7 @@ def setup(app):
                  latex=(latex_visit_rackdiag, None))
     app.add_directive('rackdiag', Rackdiag)
     app.add_config_value('rackdiag_fontpath', None, 'html')
+    app.add_config_value('rackdiag_fontmap', None, 'html')
     app.add_config_value('rackdiag_antialias', False, 'html')
     app.add_config_value('rackdiag_html_image_format', 'PNG', 'html')
     app.add_config_value('rackdiag_tex_image_format', 'PNG', 'html')

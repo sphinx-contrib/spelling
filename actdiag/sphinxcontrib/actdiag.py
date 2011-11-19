@@ -25,8 +25,10 @@ from sphinx.errors import SphinxError
 from sphinx.util.osutil import ensuredir, ENOENT, EPIPE
 from sphinx.util.compat import Directive
 
-from actdiag_sphinxhelper import diagparser, builder, DiagramDraw, ActdiagDirective
-from actdiag_sphinxhelper import actdiag
+from actdiag_sphinxhelper import command, diagparser, builder, DiagramDraw
+from actdiag_sphinxhelper import collections, FontMap
+from actdiag_sphinxhelper import actdiag, ActdiagDirective
+namedtuple = collections.namedtuple
 
 
 class ActdiagError(SphinxError):
@@ -72,28 +74,38 @@ def get_image_filename(self, code, format, options, prefix='actdiag'):
     return relfn, outfn
 
 
-def get_fontpath(self):
-    fontpath = None
-    if self.builder.config.actdiag_fontpath:
-        actdiag_fontpath = self.builder.config.actdiag_fontpath
+def get_fontmap(self):
+    try:
+        fontmappath = self.builder.config.actdiag_fontmap
+        fontmap = FontMap(fontmappath)
+    except:
+        attrname = '_actdiag_fontmap_warned'
+        if not hasattr(self.builder, attrname):
+            msg = ('actdiag cannot load "%s" as fontmap file, '
+                   'check the actdiag_fontmap setting' % fontmappath)
+            self.builder.warn(msg)
+            setattr(self.builder, attrname, True)
 
-        if isinstance(actdiag_fontpath, (str, unicode)):
-            actdiag_fontpath = [actdiag_fontpath]
+        fontmap = FontMap(None)
 
-        for path in actdiag_fontpath:
-            if os.path.isfile(path):
-                fontpath = path
+    try:
+        fontpath = self.builder.config.actdiag_fontpath
+        if isinstance(fontpath, (str, unicode)):
+            fontpath = [fontpath]
 
-        if fontpath is None:
-            attrname = '_actdiag_fontpath_warned'
-            if not hasattr(self.builder, attrname):
-                msg = ('actdiag cannot load "%s" as truetype font, '
-                       'check the actdiag_path setting' % fontpath)
-                self.builder.warn(msg)
+        if fontpath:
+            config = namedtuple('Config', 'font')(fontpath)
+            _fontpath = command.detectfont(config)
+            fontmap.set_default_font(_fontpath)
+    except:
+        attrname = '_actdiag_fontpath_warned'
+        if not hasattr(self.builder, attrname):
+            msg = ('actdiag cannot load "%s" as truetype font, '
+                   'check the actdiag_fontpath setting' % fontpath)
+            self.builder.warn(msg)
+            setattr(self.builder, attrname, True)
 
-                setattr(self.builder, attrname, True)
-
-    return fontpath
+    return fontmap
 
 
 def create_actdiag(self, code, format, filename, options, prefix='actdiag'):
@@ -101,13 +113,13 @@ def create_actdiag(self, code, format, filename, options, prefix='actdiag'):
     Render actdiag code into a PNG output file.
     """
     draw = None
-    fontpath = get_fontpath(self)
+    fontmap = get_fontmap(self)
     try:
         tree = diagparser.parse(diagparser.tokenize(code))
         screen = builder.ScreenNodeBuilder.build(tree)
 
         antialias = self.builder.config.actdiag_antialias
-        draw = DiagramDraw.DiagramDraw(format, screen, filename, font=fontpath,
+        draw = DiagramDraw.DiagramDraw(format, screen, filename, fontmap=fontmap,
                                        antialias=antialias)
     except Exception, e:
         raise ActdiagError('actdiag error:\n%s\n' % e)
@@ -225,6 +237,7 @@ def setup(app):
                  latex=(latex_visit_actdiag, None))
     app.add_directive('actdiag', Actdiag)
     app.add_config_value('actdiag_fontpath', None, 'html')
+    app.add_config_value('actdiag_fontmap', None, 'html')
     app.add_config_value('actdiag_antialias', False, 'html')
     app.add_config_value('actdiag_html_image_format', 'PNG', 'html')
     app.add_config_value('actdiag_tex_image_format', 'PNG', 'html')
