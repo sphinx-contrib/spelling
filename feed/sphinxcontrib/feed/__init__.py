@@ -58,9 +58,9 @@ def purge_dates(app, env, docname):
 
 def process_latest_toc(app, doctree, fromdocname):
     """We traverse the doctree looking for publication dates to build the
-    date-based ToC here. Since the ordering is ill-defined, from our
-    perspective, we parse all of them each time, but cache them in the
-    environment"""
+    date-based ToC here. Since the order in whicih documents are processed is
+    ill-defined, from our perspective, we parse all of them each time, but
+    cache them in the environment"""
 
     env = app.builder.env
     cache_article_dates(env)
@@ -118,8 +118,8 @@ def create_feed_container(app):
         app.config.feed_filename
 
 def cache_article_dates(env):
-    #This should only be run once, although currently it is run many times,
-    # wasting CPU cycles
+    # This should only be run once, although currently it is run many times,
+    # wasting CPU cycles.
     
     if not hasattr(env, 'feed_pub_dates'):
         env.feed_pub_dates = {}
