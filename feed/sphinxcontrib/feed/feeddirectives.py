@@ -25,13 +25,15 @@ class Latest(Directive):
     Directive to notify Sphinx about the hierarchical structure of the docs,
     and to include a table-of-contents-like tree in the current document.
     
-    Used to be subclassed of TocTree, but now heavily modified from it, to
-    avoid tedious bugs from TocTree's rather special role.
+    Used to be subclassed of TocTree, but now modified from it, to avoid
+    tedious bugs from TocTree's rather special role, and depending upon
+    private Sphinx APIs.
     """
     has_content = True
     required_arguments = 0
     optional_arguments = 0
     final_argument_whitespace = False
+    
     option_spec = {
         # 'maxdepth': int,
         'glob': directives.flag,
@@ -54,6 +56,9 @@ class Latest(Directive):
         all_docnames = env.found_docs.copy()
         # don't add the currently visited file in catch-all patterns
         all_docnames.remove(env.docname)
+        
+        ret = []
+        
         for entry in self.content:
             if not entry:
                 continue
@@ -107,4 +112,5 @@ class Latest(Directive):
         set_source_info(self, subnode)
         wrappernode = nodes.compound(classes=['latest-wrapper'])
         wrappernode.append(subnode)
-        return [wrappernode]
+        ret.append(wrappernode)
+        return ret
