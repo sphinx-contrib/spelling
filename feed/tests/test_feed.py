@@ -89,8 +89,8 @@ class TestFeedStructure(unittest.TestCase):
     
         index_path  = os.path.join(app.outdir, 'index.html')
         soup = BeautifulSoup(open(index_path).read())
-        latest_tree = soup.find('div', 'latest-wrapper')
-        latest_items = latest_tree.findAll('li')
+        latest_tree = soup.find('div', 'feed-latest-wrapper')
+        latest_items = latest_tree.findAll('li', 'feed-dated-article')
         actual_links = [entry.contents[0]['href'] for entry in latest_items]
         ideal_links = [
             u'B_latest.html',

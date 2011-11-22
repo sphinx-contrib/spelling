@@ -110,7 +110,7 @@ class Latest(Directive):
         subnode['titlesonly'] = 'titlesonly' in self.options
         #what does this do?
         set_source_info(self, subnode)
-        wrappernode = nodes.compound(classes=['latest-wrapper'])
+        wrappernode = nodes.compound(classes=['feed-latest-wrapper'])
         wrappernode.append(subnode)
         ret.append(wrappernode)
         return ret

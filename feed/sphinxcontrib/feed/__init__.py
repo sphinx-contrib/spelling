@@ -77,11 +77,13 @@ def process_latest_toc(app, doctree, fromdocname):
           if doc in feed_pub_dates]
         decorated_entries.sort(reverse=True)
         
-        latest_list = nodes.bullet_list('')
+        latest_list = nodes.bullet_list('',
+          classes=['feed-latest-articles'])
         
         for date, title, docname in decorated_entries:
             para = nodes.paragraph()
-            list_item = nodes.list_item('', para)
+            list_item = nodes.list_item('', para,
+              classes=['feed-dated-article'])
             
             if title is None:
                 title = env.titles.get(docname)
@@ -98,7 +100,9 @@ def process_latest_toc(app, doctree, fromdocname):
             para += newnode
             para += nodes.Text(' ', ' ')
             stringdate = date.strftime('%Y/%m/%d')
-            para += nodes.Text(stringdate, stringdate)
+            date_wrapper = nodes.container(classes=['feed-article-date'])
+            date_wrapper += nodes.Text(stringdate, stringdate)
+            para += date_wrapper
 
             # Insert into the latestlist
             latest_list.append(list_item)

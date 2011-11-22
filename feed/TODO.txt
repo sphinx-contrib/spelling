@@ -14,6 +14,8 @@ TODO
   - optionally, rather than ignoring undated articles, include them at the bottom of the list.
   - (Blue sky) support dates on links and subheadings rather than just whole
     documents (requires work with sphinx/docutils)
+  - create tests of round-trip date parsing (Are the displayed dates the same
+    as the supplied ones?
   - fix bug with recursive display - ATM if you explicitly include subdirs, it
     will explode when writing HTML in environment.collect_relations
   
