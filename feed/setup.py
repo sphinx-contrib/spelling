@@ -13,7 +13,7 @@ tests_require = ['BeautifulSoup>=3.2.0', 'feedparser']
 
 setup(
     name='feed',
-    version='0.3',
+    version='0.3alpha',
     url='http://bitbucket.org/birkenfeld/sphinx-contrib',
     # download_url='http://pypi.python.org/pypi/feed',
     license='BSD',
