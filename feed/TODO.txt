@@ -13,8 +13,9 @@ TODO
   - support microformats for date display
   - rather than ignoring undated articles, include them at the bottom of the list.
   - make sure articles with no date come at the bottom of the list.
-  - flatten everything in the list down to one
+  - support dates on links and subheadings
+  - flatten everything in the list down to one level
   - fix bug with recursive display - atm if you explicitly include subdirs, it will explode when writing HTML in environment.collect_relations 
   - better markup for dates - need a class to attach etc
   
-- write rss at the `html-collect-pages` event
+- write rss at the new `html-collect-pages` event
