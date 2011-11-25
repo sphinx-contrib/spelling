@@ -1,5 +1,5 @@
-0.5 (in development)
-====================
+0.5 (Sep 19, 2011)
+==================
 
 - :confval:`programoutput_prompt_template` is interpreted as format string now!
 - Require Python 2.6 now
