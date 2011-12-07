@@ -88,11 +88,14 @@ actdiag:
 nwdiag:
    Takeshi KOMIYA <i.tkomiya@gmail.com>
 
-requirements:
-   Andrey Mikhaylenko <neithere@gmail.com>
-
 googlechart:
    Takeshi KOMIYA <i.tkomiya@gmail.com>
+
+nicovideo:
+   Takeshi KOMIYA <i.tkomiya@gmail.com>
+
+requirements:
+   Andrey Mikhaylenko <neithere@gmail.com>
 
 hyphenator:
    Björn Müller <diehose@freenet.de> 

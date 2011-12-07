@@ -59,6 +59,7 @@ List of extensions
 - issuetracker: link to different issue trackers
 - lilypond: an extension inserting music scripts from Lilypond_ in PNG format.
 - mscgen: embed mscgen-formatted MSC (Message Sequence Chart)s.
+- nicoviceo: embed videos from nicovideo
 - nwdiag: embed network diagrams by using nwdiag_
 - omegat: support tools to collaborate with OmegaT_ (Sphinx 1.1 needed)
 - osaka: convert standard Japanese doc to Osaka dialect (it is joke extension)
