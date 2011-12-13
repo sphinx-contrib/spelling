@@ -19,7 +19,7 @@ from sphinx.roles import XRefRole
 from sphinx.domains import Domain, ObjType, Index
 from sphinx.directives import ObjectDescription
 from sphinx.util.nodes import make_refnode
-from sphinx.util.docfields import Field, GroupedField, TypedField
+from sphinx.util.docfields import GroupedField, TypedField
 
 
 HTTP_STATUS_CODES = {
