@@ -1,0 +1,45 @@
+.. -*- restructuredtext -*-
+
+=============================
+Sphinx "ClearQuest" extension 
+=============================
+
+A sphinx extension that adds a ``clearquest`` directive for converting 
+ClearQuest__ requests to reStructuredText tables.
+
+__ http://www-01.ibm.com/software/awdtools/clearquest/
+
+Syntax
+------
+
+The syntax of the directive is as follows: ::
+
+    .. clearquest:: <full name/of the clearquest query> (mandatory)
+        :username: <your username> (optional)
+        :password: <your password> (optional)
+        :db_name: <the name of the db> (optional)
+        :db_set: <the name of the db set> (optional)
+        :params: <parameters to pass to the query> (optional)
+
+The connection credentials can either be provided as directive options or 
+in a ``clearquest`` section in the ``~/.sphinxcontrib`` file which is a 
+standard ``.ini`` configuration file. ::
+
+	[clearquest]
+	username = john
+	password = doe
+	db_name = prod
+	db_set = cqsrv
+
+The parameters to pass to the query must respect the following syntax: ::
+
+    <param1_name>=<param1_value>,<param2_name>=<param2_value>, ....
+
+You can provide them in any order as long as you don't forget one. 
+The query call will fail if you do.
+
+Required python libraries
+-------------------------
+
+* sphinx: http://sphinx.pocoo.org/
+* PyWin32: http://sourceforge.net/projects/pywin32/

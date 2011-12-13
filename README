@@ -79,6 +79,7 @@ List of extensions
 - traclinks: create TracLinks_ to a Trac_ instance from within Sphinx
 - youtube: embed videos from YouTube_
 - zopeext: provide an ``autointerface`` directive for using Zope interfaces.
+- clearquest: create tables from ClearQuest_ queries.
 
 .. _aafigure: https://launchpad.net/aafigure
 
@@ -119,6 +120,8 @@ List of extensions
 .. _exceltable: http://packages.python.org/sphinxcontrib-exceltable/
 
 .. _YouTube: http://www.youtube.com/
+
+.. _ClearQuest: http://www-01.ibm.com/software/awdtools/clearquest/
 
 For contributors
 ================
