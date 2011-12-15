@@ -87,36 +87,15 @@ class ClearQuestConnection():
         records = []
         columns = [ field.Label for field in query.QueryFieldDefs if field.IsShown ][1:]
 
-        if status != 1:
-            # No results from ClearQuest query, we fill one line with dashes
-            records.append(list("-" * len(columns)))
 
         while status == 1:
             records.append([ resultSet.GetColumnValue(i) for i in range(2, nbcol + 2) ])
             status = resultSet.MoveNext
 
-        #return self.convert_to_utf8(columns, records)
         return columns, records
 
     def open_session(self):
         self.session = COM.dynamic.Dispatch("CLEARQUEST.SESSION")
         self.session.UserLogon(self.username, self.password, self.db_name,
                                PRIVATE_SESSION, self.db_set)
-
-#    def convert_to_utf8(self, columns, records):
-#        if self.db_encoding != 'utf-8':
-#            utf8_columns = []
-#            for col in columns:
-#                encoded_str = col.encode(self.db_encoding, 'xmlcharrefreplace')
-#                utf8_columns.append(encoded_str.decode('utf-8', 'replace'))
-#            utf8_records = []
-#            for row in records:
-#                utf8_row = []
-#                for cell in row:
-#                    encoded_str = cell.encode(self.db_encoding, 'xmlcharrefreplace')
-#                    utf8_row.append(encoded_str.decode('utf-8', 'replace'))
-#                utf8_records.append(utf8_row)
-#            return utf8_columns, utf8_records
-#        else:
-#            return columns, records
 

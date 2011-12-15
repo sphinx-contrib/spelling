@@ -99,7 +99,11 @@ class ClearQuest(Table):
 
             ClearQuest.reporter.info('Executing ClearQuest query "%s"...' % queryName)
             columns, records = ClearQuest.connection.run_query(queryName, queryParams)
-
+            
+            if len(records) == 0:
+                # No results from ClearQuest query, we fill one line with dashes
+                records.append(list("`-`" * len(columns)))
+            
             col_widths = self.get_column_widths(header=columns, content=records)
             table_head = [ self.create_row(columns) ]
             table_body = [ self.create_row(line) for line in records ]
