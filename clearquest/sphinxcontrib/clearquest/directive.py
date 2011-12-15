@@ -1,17 +1,17 @@
 # Copyright (c) 2009 by the contributors (see AUTHORS file).
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
-# 
+#
 # * Redistributions of source code must retain the above copyright
 #   notice, this list of conditions and the following disclaimer.
-# 
+#
 # * Redistributions in binary form must reproduce the above copyright
 #   notice, this list of conditions and the following disclaimer in the
 #   documentation and/or other materials provided with the distribution.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 # LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -47,82 +47,79 @@ class CQReporter(Reporter):
         settings = frontend.OptionParser().get_default_values()
         settings.report_level = 1
         Reporter.__init__(
-            self, 
-            source='sphinxcontrib.clearquest', 
-            report_level=settings.report_level, 
-            halt_level=settings.halt_level, 
-            stream=settings.warning_stream, 
-            debug=settings.debug, 
-            encoding=settings.error_encoding, 
+            self,
+            source='sphinxcontrib.clearquest',
+            report_level=settings.report_level,
+            halt_level=settings.halt_level,
+            stream=settings.warning_stream,
+            debug=settings.debug,
+            encoding=settings.error_encoding,
             error_handler=settings.error_encoding_error_handler
         )
 
 #------------------------------------------------------------------------------
 class ClearQuest(Table):
     """
-    
-    
-    
-    
+    .. clearquest:: directive
     """
-    
+
     option_spec = {
         'username': directives.unchanged,
         'password': directives.unchanged,
         'db_name': directives.unchanged,
         'db_set': directives.unchanged,
-        'params': directives.unchanged
+        'params': directives.unchanged,
     }
 
     required_arguments = 1
     optional_arguments = 0
     final_argument_whitespace = True
     has_content = False
-    
+
     reporter = CQReporter()
-    
+
     connection = None
-    
+
     def run(self):
         try:
             self.resolve_substitutions_refs()
             queryName = self.arguments[0]
             queryParams = self.extract_query_params()
-            
+
             if ClearQuest.connection is None:
-                creds = self.get_credentials()
-                if None in creds.values():
-                    missing = [ name for name, value in creds.items() if value is None ]
+                settings = self.get_settings()
+                if None in settings.values():
+                    missing = [ name for name, value in settings.items() if value is None ]
                     ClearQuest.reporter.warning(console.red( #@UndefinedVariable
-                        'Missing credentials "%s". ' % '", "'.join(missing) + 
-                        'Looked in ~/.sphinxcontrib and in directive options.' 
+                        'Missing settings "%s". ' % '", "'.join(missing) +
+                        'Looked in ~/.sphinxcontrib and in directive options.'
                     ))
                 ClearQuest.reporter.info('Opening ClearQuest session...')
-                ClearQuest.connection = ClearQuestConnection(**creds) 
-            
+                ClearQuest.connection = ClearQuestConnection(**settings)
+
             ClearQuest.reporter.info('Executing ClearQuest query "%s"...' % queryName)
             columns, records = ClearQuest.connection.run_query(queryName, queryParams)
-            
+
             col_widths = self.get_column_widths(header=columns, content=records)
             table_head = [ self.create_row(columns) ]
             table_body = [ self.create_row(line) for line in records ]
-        
+
         except Exception, detail:
             if isinstance(detail, DirectiveError):
                 message = detail.msg
             else:
                 message = str(detail)
             error = ClearQuest.reporter.error(
-                'Error with query data in "%s" directive:\n%s' % (self.name, message), 
-                nodes.literal_block(self.block_text, self.block_text), 
+                'Error with query data in "%s" directive:\n%s' % (self.name, message),
+                nodes.literal_block(self.block_text, self.block_text),
                 line=self.lineno
             )
             return [error]
-        
+
         table = (col_widths, table_head, table_body)
         table_node = self.state.build_table(table, self.content_offset)
         table_node['classes'] += self.options.get('class', [])
-        
+
         return [table_node]
 
     def create_row(self, line):
@@ -133,16 +130,16 @@ class ClearQuest(Table):
 
     def get_column_widths(self, header, content):
         widths = [0] * len(header)
-        
+
         for i in range(len(header)):
-            if len(header[i]) > widths[i]:
+            if header[i] is not None and len(header[i]) > widths[i]:
                 widths[i] = len(header[i])
-                
+
         for row in content:
             for i in range(len(row)):
-                if len(row[i]) > widths[i]:
+                if row[i] is not None and len(row[i]) > widths[i]:
                     widths[i] = len(row[i])
-                    
+
         return widths
 
     def extract_query_params(self):
@@ -157,35 +154,34 @@ class ClearQuest(Table):
     def resolve_substitutions_refs(self):
         def _subst_ref_match(match):
             return self.state.document.substitution_defs[match.group(1)].astext()
-        
+
         for opt_name in self.options.keys():
             opt_val = unicode(self.options[opt_name])
             opt_val, _ = SUBST_REF_REX.subn(_subst_ref_match, opt_val)
             self.options[opt_name] = opt_val
 
 
-    def get_credentials(self):
-        creds = {
+    def get_settings(self):
+        settings = {
             'username': None,
             'password': None,
             'db_name': None,
             'db_set': None,
         }
-        # first, we try to read connection credentials from ~/.sphinxcontrib 
+        # first, we try to read settings from ~/.sphinxcontrib
         config = ConfigParser.RawConfigParser()
         config.read(path.normpath(path.expanduser('~/.sphinxcontrib')))
         if config.has_section('clearquest'):
-            for name in creds.keys():
+            for name in settings.keys():
                 if config.has_option('clearquest', name):
-                    creds[name] = config.get('clearquest', name)
-        
-        # then, we override the credentials if they are given in the directive
-        for name in creds.keys():
+                    settings[name] = config.get('clearquest', name)
+
+        # then, we override the settings if they are given in the directive
+        for name in settings.keys():
             if self.options.has_key(name) and self.options[name] is not None:
-                creds[name] = self.options[name]
-        
-        return creds
+                settings[name] = self.options[name]
+
+        return settings
 
 
 
-        

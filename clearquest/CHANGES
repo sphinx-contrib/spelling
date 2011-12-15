@@ -1,0 +1,19 @@
+.. -*- restructuredtext -*-
+
+This file describes user-visible changes between the extension versions.
+
+
+
+
+Version 0.2 (2011-12-14)
+------------------------
+
+* fixed errors on columns widths resolution when some fields are NULL.
+* fixed broken tables when some columns are "not shown"
+* removed explicit dependency to "pywin32" to avoid crashes of easy_install.
+
+
+Version 0.1 (2011-12-13)
+------------------------
+
+* Initial version.

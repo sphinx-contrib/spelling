@@ -1,15 +1,16 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 from setuptools import setup, find_packages
 
 long_desc = open('README', 'r').read()
 
-requires = ['Sphinx>=0.6', 'pywin32']
+# We need 'pywin32' too but it is not available on pypi.
+# To avoid crashes of easy_install and pip, I removed the dependency here.
+requires = ['Sphinx>=0.6']
 
 setup(
     name='sphinxcontrib-clearquest',
-    version='0.1',
+    version='0.2',
     url='http://bitbucket.org/birkenfeld/sphinx-contrib',
     download_url='http://pypi.python.org/pypi/sphinxcontrib-clearquest',
     license='BSD',
