@@ -102,7 +102,7 @@ class ClearQuest(Table):
             
             if len(records) == 0:
                 # No results from ClearQuest query, we fill one line with dashes
-                records.append(list("`-`" * len(columns)))
+                records.append(list("--" * len(columns)))
             
             col_widths = self.get_column_widths(header=columns, content=records)
             table_head = [ self.create_row(columns) ]
