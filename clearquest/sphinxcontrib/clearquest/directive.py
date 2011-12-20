@@ -102,7 +102,7 @@ class ClearQuest(Table):
             
             if len(records) == 0:
                 # No results from ClearQuest query, we fill one line with dashes
-                records.append(list("--" * len(columns)))
+                records.append(["--"] * len(columns))
             
             col_widths = self.get_column_widths(header=columns, content=records)
             table_head = [ self.create_row(columns) ]
@@ -172,9 +172,13 @@ class ClearQuest(Table):
             'db_name': None,
             'db_set': None,
         }
-        # first, we try to read settings from ~/.sphinxcontrib
         config = ConfigParser.RawConfigParser()
+
+        # first, we try to read settings from ~/.sphinxcontrib
         config.read(path.normpath(path.expanduser('~/.sphinxcontrib')))
+        # then, from ~/sphinxcontrib for windows users
+        config.read(path.normpath(path.expanduser('~/sphinxcontrib')))
+        
         if config.has_section('clearquest'):
             for name in settings.keys():
                 if config.has_option('clearquest', name):
