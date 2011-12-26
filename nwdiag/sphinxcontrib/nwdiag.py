@@ -212,7 +212,7 @@ def latex_visit_nwdiag(self, node):
 
 
 def on_doctree_resolved(self, doctree, docname):
-    if self.builder.name in ('html', 'latex'):
+    if self.builder.name in ('gettext', 'singlehtml', 'html', 'latex'):
         return
 
     for node in doctree.traverse(nwdiag):  
