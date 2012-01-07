@@ -1,0 +1,4 @@
+include README
+include LICENSE
+include CHANGES.*
+include test/test_wordlist.txt
