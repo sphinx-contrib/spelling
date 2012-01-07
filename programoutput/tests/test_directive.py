@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2011, Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (c) 2011, 2012, Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -83,19 +83,18 @@ def test_standard_error_disabled(doctree, cache):
     assert_cache(cache, 'python -V', '', hide_standard_error=True)
 
 
-@pytest.mark.with_content('.. program-output:: echo "${VIRTUAL_ENV}"')
+@pytest.mark.with_content('.. program-output:: echo "${HOME}"')
 def test_no_expansion_without_shell(doctree, cache):
-    assert_output(doctree, '${VIRTUAL_ENV}')
-    assert_cache(cache, 'echo "${VIRTUAL_ENV}"', '${VIRTUAL_ENV}')
+    assert_output(doctree, '${HOME}')
+    assert_cache(cache, 'echo "${HOME}"', '${HOME}')
 
 
 @pytest.mark.with_content("""\
-.. program-output:: echo "${VIRTUAL_ENV}"
+.. program-output:: echo "${HOME}"
    :shell:""")
 def test_expansion_with_shell(doctree, cache):
-    assert_output(doctree, os.environ['VIRTUAL_ENV'])
-    assert_cache(cache, 'echo "${VIRTUAL_ENV}"', os.environ['VIRTUAL_ENV'],
-                 use_shell=True)
+    assert_output(doctree, os.environ['HOME'])
+    assert_cache(cache, 'echo "${HOME}"', os.environ['HOME'], use_shell=True)
 
 
 @pytest.mark.with_content("""\
@@ -135,11 +134,10 @@ def test_extraargs(doctree, cache):
 @pytest.mark.with_content('''\
 .. program-output:: echo
    :shell:
-   :extraargs: "${VIRTUAL_ENV}"''')
+   :extraargs: "${HOME}"''')
 def test_extraargs_with_shell(doctree, cache):
-    assert_output(doctree, os.environ['VIRTUAL_ENV'])
-    assert_cache(cache, 'echo "${VIRTUAL_ENV}"', os.environ['VIRTUAL_ENV'],
-                 use_shell=True)
+    assert_output(doctree, os.environ['HOME'])
+    assert_cache(cache, 'echo "${HOME}"', os.environ['HOME'], use_shell=True)
 
 
 @pytest.mark.with_content("""\
