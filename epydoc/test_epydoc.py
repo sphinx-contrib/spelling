@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2011, Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (c) 2011, 2012, Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -156,8 +156,8 @@ for left, right in [('exception', 'class'), ('data', 'function'),
 
 def pytest_generate_tests(metafunc):
     if metafunc.function == test_filename_for_object:
-        for objtype, testcases in FILENAME_TEST_CASES.iteritems():
-            for name, expected in testcases.iteritems():
+        for objtype, testcases in FILENAME_TEST_CASES.items():
+            for name, expected in testcases.items():
                 args = dict(objtype=objtype, name=name,
                             expected=expected)
                 testid = '%s "%s"' % (objtype, name)

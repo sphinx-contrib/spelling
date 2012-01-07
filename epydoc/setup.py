@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2011, Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (c) 2011, 2012, Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -32,7 +32,7 @@ with open('README') as stream:
 
 setup(
     name='sphinxcontrib-epydoc',
-    version='0.4.1',
+    version='0.5',
     url='http://packages.python.org/sphinxcontrib-epydoc',
     download_url='http://pypi.python.org/pypi/sphinxcontrib-epydoc',
     license='BSD',
@@ -55,6 +55,7 @@ setup(
     platforms='any',
     packages=find_packages(),
     include_package_data=True,
-    install_requires=['Sphinx>=1.0'],
+    install_requires=['Sphinx>=1.1'],
     namespace_packages=['sphinxcontrib'],
+    use_2to3=True,
 )
