@@ -107,33 +107,31 @@ class SQLTable(Table):
         tgroup.extend(nodes.colspec(colwidth=col_width)
                       for col_width in col_widths)
 
-        # Add headers, if given.
-        if headers:
-            thead = nodes.thead()
-            tgroup += thead
-            row_node = nodes.row()
-            thead += row_node
-            row_node.extend(
-                nodes.entry(h, nodes.paragraph(text=h))
-                for h in headers
-                )
+        # Set the headers
+        thead = nodes.thead()
+        tgroup += thead
+        row_node = nodes.row()
+        thead += row_node
+        row_node.extend(
+            nodes.entry(h, nodes.paragraph(text=h))
+            for h in headers
+            )
 
         # The body of the table is made up of rows.
         # Each row contains a series of entries,
         # and each entry contains a paragraph of text.
-        tgroup += nodes.tbody(
-            '',
-            *[ nodes.row(
-                    '',
-                    *[nodes.entry(
-                            cell,
-                            nodes.paragraph(text=cell)
-                            )
-                      for cell in row]
-                    )
-               for row in table_data
-               ]
-            )
+        tbody = nodes.tbody()
+        tgroup += tbody
+        rows = []
+        for row in table_data:
+            trow = nodes.row()
+            for cell in row:
+                entry = nodes.entry()
+                para = nodes.paragraph(text=unicode(cell))
+                entry += para
+                trow += entry
+            rows.append(trow)
+        tbody.extend(rows)
 
         #print table
         return table
