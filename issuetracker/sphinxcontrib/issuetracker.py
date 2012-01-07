@@ -43,11 +43,13 @@ from __future__ import (print_function, division, unicode_literals,
 __version__ = '0.10'
 
 import re
-import urllib2
+import json
+from os import path
 from contextlib import closing
 from collections import namedtuple
-from os import path
+from xml.etree import ElementTree as etree
 
+import requests
 from docutils import nodes
 from docutils.transforms import Transform
 from sphinx.roles import XRefRole
@@ -84,15 +86,20 @@ class TrackerConfig(_TrackerConfig):
         return cls(project, url)
 
 
-def fetch_issue(app, url, output_format=None, opener=None):
+FORMAT_CALLBACKS = {
+    'json': json.loads,
+    'xml': etree.fromstring,
+    None: lambda x: x,
+}
+
+
+def fetch_issue(app, url, output_format=None):
     """
     Fetch issue data from a web service or website.
 
     ``app`` is the sphinx application object.  ``url`` is the url of the issue.
     ``output_format`` is the format of the data retrieved from the given
-    ``url``.  If set, it must be either ``'json'`` or ``'xml'``.  ``opener`` is
-    a :class:`urllib2.OpenerDirectory` object used to open the url.  If
-    ``None``, the global opener is used.
+    ``url``.  If set, it must be either ``'json'`` or ``'xml'``.
 
     Return the raw data retrieved from url, if ``output_format`` is unset.  If
     ``output_format`` is ``'xml'``, return a ElementTree document.  If
@@ -100,29 +107,17 @@ def fetch_issue(app, url, output_format=None, opener=None):
     (typically a dictionary).  Return ``None``, if ``url`` returned a status
     code other than 200.
     """
-    if output_format not in ('json', 'xml'):
+    if output_format not in FORMAT_CALLBACKS:
         raise ValueError(output_format)
 
-    if opener:
-        urlopen = opener.open
+    response = requests.get(url)
+    if response.status_code == 200:
+        return FORMAT_CALLBACKS[output_format](response.content)
     else:
-        urlopen = urllib2.urlopen
-
-    try:
-        with closing(urlopen(url)) as response:
-            if output_format == 'json':
-                import json
-                return json.load(response)
-            elif output_format == 'xml':
-                from xml.etree import ElementTree as etree
-                return etree.parse(response)
-            else:
-                return response
-    except urllib2.HTTPError as error:
-        if error.code != 404:
-            # 404 just says that the issue doesn't exist, but anything else is
-            # more serious and deserves a warning
-            app.warn('{0} unavailable with code {1}'.format(url, error.code))
+        if response.status_code != 404:
+            # 404 just says that the issue doesn't exist, but anything else is more
+            # serious and deserves a warning
+            app.warn('{0} unavailable with code {1}'.format(url, response.status_code))
         return None
 
 
@@ -227,12 +222,8 @@ JIRA_API_URL = ('{0.url}/si/jira.issueviews:issue-xml/{1}/{1}.xml?'
 def lookup_jira_issue(app, tracker_config, issue_id):
     if not tracker_config.url:
         raise ValueError('URL required')
-    # protected jira trackers may require cookie processing
-    from cookielib import CookieJar
-    cookies = CookieJar()
-    cookie_opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookies))
     issue = fetch_issue(app, JIRA_API_URL.format(tracker_config, issue_id),
-                        output_format='xml', opener=cookie_opener)
+                        output_format='xml')
     if issue:
         project = issue.find('*/item/project').text
         if project != tracker_config.project:

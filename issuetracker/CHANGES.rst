@@ -1,6 +1,8 @@
 0.10 (in development)
 =====================
 
+- Use requests library for HTTP requests
+
 
 0.9 (Aug 31, 2011)
 ==================
