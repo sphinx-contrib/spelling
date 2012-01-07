@@ -238,6 +238,10 @@ def test_non_existing_executable(doctree, srcdir):
     srcfile = str(srcdir.join('index.rst'))
     assert message['source'] == srcfile
     assert message['line'] == 1
-    msgtemplate = ("{0}:1: (ERROR/3) Command {1!r} failed: "
-                   "[Errno 2] No such file or directory")
+    if sys.version_info[0] < 3:
+        msgtemplate = ("{0}:1: (ERROR/3) Command {1!r} failed: "
+                       "[Errno 2] No such file or directory")
+    else:
+        msgtemplate = ("{0}:1: (ERROR/3) Command {1!r} failed: "
+                       "[Errno 2] No such file or directory: {1}")
     assert message.astext() == msgtemplate.format(srcfile, "'spam with eggs'")

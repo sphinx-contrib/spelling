@@ -1,3 +1,10 @@
+0.6 (in development)
+====================
+
+- Python 3 support
+- Require Sphinx 1.1 now
+
+
 0.5 (Sep 19, 2011)
 ==================
 
