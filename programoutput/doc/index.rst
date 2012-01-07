@@ -7,7 +7,7 @@
 .. py:module:: sphinxcontrib.programoutput
    :synopsis:  Include the output of programs into documents
 
-Sphinx 1.0 extension to insert the output of arbitrary commands into documents.
+Sphinx_ extension to insert the output of arbitrary commands into documents.
 
 The extension is available under the terms of the BSD license, see LICENSE_
 for more information.
@@ -16,8 +16,8 @@ for more information.
 Installation
 ------------
 
-This extension requires Sphinx_ 1.0 and Python 2.6.  It is available in the
-Python Package Index::
+This extension requires Sphinx_ 1.1 and at least Python 2.6 or Python 3.2.  It
+is available in the Python Package Index::
 
    pip install sphinxcontrib-programoutput
 

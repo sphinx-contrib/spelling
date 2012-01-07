@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2011, Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (c) 2011, 2012, Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -314,7 +314,7 @@ class TestLaunchpad(TrackerTest):
     default_tracker_config = TrackerConfig('inkscape')
 
     tracker_config = {'wrong project': TrackerConfig('foo'),
-                      'invalid': TrackerConfig('launchpad')}
+                      'invalid': TrackerConfig('null')}
 
     issues = {
         'closed': Issue('647789', title='tries to install file(s) outside of '
