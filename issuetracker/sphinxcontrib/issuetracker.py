@@ -40,7 +40,7 @@ from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
 
-__version__ = '0.9'
+__version__ = '0.10'
 
 import re
 import urllib2
