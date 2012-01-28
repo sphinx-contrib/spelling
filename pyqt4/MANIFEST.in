@@ -1,6 +1,0 @@
-include README
-include LICENSE
-include CHANGES.*
-inlcude test_pyqt4.py
-recursive-include doc *.rst *.py Makefile
-prune doc/_build

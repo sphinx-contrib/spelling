@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2011, Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (c) 2011, 2012, Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -43,11 +43,11 @@ def assert_cache(cache, cmd, output, returncode=0):
 
 
 def test_simple(cache):
-    assert_cache(cache, Command(['echo', 'spam']), 'spam')
+    assert_cache(cache, Command(['echo', 'blök']), 'blök')
 
 
 def test_shell(cache):
-    assert_cache(cache, Command('echo spam', shell=True), 'spam')
+    assert_cache(cache, Command('echo blök', shell=True), 'blök')
 
 
 def test_hidden_standard_error(cache):

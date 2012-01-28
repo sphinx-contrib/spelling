@@ -2,31 +2,35 @@
 
 from setuptools import setup, find_packages
 
-with open('README') as stream:
-    long_desc = stream.read()
+f = open('README', 'r')
+try:
+    long_desc = f.read()
+finally:
+    f.close()
 
-
-requires = ['Sphinx>=1.0b2']
+requires = ['Sphinx>=0.6',
+            'SQLAlchemy',
+            ]
 
 setup(
-    name='sphinxcontrib-pyqt4',
-    version='0.5',
-    url='http://packages.python.org/sphinxcontrib-pyqt4',
-    download_url='http://pypi.python.org/pypi/sphinxcontrib-pyqt4',
+    name='sphinxcontrib-sqltable',
+    version='1.0',
+    url='http://bitbucket.org/birkenfeld/sphinx-contrib',
     license='BSD',
-    author='Sebastian Wiesner',
-    author_email='lunaryorn@googlemail.com',
-    description='PyQt4-specific markup for Sphinx',
+    author='Doug Hellmann',
+    author_email='doug.hellmann@gmail.com',
+    description='Sphinx "SQLTable" extension',
     long_description=long_desc,
     zip_safe=False,
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Environment :: Console',
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
+        'Topic :: Database',
         'Topic :: Documentation',
         'Topic :: Utilities',
     ],

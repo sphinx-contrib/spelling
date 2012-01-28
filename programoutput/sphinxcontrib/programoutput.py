@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2010, 2011, Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (c) 2010, 2011, 2012, Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -47,7 +47,7 @@ from docutils.parsers import rst
 from docutils.parsers.rst.directives import flag, unchanged, nonnegative_int
 
 
-__version__ = '0.5'
+__version__ = '0.6'
 
 
 class program_output(nodes.Element):
@@ -119,12 +119,18 @@ class Command(_Command): #pylint: disable=W0232
         command.
         """
         # pylint: disable=E1101
-        if isinstance(self.command, unicode):
-            command = self.command.encode(sys.getfilesystemencoding())
+        if self.shell:
+            if sys.version_info[0] < 3 and isinstance(self.command, unicode):
+                command = self.command.encode(sys.getfilesystemencoding())
+            else:
+                command = self.command
         else:
-            command = self.command
-        if isinstance(command, basestring) and not self.shell:
-            command = shlex.split(command)
+            if sys.version_info[0] < 3 and isinstance(self.command, unicode):
+                command = shlex.split(self.command.encode(sys.getfilesystemencoding()))
+            elif isinstance(self.command, str):
+                command = shlex.split(self.command)
+            else:
+                command = self.command
         return Popen(command, shell=self.shell, stdout=PIPE,
                      stderr=PIPE if self.hide_standard_error else STDOUT)
 
@@ -239,5 +245,5 @@ def setup(app):
                          '$ {command}\n{output}', 'env')
     app.add_directive('program-output', ProgramOutputDirective)
     app.add_directive('command-output', ProgramOutputDirective)
-    app.connect(b'builder-inited', init_cache)
-    app.connect(b'doctree-read', run_programs)
+    app.connect(str('builder-inited'), init_cache)
+    app.connect(str('doctree-read'), run_programs)

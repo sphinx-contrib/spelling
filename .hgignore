@@ -11,6 +11,7 @@ TAGS
 ,*~
 .DS_Store
 spelling/spelling_wordlist.txt
+sqltable/docs/sampledata.db
 
 syntax: glob
 */distribute-*.tar.gz
