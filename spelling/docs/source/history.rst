@@ -7,9 +7,11 @@
  Release History
 =================
 
-dev
+1.3
 
   - Handle text nodes without parents. (#19)
+  - Include the input document name in the console output.
+  - Use the Sphinx wrapper for registering a directive.
 
 1.2
 

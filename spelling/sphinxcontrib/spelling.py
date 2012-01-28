@@ -291,7 +291,7 @@ class SpellingBuilder(Builder):
 
                 # Check the text of the node.
                 for word, suggestions in self.checker.check(node.astext()):
-                    msg_parts = []
+                    msg_parts = [ docname ]
                     if lineno:
                         msg_parts.append(darkgreen('(line %3d)' % lineno))
                     msg_parts.append(red(word))
@@ -319,6 +319,8 @@ class SpellingBuilder(Builder):
 def setup(app):
     app.info('Initializing Spelling Checker')
     app.add_builder(SpellingBuilder)
+    # Register the 'spelling' directive for setting parameters within a document
+    app.add_directive('spelling', SpellingDirective)
     # Report guesses about correct spelling
     app.add_config_value('spelling_show_suggestions', False, 'env')
     # Set the language for the text
@@ -337,6 +339,4 @@ def setup(app):
     app.add_config_value('spelling_ignore_importable_modules', True, 'env')
     # Add any user-defined filter classes
     app.add_config_value('spelling_filters', [], 'env')
-    # Register the 'spelling' directive for setting parameters within a document
-    rst.directives.register_directive('spelling', SpellingDirective)
     return
