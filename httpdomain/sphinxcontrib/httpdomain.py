@@ -269,18 +269,21 @@ class HTTPIndex(Index):
 
     def generate(self, docnames=None):
         content = {}
-        for method, routes in self.domain.routes.iteritems():
-            for path, info in routes.iteritems():
-                letter = path.split('/', 2)
-                try:
-                    first_letter = letter[1]
-                except IndexError:
-                    first_letter = letter[0]
-                entries = content.setdefault('/' + first_letter, [])
-                entries.append([
-                    method.upper() + ' ' + path, 0, info[0],
-                    http_resource_anchor(method, path), '', '', info[1]
-                ])
+        items = ((method, path, info)
+            for method, routes in self.domain.routes.iteritems()
+            for path, info in routes.iteritems())
+        items = sorted(items, key=lambda item: item[1])
+        for method, path, info in items:
+            letter = path.split('/', 2)
+            try:
+                first_letter = letter[1]
+            except IndexError:
+                first_letter = letter[0]
+            entries = content.setdefault('/' + first_letter, [])
+            entries.append([
+                method.upper() + ' ' + path, 0, info[0],
+                http_resource_anchor(method, path), '', '', info[1]
+            ])
         content = content.items()
         content.sort(key=lambda (k, v): k)
         return (content, True)
