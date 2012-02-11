@@ -279,7 +279,7 @@ class HTTPIndex(Index):
         for prefix in self.ignore:
             if letters[:len(prefix)] == prefix:
                 return '/' + '/'.join(letters[:len(prefix) + 1])
-        return '/' + letters[0]
+        return '/%s' % (letters[0] if letters else '',)
 
     def generate(self, docnames=None):
         content = {}
