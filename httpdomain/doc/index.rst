@@ -156,6 +156,11 @@ Directives
    Describes a HTTP resource's :http:method:`PUT` method.
    It can also be referred by :rst:role:`http:put` role.
 
+.. rst:directive:: .. http:patch:: path
+
+   Describes a HTTP resource's :http:method:`PATCH` method.
+   It can also be referred by :rst:role:`http:patch` role.
+
 .. rst:directive:: .. http:delete:: path
 
    Describes a HTTP resource's :http:method:`DELETE` method.
@@ -243,6 +248,10 @@ Roles
 .. rst:role:: http:put
 
    Refers to the :rst:dir:`http:put` directive.
+
+.. rst:role:: http:patch
+
+   Refers to the :rst:dir:`http:patch` directive.
 
 .. rst:role:: http:delete
 

@@ -153,6 +153,11 @@ class HTTPHead(HTTPResource):
     method = 'head'
 
 
+class HTTPPatch(HTTPResource):
+
+    method = 'patch'
+
+
 class HTTPPost(HTTPResource):
 
     method = 'post'
@@ -224,6 +229,7 @@ def http_statuscode_role(name, rawtext, text, lineno, inliner,
 def http_method_role(name, rawtext, text, lineno, inliner,
                      options={}, content=[]):
     references = {
+        'patch': '2',
         'options': '9.2',
         'get': '9.3',
         'head': '9.4',
@@ -243,6 +249,8 @@ def http_method_role(name, rawtext, text, lineno, inliner,
         prb = inliner.problematic(rawtext, rawtext, msg)
         return [prb], [msg]
     url = 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec' + sec
+    if method == 'patch':
+        url = 'http://tools.ietf.org/html/rfc5789#section-' + sec
     node = nodes.reference(rawtext, umethod, refuri=url, **options)
     return [node], []
 
@@ -310,6 +318,7 @@ class HTTPDomain(Domain):
         'post': ObjType('post', 'post', 'obj'),
         'get': ObjType('get', 'get', 'obj'),
         'put': ObjType('put', 'put', 'obj'),
+        'patch': ObjType('patch', 'patch', 'obj'),
         'delete': ObjType('delete', 'delete', 'obj'),
         'trace': ObjType('trace', 'trace', 'obj')
     }
@@ -320,6 +329,7 @@ class HTTPDomain(Domain):
         'post': HTTPPost,
         'get': HTTPGet,
         'put': HTTPPut,
+        'patch': HTTPPatch,
         'delete': HTTPDelete,
         'trace': HTTPTrace
     }
@@ -330,6 +340,7 @@ class HTTPDomain(Domain):
         'post': HTTPXRefRole('post'),
         'get': HTTPXRefRole('get'),
         'put': HTTPXRefRole('put'),
+        'patch': HTTPXRefRole('patch'),
         'delete': HTTPXRefRole('delete'),
         'trace': HTTPXRefRole('trace'),
         'statuscode': http_statuscode_role,
@@ -342,6 +353,7 @@ class HTTPDomain(Domain):
         'post': {},
         'get': {},
         'put': {},
+        'patch': {},
         'delete': {},
         'trace': {}
     }
@@ -416,7 +428,7 @@ class HTTPLexer(RegexLexer):
 
     tokens = {
         'root': [
-            (r'(GET|POST|PUT|DELETE|HEAD|OPTIONS|TRACE)( +)([^ ]+)( +)'
+            (r'(GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS|TRACE)( +)([^ ]+)( +)'
              r'(HTTPS?)(/)(1\.[01])(\r?\n|$)',
              bygroups(Name.Function, Text, Name.Namespace, Text,
                       Keyword.Reserved, Operator, Number, Text),
