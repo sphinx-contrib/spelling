@@ -27,6 +27,54 @@ from sphinx.util.nodes import make_refnode
 from sphinx.util.docfields import GroupedField, TypedField
 
 
+class DocRef(object):
+    """Represents a link to an RFC which defines an HTTP method."""
+
+    def __init__(self, base_url, anchor, section):
+        """Stores the specified attributes which represent a URL which links to
+        an RFC which defines an HTTP method.
+
+        """
+        self.base_url = base_url
+        self.anchor = anchor
+        self.section = section
+
+    def __repr__(self):
+        """Returns the URL which this object represents, which points to the
+        location of the RFC which defines some HTTP method.
+
+        """
+        return '{}#{}{}'.format(self.base_url, self.anchor, self.section)
+
+
+#: The URL of the HTTP/1.1 RFC which defines the HTTP methods OPTIONS, GET,
+#: HEAD, POST, PUT, DELETE, TRACE, and CONNECT.
+RFC2616 = 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html'
+
+#: The name to use for section anchors in RFC2616.
+RFC2616ANCHOR = 'sec'
+
+#: The URL of the RFC which defines the HTTP PATCH method.
+RFC5789 = 'http://tools.ietf.org/html/rfc5789'
+
+#: The name to use for section anchors in RFC5789.
+RFC5789ANCHOR = 'section-'
+
+#: Mapping from lowercase HTTP method name to :class:`DocRef` object which
+#: maintains the URL which points to the section of the RFC which defines that
+#: HTTP method.
+DOCREFS = {
+    'patch': DocRef(RFC5789, RFC5789ANCHOR, 2),
+    'options': DocRef(RFC2616, RFC2616ANCHOR, 9.2),
+    'get': DocRef(RFC2616, RFC2616ANCHOR, 9.3),
+    'head': DocRef(RFC2616, RFC2616ANCHOR, 9.4),
+    'post': DocRef(RFC2616, RFC2616ANCHOR, 9.5),
+    'put': DocRef(RFC2616, RFC2616ANCHOR, 9.6),
+    'delete': DocRef(RFC2616, RFC2616ANCHOR, 9.7),
+    'trace': DocRef(RFC2616, RFC2616ANCHOR, 9.8),
+    'connect': DocRef(RFC2616, RFC2616ANCHOR, 9.9)
+}
+
 HTTP_STATUS_CODES = {
     100: 'Continue',
     101: 'Switching Protocols',
@@ -228,30 +276,14 @@ def http_statuscode_role(name, rawtext, text, lineno, inliner,
 
 def http_method_role(name, rawtext, text, lineno, inliner,
                      options={}, content=[]):
-    references = {
-        'patch': '2',
-        'options': '9.2',
-        'get': '9.3',
-        'head': '9.4',
-        'post': '9.5',
-        'put': '9.6',
-        'delete': '9.7',
-        'trace': '9.8',
-        'connect': '9.9'
-    }
     method = str(text).lower()
-    umethod = method.upper()
-    try:
-        sec = references[method]
-    except KeyError:
+    if method not in DOCREFS:
         msg = inliner.reporter.error('%s is not valid HTTP method' % umethod,
                                      lineno=lineno)
         prb = inliner.problematic(rawtext, rawtext, msg)
         return [prb], [msg]
-    url = 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec' + sec
-    if method == 'patch':
-        url = 'http://tools.ietf.org/html/rfc5789#section-' + sec
-    node = nodes.reference(rawtext, umethod, refuri=url, **options)
+    url = str(DOCREFS[method])
+    node = nodes.reference(rawtext, method.upper(), refuri=url, **options)
     return [node], []
 
 
