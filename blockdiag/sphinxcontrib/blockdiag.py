@@ -227,7 +227,8 @@ def on_doctree_resolved(self, doctree, docname):
             image.draw()
             image.save()
 
-        image = nodes.image(uri=outfn)
+        candidates = {'image/png': outfn}
+        image = nodes.image(uri=outfn, candidates=candidates)
         node.parent.replace(node, image)
 
 
