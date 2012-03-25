@@ -168,7 +168,7 @@ class GoogleChart(object):
             fd = urllib.urlopen(self.url)
 
             if not hasattr(fd, 'getcode') or fd.getcode() == 200:
-                open(filename, 'w').write(fd.read())
+                open(filename, 'wb').write(fd.read())
             else:
                 raise Exception()
         except:
