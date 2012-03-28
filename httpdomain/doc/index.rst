@@ -375,7 +375,7 @@ Author and License
 ------------------
 
 The :mod:`sphinxcontrib.httpdomain` and :mod:`sphinxcontrib.autohttp`,
-parts of :mod:`sphinxcontrib`, are written by `Hong Minhee`_ for StyleShare_
+parts of :mod:`sphinxcontrib`, are written by `Hong Minhee`_
 and distributed under BSD license.
 
 The source code is mantained under `the common repository of contributed
@@ -388,6 +388,5 @@ the repository).
    $ cd sphinx-contrib/httpdomain
 
 .. _Hong Minhee: http://dahlia.kr/
-.. _StyleShare: https://stylesha.re/
 __ https://bitbucket.org/birkenfeld/sphinx-contrib
 
