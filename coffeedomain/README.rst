@@ -56,8 +56,3 @@ You can document entire modules easily with ``automodule``:
 
   .. automodule:: mymodule
     :members:
-
-Notes/Todo
-==========
-
-While basic functionality is usable at this point, 
