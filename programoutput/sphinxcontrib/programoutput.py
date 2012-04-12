@@ -58,7 +58,7 @@ def _slice(value):
     parts = [int(v.strip()) for v in value.split(',')]
     if len(parts) > 2:
         raise ValueError('too many slice parts')
-    return tuple((parts + [None]*2)[:2])
+    return tuple((parts + [None] * 2)[:2])
 
 
 class ProgramOutputDirective(rst.Directive):
@@ -92,7 +92,7 @@ class ProgramOutputDirective(rst.Directive):
 _Command = namedtuple('Command', 'command shell hide_standard_error')
 
 
-class Command(_Command): #pylint: disable=W0232
+class Command(_Command):
     """
     A command to be executed.
     """
@@ -126,7 +126,8 @@ class Command(_Command): #pylint: disable=W0232
                 command = self.command
         else:
             if sys.version_info[0] < 3 and isinstance(self.command, unicode):
-                command = shlex.split(self.command.encode(sys.getfilesystemencoding()))
+                command = shlex.split(self.command.encode(
+                    sys.getfilesystemencoding()))
             elif isinstance(self.command, str):
                 command = shlex.split(self.command)
             else:
@@ -154,7 +155,7 @@ class Command(_Command): #pylint: disable=W0232
         return repr(self.command)
 
 
-class ProgramOutputCache(defaultdict): # pylint: disable=W0232
+class ProgramOutputCache(defaultdict):
     """
     Execute command and cache their output.
 
