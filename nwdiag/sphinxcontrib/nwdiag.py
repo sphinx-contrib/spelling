@@ -119,8 +119,8 @@ def create_nwdiag(self, code, format, filename, options, prefix='nwdiag'):
         screen = builder.ScreenNodeBuilder.build(tree)
 
         antialias = self.builder.config.nwdiag_antialias
-        draw = DiagramDraw.DiagramDraw(format, screen, filename, fontmap=fontmap,
-                                       antialias=antialias)
+        draw = DiagramDraw.DiagramDraw(format, screen, filename,
+                                       fontmap=fontmap, antialias=antialias)
     except Exception, e:
         raise NwdiagError('nwdiag error:\n%s\n' % e)
 
@@ -243,7 +243,7 @@ def on_doctree_resolved(self, doctree, docname):
     if self.builder.name in ('gettext', 'singlehtml', 'html', 'latex'):
         return
 
-    for node in doctree.traverse(nwdiag):  
+    for node in doctree.traverse(nwdiag):
         code = node['code']
         prefix = 'nwdiag'
         format = 'PNG'

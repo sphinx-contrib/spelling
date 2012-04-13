@@ -119,8 +119,8 @@ def create_rackdiag(self, code, format, filename, options, prefix='rackdiag'):
         screen = builder.ScreenNodeBuilder.build(tree)
 
         antialias = self.builder.config.rackdiag_antialias
-        draw = DiagramDraw.DiagramDraw(format, screen, filename, fontmap=fontmap,
-                                       antialias=antialias)
+        draw = DiagramDraw.DiagramDraw(format, screen, filename,
+                                       fontmap=fontmap, antialias=antialias)
     except Exception, e:
         raise RackdiagError('rackdiag error:\n%s\n' % e)
 
@@ -243,7 +243,7 @@ def on_doctree_resolved(self, doctree, docname):
     if self.builder.name in ('gettext', 'singlehtml', 'html', 'latex'):
         return
 
-    for node in doctree.traverse(rackdiag):  
+    for node in doctree.traverse(rackdiag):
         code = node['code']
         prefix = 'rackdiag'
         format = 'PNG'

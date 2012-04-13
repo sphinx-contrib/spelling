@@ -119,8 +119,8 @@ def create_seqdiag(self, code, format, filename, options, prefix='seqdiag'):
         screen = builder.ScreenNodeBuilder.build(tree)
 
         antialias = self.builder.config.seqdiag_antialias
-        draw = DiagramDraw.DiagramDraw(format, screen, filename, fontmap=fontmap,
-                                       antialias=antialias)
+        draw = DiagramDraw.DiagramDraw(format, screen, filename,
+                                       fontmap=fontmap, antialias=antialias)
     except Exception, e:
         raise SeqdiagError('seqdiag error:\n%s\n' % e)
 
@@ -243,7 +243,7 @@ def on_doctree_resolved(self, doctree, docname):
     if self.builder.name in ('gettext', 'singlehtml', 'html', 'latex'):
         return
 
-    for node in doctree.traverse(seqdiag):  
+    for node in doctree.traverse(seqdiag):
         code = node['code']
         prefix = 'seqdiag'
         format = 'PNG'

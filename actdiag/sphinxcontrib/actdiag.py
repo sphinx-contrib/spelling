@@ -119,8 +119,8 @@ def create_actdiag(self, code, format, filename, options, prefix='actdiag'):
         screen = builder.ScreenNodeBuilder.build(tree)
 
         antialias = self.builder.config.actdiag_antialias
-        draw = DiagramDraw.DiagramDraw(format, screen, filename, fontmap=fontmap,
-                                       antialias=antialias)
+        draw = DiagramDraw.DiagramDraw(format, screen, filename,
+                                       fontmap=fontmap, antialias=antialias)
     except Exception, e:
         raise ActdiagError('actdiag error:\n%s\n' % e)
 
@@ -243,7 +243,7 @@ def on_doctree_resolved(self, doctree, docname):
     if self.builder.name in ('gettext', 'singlehtml', 'html', 'latex'):
         return
 
-    for node in doctree.traverse(actdiag):  
+    for node in doctree.traverse(actdiag):
         code = node['code']
         prefix = 'actdiag'
         format = 'PNG'
