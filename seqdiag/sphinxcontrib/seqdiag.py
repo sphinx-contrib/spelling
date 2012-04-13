@@ -44,7 +44,7 @@ def get_image_filename(self, code, format, options, prefix='seqdiag'):
     """
     Get path of output file.
     """
-    if format not in ('PNG', 'PDF'):
+    if format not in ('PNG', 'PDF', 'SVG'):
         raise SeqdiagError('seqdiag error:\nunknown format: %s\n' % format)
 
     if format == 'PDF':
@@ -127,9 +127,40 @@ def create_seqdiag(self, code, format, filename, options, prefix='seqdiag'):
     return draw
 
 
+def make_svgtag(self, image, relfn, trelfn, outfn,
+                alt, thumb_size, image_size):
+    svgtag_format = """<svg xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    alt="%s" width="%s" height="%s">%s
+    </svg>"""
+
+    code = open(outfn, 'r').read().decode('utf-8')
+
+    return (svgtag_format %
+            (alt, image_size[0], image_size[1], code))
+
+
+def make_imgtag(self, image, relfn, trelfn, outfn,
+                alt, thumb_size, image_size):
+    result = ""
+    imgtag_format = '<img src="%s" alt="%s" width="%s" height="%s" />\n'
+
+    if trelfn:
+        result += ('<a href="%s">' % relfn)
+        result += (imgtag_format %
+                   (trelfn, alt, thumb_size[0], thumb_size[1]))
+        result += ('</a>')
+    else:
+        result += (imgtag_format %
+                   (relfn, alt, image_size[0], image_size[1]))
+
+    return result
+
+
 def render_dot_html(self, node, code, options, prefix='seqdiag',
                     imgcls=None, alt=None):
-    has_thumbnail = False
+    trelfn = None
+    thumb_size = None
     try:
         format = self.builder.config.seqdiag_html_image_format
         relfn, outfn = get_image_filename(self, code, format, options, prefix)
@@ -142,7 +173,6 @@ def render_dot_html(self, node, code, options, prefix='seqdiag',
         # generate thumbnails
         image_size = image.pagesize()
         if 'maxwidth' in options and options['maxwidth'] < image_size[0]:
-            has_thumbnail = True
             thumb_prefix = prefix + '_thumb'
             trelfn, toutfn = get_image_filename(self, code, format,
                                                 options, thumb_prefix)
@@ -170,15 +200,13 @@ def render_dot_html(self, node, code, options, prefix='seqdiag',
         if alt is None:
             alt = node.get('alt', self.encode(code).strip())
 
-        imgtag_format = '<img src="%s" alt="%s" width="%s" height="%s" />\n'
-        if has_thumbnail:
-            self.body.append('<a href="%s">' % relfn)
-            self.body.append(imgtag_format %
-                             (trelfn, alt, thumb_size[0], thumb_size[1]))
-            self.body.append('</a>')
+        if format == 'SVG':
+            tagfunc = make_svgtag
         else:
-            self.body.append(imgtag_format %
-                             (relfn, alt, image_size[0], image_size[1]))
+            tagfunc = make_imgtag
+
+        self.body.append(tagfunc(self, image, relfn, trelfn, outfn, alt,
+                                 thumb_size, image_size))
 
     self.body.append('</p>\n')
     raise nodes.SkipNode
