@@ -23,7 +23,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-
 """
     sphinxcontrib.programoutput
     ===========================
@@ -68,9 +67,11 @@ class ProgramOutputDirective(rst.Directive):
 
     option_spec = dict(shell=flag, prompt=flag, nostderr=flag,
                        ellipsis=_slice, extraargs=unchanged,
-                       returncode=nonnegative_int)
+                       returncode=nonnegative_int, cwd=unchanged)
 
     def run(self):
+        env = self.state.document.settings.env
+
         node = program_output()
         node.line = self.lineno
         node['command'] = self.arguments[0]
@@ -82,6 +83,8 @@ class ProgramOutputDirective(rst.Directive):
 
         node['hide_standard_error'] = 'nostderr' in self.options
         node['extraargs'] = self.options.get('extraargs', '')
+        _, cwd = env.relfn2path(self.options.get('cwd', '/'))
+        node['working_directory'] = cwd
         node['use_shell'] = 'shell' in self.options
         node['returncode'] = self.options.get('returncode', 0)
         if 'ellipsis' in self.options:
@@ -89,7 +92,8 @@ class ProgramOutputDirective(rst.Directive):
         return [node]
 
 
-_Command = namedtuple('Command', 'command shell hide_standard_error')
+_Command = namedtuple(
+    'Command', 'command shell hide_standard_error working_directory')
 
 
 class Command(_Command):
@@ -97,10 +101,12 @@ class Command(_Command):
     A command to be executed.
     """
 
-    def __new__(cls, command, shell=False, hide_standard_error=False):
+    def __new__(cls, command, shell=False, hide_standard_error=False,
+                working_directory='/'):
         if isinstance(command, list):
             command = tuple(command)
-        return _Command.__new__(cls, command, shell, hide_standard_error)
+        return _Command.__new__(cls, command, shell, hide_standard_error,
+                                working_directory)
 
     @classmethod
     def from_program_output_node(cls, node):
@@ -109,7 +115,8 @@ class Command(_Command):
         """
         extraargs = node.get('extraargs', '')
         command = (node['command'] + ' ' + extraargs).strip()
-        return cls(command, node['use_shell'], node['hide_standard_error'])
+        return cls(command, node['use_shell'],
+                   node['hide_standard_error'], node['working_directory'])
 
     def execute(self):
         """
@@ -118,7 +125,6 @@ class Command(_Command):
         Return the :class:`~subprocess.Popen` object representing the running
         command.
         """
-        # pylint: disable=E1101
         if self.shell:
             if sys.version_info[0] < 3 and isinstance(self.command, unicode):
                 command = self.command.encode(sys.getfilesystemencoding())
@@ -133,7 +139,8 @@ class Command(_Command):
             else:
                 command = self.command
         return Popen(command, shell=self.shell, stdout=PIPE,
-                     stderr=PIPE if self.hide_standard_error else STDOUT)
+                     stderr=PIPE if self.hide_standard_error else STDOUT,
+                     cwd=self.working_directory)
 
     def get_output(self):
         """
@@ -149,7 +156,6 @@ class Command(_Command):
         return process.returncode, output
 
     def __str__(self):
-        # pylint: disable=E1101
         if isinstance(self.command, tuple):
             return repr(list(self.command))
         return repr(self.command)

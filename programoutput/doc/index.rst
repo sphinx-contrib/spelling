@@ -46,6 +46,11 @@ syntax highlighting:
 You can omit the content of the standard error stream with the ``nostderr``
 option.
 
+By default, commands are executed in the top-level source directory.  You can
+choose an alternate working directory with the ``cwd`` option.  The argument of
+this option is either a path relative to the current source file, or a absolute
+path which means that it is relative to the top level source directory.
+
 
 Shortening the output
 ^^^^^^^^^^^^^^^^^^^^^
@@ -179,6 +184,12 @@ Reference
    in the document.  However, if the option ``shell`` is given, ``command`` is
    literally passed to the system shell.  With the ``nostderr`` option,
    standard error is hidden from the output.
+
+   The working directory of the command can be configured with the ``cwd``
+   option.  The argument of this option is a directory path, relative to the
+   current source file.  Absolute paths are interpreted as relative to the
+   root of the source directory.  The default working directory is ``/``, i.e.
+   the root of the source directory.
 
    If the ``prompt`` option is given, the ``command`` itself is included in the
    document, so that the output mimics input in a shell prompt.
