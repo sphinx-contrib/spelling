@@ -28,6 +28,11 @@ where to look in your conf.py like so::
 
   coffee_src_dir = os.path.abspath('../')
 
+Depending on the module system you use, you might want to change the coffeedoc
+parser from its default ``commonjs`` to ``requirejs``::
+
+  coffee_src_parser = 'requirejs'
+
 Finally, if your project is primarily CoffeeScript, you might want to
 define the primary domain as well::
 

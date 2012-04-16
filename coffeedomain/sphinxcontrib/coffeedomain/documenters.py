@@ -71,12 +71,14 @@ class CoffeedocDocumenter(Documenter):
         filename= self.modname + '.coffee'
         modules = self.env.temp_data.setdefault('coffee:docgen', {})
         basedir = self.env.config.coffee_src_dir
+        parser  = self.env.config.coffee_src_parser or 'commonjs'
         if filename not in modules:
-            docgen = Popen(['coffeedoc', '--stdout', '--renderer', 'json',
-                            filename],
+            gencmd = ['coffeedoc', '--stdout', '--renderer', 'json', '--parser',
+                      parser, filename]
+            docgen = Popen(gencmd,
                            cwd=basedir, stdout=PIPE)
             module_data = json.load(docgen.stdout)[0]['module']
-            print "ran coffeedoc --stdout --renderer json %s" % filename
+            print "ran %s" % ' '.join(gencmd)
             modules[filename] = StubObject('module', module_data)
         return modules[filename]
 
