@@ -1,11 +1,16 @@
-0.6 (in development)
-====================
+0.7 (Apr 17, 2012)
+==================
 
-- Python 3 support
-- Require Sphinx 1.1 now
 - #28: Added ``cwd`` option to :rst:dir:`program-output`
 - #28: Working directory of executed programs defaults to documentation root
   now
+
+
+0.6 (Jan 07, 2012)
+==================
+
+- Python 3 support
+- Require Sphinx 1.1 now
 
 
 0.5 (Sep 19, 2011)
