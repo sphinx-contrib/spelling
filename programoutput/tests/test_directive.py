@@ -308,6 +308,10 @@ def test_non_existing_working_directry(doctree, srcdir):
     assert message['line'] == 4
     msgtemplate = ("{0}:4: (ERROR/3) Command {1!r} failed: "
                    "[Errno 2] No such file or directory: {2!r}")
-    filename = srcdir.join('content').realpath().join('subdir')
+    if sys.version_info[0] < 3:
+        filename = srcdir.join('content').realpath().join('subdir')
+    else:
+        # Python 3 breaks the error message here :(
+        filename = 'echo'
     msg = msgtemplate.format(srcfile, 'echo spam', str(filename))
     assert message.astext() == msg
