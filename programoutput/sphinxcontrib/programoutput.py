@@ -37,6 +37,7 @@ from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
 import sys
+import os
 import shlex
 from subprocess import Popen, PIPE, STDOUT
 from collections import defaultdict, namedtuple
@@ -105,6 +106,12 @@ class Command(_Command):
                 working_directory='/'):
         if isinstance(command, list):
             command = tuple(command)
+        # `chdir()` resolves symlinks, so we need to resolve them too for
+        # caching to make sure that different symlinks to the same directory
+        # don't result in different cache keys.  Also normalize paths to make
+        # sure that identical paths are also equal as strings.
+        working_directory = os.path.normpath(os.path.realpath(
+            working_directory))
         return _Command.__new__(cls, command, shell, hide_standard_error,
                                 working_directory)
 
