@@ -26,6 +26,8 @@
 from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
+import os.path
+
 from sphinxcontrib.programoutput import Command, program_output
 
 
@@ -53,8 +55,10 @@ def test_from_programoutput_node():
     node['command'] = 'echo spam'
     node['use_shell'] = False
     node['hide_standard_error'] = False
+    node['working_directory'] = '/spam/with/eggs'
     command = Command.from_program_output_node(node)
     assert command.command == 'echo spam'
+    assert command.working_directory == '/spam/with/eggs'
     assert not command.shell
     assert not command.hide_standard_error
     node['use_shell'] = True
@@ -70,6 +74,7 @@ def test_from_programoutput_node_extraargs():
     node['use_shell'] = False
     node['hide_standard_error'] = False
     node['extraargs'] = 'with eggs'
+    node['working_directory'] = '/'
     command = Command.from_program_output_node(node)
     assert command.command == 'echo spam with eggs'
 
@@ -113,3 +118,12 @@ def test_get_output_with_hidden_standard_error():
         hide_standard_error=True).get_output()
     assert returncode == 0
     assert output == ''
+
+
+def test_get_output_with_working_directory(tmpdir):
+    cwd = os.path.realpath(str(tmpdir))
+    returncode, output = Command(
+        'python -c "import sys, os; sys.stdout.write(os.getcwd())"',
+        working_directory=cwd).get_output()
+    assert returncode == 0
+    assert output == cwd

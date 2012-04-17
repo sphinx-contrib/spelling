@@ -55,7 +55,14 @@ def pytest_funcarg__content(request):
     Return the content for the current test, extracted from ``with_content``
     marker.
     """
-    return request.keywords['with_content'].args[0]
+    # prepend a title to the content to avoid a Sphinx warning emitted for
+    # toctree-referenced documents without titles
+    content = """\
+Content
+#######
+
+{0}""".format(request.keywords['with_content'].args[0])
+    return content
 
 
 def pytest_funcarg__srcdir(request):
@@ -67,8 +74,15 @@ def pytest_funcarg__srcdir(request):
     srcdir.ensure(dir=True)
     confpy = srcdir.join('conf.py')
     confpy.write(CONF_PY)
-    content = request.getfuncargvalue('content')
-    srcdir.join('index.rst').write(content)
+    index_document = srcdir.join('index.rst')
+    index_document.write("""\
+.. toctree::
+
+   content/doc""")
+    content_directory = srcdir.join('content')
+    content_directory.ensure(dir=True)
+    content_document = content_directory.join('doc.rst')
+    content_document.write(request.getfuncargvalue('content'))
     return srcdir
 
 
@@ -120,7 +134,7 @@ def pytest_funcarg__app(request):
 def pytest_funcarg__doctree(request):
     request.applymarker(pytest.mark.build_app)
     app = request.getfuncargvalue('app')
-    return app.env.get_doctree('index')
+    return app.env.get_doctree('content/doc')
 
 
 def pytest_funcarg__cache(request):

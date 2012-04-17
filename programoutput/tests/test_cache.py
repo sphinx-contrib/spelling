@@ -26,12 +26,14 @@
 from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
+import os
+
 import pytest
 
 from sphinxcontrib.programoutput import ProgramOutputCache, Command
 
 
-def pytest_funcarg__cache(request): # pylint: disable=W0613
+def pytest_funcarg__cache(request):
     return ProgramOutputCache()
 
 
@@ -48,6 +50,22 @@ def test_simple(cache):
 
 def test_shell(cache):
     assert_cache(cache, Command('echo blök', shell=True), 'blök')
+
+
+def test_working_directory(cache, tmpdir):
+    cwd = tmpdir.join('wd')
+    cwd.ensure(dir=True)
+    cwd = os.path.realpath(os.path.normpath(str(cwd)))
+    cmd = ['python', '-c', 'import sys, os; sys.stdout.write(os.getcwd())']
+    assert_cache(cache, Command(cmd, working_directory=cwd), cwd)
+
+
+def test_working_directory_shell(cache, tmpdir):
+    cwd = tmpdir.join('wd')
+    cwd.ensure(dir=True)
+    cwd = os.path.realpath(os.path.normpath(str(cwd)))
+    cmd = Command('echo $PWD', working_directory=cwd, shell=True)
+    assert_cache(cache, cmd, cwd)
 
 
 def test_hidden_standard_error(cache):
