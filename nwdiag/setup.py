@@ -46,7 +46,7 @@ requires = ['nwdiag>=0.7.0', 'Sphinx>=0.6']
 
 setup(
     name='sphinxcontrib-nwdiag',
-    version='0.4.0',
+    version='0.4.1',
     url='http://bitbucket.org/birkenfeld/sphinx-contrib',
     download_url='http://pypi.python.org/pypi/sphinxcontrib-nwdiag',
     license='BSD',
