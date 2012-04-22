@@ -36,6 +36,18 @@ class BlockdiagError(SphinxError):
 
 
 class Blockdiag(BlockdiagDirective):
+    def run(self):
+        try:
+            return super(Blockdiag, self).run()
+        except diagparser.ParseException, e:
+            if self.content:
+                msg = '[%s] ParseError: %s\n%s' % (self.name, e, "\n".join(self.content))
+            else:
+                msg = '[%s] ParseError: %s\n%r' % (self.name, e, self.arguments[0])
+
+            reporter = self.state.document.reporter
+            return [reporter.warning(msg, line=self.lineno)]
+
     def node2image(self, node, diagram):
         return node
 
