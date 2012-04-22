@@ -11,6 +11,7 @@
 """
 
 import posixpath
+import re
 import os
 import codecs
 try:
@@ -120,6 +121,26 @@ def get_fontmap(self):
     return fontmap
 
 
+def get_anchor(self, refid, fromdocname):
+    for docname in self.builder.env.found_docs:
+        doctree = self.builder.env.get_doctree(docname)
+        for target in doctree.traverse(nodes.Targetable):
+            if target.attributes['refid'] == refid:
+                targetfile = self.builder.get_relative_uri(fromdocname, docname)
+                return targetfile + "#" + refid
+
+
+def resolve_reference(self, href, options):
+    if href is None:
+        return
+    pattern = re.compile(u"^:ref:`(.+?)`", re.UNICODE)
+    matched = pattern.search(href)
+    if matched:
+        return get_anchor(self, matched.group(1), options['current_docname'])
+    else:
+        return href
+
+
 def create_blockdiag(self, code, format, filename, options, prefix):
     """
     Render blockdiag code into a PNG output file.
@@ -129,6 +150,9 @@ def create_blockdiag(self, code, format, filename, options, prefix):
     try:
         tree = diagparser.parse(diagparser.tokenize(code))
         screen = builder.ScreenNodeBuilder.build(tree)
+        for node in screen.traverse_nodes():
+            if node.href:
+                node.href = resolve_reference(self, node.href, options)
 
         antialias = self.builder.config.blockdiag_antialias
         draw = DiagramDraw.DiagramDraw(format, screen, filename,
@@ -201,6 +225,7 @@ def render_dot_html(self, node, code, options, prefix='blockdiag',
         format = self.builder.config.blockdiag_html_image_format
         relfn, outfn = get_image_filename(self, code, format, options, prefix)
 
+        options['current_docname'] = self.builder.current_docname
         image = create_blockdiag(self, code, format, outfn, options, prefix)
 
         if not os.path.isfile(outfn):
