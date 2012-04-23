@@ -11,6 +11,7 @@
 """
 
 import posixpath
+import re
 import os
 import codecs
 try:
@@ -120,6 +121,26 @@ def get_fontmap(self):
     return fontmap
 
 
+def get_anchor(self, refid, fromdocname):
+    for docname in self.builder.env.found_docs:
+        doctree = self.builder.env.get_doctree(docname)
+        for target in doctree.traverse(nodes.Targetable):
+            if target.attributes['refid'] == refid:
+                targetfile = self.builder.get_relative_uri(fromdocname, docname)
+                return targetfile + "#" + refid
+
+
+def resolve_reference(self, href, options):
+    if href is None:
+        return
+    pattern = re.compile(u"^:ref:`(.+?)`", re.UNICODE)
+    matched = pattern.search(href)
+    if matched:
+        return get_anchor(self, matched.group(1), options['current_docname'])
+    else:
+        return href
+
+
 def create_actdiag(self, code, format, filename, options, prefix='actdiag'):
     """
     Render actdiag code into a PNG output file.
@@ -129,6 +150,13 @@ def create_actdiag(self, code, format, filename, options, prefix='actdiag'):
     try:
         tree = diagparser.parse(diagparser.tokenize(code))
         screen = builder.ScreenNodeBuilder.build(tree)
+
+        for lane in screen.lanes:
+            if lane.href:
+                lane.href = resolve_reference(self, lane.href, options)
+        for node in screen.traverse_nodes():
+            if node.href:
+                node.href = resolve_reference(self, node.href, options)
 
         antialias = self.builder.config.actdiag_antialias
         draw = DiagramDraw.DiagramDraw(format, screen, filename,
@@ -155,7 +183,22 @@ def make_svgtag(self, image, relfn, trelfn, outfn,
 def make_imgtag(self, image, relfn, trelfn, outfn,
                 alt, thumb_size, image_size):
     result = ""
-    imgtag_format = '<img src="%s" alt="%s" width="%s" height="%s" />\n'
+
+    clickable_map = []
+    for l in image.diagram.lanes:
+        if l.href:
+            cell = image.metrics.lane_headerbox(l)
+            clickable_map.append((cell, l.href))
+    for n in image.nodes:
+        if n.href:
+            cell = image.metrics.cell(n)
+            clickable_map.append((cell, n.href))
+
+    if clickable_map:
+        imgtag_format = '<img src="%s" alt="%s" width="%s" '
+        imgtag_format += 'usemap="#map_1" height="%s" />\n'  # TODO:mapname
+    else:
+        imgtag_format = '<img src="%s" alt="%s" width="%s" height="%s" />\n'
 
     if trelfn:
         result += ('<a href="%s">' % relfn)
@@ -165,6 +208,18 @@ def make_imgtag(self, image, relfn, trelfn, outfn,
     else:
         result += (imgtag_format %
                    (relfn, alt, image_size[0], image_size[1]))
+
+    if clickable_map:
+        result += ('<map name="map_1">')
+        rect_format = '<area shape="rect" coords="%s,%s,%s,%s" href="%s">'
+        for m in clickable_map:
+            x1 = m[0][0]
+            y1 = m[0][1]
+            x2 = m[0][2]
+            y2 = m[0][3]
+            result += (rect_format % (x1, y1, x2, y2, m[1]))
+
+        result += ('</map>')
 
     return result
 
@@ -177,6 +232,7 @@ def render_dot_html(self, node, code, options, prefix='actdiag',
         format = self.builder.config.actdiag_html_image_format
         relfn, outfn = get_image_filename(self, code, format, options, prefix)
 
+        options['current_docname'] = self.builder.current_docname
         image = create_actdiag(self, code, format, outfn, options, prefix)
         if not os.path.isfile(outfn):
             image.draw()
