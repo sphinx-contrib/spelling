@@ -10,7 +10,7 @@ requires = ['Sphinx>=0.6']
 
 setup(
     name='sphinxcontrib-clearquest',
-    version='0.4',
+    version='0.5',
     url='http://bitbucket.org/birkenfeld/sphinx-contrib',
     download_url='http://pypi.python.org/pypi/sphinxcontrib-clearquest',
     license='BSD',

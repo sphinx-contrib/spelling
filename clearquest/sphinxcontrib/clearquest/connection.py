@@ -69,9 +69,9 @@ class ClearQuestConnection():
                 param_name = resultSet.GetParamLabel(i)
                 try:
                     param_value = parameters[param_name]
+                    resultSet.AddParamValue(i, param_value)
                 except:
                     errors.append("'%s'" % param_name)
-                resultSet.AddParamValue(i, param_value)
 
             if errors:
                 params = ", ".join(errors)
