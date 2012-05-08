@@ -44,6 +44,7 @@ List of extensions
 - autorun: Execute code in a runblock directive.
 - blockdiag: embed block diagrams by using blockdiag_
 - cheeseshop: easily link to PyPI packages
+- coffeedomain: a domain for (auto)documenting CoffeeScript source code.
 - context: a builder for ConTeXt.
 - doxylink: Link to external Doxygen-generated HTML documentation
 - epydoc: cross-reference eypdoc generated documentation
