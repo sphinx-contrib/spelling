@@ -381,6 +381,15 @@ will be rendered as:
 
       will exclude :func:`admin`, :func:`admin_login` view functions.
 
+      .. warning::
+
+         Unlike the `undoc-members`_ flag of the
+         :mod:`~sphinx.ext.autodoc` extension, the ``undoc-endpoints``
+         didn't includes view functions without docstrings. It has an opposite
+         effect to ``undoc-members`` so it could be confusing.
+
+         .. _undoc-members: http://sphinx.pocoo.org/ext/autodoc.html#directive-automodule
+
    ``undoc-static``
       Excludes a view function that serves static files, which is included
       in Flask by default.
