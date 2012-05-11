@@ -348,6 +348,27 @@ will be rendered as:
 
    It takes several flag options as well.
 
+   ``endpoints``
+      Endpoints to generate a reference.
+
+      .. sourcecode:: rst
+
+         .. autoflask:: yourwebapp:app
+            :endpoints: user, post, friends
+
+      will document :func:`user`, :func:`post`, and :func:`friends`
+      view functions, and
+
+      .. sourcecode:: rst
+
+         .. autoflask:: yourwebapp:app
+            :endpoints:
+
+      will document all endpoints in the flask app.
+
+      For compatibility, omitting this option will produce the same effect
+      like above.
+
    ``undoc-endpoints``
       Excludes specified endpoints from generated references.
 

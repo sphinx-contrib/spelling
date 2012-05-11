@@ -33,5 +33,3 @@ def post(user, post_id):
 
     """
     return str(post_id), 'by', user
-
-
