@@ -99,3 +99,22 @@ Method roles
 :http:method:`trace`
 
 :http:method:`connect`
+
+
+.. module:: sphinxcontrib.autohttp.flask
+
+:mod:`sphinxcontrib.autohttp.flask` --- Exporting API reference from Flask app
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Basic option
+............
+
+.. autoflask:: autoflask_sampleapp:app
+   :undoc-static:
+
+Filter some endpoints
+......................
+
+.. autoflask:: autoflask_sampleapp:app
+   :endpoints: user, post
+   :undoc-static:

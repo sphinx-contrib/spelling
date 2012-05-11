@@ -76,9 +76,19 @@ class AutoflaskDirective(Directive):
 
     has_content = True
     required_arguments = 1
-    option_spec = {'undoc-endpoints': str,
+    option_spec = {'endpoints': str,
+                   'undoc-endpoints': str,
                    'undoc-static': str,
                    'include-empty-docstring': str}
+
+    @property
+    def endpoints(self):
+        try:
+            endpoints = re.split(r'\s*,\s*', self.options['endpoints'])
+        except KeyError:
+            # means 'endpoints' option was missing
+            return None
+        return frozenset(endpoints)
 
     @property
     def undoc_endpoints(self):
@@ -91,6 +101,8 @@ class AutoflaskDirective(Directive):
     def make_rst(self):
         app = import_object(self.arguments[0])
         for method, path, endpoint in get_routes(app):
+            if self.endpoints and endpoint not in self.endpoints:
+                continue
             if endpoint in self.undoc_endpoints:
                 continue
             try:
