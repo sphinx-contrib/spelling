@@ -381,12 +381,11 @@ will be rendered as:
 
       will exclude :func:`admin`, :func:`admin_login` view functions.
 
-      .. warning::
+      .. note::
 
-         Unlike the `undoc-members`_ flag of the
-         :mod:`~sphinx.ext.autodoc` extension, the ``undoc-endpoints``
-         didn't includes view functions without docstrings. It has an opposite
-         effect to ``undoc-members`` so it could be confusing.
+         While the `undoc-members`_ flag of :mod:`sphinx.ext.autodoc` extension
+         includes members without docstrings, ``undoc-endpoints`` option has
+         nothing to do with docstrings. It just excludes specified endpoints.
 
          .. _undoc-members: http://sphinx.pocoo.org/ext/autodoc.html#directive-automodule
 
