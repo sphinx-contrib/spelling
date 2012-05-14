@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 import os
-from setuptools import setup, find_packages
+
+try:
+    from setuptools import setup, find_packages
+except ImportError:
+    from distutils.core import setup, find_packages
 
 here = os.path.dirname(os.path.abspath(__file__))
 
@@ -13,7 +17,7 @@ requires = [
 
 setup(
     name='sphinxcontrib-sadisplay',
-    version='0.3',
+    version='0.3.1',
     url='http://bitbucket.org/birkenfeld/sphinx-contrib',
     download_url='http://pypi.python.org/pypi/sphinxcontrib-sadisplay',
     license='BSD',
@@ -29,12 +33,17 @@ setup(
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 3',
         'Topic :: Documentation',
         'Topic :: Utilities',
     ],
     platforms='any',
+    #packages=['sphinxcontib',],
     packages=find_packages(),
     include_package_data=True,
     install_requires=requires,
+    tests_require=['nose >= 1.0',],
+    test_suite = 'nose.collector',
     namespace_packages=['sphinxcontrib'],
 )

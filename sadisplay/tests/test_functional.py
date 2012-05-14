@@ -24,17 +24,14 @@ def teardown():
 
 
 def readfile(fname):
-    f = open(os.path.join(_outdir, fname), 'rb')
-    try:
+    with open(os.path.join(_outdir, fname), 'r') as f:
         return f.read()
-    finally:
-        f.close()
 
 
 def runsphinx(text, builder, confoverrides):
     f = open(os.path.join(_srcdir, 'index.rst'), 'w')
     try:
-        f.write(text.encode('utf-8'))
+        f.write(text)
     finally:
         f.close()
     app = Sphinx(_srcdir, _fixturedir, _outdir, _outdir, builder,
@@ -59,7 +56,7 @@ def with_runsphinx(builder, confoverrides=None):
             finally:
                 os.unlink(os.path.join(_srcdir, 'index.rst'))
                 shutil.rmtree(_outdir)
-        test.func_name = func.func_name
+        test.__name__ = func.__name__
         return test
     return wrapfunc
 
@@ -76,9 +73,9 @@ def test_buildhtml_simple():
     assert '<img src="_images/sadisplay' in readfile('index.html')
 
     content = readfile(files[0])
-    assert u'Admin' in content
-    assert u'User' in content
-    assert u'Address' in content
+    assert 'Admin' in content
+    assert 'User' in content
+    assert 'Address' in content
 
 
 @with_runsphinx('html')
@@ -104,10 +101,10 @@ def test_buildlatex_simple():
     """
     files = glob.glob(os.path.join(_outdir, 'sadisplay-*.png'))
     assert len(files) == 1
-    assert r'\includegraphics{sadisplay-' in \
+    assert '\includegraphics{sadisplay-' in \
             readfile('sadisplay_fixture.tex')
 
     content = readfile(files[0])
-    assert u'Admin' not in content
-    assert u'User' in content
-    assert u'Address' in content
+    assert 'Admin' not in content
+    assert 'User' in content
+    assert 'Address' in content

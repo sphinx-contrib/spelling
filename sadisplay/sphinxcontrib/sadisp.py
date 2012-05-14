@@ -51,15 +51,15 @@ class SadisplayDirective(Directive):
 
         def tolist(val):
             if val:
-                return map(lambda i: i.strip(), val.split(','))
+                return list(map(lambda i: i.strip(), val.split(',')))
             return []
 
-        node['module'] = tolist(self.options.get('module', u''))
+        node['module'] = tolist(self.options.get('module', ''))
         node['include'] = tolist(self.options.get('include', None))
         node['exclude'] = tolist(self.options.get('exclude', None))
 
         if node['include'] and node['exclude']:
-            raise SphinxWarning(u'sadisplay directive error - \
+            raise SphinxWarning('sadisplay directive error - \
                     both defined :include: and :exclude:')
 
         return [node]
@@ -77,7 +77,7 @@ def generate_name(self, content):
 
 
 def generate_plantuml_args(self):
-    if isinstance(self.builder.config.plantuml, basestring):
+    if isinstance(self.builder.config.plantuml, str):
         args = [self.builder.config.plantuml]
     else:
         args = list(self.builder.config.plantuml)
@@ -86,7 +86,7 @@ def generate_plantuml_args(self):
 
 
 def generate_graphviz_args(self):
-    if isinstance(self.builder.config.graphviz, basestring):
+    if isinstance(self.builder.config.graphviz, str):
         args = [self.builder.config.graphviz]
     else:
         args = list(self.builder.config.graphviz)
@@ -103,7 +103,7 @@ def render_image(self, content, command):
         try:
             p = subprocess.Popen(command, stdout=f,
                                  stdin=subprocess.PIPE, stderr=subprocess.PIPE)
-        except OSError, err:
+        except OSError as err:
             if err.errno != ENOENT:
                 raise
             raise RendererError('command %r cannot be run' % command)
@@ -123,7 +123,18 @@ def render(self, node):
         __import__(module_name, globals(), locals(), [], -1)
         module = sys.modules[module_name]
 
-        all_names += [getattr(module, attr) for attr in dir(module)]
+        for attr in dir(module):
+            try:
+                m = getattr(module, attr)
+
+                # !!!
+                # Ugly hack
+                repr(m) # without this statement - exception raises
+                # any ideas?
+
+                all_names.append(m)
+            except:
+                pass
 
     names = []
 
@@ -163,8 +174,8 @@ def render(self, node):
 def html_visit(self, node):
     try:
         refname = render(self, node)
-    except Exception, err:
-        self.builder.warn(str(err))
+    except Exception as err:
+        self.builder.warn('sadisplay render error: %s' % err)
         raise nodes.SkipNode
     self.body.append(self.starttag(node, 'p', CLASS='sadisplay'))
 
@@ -183,8 +194,8 @@ def html_visit(self, node):
 def latex_visit(self, node):
     try:
         refname = render(self, node)
-    except Exception, err:
-        self.builder.warn(str(err))
+    except Exception as err:
+        self.builder.warn('sadisplay render error: %s' % err)
         raise nodes.SkipNode
     self.body.append('\\includegraphics{%s}' % self.encode(refname))
     raise nodes.SkipNode

@@ -36,7 +36,8 @@ def with_parsed(func):
         src = '\n'.join(l[4:] for l in func.__doc__.splitlines()[2:])
         _parser.parse(src, doc)
         func(doc.children)
-    test.func_name = func.func_name
+    #test.func_name = func.func_name
+    test.__name__ = func.__name__
     return test
 
 
@@ -52,9 +53,9 @@ def test_simple(nodes):
     assert n['alt'] is None
     assert n['link'] is True
     assert n['render'] == None
-    assert n['module'] == ['myapp.model', 'myapp.model2']
-    assert n['include'] == []
-    assert n['exclude'] == []
+    assert list(n['module']) == ['myapp.model', 'myapp.model2']
+    assert list(n['include']) == []
+    assert list(n['exclude']) == []
 
 
 @with_parsed
@@ -70,8 +71,9 @@ def test_include(nodes):
     assert n['alt'] is None
     assert n['link'] is False
     assert n['render'] == None
-    assert n['module'] == ['myapp.model', ]
-    assert n['include'] == [u'User', u'Group']
+    assert ['myapp.model'] == ['myapp.model']
+    assert list(n['module']) == ['myapp.model']
+    assert list(n['include']) == ['User', 'Group']
 
 
 @with_parsed

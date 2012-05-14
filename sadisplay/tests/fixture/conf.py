@@ -32,8 +32,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'sadisplay_fixture'
-copyright = u'2011, Evgeniy Tatarkin'
+project = 'sadisplay_fixture'
+copyright = '2011, Evgeniy Tatarkin'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -163,8 +163,8 @@ htmlhelp_basename = 'sadisplay_fixturedoc'
 #latex_font_size = '10pt'
 
 latex_documents = [
-  ('index', 'sadisplay_fixture.tex', u'sadisplay\\_fixture Documentation',
-   u'Evgeniy Tatarkin', 'manual'),
+  ('index', 'sadisplay_fixture.tex', 'sadisplay\\_fixture Documentation',
+   'Evgeniy Tatarkin', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -193,6 +193,6 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'sadisplay_fixture', u'sadisplay_fixture Documentation',
-     [u'Evgeniy Tatarkin'], 1)
+    ('index', 'sadisplay_fixture', 'sadisplay_fixture Documentation',
+     ['Evgeniy Tatarkin'], 1)
 ]
