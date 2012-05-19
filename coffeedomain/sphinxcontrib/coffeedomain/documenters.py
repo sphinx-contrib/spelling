@@ -1,8 +1,12 @@
 from sphinx.util.docstrings import prepare_docstring
 from sphinx.ext.autodoc import Documenter, members_option, bool_option, ModuleDocumenter as PyModuleDocumenter
 from subprocess import Popen, PIPE
+import os.path
 import json
+import re
  
+from .domain import MOD_SEP
+
 class StubObject(object):
     """
     A python object that takes the place of the coffeescript object being
@@ -49,7 +53,7 @@ class CoffeedocDocumenter(Documenter):
         *self.args* and *self.retann* if parsing and resolving was successful.
         """
         self.fullname = self.name
-        self.modname, path = self.name.split('::')
+        self.modname, path = self.name.split(MOD_SEP)
         self.real_modname = self.modname
         self.objpath = path.split('.')
         self.args = None
@@ -57,7 +61,7 @@ class CoffeedocDocumenter(Documenter):
         return True
             
     def format_name(self):
-        return self.modname + '::' + '.'.join(self.objpath)
+        return self.modname + MOD_SEP + '.'.join(self.objpath)
 
     def get_object_members(self, want_all=False):
         members = []
@@ -69,17 +73,23 @@ class CoffeedocDocumenter(Documenter):
     @property
     def coffeedoc_module(self):
         filename= self.modname + '.coffee'
-        modules = self.env.temp_data.setdefault('coffee:docgen', {})
+        return self._load_module(filename)
+
+    def _load_module(self, filename):
+        modules = self.env.temp_data.setdefault('coffee:coffeedoc-output', {})
+        if filename in modules:
+            return modules[filename]
         basedir = self.env.config.coffee_src_dir
         parser  = self.env.config.coffee_src_parser or 'commonjs'
-        if filename not in modules:
-            gencmd = ['coffeedoc', '--stdout', '--renderer', 'json', '--parser',
-                      parser, filename]
-            docgen = Popen(gencmd,
-                           cwd=basedir, stdout=PIPE)
-            module_data = json.load(docgen.stdout)[0]['module']
-            print "ran %s" % ' '.join(gencmd)
-            modules[filename] = StubObject('module', module_data)
+
+        gencmd = ['coffeedoc', '--stdout', '--renderer', 'json', '--parser',
+                  parser, filename]
+        docgen = Popen(gencmd, cwd=basedir, stdout=PIPE, shell=True)
+        (stdout, stderr) = docgen.communicate()
+        data = json.loads(stdout)[0]
+        data['path'] = data['path'].replace(basedir+'/', '')
+        data['name'] = data['path'].replace('.coffee', MOD_SEP)
+        modules[filename] = StubObject('module', data)
         return modules[filename]
 
     def import_object(self):
@@ -93,6 +103,10 @@ class ModuleDocumenter(CoffeedocDocumenter, PyModuleDocumenter):
 
     documents_type = 'module'
     sub_member_keys = ('classes', 'functions')
+
+    option_spec =  {
+        'show-dependencies': bool_option
+    }
 
     def import_object(self):
         self.object = self.coffeedoc_module
@@ -110,11 +124,11 @@ class ModuleDocumenter(CoffeedocDocumenter, PyModuleDocumenter):
 
     def add_content(self, more_content, no_docstring=False):
         super(ModuleDocumenter, self).add_content(more_content, no_docstring=False)
-        if not self.object['deps']:
-            return
-        self.add_line('*Dependencies:*', '<autodoc>')
-        for localname, module in self.object['deps'].items():
-            self.add_line('  * %s = require "%s"' % (localname, module), '<autodoc>')
+        if self.options.get('show-dependencies') and self.object['deps']:
+            self.add_line('*Dependencies:*', '<autodoc>')
+            for localname, module in self.object['deps'].items():
+                self.add_line('  * ``%s = require "%s"``' % (localname, module),
+                              '<autodoc>')
 
 class SubMember(object):
     option_spec = {
@@ -154,13 +168,41 @@ class ClassDocumenter(ModuleMember, CoffeedocDocumenter):
     objtype = 'class'
     documents_type = 'classes'
     sub_member_keys = ('staticmethods', 'instancemethods')
+    option_spec = {'inherited-members': bool_option}
 
-    def get_object_members(self, want_all=False):
-        members = []
-        for type in self.sub_member_keys:
-            for obj in self.object[type]:
-                members.append((obj['name'], StubObject(type, obj)))
-        return False, members
+    def add_directive_header(self, sig):
+        super(ClassDocumenter, self).add_directive_header(sig)
+        parent = self.object['parent']
+        if parent:
+            base = self.find_class_fqn(parent)
+            self.add_line(u'   :parent: ' + base, '<autodoc>')
+
+    def find_class_fqn(self, parent):
+        module = self.coffeedoc_module
+        # Module where the parent class came from
+        modname = None
+        if parent in [c['name'] for c in module['classes']]:
+            modname = module['name']
+
+        else:
+            for (local_name, dep) in module['deps'].iteritems():
+                if local_name.find(parent) >= 0:
+                    if dep[0] == '.':
+                        modname = self._relpath_modname(dep)
+                    else:
+                        modname = dep + MOD_SEP
+                    break
+
+        if modname:
+            return (modname + parent)
+        else:
+            return parent
+
+    def _relpath_modname(self, path):
+        here = os.path.dirname(self.coffeedoc_module['path'])
+        path = re.sub('(\\.js|\\.coffee)$', '', path)
+        return os.path.normpath(os.path.join(here, path)) + MOD_SEP
+
 
 class CodeDocumenter(CoffeedocDocumenter):
     sub_member_keys = ()
@@ -174,22 +216,13 @@ class FunctionDocumenter(ModuleMember, CodeDocumenter):
 
 class MethodDocumenter(ClassMember, CodeDocumenter):
     objtype = 'method'
-    documents_type = 'methods'
-
-    @property
-    def __doc__(self):
-        return self['docstring']
-
-    def _import_candidates(self, parent):
-        methods = []
-        for meth in parent['instancemethods']:
-            meth['static'] = False
-            methods.append(meth)
-        for meth in parent['staticmethods']:
-            meth['static'] = True
-            methods.append(meth)
-        return methods
+    documents_type = 'instancemethods'
 
     @classmethod
     def can_document_member(cls, member, membername, isattr, parent):
-        return isinstance(member, StubObject) and member.type.endswith('methods')
+        if isinstance(member, StubObject) and member.type == cls.documents_type:
+            return True
+
+class StaticMethodDocumenter(ClassMember, CodeDocumenter):
+    objtype = 'staticmethod'
+    documents_type = 'staticmethods'

@@ -8,3 +8,4 @@ def setup(app):
     app.add_autodocumenter(doc.ClassDocumenter)
     app.add_autodocumenter(doc.FunctionDocumenter)
     app.add_autodocumenter(doc.MethodDocumenter)
+    app.add_autodocumenter(doc.StaticMethodDocumenter)

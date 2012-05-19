@@ -6,14 +6,15 @@ from sphinx.roles import XRefRole
 from sphinx.domains import Domain, ObjType
 from sphinx.domains.python import _pseudo_parse_arglist
 from sphinx.locale import l_, _
-from sphinx.util.docfields import DocFieldTransformer, TypedField, GroupedField
+from sphinx.util.docfields import TypedField, GroupedField
 from sphinx.util.nodes import make_refnode
+
+MOD_SEP = '::'
 
 class CoffeeObj(ObjectDescription):
     doc_field_types = [
-        TypedField('parameter', label='Parameters',
-                     names=('param', 'parameter', 'arg', 'argument'),
-                     typerolename='obj', typenames=('paramtype', 'type')),
+        GroupedField('parameter', label='Parameters',
+                     names=('param', 'parameter', 'arg', 'argument')),
     ]
 
     def handle_signature(self, sig, signode):
@@ -21,7 +22,10 @@ class CoffeeObj(ObjectDescription):
             signode += addnodes.desc_annotation(self.display_prefix, self.display_prefix)
 
         fullname, _, args = sig.partition('(')
-        modname, name = fullname.split('::')
+        modname, name = fullname.split(MOD_SEP)
+        classname = self.env.temp_data.get('autodoc:class')
+        if classname and name.startswith(classname):
+            name = name[len(classname):]
         args = args[:-1]
         signode += addnodes.desc_name(name, name)
         if isinstance(self, CoffeeFunction):
@@ -39,6 +43,7 @@ class CoffeeObj(ObjectDescription):
 
         indextext = "%s (%s)" % (fqn, self.display_prefix.strip())
         self.indexnode['entries'].append(('single', _(indextext), fqn, ''))
+
 
 # CoffeeModule inherits from Directive to allow it to output titles etc.
 class CoffeeModule(Directive):
@@ -62,8 +67,6 @@ class CoffeeModule(Directive):
         targetnode = nodes.target('', '', ids=['module-' + modname],
                                   ismod=True)
         self.state.document.note_explicit_target(targetnode)
-        # the platform and synopsis aren't printed; in fact, they are only
-        # used in the modindex currently
         indextext = _('%s (module)') % modname[:-2]
         inode = addnodes.index(entries=[('single', indextext,
                                          'module-' + modname, '')])
@@ -73,63 +76,97 @@ class CoffeeClass(CoffeeObj):
     option_spec = {
         'module': directives.unchanged,
         'export_name': directives.unchanged,
+        'parent': directives.unchanged,
     }
+
     display_prefix = 'class '
+
+    def handle_signature(self, sig, signode):
+        fullname = super(CoffeeClass, self).handle_signature(sig, signode)
+
+        parent = self.options.get('parent')
+        if parent:
+            signode += addnodes.desc_annotation('extends', ' extends ')
+            modname, classname = parent.split(MOD_SEP)
+            pnode = addnodes.pending_xref(classname,
+                                          refdomain='coffee',
+                                          reftype='class',
+                                          reftarget=parent,
+                                          )
+            pnode += nodes.literal(classname,
+                                   classname,
+                                   classes=['xref',
+                                            'coffee',
+                                            'coffee-class'])
+            signode += pnode
+
+        return fullname
 
 class CoffeeFunction(CoffeeObj):
     option_spec = {
         'module': directives.unchanged,
         'export_name': directives.unchanged,
     }
+
     display_prefix = 'function '
+
 
 class CoffeeMethod(CoffeeFunction):
     option_spec = {
         'module': directives.unchanged,
-        'class': directives.unchanged,
-        'static': directives.unchanged,
     }
-    @property
-    def display_prefix(self):
-        return 'method '
 
+    display_prefix = 'method '
+
+
+class CoffeeStaticMethod(CoffeeFunction):
+    option_spec = {
+        'module': directives.unchanged,
+    }
+
+    display_prefix = 'static method '
 
 class CoffeeXRefRole(XRefRole):
     def process_link(self, env, refnode, has_explicit_title, title, target):
         """ Called after CoffeeDomain.resolve_xref """
         if not has_explicit_title:
-            title = title.split('::').pop()
+            title = title.split(MOD_SEP).pop()
         return title, target
+
 
 class CoffeeDomain(Domain):
     label = 'CoffeeScript'
     name = 'coffee'
     object_types = {
-        'module':      ObjType(l_('module'), 'module'),
-        'function':  ObjType(l_('function'),  'func'),
-        'class':     ObjType(l_('class'),     'class'),
-        'method':    ObjType(l_('method'), 'method')
+        'module':   ObjType(l_('module'),   'module'),
+        'function': ObjType(l_('function'), 'func'),
+        'class':    ObjType(l_('class'),    'class'),
+        'method':   ObjType(l_('method'),   'method'),
+        'staticmethod':   ObjType(l_('staticmethod'),   'staticmethod'),
     }
+
     directives = {
-        'module': CoffeeModule,
+        'module':   CoffeeModule,
         'function': CoffeeFunction,
-        'class': CoffeeClass,
-        'method': CoffeeMethod,
+        'class':    CoffeeClass,
+        'method':   CoffeeMethod,
+        'staticmethod':   CoffeeStaticMethod,
     }
 
     roles = {
+       'mod': CoffeeXRefRole(),
        'meth': CoffeeXRefRole(),
        'class': CoffeeXRefRole(),
        'func': CoffeeXRefRole(),
     }
+
     data_version = 1
     initial_data = {"modules": {}, "objects": {}}
 
     def get_objects(self):
-        for fqn, obj in self.data['objects'].iteritems():
-            (docname, objtype) = obj
+        for fqn, (docname, objtype) in self.data['objects'].iteritems():
             yield (fqn, fqn, objtype, docname, fqn, 1)
-            
+
     def resolve_xref(self, env, fromdocname, builder, type, target, node, contnode):
         if target[0] == '~':
             target = target[1:]
