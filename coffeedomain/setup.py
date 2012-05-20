@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 if __name__ == '__main__':
     setup(name='sphinxcontrib-coffee',
-          version='0.1.1',
+          version='0.2.0',
           license='BSD',
           author="Stephen Sugden",
           author_email="glurgle@gmail.com",
