@@ -19,9 +19,11 @@ except ImportError:
 from docutils import nodes
 from docutils.statemachine import ViewList
 
+from sphinx.util import force_decode
 from sphinx.util.compat import Directive
 from sphinx.util.nodes import nested_parse_with_titles
 from sphinx.util.docstrings import prepare_docstring
+from sphinx.pycode import ModuleAnalyzer
 
 from sphinxcontrib import httpdomain
 
@@ -114,6 +116,9 @@ class AutoflaskDirective(Directive):
                 continue
             view = app.view_functions[endpoint]
             docstring = view.__doc__ or ''
+            if not isinstance(docstring, unicode):
+                analyzer = ModuleAnalyzer.for_module(view.__module__)
+                docstring = force_decode(docstring, analyzer.encoding)
             if not docstring and 'include-empty-docstring' not in self.options:
                 continue
             docstring = prepare_docstring(docstring)
