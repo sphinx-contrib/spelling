@@ -118,3 +118,9 @@ Filter some endpoints
 .. autoflask:: autoflask_sampleapp:app
    :endpoints: user, post
    :undoc-static:
+
+Documenting by non-ASCII characters
+...................................
+
+.. autoflask:: autoflask_alternative_lang:app
+   :undoc-static:
