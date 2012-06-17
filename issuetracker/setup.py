@@ -34,10 +34,11 @@ with open('README') as stream:
 
 
 VERSION_PATTERN = re.compile(r"__version__ = '([^']+)'")
+VERSION_FILE = os.path.join('sphinxcontrib', 'issuetracker', '__init__.py')
 
 
 def read_version_number():
-    with open(os.path.join('sphinxcontrib', 'issuetracker.py')) as stream:
+    with open(VERSION_FILE) as stream:
         for line in stream:
             match = VERSION_PATTERN.search(line)
             if match:
