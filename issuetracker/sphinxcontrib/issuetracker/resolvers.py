@@ -36,8 +36,10 @@
 from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
+import requests
+from xml.etree import ElementTree as etree
 
-from sphinxcontrib.issuetracker import fetch_issue, Issue
+from sphinxcontrib.issuetracker import Issue
 
 
 GITHUB_API_URL = 'https://api.github.com/repos/{0.project}/issues/{1}'
@@ -64,12 +66,32 @@ def check_project_with_username(tracker_config):
                 tracker_config))
 
 
+def get(app, url):
+    """
+    Get a response from the given ``url``.
+
+    ``url`` is a string containing the URL to request via GET. ``app`` is the
+    Sphinx application object.
+
+    Return the :class:`~requests.Response` object on status code 200, or
+    ``None`` otherwise. If the status code is not 200 or 404, a warning is
+    emitted via ``app``.
+    """
+    response = requests.get(url)
+    if response.status_code == requests.codes.ok:
+        return response
+    elif response.status_code != requests.codes.not_found:
+        msg = 'GET {0.url} failed with code {0.status_code}'
+        app.warn(msg.format(response))
+
+
 def lookup_github_issue(app, tracker_config, issue_id):
     check_project_with_username(tracker_config)
 
     url = GITHUB_API_URL.format(tracker_config, issue_id)
-    issue = fetch_issue(app, url, output_format='json')
-    if issue:
+    response = get(app, url)
+    if response:
+        issue = response.json
         closed = issue['state'] == 'closed'
         return Issue(id=issue_id, title=issue['title'], closed=closed,
                      url=issue['html_url'])
@@ -79,8 +101,9 @@ def lookup_bitbucket_issue(app, tracker_config, issue_id):
     check_project_with_username(tracker_config)
 
     url = BITBUCKET_API_URL.format(tracker_config, issue_id)
-    issue = fetch_issue(app, url, output_format='json')
-    if issue:
+    response = get(app, url)
+    if response:
+        issue = response.json
         closed = issue['status'] not in ('new', 'open')
         url = BITBUCKET_URL.format(tracker_config, issue_id)
         return Issue(id=issue_id, title=issue['title'], closed=closed, url=url)
@@ -124,9 +147,10 @@ def lookup_launchpad_issue(app, tracker_config, issue_id):
 
 
 def lookup_google_code_issue(app, tracker_config, issue_id):
-    issue = fetch_issue(app, GOOGLE_CODE_API_URL.format(
-        tracker_config, issue_id), output_format='xml')
-    if issue:
+    url = GOOGLE_CODE_API_URL.format(tracker_config, issue_id)
+    response = get(app, url)
+    if response:
+        issue = etree.fromstring(response.content)
         state = issue.find('{0}state'.format(GOOGLE_ISSUE_NS))
         title_node = issue.find('{0}title'.format(ATOM_NS))
         title = title_node.text if title_node is not None else None
@@ -138,9 +162,10 @@ def lookup_google_code_issue(app, tracker_config, issue_id):
 def lookup_jira_issue(app, tracker_config, issue_id):
     if not tracker_config.url:
         raise ValueError('URL required')
-    issue = fetch_issue(app, JIRA_API_URL.format(tracker_config, issue_id),
-                        output_format='xml')
-    if issue:
+    url = JIRA_API_URL.format(tracker_config, issue_id)
+    response = get(app, url)
+    if response:
+        issue = etree.fromstring(response.content)
         project = issue.find('*/item/project').text
         if project != tracker_config.project:
             return None

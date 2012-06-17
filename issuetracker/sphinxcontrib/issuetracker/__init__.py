@@ -43,13 +43,10 @@ from __future__ import (print_function, division, unicode_literals,
 __version__ = '0.10'
 
 import re
-import json
 from os import path
 from contextlib import closing
 from collections import namedtuple
-from xml.etree import ElementTree as etree
 
-import requests
 from docutils import nodes
 from docutils.transforms import Transform
 from sphinx.roles import XRefRole
@@ -86,41 +83,6 @@ class TrackerConfig(_TrackerConfig):
         project = config.issuetracker_project or config.project
         url = config.issuetracker_url
         return cls(project, url)
-
-
-FORMAT_CALLBACKS = {
-    'json': json.loads,
-    'xml': etree.fromstring,
-    None: lambda x: x,
-}
-
-
-def fetch_issue(app, url, output_format=None):
-    """
-    Fetch issue data from a web service or website.
-
-    ``app`` is the sphinx application object.  ``url`` is the url of the issue.
-    ``output_format`` is the format of the data retrieved from the given
-    ``url``.  If set, it must be either ``'json'`` or ``'xml'``.
-
-    Return the raw data retrieved from url, if ``output_format`` is unset.  If
-    ``output_format`` is ``'xml'``, return a ElementTree document.  If
-    ``output_format`` is ``'json'``, return the object parsed from JSON
-    (typically a dictionary).  Return ``None``, if ``url`` returned a status
-    code other than 200.
-    """
-    if output_format not in FORMAT_CALLBACKS:
-        raise ValueError(output_format)
-
-    response = requests.get(url)
-    if response.status_code == 200:
-        return FORMAT_CALLBACKS[output_format](response.content)
-    else:
-        if response.status_code != 404:
-            # 404 just says that the issue doesn't exist, but anything else is more
-            # serious and deserves a warning
-            app.warn('{0} unavailable with code {1}'.format(url, response.status_code))
-        return None
 
 
 class IssueRole(XRefRole):
