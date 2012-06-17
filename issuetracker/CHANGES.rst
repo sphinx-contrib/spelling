@@ -2,6 +2,7 @@
 =====================
 
 - Use requests library for HTTP requests
+- Consider launchpad issues closed only if all referenced tasks are completed
 
 
 0.9 (Aug 31, 2011)
