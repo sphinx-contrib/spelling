@@ -45,6 +45,7 @@ import pytest
 from sphinx.environment import SphinxStandaloneReader
 
 from sphinxcontrib import issuetracker
+from sphinxcontrib.issuetracker import resolvers
 
 
 def pytest_funcarg__content(request):
@@ -64,8 +65,8 @@ def test_builtin_issue_trackers():
     Test that all builtin issue trackers are really declared in the
     BUILTIN_ISSUE_TRACKERS dict.
     """
-    trackers = dict(issuetracker.BUILTIN_ISSUE_TRACKERS)
-    for attr in dir(issuetracker):
+    trackers = dict(resolvers.BUILTIN_ISSUE_TRACKERS)
+    for attr in dir(resolvers):
         match = BUILTIN_TRACKER_NAME_PATTERN.match(attr)
         if match:
             tracker_name = match.group(1).replace('_', ' ')
