@@ -200,14 +200,14 @@ def lookup_launchpad_issue(app, tracker_config, issue_id):
 GOOGLE_CODE_URL = 'http://code.google.com/p/{0.project}/issues/detail?id={1}'
 GOOGLE_CODE_API_URL = ('http://code.google.com/feeds/issues/p/'
                        '{0.project}/issues/full/{1}')
+GOOGLE_ISSUE_NS = '{http://schemas.google.com/projecthosting/issues/2009}'
+ATOM_NS = '{http://www.w3.org/2005/Atom}'
 
 def lookup_google_code_issue(app, tracker_config, issue_id):
     issue = fetch_issue(app, GOOGLE_CODE_API_URL.format(
         tracker_config, issue_id), output_format='xml')
     if issue:
-        ISSUE_NS = '{http://schemas.google.com/projecthosting/issues/2009}'
-        ATOM_NS = '{http://www.w3.org/2005/Atom}'
-        state = issue.find('{0}state'.format(ISSUE_NS))
+        state = issue.find('{0}state'.format(GOOGLE_ISSUE_NS))
         title_node = issue.find('{0}title'.format(ATOM_NS))
         title = title_node.text if title_node is not None else None
         closed = state is not None and state.text == 'closed'
