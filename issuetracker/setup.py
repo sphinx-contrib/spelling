@@ -72,6 +72,6 @@ setup(
     platforms='any',
     packages=find_packages(),
     include_package_data=True,
-    install_requires=['Sphinx>=1.1', 'requests>=0.9'],
+    install_requires=['Sphinx>=1.1', 'requests>=0.13'],
     namespace_packages=['sphinxcontrib'],
 )
