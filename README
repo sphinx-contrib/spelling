@@ -57,7 +57,6 @@ List of extensions
 - googlechart: embed charts by using Google Chart_
 - httpdomain: a domain for documenting RESTful HTTP APIs.
 - hyphenator: client-side hyphenation of HTML using hyphenator_
-- issuetracker: link to different issue trackers
 - lilypond: an extension inserting music scripts from Lilypond_ in PNG format.
 - mscgen: embed mscgen-formatted MSC (Message Sequence Chart)s.
 - nicoviceo: embed videos from nicovideo
