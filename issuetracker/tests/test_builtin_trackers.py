@@ -154,10 +154,7 @@ def pytest_funcarg__issue_id(request):
     if not testname:
         return None
     issue = request.cls.issues[testname]
-    if isinstance(issue, basestring):
-        return issue
-    else:
-        return issue.id
+    return issue.id if isinstance(issue, Issue) else issue
 
 
 def pytest_funcarg__issue(request):
@@ -170,10 +167,7 @@ def pytest_funcarg__issue(request):
     """
     testname = request.getfuncargvalue('testname')
     issue = request.cls.issues[testname]
-    if isinstance(issue, basestring):
-        return None
-    else:
-        return issue
+    return issue if isinstance(issue, Issue) else None
 
 
 class TrackerTest(object):
@@ -261,7 +255,7 @@ class TestGitHub(ScopedProjectTrackerTest):
     tracker_config = {'no project': TrackerConfig('lunaryorn/foobar')}
 
     issues = {
-        'closed': Issue(id='2', title=u'python 3 support', closed=True,
+        'closed': Issue(id='2', title='python 3 support', closed=True,
                         url='https://github.com/lunaryorn/pyudev/issues/2'),
         'no project': '10',
         'no issue': '1000',
@@ -291,7 +285,7 @@ class TestGoogleCode(TrackerTest):
 
 
 class TestDebian(TrackerTest):
-    pytestmark = pytest.mark.skipif(b'debianbts is None')
+    pytestmark = pytest.mark.skipif(str('debianbts is None'))
 
     name = 'debian'
 
@@ -307,7 +301,7 @@ class TestDebian(TrackerTest):
 
 
 class TestLaunchpad(TrackerTest):
-    pytestmark = pytest.mark.skipif(b'launchpadlib is None')
+    pytestmark = pytest.mark.skipif(str('launchpadlib is None'))
 
     name = 'launchpad'
 

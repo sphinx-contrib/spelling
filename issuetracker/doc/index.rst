@@ -13,8 +13,12 @@ The extension is available under the terms of the BSD license, see
 Installation
 ------------
 
-This extension needs Sphinx 1.0 and Python 2.6 or newer.  Python 3 is not (yet)
-supported.
+This extension needs Sphinx 1.0 and Python 2.6 or newer, including Python 3.
+
+.. note::
+
+   Some builtin issue trackers do *not* support Python 3 currently. Refer to
+   :confval:`issuetracker` for more information.
 
 Use ``pip`` to install this extension straight from the Python Package Index::
 
@@ -91,10 +95,14 @@ Add ``sphinxcontrib.issuetracker`` to the configuration value
    - ``github``: The issue tracker of https://github.com.
    - ``bitbucket``: The issue tracker of https://bitbucket.org.
    - ``launchpad``: The issue tracker of https://launchpad.net.  To use this
-     issue tracker, launchpadlib_ must be installed.
+     issue tracker, launchpadlib_ must be installed. This tracker is not
+     supported on Python 3, because launchpadlib_ is not yet available for
+     Python 3.
    - ``google code``: The issue tracker of http://code.google.com.
    - ``debian``: The Debian issue tracker at http://bugs.debian.org.  To use
-     this issue tracker, debianbts_ and SOAPpy_ must be installed.
+     this issue tracker, debianbts_ and SOAPpy_ must be installed. This issue
+     tracker is not available on Python 3, because neither debianbts_ nor 
+     SOAPpy_ are available for Python 3 yet.
    - ``jira``: A Jira_ instance.  With this issue tracker
      :confval:`issuetracker_url` must be set to the base url of the Jira
      instance to use.  Otherwise a :exc:`~exceptions.ValueError` is raised when

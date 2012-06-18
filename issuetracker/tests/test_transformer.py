@@ -169,4 +169,4 @@ def test_too_many_groups(app):
         app.build()
     error = excinfo.value
     assert str(error) == ('issuetracker_issue_pattern must have '
-                          'exactly one group: {0!r}'.format((u'a', u'b')))
+                          'exactly one group: {0!r}'.format(('a', 'b')))

@@ -42,6 +42,7 @@ from __future__ import (print_function, division, unicode_literals,
 
 __version__ = '0.10'
 
+import sys
 import re
 from os import path
 from contextlib import closing
@@ -53,6 +54,15 @@ from sphinx.roles import XRefRole
 from sphinx.addnodes import pending_xref
 from sphinx.util.osutil import copyfile
 from sphinx.util.console import bold
+
+
+# Python 2/3 compatibility aliases
+if sys.version_info[0] >= 3:
+    string_type = str
+    text_type = str
+else:
+    string_type = basestring
+    text_type = unicode
 
 
 Issue = namedtuple('Issue', 'id title url closed')
@@ -119,14 +129,14 @@ class IssueReferences(Transform):
         tracker_config = TrackerConfig.from_sphinx_config(config)
         issue_pattern = config.issuetracker_issue_pattern
         title_template = config.issuetracker_title_template
-        if isinstance(issue_pattern, basestring):
+        if isinstance(issue_pattern, string_type):
             issue_pattern = re.compile(issue_pattern)
         for node in self.document.traverse(nodes.Text):
             parent = node.parent
             if isinstance(parent, (nodes.literal, nodes.FixedTextElement)):
                 # ignore inline and block literal text
                 continue
-            text = unicode(node)
+            text = text_type(node)
             new_nodes = []
             last_issue_ref_end = 0
             for match in issue_pattern.finditer(text):
@@ -261,7 +271,7 @@ def resolve_issue_reference(app, env, node, contnode):
         return contnode
     else:
         classes = contnode['classes']
-        conttext = unicode(contnode[0])
+        conttext = text_type(contnode[0])
         formatted_conttext = nodes.Text(conttext.format(issue=issue))
         formatted_contnode = nodes.inline(conttext, formatted_conttext,
                                           classes=classes)
@@ -272,7 +282,7 @@ def connect_builtin_tracker(app):
     from sphinxcontrib.issuetracker.resolvers import BUILTIN_ISSUE_TRACKERS
     if app.config.issuetracker:
         tracker = BUILTIN_ISSUE_TRACKERS[app.config.issuetracker.lower()]
-        app.connect(b'issuetracker-lookup-issue', tracker)
+        app.connect(str('issuetracker-lookup-issue'), tracker)
 
 
 def add_stylesheet(app):
@@ -303,8 +313,8 @@ def copy_stylesheet(app, exception):
 def setup(app):
     app.require_sphinx('1.0')
     app.add_role('issue', IssueRole())
-    app.add_event(b'issuetracker-lookup-issue')
-    app.connect(b'builder-inited', connect_builtin_tracker)
+    app.add_event(str('issuetracker-lookup-issue'))
+    app.connect(str('builder-inited'), connect_builtin_tracker)
     # general configuration
     app.add_config_value('issuetracker', None, 'env')
     app.add_config_value('issuetracker_project', None, 'env')
@@ -314,9 +324,9 @@ def setup(app):
     app.add_config_value('issuetracker_issue_pattern',
                          re.compile(r'#(\d+)'), 'env')
     app.add_config_value('issuetracker_title_template', None, 'env')
-    app.connect(b'builder-inited', add_stylesheet)
-    app.connect(b'builder-inited', init_cache)
-    app.connect(b'builder-inited', init_transformer)
-    app.connect(b'doctree-read', lookup_issues)
-    app.connect(b'missing-reference', resolve_issue_reference)
-    app.connect(b'build-finished', copy_stylesheet)
+    app.connect(str('builder-inited'), add_stylesheet)
+    app.connect(str('builder-inited'), init_cache)
+    app.connect(str('builder-inited'), init_transformer)
+    app.connect(str('doctree-read'), lookup_issues)
+    app.connect(str('missing-reference'), resolve_issue_reference)
+    app.connect(str('build-finished'), copy_stylesheet)

@@ -3,6 +3,7 @@
 
 - Use requests library for HTTP requests
 - Consider launchpad issues closed only if all referenced tasks are completed
+- Support Python 3 (with exception of ``launchpad`` and ``debianbts`` trackers)
 
 
 0.9 (Aug 31, 2011)

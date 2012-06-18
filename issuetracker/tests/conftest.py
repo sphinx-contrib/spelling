@@ -310,7 +310,7 @@ def pytest_funcarg__app(request):
     request.addfinalizer(reset_global_state)
     if 'mock_lookup' in request.keywords:
         lookup_mock_issue = request.getfuncargvalue('mock_lookup')
-        app.connect(b'issuetracker-lookup-issue', lookup_mock_issue)
+        app.connect(str('issuetracker-lookup-issue'), lookup_mock_issue)
     if 'build_app' in request.keywords:
         app.build()
     return app
