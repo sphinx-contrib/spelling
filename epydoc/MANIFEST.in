@@ -1,6 +1,0 @@
-include README
-include LICENSE
-include CHANGES.*
-include test_epydoc.py
-recursive-include doc *.rst *.py
-prune doc/_build

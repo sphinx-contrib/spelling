@@ -47,7 +47,6 @@ List of extensions
 - coffeedomain: a domain for (auto)documenting CoffeeScript source code.
 - context: a builder for ConTeXt.
 - doxylink: Link to external Doxygen-generated HTML documentation
-- epydoc: cross-reference eypdoc generated documentation
 - erlangdomain: an extension for Erlang support (Sphinx 1.0 needed)
 - exceltable: embed Excel spreadsheets into documents using exceltable_
 - feed: an extension for creating syndication feeds and time-based overviews

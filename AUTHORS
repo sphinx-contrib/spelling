@@ -45,9 +45,6 @@ zopeext:
 googleanalytics:
    Domen Kožar <domen@dev.si>
 
-epydoc:
-   Sebastian Wiesner <lunaryorn@googlemail.com>
-
 doxylink
    Matt Williams <matt@milliams.com>
 
