@@ -1,6 +1,0 @@
-include README
-include LICENSE
-include CHANGES.*
-include tox.ini
-recursive-include doc *.rst *.py
-recursive-include tests *.py *.txt

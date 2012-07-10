@@ -51,9 +51,6 @@ doxylink
 ansi:
    Sebastian Wiesner <lunaryorn@googlemail.com>
 
-programoutput:
-   Sebastian Wiesner <lunaryorn@googlemail.com>
-
 cheeseshop:
    Richard Jones <r1chardj0n3s@gmail.com>
    Georg Brandl <georg@python.org>

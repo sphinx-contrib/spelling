@@ -64,7 +64,6 @@ List of extensions
 - osaka: convert standard Japanese doc to Osaka dialect (it is joke extension)
 - paverutils: an alternate integration of Sphinx with Paver_.
 - plantuml: embed UML diagram by using PlantUML_
-- programoutput: include output of programs into documentation
 - requirements: declare requirements wherever you need (e.g. in test
   docstrings), mark statuses and collect them in a single list
 - rubydomain: an extension for Ruby support (Sphinx 1.0 needed)
