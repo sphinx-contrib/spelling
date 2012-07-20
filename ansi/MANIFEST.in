@@ -1,7 +1,0 @@
-include README
-include LICENSE
-include CHANGES.*
-include test_ansi.py
-global-include requirements.txt
-recursive-include sphinxcontrib *.css
-recursive-include doc *.rst *.py

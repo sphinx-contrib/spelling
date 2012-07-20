@@ -1,5 +1,0 @@
-include README
-include LICENSE
-include CHANGES.*
-recursive-include tests *
-recursive-exclude tests *.pyc
