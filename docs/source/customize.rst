@@ -1,6 +1,6 @@
-.. spelling::
+.. .. spelling::
 
-   wikis
+..    wikis
 
 =======================
  Configuration Options

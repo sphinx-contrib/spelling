@@ -1,7 +1,7 @@
-.. spelling::
+.. .. spelling::
 
-   wordlist
-   txt
+..    wordlist
+..    txt
 
 =================
  Release History
