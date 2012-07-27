@@ -6,6 +6,7 @@
 """Spelling checker extension for Sphinx.
 """
 
+import __builtin__
 import codecs
 import collections
 import imp
@@ -145,7 +146,7 @@ class PythonBuiltinsFilter(Filter):
     """Ignore names of built-in Python symbols.
     """
     def _skip(self, word):
-        return word in __builtins__
+        return hasattr(__builtin__, word)
 
 class ImportableModuleFilter(Filter):
     """Ignore names of modules that we could import.
