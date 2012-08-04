@@ -7,6 +7,11 @@
  Release History
 =================
 
+dev
+
+  - Fixed detection of builtins under PyPy, contributed by Hong Minhee
+    (https://bitbucket.org/dahlia).
+
 1.3
 
   - Handle text nodes without parents. (#19)
