@@ -19,9 +19,11 @@ Input Options
   String specifying a file containing a list of words known to be
   spelled correctly but that do not appear in the language dictionary
   selected by ``spelling_lang``.  The file should contain one word per
-  line.  Refer to the `PyEnchant tutoral
-  <http://www.rfk.id.au/software/pyenchant/tutorial.html>`_ for
+  line.  Refer to the `PyEnchant tutorial`_
+  for
   details.
+  
+.. _PyEnchant tutorial: http://packages.python.org/pyenchant/tutorial.html
 
 Output Options
 ==============
@@ -60,8 +62,7 @@ returned by the tokenizer to be checked.
 ``spelling_filters=[]``
   List of filter classes to be added to the tokenizer that produces
   words to be checked. The classes should be derived from
-  ``enchant.tokenize.Filter``. Refer to `the PyEnchant tutorial
-  <http://www.rfk.id.au/software/pyenchant/tutorial.html#basics>`__
+  ``enchant.tokenize.Filter``. Refer to the `PyEnchant tutorial`_
   for examples.
 
 Private Dictionaries
@@ -87,3 +88,53 @@ to the list of known words for just that document.
 
 
 .. _PyEnchant: http://www.rfk.id.au/software/pyenchant/
+
+Custom Word Filters
+===================
+
+The PyEnchant tokenizer supports a "filtering" API for processing
+words from the input. Filters can alter the stream of words by adding,
+replacing, or dropping values.
+
+New filters should be derived from ``enchant.tokenize.Filter`` and
+implement either the ``_split()`` method (to add or replace words) or
+``_skip()`` (to treat words as being spelled correctly). For example,
+this :class:`AcronymFilter` skips words that are all uppercase letters
+or all uppercase with a trailing lowercase "s".
+
+::
+    
+    class AcronymFilter(Filter):
+        """If a word looks like an acronym (all upper case letters),
+        ignore it.
+        """
+
+        def _skip(self, word):
+            return (word == word.upper() # all caps
+                    or
+                    # pluralized acronym ("URLs")
+                    (word[-1].lower() == 's'
+                     and
+                     word[:-1] == word[:-1].upper()
+                     )
+                    )
+
+To be used in a document, the custom filter needs to be installed
+somewhere that Sphinx can import it while processing the input
+files. The Sphinx project's ``conf.py`` then needs two changes.
+
+1. Import the filter class.
+2. Add the filter class to the ``spelling_filters`` configuration
+   variable.
+
+::
+
+   from mymodule import MyFilter
+
+   spelling_filters = [MyFilter]
+
+.. seealso::
+
+   * `Creating a Spelling Checker for reStructuredText Documents
+     <http://www.doughellmann.com/articles/how-tos/sphinxcontrib-spelling/>`_
+   * `PyEnchant tutorial`_
