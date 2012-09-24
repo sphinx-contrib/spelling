@@ -25,6 +25,9 @@ import sys, os
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
+#
+# CANNOT ENABLE SPHINXCONTRIB.SPELLING because ReadTheDocs.org does not support
+# PyEnchant.
 #extensions = [ 'sphinxcontrib.spelling' ]
 
 spelling_show_suggestions = True
