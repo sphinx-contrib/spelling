@@ -1,5 +1,5 @@
 ============================
- sphinxcontrib.spelling 1.3
+ sphinxcontrib.spelling 1.4
 ============================
 
 What is sphinxcontrib.spelling?
@@ -8,12 +8,12 @@ What is sphinxcontrib.spelling?
 `sphinxcontrib.spelling`_ is a spelling checker for Sphinx_.  It uses
 PyEnchant_ to produce a report showing misspelled words.
 
-What's New in 1.3?
-==================
+What's New in This Release?
+===========================
 
-This update changes the output format to include the document name
-with each misspelled word. It also fixes a bug processing some edge
-cases in the input parse tree.
+- Fixed detection of builtins under PyPy, contributed by `Hong Minhee`_.
+
+.. _Hong Minhee: https://bitbucket.org/dahlia
 
 .. _PyEnchant: http://www.rfk.id.au/software/pyenchant/
 

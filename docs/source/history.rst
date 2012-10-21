@@ -7,7 +7,7 @@
  Release History
 =================
 
-dev
+1.4
 
   - Fixed detection of builtins under PyPy, contributed by Hong Minhee
     (https://bitbucket.org/dahlia).

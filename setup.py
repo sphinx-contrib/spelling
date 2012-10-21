@@ -14,7 +14,7 @@ requires = ['Sphinx>=0.6',
 
 setup(
     name='sphinxcontrib-spelling',
-    version='1.3',
+    version='1.4',
     url='http://bitbucket.org/dhellmann/sphinxcontrib-spelling',
     license='BSD',
     author='Doug Hellmann',
