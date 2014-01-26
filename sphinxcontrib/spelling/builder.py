@@ -16,6 +16,8 @@ from sphinx.util.console import darkgreen, red
 
 from enchant.tokenize import EmailFilter, WikiWordFilter
 
+import six
+
 from . import checker
 from . import filters
 
@@ -63,7 +65,12 @@ class SpellingBuilder(Builder):
             filters=f,
         )
         self.output_filename = os.path.join(self.outdir, 'output.txt')
-        self.output = codecs.open(self.output_filename, 'wt', encoding='UTF-8')
+        if six.PY2:
+            self.output = codecs.open(self.output_filename,
+                                      'wt',
+                                      encoding='UTF-8')
+        else:
+            self.output = open(self.output_filename, 'wt', encoding='UTF-8')
 
     def get_outdated_docs(self):
         return 'all documents'

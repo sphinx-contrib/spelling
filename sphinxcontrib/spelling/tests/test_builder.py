@@ -6,11 +6,14 @@
 """Tests for SpellingBuilder
 """
 
+from __future__ import print_function
+
 import codecs
 import os
 import shutil
 import tempfile
-from cStringIO import StringIO
+
+from six import StringIO
 
 from sphinx.application import Sphinx
 
@@ -71,7 +74,7 @@ Welcome to Speeling Checker documentation!
         output_text = f.read()
 
     def check_one(word):
-        print output_text
+        print(output_text)
         assert word in output_text
     for word in ['(Speeling)']:
         yield check_one, word
@@ -97,7 +100,7 @@ There are several mispelled words in this txt.
                  freshenv=True,
                  )
     app.build()
-    print 'reading from %s' % app.builder.output_filename
+    print('reading from %s' % app.builder.output_filename)
     with codecs.open(app.builder.output_filename, 'r') as f:
         output_text = f.read()
 
@@ -134,7 +137,7 @@ Inline ``litterals`` are ignored, too.
                  freshenv=True,
                  )
     app.build()
-    print 'reading from %s' % app.builder.output_filename
+    print('reading from %s' % app.builder.output_filename)
     with codecs.open(app.builder.output_filename, 'r') as f:
         output_text = f.read()
 

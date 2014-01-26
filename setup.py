@@ -10,6 +10,7 @@ finally:
 
 requires = [
     'Sphinx>=0.6',
+    'six',
 
     # FIXME: I would love to have a proper depdency on PyEnchant
     # listed, but since it can't actually be installed from source

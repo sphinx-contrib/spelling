@@ -6,11 +6,12 @@
 """Spelling checker extension for Sphinx.
 """
 
-import __builtin__
 import imp
-import xmlrpclib
 
 from enchant.tokenize import Filter, tokenize, unit_tokenize
+
+from six.moves import builtins
+from six.moves import xmlrpc_client
 
 # TODO - Words with multiple uppercase letters treated as classes and ignored
 
@@ -94,7 +95,7 @@ class PyPIFilterFactory(IgnoreWordsFilterFactory):
     """Build an IgnoreWordsFilter for all of the names of packages on PyPI.
     """
     def __init__(self):
-        client = xmlrpclib.ServerProxy('http://pypi.python.org/pypi')
+        client = xmlrpc_client.ServerProxy('http://pypi.python.org/pypi')
         IgnoreWordsFilterFactory.__init__(self, client.list_packages())
 
 
@@ -102,7 +103,7 @@ class PythonBuiltinsFilter(Filter):
     """Ignore names of built-in Python symbols.
     """
     def _skip(self, word):
-        return hasattr(__builtin__, word)
+        return hasattr(builtins, word)
 
 
 class ImportableModuleFilter(Filter):
