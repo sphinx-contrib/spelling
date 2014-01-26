@@ -8,7 +8,7 @@
 
 import os
 
-from sphinxcontrib.spelling import SpellingChecker
+from sphinxcontrib.spelling.checker import SpellingChecker
 
 
 def test_errors_only():

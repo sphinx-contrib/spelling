@@ -81,7 +81,7 @@ Welcome to Speeling Checker documentation!
 def test_body():
     with open(os.path.join(_srcdir, 'conf.py'), 'w') as f:
         f.write('''
-extensions = [ 'sphinxcontrib.spelling' ]
+extensions = ['sphinxcontrib.spelling']
 ''')
     with open(os.path.join(_srcdir, 'contents.rst'), 'w') as f:
         f.write('''
@@ -111,7 +111,7 @@ There are several mispelled words in this txt.
 def test_ignore_literals():
     with open(os.path.join(_srcdir, 'conf.py'), 'w') as f:
         f.write('''
-extensions = [ 'sphinxcontrib.spelling' ]
+extensions = ['sphinxcontrib.spelling']
 ''')
     with open(os.path.join(_srcdir, 'contents.rst'), 'w') as f:
         f.write('''
