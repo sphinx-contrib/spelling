@@ -7,6 +7,14 @@
  Release History
 =================
 
+dev
+
+- Add python 3.3 support.
+- Add PyPy support.
+- Use pbr for packaging.
+- Update tox config to work with forked version of PyEnchant until
+  changes are accepted upstream.
+
 1.4
 
   - Fixed detection of builtins under PyPy, contributed by Hong Minhee
