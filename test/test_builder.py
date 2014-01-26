@@ -12,10 +12,12 @@ import shutil
 import tempfile
 from cStringIO import StringIO
 
-from sphinxcontrib import spelling
-
 from sphinx.application import Sphinx
-from sphinx.config import Config
+
+_tempdir = None
+_srcdir = None
+_outdir = None
+
 
 def setup():
     global _tempdir, _srcdir, _outdir
@@ -25,8 +27,10 @@ def setup():
     os.mkdir(_srcdir)
     os.mkdir(_outdir)
 
+
 def teardown():
     shutil.rmtree(_tempdir)
+
 
 def test_setup():
     with open(os.path.join(_srcdir, 'conf.py'), 'w') as f:
@@ -38,11 +42,13 @@ extensions = [ 'sphinxcontrib.spelling' ]
     # If the spelling builder is not properly initialized,
     # trying to use it with the Sphinx app class will
     # generate an exception.
-    app = Sphinx(_srcdir, _srcdir, _outdir, _outdir, 'spelling',
-                 status=stdout, warning=stderr,
-                 freshenv=True,
-                 )
+    Sphinx(
+        _srcdir, _srcdir, _outdir, _outdir, 'spelling',
+        status=stdout, warning=stderr,
+        freshenv=True,
+    )
     return
+
 
 def test_title():
     with open(os.path.join(_srcdir, 'conf.py'), 'w') as f:
@@ -67,7 +73,7 @@ Welcome to Speeling Checker documentation!
     def check_one(word):
         print output_text
         assert word in output_text
-    for word in [ '(Speeling)', ]:
+    for word in ['(Speeling)']:
         yield check_one, word
     return
 
@@ -97,7 +103,7 @@ There are several mispelled words in this txt.
 
     def check_one(word):
         assert word in output_text
-    for word in [ '(mispelled)', '(txt)' ]:
+    for word in ['(mispelled)', '(txt)']:
         yield check_one, word
     return
 
@@ -134,7 +140,6 @@ Inline ``litterals`` are ignored, too.
 
     def check_one(word):
         assert word not in output_text
-    for word in [ '(ignoreed)', '(litterals)' ]:
+    for word in ['(ignoreed)', '(litterals)']:
         yield check_one, word
     return
-

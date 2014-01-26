@@ -4,7 +4,7 @@
 build/
 dist/
 env/
-sphinx-contrib.egg-info/
+*.egg-info/
 TAGS
 *~
 .DS_Store

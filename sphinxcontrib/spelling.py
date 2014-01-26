@@ -10,29 +10,18 @@ import __builtin__
 import codecs
 import collections
 import imp
-import itertools
 import os
-import re
-import textwrap
-import tempfile
 import xmlrpclib
 
-#from docutils import core
-from docutils.frontend import OptionParser
-from docutils.io import StringOutput
 import docutils.nodes
-from docutils.nodes import GenericNodeVisitor
 from docutils.parsers import rst
-from docutils.writers import Writer
 from sphinx.builders import Builder
-from sphinx.util.console import bold, darkgreen
-from sphinx.util.console import purple, red, darkgreen, darkgray
-from sphinx.util.nodes import inline_all_toctrees
+from sphinx.util.console import darkgreen, red
 
 import enchant
 from enchant.tokenize import (get_tokenizer, tokenize,
                               Filter, EmailFilter, WikiWordFilter,
-                              unit_tokenize, wrap_tokenizer,
+                              unit_tokenize,
                               )
 
 # TODO - Words with multiple uppercase letters treated as classes and ignored
@@ -57,15 +46,17 @@ class SpellingDirective(rst.Directive):
         # Initialize the per-document filters
         if not hasattr(env, 'spelling_document_filters'):
             env.spelling_document_filters = collections.defaultdict(list)
-            
+
         good_words = []
         for entry in self.content:
             if not entry:
                 continue
             good_words.extend(entry.split())
         if good_words:
-            env.app.info('Extending local dictionary for %s with %s' % (
-                    env.docname, str(good_words)))
+            env.app.info(
+                'Extending local dictionary for %s with %s' % (
+                    env.docname, str(good_words))
+            )
             env.spelling_document_filters[env.docname].append(
                 IgnoreWordsFilterFactory(good_words)
                 )
@@ -77,7 +68,7 @@ class AcronymFilter(Filter):
     ignore it.
     """
     def _skip(self, word):
-        return (word == word.upper() # all caps
+        return (word == word.upper()  # all caps
                 or
                 # pluralized acronym ("URLs")
                 (word[-1].lower() == 's'
@@ -86,25 +77,30 @@ class AcronymFilter(Filter):
                  )
                 )
 
+
 class list_tokenize(tokenize):
+
     def __init__(self, words):
         tokenize.__init__(self, '')
         self._words = words
+
     def next(self):
         if not self._words:
             raise StopIteration()
         word = self._words.pop(0)
         return (word, 0)
 
+
 class ContractionFilter(Filter):
     """Strip common contractions from words.
     """
     splits = {
-        "won't":['will', 'not'],
-        "isn't":['is', 'not'],
-        "can't":['can', 'not'],
-        "i'm":['I', 'am'],
+        "won't": ['will', 'not'],
+        "isn't": ['is', 'not'],
+        "can't": ['can', 'not'],
+        "i'm": ['I', 'am'],
         }
+
     def _split(self, word):
         # Fixed responses
         if word.lower() in self.splits:
@@ -120,20 +116,27 @@ class ContractionFilter(Filter):
 
         return unit_tokenize(word)
 
+
 class IgnoreWordsFilter(Filter):
     """Given a set of words, ignore them all.
     """
+
     def __init__(self, tokenizer, word_set):
         self.word_set = set(word_set)
         Filter.__init__(self, tokenizer)
+
     def _skip(self, word):
         return word in self.word_set
 
+
 class IgnoreWordsFilterFactory(object):
+
     def __init__(self, words):
         self.words = words
+
     def __call__(self, tokenizer):
         return IgnoreWordsFilter(tokenizer, self.words)
+
 
 class PyPIFilterFactory(IgnoreWordsFilterFactory):
     """Build an IgnoreWordsFilter for all of the names of packages on PyPI.
@@ -142,11 +145,13 @@ class PyPIFilterFactory(IgnoreWordsFilterFactory):
         client = xmlrpclib.ServerProxy('http://pypi.python.org/pypi')
         IgnoreWordsFilterFactory.__init__(self, client.list_packages())
 
+
 class PythonBuiltinsFilter(Filter):
     """Ignore names of built-in Python symbols.
     """
     def _skip(self, word):
         return hasattr(__builtin__, word)
+
 
 class ImportableModuleFilter(Filter):
     """Ignore names of modules that we could import.
@@ -155,6 +160,7 @@ class ImportableModuleFilter(Filter):
         Filter.__init__(self, tokenizer)
         self.found_modules = set()
         self.sought_modules = set()
+
     def _skip(self, word):
         if word not in self.sought_modules:
             self.sought_modules.add(word)
@@ -197,7 +203,7 @@ class SpellingChecker(object):
         self.tokenizer = self.original_tokenizer
 
     def check(self, text):
-        """Generator function that yields bad words and suggested alternate spellings.
+        """Yields bad words and suggested alternate spellings.
         """
         for word, pos in self.tokenizer(text):
             correct = self.dictionary.check(word)
@@ -207,13 +213,14 @@ class SpellingChecker(object):
         return
 
 
-TEXT_NODES = set([ 'block_quote',
-                   'paragraph',
-                   'list_item',
-                   'term',
-                   'definition_list_item',
-                   'title',
-                   ])
+TEXT_NODES = set([
+    'block_quote',
+    'paragraph',
+    'list_item',
+    'term',
+    'definition_list_item',
+    'title',
+])
 
 
 class SpellingBuilder(Builder):
@@ -231,15 +238,16 @@ class SpellingBuilder(Builder):
             self.env.spelling_document_filters = collections.defaultdict(list)
 
         # Initialize the global filters
-        filters = [ ContractionFilter,
-                    EmailFilter,
-                    ]
+        filters = [
+            ContractionFilter,
+            EmailFilter,
+        ]
         if self.config.spelling_ignore_wiki_words:
             filters.append(WikiWordFilter)
         if self.config.spelling_ignore_acronyms:
             filters.append(AcronymFilter)
         if self.config.spelling_ignore_pypi_package_names:
-            self.info('Adding package names from PyPI to local spelling dictionary...')
+            self.info('Adding package names from PyPI to local dictionary...')
             filters.append(PyPIFilterFactory())
         if self.config.spelling_ignore_python_builtins:
             filters.append(PythonBuiltinsFilter)
@@ -247,12 +255,14 @@ class SpellingBuilder(Builder):
             filters.append(ImportableModuleFilter)
         filters.extend(self.config.spelling_filters)
 
-        project_words = os.path.join(self.srcdir, self.config.spelling_word_list_filename)
-        self.checker = SpellingChecker(lang=self.config.spelling_lang,
-                                       suggest=self.config.spelling_show_suggestions,
-                                       word_list_filename=project_words,
-                                       filters=filters,
-                                       )
+        project_words = os.path.join(self.srcdir,
+                                     self.config.spelling_word_list_filename)
+        self.checker = SpellingChecker(
+            lang=self.config.spelling_lang,
+            suggest=self.config.spelling_show_suggestions,
+            word_list_filename=project_words,
+            filters=filters,
+        )
         self.output_filename = os.path.join(self.outdir, 'output.txt')
         self.output = codecs.open(self.output_filename, 'wt', encoding='UTF-8')
 
@@ -274,7 +284,9 @@ class SpellingBuilder(Builder):
         self.checker.push_filters(self.env.spelling_document_filters[docname])
 
         for node in doctree.traverse(docutils.nodes.Text):
-            if node.tagname == '#text' and node.parent and node.parent.tagname in TEXT_NODES:
+            if (node.tagname == '#text'
+                    and node.parent
+                    and node.parent.tagname in TEXT_NODES):
 
                 # Figure out the line number for this node by climbing the
                 # tree until we find a node that has a line number.
@@ -288,11 +300,10 @@ class SpellingBuilder(Builder):
                     if parent is None or parent in seen:
                         break
                     lineno = parent.line
-                filename = self.env.doc2path(docname, base=None)
 
                 # Check the text of the node.
                 for word, suggestions in self.checker.check(node.astext()):
-                    msg_parts = [ docname ]
+                    msg_parts = [docname]
                     if lineno:
                         msg_parts.append(darkgreen('(line %3d)' % lineno))
                     msg_parts.append(red(word))
@@ -300,10 +311,10 @@ class SpellingBuilder(Builder):
                     msg = ' '.join(msg_parts)
                     self.info(msg)
                     self.output.write(u"%s:%s: (%s) %s\n" % (
-                            self.env.doc2path(docname, None),
-                            lineno, word,
-                            self.format_suggestions(suggestions),
-                            ))
+                        self.env.doc2path(docname, None),
+                        lineno, word,
+                        self.format_suggestions(suggestions),
+                    ))
 
                     # We found at least one bad spelling, so set the status
                     # code for the app to a value that indicates an error.
@@ -314,29 +325,36 @@ class SpellingBuilder(Builder):
 
     def finish(self):
         self.output.close()
-        self.info('Spelling checker messages written to %s' % self.output_filename)
+        self.info('Spelling checker messages written to %s' %
+                  self.output_filename)
         return
+
 
 def setup(app):
     app.info('Initializing Spelling Checker')
     app.add_builder(SpellingBuilder)
-    # Register the 'spelling' directive for setting parameters within a document
+    # Register the 'spelling' directive for setting parameters within
+    # a document
     app.add_directive('spelling', SpellingDirective)
     # Report guesses about correct spelling
     app.add_config_value('spelling_show_suggestions', False, 'env')
     # Set the language for the text
     app.add_config_value('spelling_lang', 'en_US', 'env')
     # Set a user-provided list of words known to be spelled properly
-    app.add_config_value('spelling_word_list_filename', 'spelling_wordlist.txt', 'env')
+    app.add_config_value('spelling_word_list_filename',
+                         'spelling_wordlist.txt',
+                         'env')
     # Assume anything that looks like a PyPI package name is spelled properly
     app.add_config_value('spelling_ignore_pypi_package_names', False, 'env')
     # Assume words that look like wiki page names are spelled properly
     app.add_config_value('spelling_ignore_wiki_words', True, 'env')
-    # Assume words that are all caps, or all caps with trailing s, are spelled properly
+    # Assume words that are all caps, or all caps with trailing s, are
+    # spelled properly
     app.add_config_value('spelling_ignore_acronyms', True, 'env')
     # Assume words that are part of __builtins__ are spelled properly
     app.add_config_value('spelling_ignore_python_builtins', True, 'env')
-    # Assume words that look like the names of importable modules are spelled properly
+    # Assume words that look like the names of importable modules are
+    # spelled properly
     app.add_config_value('spelling_ignore_importable_modules', True, 'env')
     # Add any user-defined filter classes
     app.add_config_value('spelling_filters', [], 'env')

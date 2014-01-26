@@ -10,6 +10,7 @@ import os
 
 from sphinxcontrib.spelling import SpellingChecker
 
+
 def test_errors_only():
     checker = SpellingChecker(lang='en_US',
                               suggest=False,
@@ -19,6 +20,7 @@ def test_errors_only():
         assert not suggestions, 'Suggesting'
         assert word == 'txt'
     return
+
 
 def test_with_suggestions():
     checker = SpellingChecker(lang='en_US',
@@ -30,12 +32,14 @@ def test_with_suggestions():
         assert word == 'txt'
     return
 
+
 def test_with_wordlist():
-    checker = SpellingChecker(lang='en_US',
-                              suggest=False,
-                              word_list_filename=os.path.join(os.path.dirname(__file__),
-                                                              'test_wordlist.txt')
-                              )
-    words = [ w for w, s in checker.check('This txt is wrong') ]
+    checker = SpellingChecker(
+        lang='en_US',
+        suggest=False,
+        word_list_filename=os.path.join(os.path.dirname(__file__),
+                                        'test_wordlist.txt')
+    )
+    words = [w for w, s in checker.check('This txt is wrong')]
     assert not words, 'Did not use personal word list file'
     return

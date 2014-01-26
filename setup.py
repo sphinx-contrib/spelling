@@ -8,9 +8,17 @@ try:
 finally:
     f.close()
 
-requires = ['Sphinx>=0.6',
-            #'PyEnchant>=1.6.5',
-            ]
+requires = [
+    'Sphinx>=0.6',
+
+    # FIXME: I would love to have a proper depdency on PyEnchant
+    # listed, but since it can't actually be installed from source
+    # anywhere other than Linux (maybe not even there) we all
+    # lose. Install the binaries.
+    #
+    #'PyEnchant>=1.6.5',
+
+]
 
 setup(
     name='sphinxcontrib-spelling',
@@ -18,7 +26,7 @@ setup(
     url='http://bitbucket.org/dhellmann/sphinxcontrib-spelling',
     license='BSD',
     author='Doug Hellmann',
-    author_email='doug.hellmann@gmail.com',
+    author_email='doug@doughellmann.com',
     description='Sphinx "spelling" extension',
     long_description=long_desc,
     zip_safe=False,
