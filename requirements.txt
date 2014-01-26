@@ -1,0 +1,8 @@
+Sphinx>=0.6
+six
+# FIXME: I would love to have a proper depdency on PyEnchant
+# listed, but since it can't actually be installed from source
+# anywhere other than Linux (maybe not even there) we all
+# lose. Install the binaries.
+#
+#PyEnchant>=1.6.5

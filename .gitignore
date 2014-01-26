@@ -12,3 +12,7 @@ spelling/spelling_wordlist.txt
 .tox/
 .coverage/
 *.swp
+
+# Created by pbr
+AUTHORS
+ChangeLog
