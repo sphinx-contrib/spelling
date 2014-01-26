@@ -1,5 +1,5 @@
 ============================
- sphinxcontrib.spelling 1.4
+ sphinxcontrib.spelling 2.0
 ============================
 
 .. tags:: python sphinx sphinxcontrib-spelling release 
@@ -13,14 +13,8 @@ PyEnchant_ to produce a report showing misspelled words.
 What's New in This Release?
 ===========================
 
-- Fixed detection of builtins under PyPy, contributed by `Hong Minhee`_.
-
-.. _Hong Minhee: https://bitbucket.org/dahlia
-
-.. _PyEnchant: http://www.rfk.id.au/software/pyenchant/
-
-.. _Sphinx: http://sphinx.pocoo.org/
-
-.. _sphinxcontrib.spelling: http://www.doughellmann.com/projects/sphinxcontrib-spelling/
-
-.. _documentation: http://www.doughellmann.com/docs/sphinxcontrib.spelling/
+- Add python 3.3 support.
+- Add PyPy support.
+- Use pbr for packaging.
+- Update tox config to work with forked version of PyEnchant until
+  changes are accepted upstream.

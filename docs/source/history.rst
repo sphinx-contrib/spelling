@@ -7,7 +7,7 @@
  Release History
 =================
 
-dev
+2.0
 
 - Add python 3.3 support.
 - Add PyPy support.
