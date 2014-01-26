@@ -67,10 +67,10 @@ class SpellingBuilder(Builder):
         self.output_filename = os.path.join(self.outdir, 'output.txt')
         if six.PY2:
             self.output = codecs.open(self.output_filename,
-                                      'wt',
+                                      'w',
                                       encoding='UTF-8')
         else:
-            self.output = open(self.output_filename, 'wt', encoding='UTF-8')
+            self.output = open(self.output_filename, 'w', encoding='UTF-8')
 
     def get_outdated_docs(self):
         return 'all documents'
