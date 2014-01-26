@@ -1,0 +1,14 @@
+*.pyc
+*.egg
+*.so
+build/
+dist/
+env/
+sphinx-contrib.egg-info/
+TAGS
+*~
+.DS_Store
+spelling/spelling_wordlist.txt
+.tox/
+.coverage/
+*.swp
