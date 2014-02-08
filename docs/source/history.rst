@@ -7,6 +7,10 @@
  Release History
 =================
 
+dev
+
+- Fix unicode error in ``PythonBuiltinsFilter``.
+
 2.0
 
 - Add python 3.3 support.
