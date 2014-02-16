@@ -39,7 +39,7 @@ class SpellingDirective(rst.Directive):
                 continue
             good_words.extend(entry.split())
         if good_words:
-            env.app.info(
+            env.app.debug(
                 'Extending local dictionary for %s with %s' % (
                     env.docname, str(good_words))
             )
