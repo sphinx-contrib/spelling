@@ -118,12 +118,12 @@ class SpellingBuilder(Builder):
 
                 # Check the text of the node.
                 for word, suggestions in self.checker.check(node.astext()):
-                    msg_parts = [docname]
+                    msg_parts = [docname + '.rst']
                     if lineno:
-                        msg_parts.append(darkgreen('(line %3d)' % lineno))
+                        msg_parts.append(darkgreen(str(lineno)))
                     msg_parts.append(red(word))
                     msg_parts.append(self.format_suggestions(suggestions))
-                    msg = ' '.join(msg_parts)
+                    msg = ':'.join(msg_parts)
                     self.info(msg)
                     self.output.write(u"%s:%s: (%s) %s\n" % (
                         self.env.doc2path(docname, None),
