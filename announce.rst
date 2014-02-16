@@ -2,7 +2,7 @@
  sphinxcontrib.spelling 2.1
 ============================
 
-.. tags:: python sphinx sphinxcontrib-spelling release 
+.. tags:: python, sphinx, sphinxcontrib-spelling, release
 
 What is sphinxcontrib.spelling?
 ===============================
