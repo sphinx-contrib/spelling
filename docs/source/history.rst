@@ -7,9 +7,13 @@
  Release History
 =================
 
-dev
+2.1
 
 - Fix unicode error in ``PythonBuiltinsFilter``.
+- Make error output useful in emacs compiler mode
+- Only show the words being added to a local dictionary if debugging
+  is enabled.
+
 
 2.0
 

@@ -1,5 +1,5 @@
 ============================
- sphinxcontrib.spelling 2.0
+ sphinxcontrib.spelling 2.1
 ============================
 
 .. tags:: python sphinx sphinxcontrib-spelling release 
@@ -20,11 +20,10 @@ PyEnchant_ to produce a report showing misspelled words.
 What's New in This Release?
 ===========================
 
-- Add python 3.3 support.
-- Add PyPy support.
-- Use pbr for packaging.
-- Update tox config to work with forked version of PyEnchant until
-  changes are accepted upstream.
+- Fix unicode error in ``PythonBuiltinsFilter``.
+- Make error output useful in emacs compiler mode
+- Only show the words being added to a local dictionary if debugging
+  is enabled.
 
 Installing
 ==========
