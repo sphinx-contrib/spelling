@@ -110,12 +110,12 @@ or all uppercase with a trailing lowercase "s".
         """
 
         def _skip(self, word):
-            return (word == word.upper() # all caps
+            return (word.isupper() # all caps
                     or
                     # pluralized acronym ("URLs")
                     (word[-1].lower() == 's'
                      and
-                     word[:-1] == word[:-1].upper()
+                     word[:-1].isupper()
                      )
                     )
 
