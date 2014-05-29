@@ -1,4 +1,3 @@
 include README
 include LICENSE
-include CHANGES.*
 include sphinxcontrib/spelling/tests/test_wordlist.txt
