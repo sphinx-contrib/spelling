@@ -10,8 +10,9 @@ import imp
 
 from enchant.tokenize import Filter, tokenize, unit_tokenize
 
-from six.moves import builtins
-from six.moves import xmlrpc_client
+from six import moves
+builtins = moves.builtins
+xmlrpc_client = moves.xmlrpc_client
 
 # TODO - Words with multiple uppercase letters treated as classes and ignored
 
