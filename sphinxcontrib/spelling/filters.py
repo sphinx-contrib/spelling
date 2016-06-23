@@ -95,7 +95,7 @@ class PyPIFilterFactory(IgnoreWordsFilterFactory):
     """Build an IgnoreWordsFilter for all of the names of packages on PyPI.
     """
     def __init__(self):
-        client = xmlrpc_client.ServerProxy('http://pypi.python.org/pypi')
+        client = xmlrpc_client.ServerProxy('https://pypi.python.org/pypi')
         IgnoreWordsFilterFactory.__init__(self, client.list_packages())
 
 
