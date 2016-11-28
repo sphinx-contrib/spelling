@@ -17,6 +17,8 @@ def setup(app):
     app.add_config_value('spelling_show_suggestions', False, 'env')
     # Set the language for the text
     app.add_config_value('spelling_lang', 'en_US', 'env')
+    # Set the language for the tokenizer
+    app.add_config_value('tokenizer_lang', 'en_US', 'env')
     # Set a user-provided list of words known to be spelled properly
     app.add_config_value('spelling_word_list_filename',
                          'spelling_wordlist.txt',
