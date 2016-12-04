@@ -15,6 +15,9 @@ Input Options
 ``spelling_lang='en_US'``
   String specifying the language, as understood by PyEnchant and
   enchant.  Defaults to ``en_US`` for US English.
+``tokenizer_lang='en_US'``
+    String specifying the tokenizer language as understood by PyEnchant
+    and enchant. Defaults to ``en_US`` for US English.
 ``spelling_word_list_filename='spelling_wordlist.txt'``
   String specifying a file containing a list of words known to be
   spelled correctly but that do not appear in the language dictionary

@@ -42,3 +42,13 @@ def test_with_wordlist():
     words = [w for w, s in checker.check('This txt is wrong')]
     assert not words, 'Did not use personal word list file'
     return
+
+
+def test_non_english():
+    checker = SpellingChecker(lang='de_DE',
+                              suggest=False,
+                              word_list_filename=None,
+                              )
+    for word, suggestions in checker.check('Dieser Txt ist falsch'):
+        assert word == 'Txt'
+    return

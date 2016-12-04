@@ -59,6 +59,7 @@ class SpellingBuilder(Builder):
                                      self.config.spelling_word_list_filename)
         self.checker = checker.SpellingChecker(
             lang=self.config.spelling_lang,
+            tokenizer_lang=self.config.tokenizer_lang,
             suggest=self.config.spelling_show_suggestions,
             word_list_filename=project_words,
             filters=f,
