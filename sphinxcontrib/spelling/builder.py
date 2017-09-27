@@ -43,20 +43,26 @@ class SpellingBuilder(Builder):
             EmailFilter,
         ]
         if self.config.spelling_ignore_wiki_words:
+            self.info('Ignoring wiki words')
             f.append(WikiWordFilter)
         if self.config.spelling_ignore_acronyms:
+            self.info('Ignoring acronyms')
             f.append(filters.AcronymFilter)
         if self.config.spelling_ignore_pypi_package_names:
             self.info('Adding package names from PyPI to local dictionary...')
             f.append(filters.PyPIFilterFactory())
         if self.config.spelling_ignore_python_builtins:
+            self.info('Ignoring Python builtins')
             f.append(filters.PythonBuiltinsFilter)
         if self.config.spelling_ignore_importable_modules:
+            self.info('Ignoring importable module names')
             f.append(filters.ImportableModuleFilter)
         f.extend(self.config.spelling_filters)
 
         project_words = os.path.join(self.srcdir,
                                      self.config.spelling_word_list_filename)
+        self.info('Looking for custom word list in {}'.format(
+            project_words))
         self.checker = checker.SpellingChecker(
             lang=self.config.spelling_lang,
             tokenizer_lang=self.config.tokenizer_lang,
