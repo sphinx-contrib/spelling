@@ -11,137 +11,121 @@ import codecs
 import os
 import shutil
 import tempfile
+import textwrap
 
+import fixtures
 from six import StringIO
+import testtools
 
 from sphinx.application import Sphinx
 
-_tempdir = None
-_srcdir = None
-_outdir = None
 
+class BuilderTest(testtools.TestCase):
 
-def setup():
-    global _tempdir, _srcdir, _outdir
-    _tempdir = tempfile.mkdtemp()
-    _srcdir = os.path.join(_tempdir, 'src')
-    _outdir = os.path.join(_tempdir, 'out')
-    os.mkdir(_srcdir)
-    os.mkdir(_outdir)
+    def setUp(self):
+        super(BuilderTest, self).setUp()
+        self.tempdir = self.useFixture(fixtures.TempDir()).path
+        self.srcdir = os.path.join(self.tempdir, 'src')
+        self.outdir = os.path.join(self.tempdir, 'out')
+        os.mkdir(self.srcdir)
+        os.mkdir(self.outdir)
 
+    def test_setup(self):
+        with open(os.path.join(self.srcdir, 'conf.py'), 'w') as f:
+            f.write(textwrap.dedent('''
+            extensions = [ 'sphinxcontrib.spelling' ]
+            '''))
+        stdout = StringIO()
+        stderr = StringIO()
+        # If the spelling builder is not properly initialized,
+        # trying to use it with the Sphinx app class will
+        # generate an exception.
+        Sphinx(
+            self.srcdir, self.srcdir, self.outdir, self.outdir, 'spelling',
+            status=stdout, warning=stderr,
+            freshenv=True,
+        )
 
-def teardown():
-    shutil.rmtree(_tempdir)
+    def test_title(self):
+        with open(os.path.join(self.srcdir, 'conf.py'), 'w') as f:
+            f.write(textwrap.dedent('''
+            extensions = [ 'sphinxcontrib.spelling' ]
+            '''))
+        with open(os.path.join(self.srcdir, 'contents.rst'), 'w') as f:
+            f.write(textwrap.dedent('''
+            Welcome to Speeling Checker documentation!
+            ==========================================
+            '''))
+        stdout = StringIO()
+        stderr = StringIO()
+        app = Sphinx(
+            self.srcdir, self.srcdir, self.outdir, self.outdir, 'spelling',
+            status=stdout, warning=stderr,
+            freshenv=True,
+        )
+        app.build()
+        with codecs.open(app.builder.output_filename, 'r') as f:
+            output_text = f.read()
 
+        self.assertIn('(Speeling)', output_text)
 
-def test_setup():
-    with open(os.path.join(_srcdir, 'conf.py'), 'w') as f:
-        f.write('''
-extensions = [ 'sphinxcontrib.spelling' ]
-''')
-    stdout = StringIO()
-    stderr = StringIO()
-    # If the spelling builder is not properly initialized,
-    # trying to use it with the Sphinx app class will
-    # generate an exception.
-    Sphinx(
-        _srcdir, _srcdir, _outdir, _outdir, 'spelling',
-        status=stdout, warning=stderr,
-        freshenv=True,
-    )
-    return
+    def test_body(self):
+        with open(os.path.join(self.srcdir, 'conf.py'), 'w') as f:
+            f.write(textwrap.dedent('''
+            extensions = ['sphinxcontrib.spelling']
+            '''))
+        with open(os.path.join(self.srcdir, 'contents.rst'), 'w') as f:
+            f.write(textwrap.dedent('''
+            Welcome to Spelling Checker documentation!
+            ==========================================
 
+            There are several mispelled words in this txt.
+            '''))
+        stdout = StringIO()
+        stderr = StringIO()
+        app = Sphinx(
+            self.srcdir, self.srcdir, self.outdir, self.outdir, 'spelling',
+            status=stdout, warning=stderr,
+            freshenv=True,
+        )
+        app.build()
+        print('reading from %s' % app.builder.output_filename)
+        with codecs.open(app.builder.output_filename, 'r') as f:
+            output_text = f.read()
 
-def test_title():
-    with open(os.path.join(_srcdir, 'conf.py'), 'w') as f:
-        f.write('''
-extensions = [ 'sphinxcontrib.spelling' ]
-''')
-    with open(os.path.join(_srcdir, 'contents.rst'), 'w') as f:
-        f.write('''
-Welcome to Speeling Checker documentation!
-==========================================
-''')
-    stdout = StringIO()
-    stderr = StringIO()
-    app = Sphinx(_srcdir, _srcdir, _outdir, _outdir, 'spelling',
-                 status=stdout, warning=stderr,
-                 freshenv=True,
-                 )
-    app.build()
-    with codecs.open(app.builder.output_filename, 'r') as f:
-        output_text = f.read()
+        self.assertIn('(mispelled)', output_text)
+        self.assertIn('(txt)', output_text)
 
-    def check_one(word):
-        print(output_text)
-        assert word in output_text
-    for word in ['(Speeling)']:
-        yield check_one, word
-    return
+    def test_ignore_literals(self):
+        with open(os.path.join(self.srcdir, 'conf.py'), 'w') as f:
+            f.write(textwrap.dedent('''
+            extensions = ['sphinxcontrib.spelling']
+            '''))
+        with open(os.path.join(self.srcdir, 'contents.rst'), 'w') as f:
+            f.write(textwrap.dedent('''
+            Welcome to Spelling Checker documentation!
+            ==========================================
 
+            There are several misspelled words in this text.
 
-def test_body():
-    with open(os.path.join(_srcdir, 'conf.py'), 'w') as f:
-        f.write('''
-extensions = ['sphinxcontrib.spelling']
-''')
-    with open(os.path.join(_srcdir, 'contents.rst'), 'w') as f:
-        f.write('''
-Welcome to Spelling Checker documentation!
-==========================================
+            ::
 
-There are several mispelled words in this txt.
-''')
-    stdout = StringIO()
-    stderr = StringIO()
-    app = Sphinx(_srcdir, _srcdir, _outdir, _outdir, 'spelling',
-                 status=stdout, warning=stderr,
-                 freshenv=True,
-                 )
-    app.build()
-    print('reading from %s' % app.builder.output_filename)
-    with codecs.open(app.builder.output_filename, 'r') as f:
-        output_text = f.read()
+                Literal blocks are ignoreed.
 
-    def check_one(word):
-        assert word in output_text
-    for word in ['(mispelled)', '(txt)']:
-        yield check_one, word
-    return
+            Inline ``litterals`` are ignored, too.
 
+            '''))
+        stdout = StringIO()
+        stderr = StringIO()
+        app = Sphinx(
+            self.srcdir, self.srcdir, self.outdir, self.outdir, 'spelling',
+            status=stdout, warning=stderr,
+            freshenv=True,
+        )
+        app.build()
+        print('reading from %s' % app.builder.output_filename)
+        with codecs.open(app.builder.output_filename, 'r') as f:
+            output_text = f.read()
 
-def test_ignore_literals():
-    with open(os.path.join(_srcdir, 'conf.py'), 'w') as f:
-        f.write('''
-extensions = ['sphinxcontrib.spelling']
-''')
-    with open(os.path.join(_srcdir, 'contents.rst'), 'w') as f:
-        f.write('''
-Welcome to Spelling Checker documentation!
-==========================================
-
-There are several misspelled words in this text.
-
-::
-
-  Literal blocks are ignoreed.
-
-Inline ``litterals`` are ignored, too.
-
-''')
-    stdout = StringIO()
-    stderr = StringIO()
-    app = Sphinx(_srcdir, _srcdir, _outdir, _outdir, 'spelling',
-                 status=stdout, warning=stderr,
-                 freshenv=True,
-                 )
-    app.build()
-    print('reading from %s' % app.builder.output_filename)
-    with codecs.open(app.builder.output_filename, 'r') as f:
-        output_text = f.read()
-
-    def check_one(word):
-        assert word not in output_text
-    for word in ['(ignoreed)', '(litterals)']:
-        yield check_one, word
-    return
+        self.assertNotIn('(ignoreed)', output_text)
+        self.assertNotIn('(litterals)', output_text)

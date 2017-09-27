@@ -16,3 +16,6 @@ spelling/spelling_wordlist.txt
 # Created by pbr
 AUTHORS
 ChangeLog
+/.coverage
+/.testrepository/
+/cover/
