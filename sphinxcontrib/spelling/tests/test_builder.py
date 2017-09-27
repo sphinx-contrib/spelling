@@ -9,8 +9,6 @@ from __future__ import print_function
 
 import codecs
 import os
-import shutil
-import tempfile
 import textwrap
 
 import fixtures

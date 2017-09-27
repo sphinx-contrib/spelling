@@ -16,7 +16,8 @@ class SpellingChecker(object):
     the checking and filtering behavior.
     """
 
-    def __init__(self, lang, suggest, word_list_filename, tokenizer_lang='en_US', filters=[]):
+    def __init__(self, lang, suggest, word_list_filename,
+                 tokenizer_lang='en_US', filters=[]):
         self.dictionary = enchant.DictWithPWL(lang, word_list_filename)
         self.tokenizer = get_tokenizer(tokenizer_lang, filters)
         self.original_tokenizer = self.tokenizer

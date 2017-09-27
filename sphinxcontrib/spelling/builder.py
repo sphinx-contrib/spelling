@@ -109,7 +109,7 @@ class SpellingBuilder(Builder):
                 parent = node
                 seen = set()
                 while lineno is None:
-                    #self.info('looking for line number on %r' % node)
+                    # self.info('looking for line number on %r' % node)
                     seen.add(parent)
                     parent = node.parent
                     if parent is None or parent in seen:
