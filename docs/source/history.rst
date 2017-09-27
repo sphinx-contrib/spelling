@@ -1,8 +1,3 @@
-.. .. spelling::
-
-..    wordlist
-..    txt
-
 =================
  Release History
 =================
