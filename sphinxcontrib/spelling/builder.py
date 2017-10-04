@@ -33,6 +33,7 @@ class SpellingBuilder(Builder):
         self.docnames = []
         self.document_data = []
 
+        self.env.settings["smart_quotes"] = False
         # Initialize the per-document filters
         if not hasattr(self.env, 'spelling_document_filters'):
             self.env.spelling_document_filters = collections.defaultdict(list)
