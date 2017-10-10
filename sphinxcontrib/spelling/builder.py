@@ -32,6 +32,7 @@ class SpellingBuilder(Builder):
     def init(self):
         self.docnames = []
         self.document_data = []
+        self.misspelling_count = 0
 
         # Initialize the per-document filters
         if not hasattr(self.env, 'spelling_document_filters'):
@@ -136,10 +137,7 @@ class SpellingBuilder(Builder):
                         lineno, word,
                         self.format_suggestions(suggestions),
                     ))
-
-                    # We found at least one bad spelling, so set the status
-                    # code for the app to a value that indicates an error.
-                    self.app.statuscode = 1
+                    self.misspelling_count += 1
 
         self.checker.pop_filters()
         return
@@ -148,4 +146,6 @@ class SpellingBuilder(Builder):
         self.output.close()
         self.info('Spelling checker messages written to %s' %
                   self.output_filename)
+        if self.misspelling_count:
+            self.warning('Found %d misspelled words' % self.misspelling_count)
         return
