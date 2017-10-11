@@ -34,6 +34,7 @@ class SpellingBuilder(Builder):
         self.document_data = []
         self.misspelling_count = 0
 
+        self.env.settings["smart_quotes"] = False
         # Initialize the per-document filters
         if not hasattr(self.env, 'spelling_document_filters'):
             self.env.spelling_document_filters = collections.defaultdict(list)
