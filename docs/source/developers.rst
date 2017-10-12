@@ -9,8 +9,8 @@
 
 If you would like to contribute to sphinxcontrib.spelling directly,
 these instructions should help you get started.  Patches, bug reports,
-and feature requests are all welcome through the `BitBucket site
-<https://bitbucket.org/birkenfeld/sphinx-contrib/>`__.
+and feature requests are all welcome through the `GitHub site
+<https://github.com/sphinx-contrib/spelling>`__.
 Contributions in the form of patches or pull requests are easier to
 integrate and will receive priority attention.
 
