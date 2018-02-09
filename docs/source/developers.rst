@@ -14,6 +14,10 @@ and feature requests are all welcome through the `GitHub site
 Contributions in the form of patches or pull requests are easier to
 integrate and will receive priority attention.
 
+Running tests
+-------------
+To run the tests, you need ``tox`` installed. Then just run ``make test``.
+
 Building Documentation
 ======================
 
