@@ -5,17 +5,16 @@
 """Spelling checker extension for Sphinx.
 """
 
-import codecs
 import collections
+import io
 import os
+import tempfile
 
 import docutils.nodes
 from sphinx.builders import Builder
 from sphinx.util.console import darkgreen, red
 
 from enchant.tokenize import EmailFilter, WikiWordFilter
-
-import six
 
 from . import checker
 from . import filters
@@ -61,24 +60,57 @@ class SpellingBuilder(Builder):
             f.append(filters.ImportableModuleFilter)
         f.extend(self.config.spelling_filters)
 
-        project_words = os.path.join(self.srcdir,
-                                     self.config.spelling_word_list_filename)
-        self.info('Looking for custom word list in {}'.format(
-            project_words))
+        if not os.path.isdir(self.outdir):
+            os.mkdir(self.outdir)
+
+        #
+        # In case the user has multiple word lists, we combine them into one
+        # large list that we pass on to the checker.
+        #
+        word_list = self.config.spelling_word_list_filename
+
+        # If we have a list, the combined list is the first list plus all words
+        # from the other lists. Otherwise, word_list is assumed to just be a
+        # string.
+        if isinstance(word_list, list):
+            temp_dir = tempfile.mkdtemp()
+            combined_word_list = os.path.join(temp_dir,
+                                              'spelling_wordlist.txt')
+
+            word_list_outfile = io.open(combined_word_list,
+                                        'w',
+                                        encoding='UTF-8')
+
+            for word_file in word_list:
+                # Paths are relative
+                long_word_file = os.path.join(self.srcdir, word_file)
+                self.info('Looking for custom word list in {}'.format(
+                    long_word_file))
+                infile = io.open(long_word_file, 'r', encoding='UTF-8')
+                infile_contents = infile.readlines()
+                word_list_outfile.writelines(infile_contents)
+                infile.close()
+
+                # Check for newline, and add one if not present
+                if len(infile_contents[-1].strip()) > 0:
+                    word_list_outfile.write(u'\n')
+
+            word_list = combined_word_list
+            word_list_outfile.close()
+        else:
+            # If not a list, the path is still relative
+            word_list = os.path.join(self.srcdir, word_list)
+
         self.checker = checker.SpellingChecker(
             lang=self.config.spelling_lang,
             tokenizer_lang=self.config.tokenizer_lang,
             suggest=self.config.spelling_show_suggestions,
-            word_list_filename=project_words,
+            word_list_filename=word_list,
             filters=f,
         )
+
         self.output_filename = os.path.join(self.outdir, 'output.txt')
-        if six.PY2:
-            self.output = codecs.open(self.output_filename,
-                                      'w',
-                                      encoding='UTF-8')
-        else:
-            self.output = open(self.output_filename, 'w', encoding='UTF-8')
+        self.output = io.open(self.output_filename, 'w', encoding='UTF-8')
 
     def get_outdated_docs(self):
         return 'all documents'

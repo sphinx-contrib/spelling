@@ -22,10 +22,10 @@ Input Options
   String specifying a file containing a list of words known to be
   spelled correctly but that do not appear in the language dictionary
   selected by ``spelling_lang``.  The file should contain one word per
-  line.  Refer to the `PyEnchant tutorial`_
-  for
-  details.
-  
+  line. Refer to the `PyEnchant tutorial`_ for details.
+``spelling_word_list_filename=['spelling_wordlist.txt','another_list.txt']``
+  Same as above, but with several files of correctly spelled words.
+
 .. _PyEnchant tutorial: http://packages.python.org/pyenchant/tutorial.html
 
 Output Options
