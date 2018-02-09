@@ -31,5 +31,5 @@ build the docs:
 - sphinxcontrib.spelling
 
 Once all of the tools are installed into a virtualenv using
-pip, run ``make html`` to generate the HTML version of the
+pip, run ``make -C docs/ html`` to generate the HTML version of the
 documentation.
