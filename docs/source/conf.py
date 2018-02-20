@@ -32,6 +32,11 @@ extensions = []
 if os.getenv('ENABLE_SPELLING'):
     extensions.append('sphinxcontrib.spelling')
 
+spelling_word_list_filename = [
+    'spelling_wordlist.txt',
+    'spelling_people.txt',
+]
+
 spelling_show_suggestions = True
 spelling_ignore_pypi_package_names = True
 
