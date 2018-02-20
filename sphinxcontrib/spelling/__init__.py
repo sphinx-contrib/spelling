@@ -21,7 +21,7 @@ def setup(app):
     app.add_config_value('tokenizer_lang', 'en_US', 'env')
     # Set a user-provided list of words known to be spelled properly
     app.add_config_value('spelling_word_list_filename',
-                         'spelling_wordlist.txt',
+                         None,
                          'env')
     # Assume anything that looks like a PyPI package name is spelled properly
     app.add_config_value('spelling_ignore_pypi_package_names', False, 'env')

@@ -63,43 +63,8 @@ class SpellingBuilder(Builder):
         if not os.path.isdir(self.outdir):
             os.mkdir(self.outdir)
 
-        #
-        # In case the user has multiple word lists, we combine them into one
-        # large list that we pass on to the checker.
-        #
-        word_list = self.config.spelling_word_list_filename
-
-        # If we have a list, the combined list is the first list plus all words
-        # from the other lists. Otherwise, word_list is assumed to just be a
-        # string.
-        if isinstance(word_list, list):
-            temp_dir = tempfile.mkdtemp()
-            combined_word_list = os.path.join(temp_dir,
-                                              'spelling_wordlist.txt')
-
-            word_list_outfile = io.open(combined_word_list,
-                                        'w',
-                                        encoding='UTF-8')
-
-            for word_file in word_list:
-                # Paths are relative
-                long_word_file = os.path.join(self.srcdir, word_file)
-                self.info('Looking for custom word list in {}'.format(
-                    long_word_file))
-                infile = io.open(long_word_file, 'r', encoding='UTF-8')
-                infile_contents = infile.readlines()
-                word_list_outfile.writelines(infile_contents)
-                infile.close()
-
-                # Check for newline, and add one if not present
-                if len(infile_contents[-1].strip()) > 0:
-                    word_list_outfile.write(u'\n')
-
-            word_list = combined_word_list
-            word_list_outfile.close()
-        else:
-            # If not a list, the path is still relative
-            word_list = os.path.join(self.srcdir, word_list)
+        word_list = self.get_wordlist_filename()
+        self.info('Looking for custom word list in {}'.format(word_list))
 
         self.checker = checker.SpellingChecker(
             lang=self.config.spelling_lang,
@@ -111,6 +76,47 @@ class SpellingBuilder(Builder):
 
         self.output_filename = os.path.join(self.outdir, 'output.txt')
         self.output = io.open(self.output_filename, 'w', encoding='UTF-8')
+
+    def get_wordlist_filename(self):
+        word_list = self.config.spelling_word_list_filename
+        if word_list is None:
+            word_list = 'spelling_wordlist.txt'
+
+        if not isinstance(word_list, list):
+            filename = os.path.join(self.srcdir, word_list)
+            return filename
+
+        # In case the user has multiple word lists, we combine them
+        # into one large list that we pass on to the checker.
+        return self._build_combined_wordlist()
+
+    def _build_combined_wordlist(self):
+        # If we have a list, the combined list is the first list plus all words
+        # from the other lists. Otherwise, word_list is assumed to just be a
+        # string.
+        temp_dir = tempfile.mkdtemp()
+        combined_word_list = os.path.join(temp_dir,
+                                          'spelling_wordlist.txt')
+
+        word_list = self.config.spelling_word_list_filename
+
+        with io.open(combined_word_list,
+                     'w',
+                     encoding='UTF-8') as outfile:
+            for word_file in word_list:
+                # Paths are relative
+                long_word_file = os.path.join(self.srcdir, word_file)
+                self.info('Adding contents of {} to custom word list'.format(
+                    long_word_file))
+                with io.open(long_word_file, 'r', encoding='UTF-8') as infile:
+                    infile_contents = infile.readlines()
+                outfile.writelines(infile_contents)
+
+                # Check for newline, and add one if not present
+                if not infile_contents[-1].endswith('\n'):
+                    outfile.write(u'\n')
+
+        return combined_word_list
 
     def get_outdated_docs(self):
         return 'all documents'
