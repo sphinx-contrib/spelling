@@ -37,6 +37,6 @@ Details
    history
 
 
-.. _PyEnchant: http://www.rfk.id.au/software/pyenchant/
+.. _PyEnchant: https://github.com/rfk/pyenchant
 
 .. _Sphinx: http://sphinx.pocoo.org/

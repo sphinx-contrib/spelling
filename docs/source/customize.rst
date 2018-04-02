@@ -26,7 +26,7 @@ Input Options
 ``spelling_word_list_filename=['spelling_wordlist.txt','another_list.txt']``
   Same as above, but with several files of correctly spelled words.
 
-.. _PyEnchant tutorial: http://packages.python.org/pyenchant/tutorial.html
+.. _PyEnchant tutorial: https://github.com/rfk/pyenchant/blob/master/website/content/tutorial.rst
 
 Output Options
 ==============
@@ -90,7 +90,7 @@ to the list of known words for just that document.
      Goodger
 
 
-.. _PyEnchant: http://www.rfk.id.au/software/pyenchant/
+.. _PyEnchant: https://github.com/rfk/pyenchant
 
 Custom Word Filters
 ===================

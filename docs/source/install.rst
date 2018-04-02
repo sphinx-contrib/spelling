@@ -10,11 +10,7 @@
 Installing sphinxcontrib.spelling
 =================================
 
-1. Follow the instructions on the PyEnchant_ site to install
-   **enchant** and then **PyEnchant**.
-2. Install the extension with pip: ``pip install sphinxcontrib-spelling``
-
-.. _PyEnchant: http://packages.python.org/pyenchant/
+Install the extension with pip: ``pip install sphinxcontrib-spelling``
 
 Configuration
 =============
