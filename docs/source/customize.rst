@@ -82,8 +82,9 @@ You can use multiple text files with words to be added to the dictionary,
 to do this all you need to do is use a list and include the name of your
 text files.
 
-Example:
-``spelling_word_list_filename=['spelling_wordlist.txt', 'my_wordlist.txt']``
+For example::
+
+  spelling_word_list_filename = ['spelling_wordlist.txt', 'my_wordlist.txt']
 
 The ``spelling`` directive can be used to create a list of words known
 to be spelled correctly within a single file.  For example, if a

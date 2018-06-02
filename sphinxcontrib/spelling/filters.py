@@ -21,14 +21,11 @@ class AcronymFilter(Filter):
     ignore it.
     """
     def _skip(self, word):
-        return (word.isupper()  # all caps
-                or
-                # pluralized acronym ("URLs")
-                (word[-1].lower() == 's'
-                 and
-                 word[:-1].isupper()
-                 )
-                )
+        return (
+            word.isupper() or  # all caps
+            # pluralized acronym ("URLs")
+            (word[-1].lower() == 's' and word[:-1].isupper())
+        )
 
 
 class list_tokenize(tokenize):
@@ -52,7 +49,7 @@ class ContractionFilter(Filter):
         "isn't": ['is', 'not'],
         "can't": ['can', 'not'],
         "i'm": ['I', 'am'],
-        }
+    }
 
     def _split(self, word):
         # Fixed responses
