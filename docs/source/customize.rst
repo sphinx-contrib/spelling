@@ -22,7 +22,8 @@ Input Options
   String specifying a file containing a list of words known to be
   spelled correctly but that do not appear in the language dictionary
   selected by ``spelling_lang``.  The file should contain one word per
-  line. Refer to the `PyEnchant tutorial`_ for details.
+  line. Refer to the `PyEnchant tutorial`_ for details. Use a list to add
+  multiple files.
 ``spelling_word_list_filename=['spelling_wordlist.txt','another_list.txt']``
   Same as above, but with several files of correctly spelled words.
 
@@ -76,6 +77,13 @@ There are two ways to provide a list of known good words. The
 name of a plain text file containing one word per line. All of the
 words in the file are assumed to be spelled correctly and may appear
 in any part of the document being processed.
+
+You can use multiple text files with words to be added to the dictionary,
+to do this all you need to do is use a list and include the name of your
+text files.
+
+Example:
+``spelling_word_list_filename=['spelling_wordlist.txt', 'my_wordlist.txt']``
 
 The ``spelling`` directive can be used to create a list of words known
 to be spelled correctly within a single file.  For example, if a
