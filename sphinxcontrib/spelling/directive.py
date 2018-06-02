@@ -44,5 +44,5 @@ class SpellingDirective(rst.Directive):
             )
             env.spelling_document_filters[env.docname].append(
                 filters.IgnoreWordsFilterFactory(good_words)
-                )
+            )
         return []
