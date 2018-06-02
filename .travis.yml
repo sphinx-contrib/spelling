@@ -19,10 +19,12 @@ matrix:
 # install pbr to avoid any setup_requires funkiness with
 # pip/setuptools.
 before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y enchant
   - pip uninstall -y nose mock
   - pip install pbr
 
-install: pip install .[test] .[docs]
+install: pip install .[test] .[linter]
 
 script:
   - ./tools/travis.sh
