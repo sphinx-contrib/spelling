@@ -24,7 +24,7 @@ before_install:
   - pip uninstall -y nose mock
   - pip install pbr
 
-install: pip install .[test]
+install: pip install .[test] .[linter]
 
 script:
   - ./tools/travis.sh
