@@ -113,7 +113,7 @@ class SpellingBuilder(Builder):
                 outfile.writelines(infile_contents)
 
                 # Check for newline, and add one if not present
-                if not infile_contents[-1].endswith('\n'):
+                if infile and not infile_contents[-1].endswith('\n'):
                     outfile.write(u'\n')
 
         return combined_word_list

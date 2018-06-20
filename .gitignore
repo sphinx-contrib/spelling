@@ -8,6 +8,8 @@ env/
 TAGS
 *~
 .DS_Store
+.idea
+.vscode
 spelling/spelling_wordlist.txt
 .tox/
 .coverage/
