@@ -8,8 +8,11 @@
 import collections
 
 from docutils.parsers import rst
+from sphinx.util import logging
 
 from . import filters
+
+logger = logging.getLogger(__name__)
 
 
 class SpellingDirective(rst.Directive):
@@ -38,7 +41,7 @@ class SpellingDirective(rst.Directive):
                 continue
             good_words.extend(entry.split())
         if good_words:
-            env.app.debug(
+            logger.debug(
                 'Extending local dictionary for %s with %s' % (
                     env.docname, str(good_words))
             )
