@@ -1,14 +1,18 @@
 import inspect
 
+from sphinx.util import logging
+
 from .builder import SpellingBuilder
 from .directive import SpellingDirective
+
+logger = logging.getLogger(__name__)
 
 
 def setup(app):
     # If we are running inside the test suite, "app" will be a module.
     if inspect.ismodule(app):
         return
-    app.info('Initializing Spelling Checker')
+    logger.info('Initializing Spelling Checker')
     app.add_builder(SpellingBuilder)
     # Register the 'spelling' directive for setting parameters within
     # a document

@@ -12,12 +12,15 @@ import tempfile
 
 import docutils.nodes
 from sphinx.builders import Builder
+from sphinx.util import logging
 from sphinx.util.console import darkgreen, red
 
 from enchant.tokenize import EmailFilter, WikiWordFilter
 
 from . import checker
 from . import filters
+
+logger = logging.getLogger(__name__)
 
 # TODO - Words with multiple uppercase letters treated as classes and ignored
 
@@ -44,19 +47,19 @@ class SpellingBuilder(Builder):
             EmailFilter,
         ]
         if self.config.spelling_ignore_wiki_words:
-            self.info('Ignoring wiki words')
+            logger.info('Ignoring wiki words')
             f.append(WikiWordFilter)
         if self.config.spelling_ignore_acronyms:
-            self.info('Ignoring acronyms')
+            logger.info('Ignoring acronyms')
             f.append(filters.AcronymFilter)
         if self.config.spelling_ignore_pypi_package_names:
-            self.info('Adding package names from PyPI to local dictionary...')
+            logger.info('Adding package names from PyPI to local dictionary…')
             f.append(filters.PyPIFilterFactory())
         if self.config.spelling_ignore_python_builtins:
-            self.info('Ignoring Python builtins')
+            logger.info('Ignoring Python builtins')
             f.append(filters.PythonBuiltinsFilter)
         if self.config.spelling_ignore_importable_modules:
-            self.info('Ignoring importable module names')
+            logger.info('Ignoring importable module names')
             f.append(filters.ImportableModuleFilter)
         f.extend(self.config.spelling_filters)
 
@@ -64,7 +67,7 @@ class SpellingBuilder(Builder):
             os.mkdir(self.outdir)
 
         word_list = self.get_wordlist_filename()
-        self.info('Looking for custom word list in {}'.format(word_list))
+        logger.info('Looking for custom word list in {}'.format(word_list))
 
         self.checker = checker.SpellingChecker(
             lang=self.config.spelling_lang,
@@ -106,7 +109,7 @@ class SpellingBuilder(Builder):
             for word_file in word_list:
                 # Paths are relative
                 long_word_file = os.path.join(self.srcdir, word_file)
-                self.info('Adding contents of {} to custom word list'.format(
+                logger.info('Adding contents of {} to custom word list'.format(
                     long_word_file))
                 with io.open(long_word_file, 'r', encoding='UTF-8') as infile:
                     infile_contents = infile.readlines()
@@ -155,7 +158,7 @@ class SpellingBuilder(Builder):
                 parent = node
                 seen = set()
                 while lineno is None:
-                    # self.info('looking for line number on %r' % node)
+                    # logger.info('looking for line number on %r' % node)
                     seen.add(parent)
                     parent = node.parent
                     if parent is None or parent in seen:
@@ -170,7 +173,7 @@ class SpellingBuilder(Builder):
                     msg_parts.append(red(word))
                     msg_parts.append(self.format_suggestions(suggestions))
                     msg = ':'.join(msg_parts)
-                    self.info(msg)
+                    logger.info(msg)
                     self.output.write(u"%s:%s: (%s) %s\n" % (
                         self.env.doc2path(docname, None),
                         lineno, word,
@@ -183,8 +186,8 @@ class SpellingBuilder(Builder):
 
     def finish(self):
         self.output.close()
-        self.info('Spelling checker messages written to %s' %
-                  self.output_filename)
+        logger.info('Spelling checker messages written to %s' %
+                    self.output_filename)
         if self.misspelling_count:
-            self.warn('Found %d misspelled words' % self.misspelling_count)
+            logger.warn('Found %d misspelled words' % self.misspelling_count)
         return
