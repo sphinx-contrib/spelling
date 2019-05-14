@@ -189,5 +189,6 @@ class SpellingBuilder(Builder):
         logger.info('Spelling checker messages written to %s' %
                     self.output_filename)
         if self.misspelling_count:
-            logger.warn('Found %d misspelled words' % self.misspelling_count)
+            logger.warning('Found %d misspelled words' %
+                           self.misspelling_count)
         return
