@@ -6,6 +6,7 @@
 """
 
 import collections
+import importlib
 import io
 import os
 import tempfile
@@ -61,7 +62,7 @@ class SpellingBuilder(Builder):
         if self.config.spelling_ignore_importable_modules:
             logger.info('Ignoring importable module names')
             f.append(filters.ImportableModuleFilter)
-        f.extend(self.config.spelling_filters)
+        f.extend(self._load_filter_classes(self.config.spelling_filters))
 
         if not os.path.isdir(self.outdir):
             os.mkdir(self.outdir)
@@ -79,6 +80,18 @@ class SpellingBuilder(Builder):
 
         self.output_filename = os.path.join(self.outdir, 'output.txt')
         self.output = io.open(self.output_filename, 'w', encoding='UTF-8')
+
+    def _load_filter_classes(self, filters):
+        # Filters may be expressed in the configuration file using
+        # names, so look through them and import the referenced class
+        # and use that in the checker.
+        for filter in filters:
+            if not isinstance(filter, str):
+                yield filter
+                continue
+            module_name, _, class_name = filter.rpartition('.')
+            mod = importlib.import_module(module_name)
+            yield getattr(mod, class_name)
 
     def get_wordlist_filename(self):
         word_list = self.config.spelling_word_list_filename
