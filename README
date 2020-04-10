@@ -6,10 +6,10 @@
 
 This package contains sphinxcontrb.spelling, a spelling checker for
 Sphinx-based documentation.  It uses PyEnchant_ to produce a report
-showing misspelled words.  
+showing misspelled words.
 
 Refer to the `main documentation page
-<http://www.doughellmann.com/docs/sphinxcontrib.spelling/>`__ for
+<https://sphinxcontrib-spelling.readthedocs.io/en/latest/>`__ for
 installation and setup details.
 
 License
