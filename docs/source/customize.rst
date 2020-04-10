@@ -64,10 +64,11 @@ returned by the tokenizer to be checked.
   Boolean controlling whether words that are names of modules found on
   ``sys.path`` are treated as spelled properly. Defaults to ``True``.
 ``spelling_filters=[]``
-  List of filter classes to be added to the tokenizer that produces
-  words to be checked. The classes should be derived from
-  ``enchant.tokenize.Filter``. Refer to the `PyEnchant tutorial`_
-  for examples.
+  List of importable filter classes to be added to the tokenizer that
+  produces words to be checked. For example,
+  ``["enchant.tokenize.MentionFilter"]``.  The classes should be
+  derived from ``enchant.tokenize.Filter``. Refer to the `PyEnchant
+  tutorial`_ for examples.
 
 Private Dictionaries
 ====================
