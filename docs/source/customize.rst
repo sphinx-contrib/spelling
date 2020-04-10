@@ -137,14 +137,12 @@ somewhere that Sphinx can import it while processing the input
 files. The Sphinx project's ``conf.py`` then needs two changes.
 
 1. Import the filter class.
-2. Add the filter class to the ``spelling_filters`` configuration
-   variable.
+2. Add the import string for the filter class to the
+   ``spelling_filters`` configuration variable.
 
 ::
 
-   from mymodule import MyFilter
-
-   spelling_filters = [MyFilter]
+   spelling_filters = ['mymodule.MyFilter']
 
 .. seealso::
 
