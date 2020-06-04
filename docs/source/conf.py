@@ -38,7 +38,6 @@ spelling_word_list_filename = [
 ]
 
 spelling_show_suggestions = True
-spelling_show_whole_line = True
 spelling_ignore_pypi_package_names = True
 
 # Add any paths that contain templates here, relative to this directory.

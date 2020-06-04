@@ -20,7 +20,7 @@ def setup(app):
     # Report guesses about correct spelling
     app.add_config_value('spelling_show_suggestions', False, 'env')
     # Report the whole line that has the error
-    app.add_config_value('spelling_show_whole_line', False, 'env')
+    app.add_config_value('spelling_show_whole_line', True, 'env')
     # Set the language for the text
     app.add_config_value('spelling_lang', 'en_US', 'env')
     # Set the language for the tokenizer

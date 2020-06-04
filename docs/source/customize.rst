@@ -36,10 +36,10 @@ Output Options
   Boolean controlling whether suggestions for misspelled words are
   printed.  Defaults to False.
 
-``spelling_show_whole_line=False``
+``spelling_show_whole_line=True``
   Boolean controlling whether the contents of the line containing each
   misspelled word is printed, for more context about the location of each
-  word.  Defaults to False.
+  word.  Defaults to True.
 
 Word Filters
 ============
