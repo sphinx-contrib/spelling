@@ -76,6 +76,7 @@ class SpellingBuilder(Builder):
             suggest=self.config.spelling_show_suggestions,
             word_list_filename=word_list,
             filters=f,
+            context_line=self.config.spelling_show_whole_line,
         )
 
         self.output_filename = os.path.join(self.outdir, 'output.txt')
@@ -179,18 +180,21 @@ class SpellingBuilder(Builder):
                     lineno = parent.line
 
                 # Check the text of the node.
-                for word, suggestions in self.checker.check(node.astext()):
+                misspellings = self.checker.check(node.astext())
+                for word, suggestions, context_line in misspellings:
                     msg_parts = [docname + '.rst']
                     if lineno:
                         msg_parts.append(darkgreen(str(lineno)))
                     msg_parts.append(red(word))
                     msg_parts.append(self.format_suggestions(suggestions))
+                    msg_parts.append(context_line)
                     msg = ':'.join(msg_parts)
                     logger.info(msg)
-                    self.output.write(u"%s:%s: (%s) %s\n" % (
+                    self.output.write(u"%s:%s: (%s) %s %s\n" % (
                         self.env.doc2path(docname, None),
                         lineno, word,
                         self.format_suggestions(suggestions),
+                        context_line,
                     ))
                     self.misspelling_count += 1
 
