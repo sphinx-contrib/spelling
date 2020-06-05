@@ -12,7 +12,9 @@ matrix:
     - python: "nightly"
   include:
     - env: BUILD=docs
+      python: 3.8
     - env: BUILD=linter
+      python: 3.8
 
 # travis pre-installs some packages that may conflict with our test
 # dependencies, so remove them before we set ourselves up. Also
