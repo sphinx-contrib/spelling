@@ -1,7 +1,6 @@
 language: python
 
 python:
-  - "3.6"
   - "3.7"
   - "3.8"
   - "nightly"
@@ -27,7 +26,6 @@ before_install:
 
 install:
   - pip install .[test] .[linter]
-  - pip install -U setuptools
 
 script:
   # Conditional builds (related to env passed)
