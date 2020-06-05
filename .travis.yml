@@ -27,6 +27,7 @@ before_install:
 
 install:
   - pip install .[test] .[linter]
+  - pip install -U setuptools
 
 script:
   # Conditional builds (related to env passed)
