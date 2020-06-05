@@ -17,13 +17,14 @@ class SpellingChecker(object):
     """
 
     def __init__(self, lang, suggest, word_list_filename,
-                 tokenizer_lang='en_US', filters=None):
+                 tokenizer_lang='en_US', filters=None, context_line=False):
         if filters is None:
             filters = []
         self.dictionary = enchant.DictWithPWL(lang, word_list_filename)
         self.tokenizer = get_tokenizer(tokenizer_lang, filters)
         self.original_tokenizer = self.tokenizer
         self.suggest = suggest
+        self.context_line = context_line
 
     def push_filters(self, new_filters):
         """Add a filter to the tokenizer chain.
@@ -45,5 +46,22 @@ class SpellingChecker(object):
             correct = self.dictionary.check(word)
             if correct:
                 continue
-            yield word, self.dictionary.suggest(word) if self.suggest else []
+
+            suggestions = self.dictionary.suggest(word) if self.suggest else []
+            line = line_of_index(text, pos) if self.context_line else ""
+
+            yield word, suggestions, line
         return
+
+
+def line_of_index(text, index):
+    try:
+        line_start = text.rindex("\n", 0, index) + 1
+    except ValueError:
+        line_start = 0
+    try:
+        line_end = text.index("\n", index)
+    except ValueError:
+        line_end = len(text)
+
+    return text[line_start:line_end]
