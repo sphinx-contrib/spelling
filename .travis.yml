@@ -1,8 +1,8 @@
 language: python
 
 python:
-  - "3.5"
-  - "3.6"
+  - "3.7"
+  - "3.8"
   - "nightly"
 
 # Test the nightly build of cpython, but ignore any failures.
@@ -12,7 +12,9 @@ matrix:
     - python: "nightly"
   include:
     - env: BUILD=docs
+      python: 3.8
     - env: BUILD=linter
+      python: 3.8
 
 # travis pre-installs some packages that may conflict with our test
 # dependencies, so remove them before we set ourselves up. Also
@@ -22,9 +24,30 @@ before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y enchant
   - pip uninstall -y nose mock
-  - pip install pbr
+  - pip install pbr tox tox-travis
 
-install: pip install .[test] .[linter]
+install:
+  - pip install .[test] .[linter]
 
 script:
-  - ./tools/travis.sh
+  # Conditional builds (related to env passed)
+  - |
+    case ${BUILD} in
+        docs|pep8|cover)
+            tox -e ${BUILD}
+            ;;
+        *)
+            tox
+            ;;
+    esac
+
+
+deploy:
+  on:
+    tags: true
+  distributions: "sdist bdist_wheel"
+  skip_existing: true
+  provider: pypi
+  user: __token__
+  password:
+    secure: "LcKMGh8rF8R4/yVYXPUpsyHseUxlYg3jF/Y76nfqhiKkS/5Vw2g6qgav2gHpjKEW4kJVzfCEfJ3FyCJgV50P9UcWvG6a8p+ld7rmEel7nXcfym6xFvxDJa+MGQmdU0NlelKAsPF+RRIG96WLoU/B53AqiypaSMZ1sjr1nFeisRvif7FwAJlgeimgWBxWuJx7UmJ5NblDaWKvA4YGb3fJWnuGxk8DKmLvrEnfzaVRE5HCkebk9dOfPWGUG4D7apUFPX1rgF2MC49aHYWXEG4lfzg4ldd6EtCNC1eY36MYK5rHjjmw1JTxHwwmpMXZ1QCwwuk7UFW+trkiuc43qtqxtlha7MSwCO6Q/8V9g/CvrUf+iOpy7yKsooD/VrWAIJql8Z3BfAXR23IJwtdEU8bwt0rCMu64+UAPXxlSITXEZAqOZnsKlLpF437VfG7clEGcguajPKMyvDKD/GMEx6vWhY3uEOvjVx+2rJ6sAq+joyX6qkwE0eYqgCcDJQhHYP3orJmednKeKnkGtSUC9g+amlPfDyoDrTyFwsCKbuCDgnSFm8G9o10CXii6IUQ0peVdbBCPdmZXjUNqQAcKgD9rL2qC3/Tp+QZZlIpLq1JVtmb9L0Svu3XSjwCVdhYuNm2mgeiFy3Hr/RSB+GFHEsOI/Eh9zV0qMy+ZjQ7yQ0A7Dow="
