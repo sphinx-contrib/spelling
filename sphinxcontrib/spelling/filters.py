@@ -5,13 +5,11 @@
 """Spelling checker extension for Sphinx.
 """
 
+import builtins
 import imp
+import xmlrpc.client as xmlrpc_client
 
 from enchant.tokenize import Filter, tokenize, unit_tokenize
-
-from six import moves
-builtins = moves.builtins
-xmlrpc_client = moves.xmlrpc_client
 
 # TODO - Words with multiple uppercase letters treated as classes and ignored
 

@@ -5,17 +5,14 @@
 """Tests for SpellingBuilder
 """
 
-from __future__ import print_function
-
 import pytest
 
 import codecs
+import io
 import os
 import textwrap
 
 import fixtures
-from six import StringIO
-import testtools
 
 from sphinx.application import Sphinx
 
@@ -36,8 +33,8 @@ def add_file(thedir, filename, content):
 
 
 def get_sphinx_output(srcdir, outdir):
-    stdout = StringIO()
-    stderr = StringIO()
+    stdout = io.StringIO()
+    stderr = io.StringIO()
     app = Sphinx(
         srcdir, srcdir, outdir, outdir, 'spelling',
         status=stdout, warning=stderr,
@@ -50,8 +47,8 @@ def get_sphinx_output(srcdir, outdir):
 
 def test_setup(sphinx_project):
     srcdir, outdir = sphinx_project
-    stdout = StringIO()
-    stderr = StringIO()
+    stdout = io.StringIO()
+    stderr = io.StringIO()
     # If the spelling builder is not properly initialized,
     # trying to use it with the Sphinx app class will
     # generate an exception.
