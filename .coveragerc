@@ -1,0 +1,2 @@
+[run]
+omit = sphinxcontrib/spelling/tests/*
