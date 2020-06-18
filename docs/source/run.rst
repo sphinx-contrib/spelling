@@ -12,7 +12,7 @@ saved to the file ``spelling/output.txt`` under the build directory.
 ::
 
     $ make spelling
-    sphinx-build -b spelling -d build/doctrees   source build/spelling
+    sphinx-build -W -b spelling -d build/doctrees   source build/spelling
     Running Sphinx v1.0.7
     Initializing Spelling Checker
     loading pickled environment... done
