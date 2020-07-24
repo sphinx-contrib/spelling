@@ -6,7 +6,6 @@
 """
 
 import os
-import unittest
 
 from sphinxcontrib.spelling.checker import SpellingChecker, line_of_index
 

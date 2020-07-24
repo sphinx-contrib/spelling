@@ -26,16 +26,16 @@ before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y enchant
   - pip uninstall -y nose mock
-  - pip install pbr tox tox-travis
 
 install:
+  - pip install pbr tox tox-travis
   - pip install .[test] .[linter]
 
 script:
   # Conditional builds (related to env passed)
   - |
     case ${BUILD} in
-        docs|pep8|cover)
+        docs|pep8|cover|linter)
             tox -e ${BUILD}
             ;;
         *)

@@ -9,10 +9,7 @@ import pytest
 
 import codecs
 import io
-import os
 import textwrap
-
-import fixtures
 
 from sphinx.application import Sphinx
 
@@ -44,6 +41,7 @@ def get_sphinx_output(srcdir, outdir):
     with codecs.open(app.builder.output_filename, 'r') as f:
         output_text = f.read()
     return (stdout, stderr, output_text)
+
 
 def test_setup(sphinx_project):
     srcdir, outdir = sphinx_project

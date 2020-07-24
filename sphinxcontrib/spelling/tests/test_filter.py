@@ -5,8 +5,6 @@
 """Tests for filters.
 """
 
-import unittest
-
 from enchant.tokenize import get_tokenizer
 
 from sphinxcontrib.spelling import filters
