@@ -10,8 +10,6 @@ import collections
 from docutils.parsers import rst
 from sphinx.util import logging
 
-from . import filters
-
 logger = logging.getLogger(__name__)
 
 
@@ -31,9 +29,9 @@ class SpellingDirective(rst.Directive):
     def run(self):
         env = self.state.document.settings.env
 
-        # Initialize the per-document filters
-        if not hasattr(env, 'spelling_document_filters'):
-            env.spelling_document_filters = collections.defaultdict(list)
+        # Initialize the per-document good words list
+        if not hasattr(env, 'spelling_document_words'):
+            env.spelling_document_words = collections.defaultdict(list)
 
         good_words = []
         for entry in self.content:
@@ -45,7 +43,6 @@ class SpellingDirective(rst.Directive):
                 'Extending local dictionary for %s with %s' % (
                     env.docname, str(good_words))
             )
-            env.spelling_document_filters[env.docname].append(
-                filters.IgnoreWordsFilterFactory(good_words)
-            )
+            env.spelling_document_words[env.docname].extend(good_words)
+
         return []

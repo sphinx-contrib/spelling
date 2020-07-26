@@ -39,8 +39,8 @@ class SpellingBuilder(Builder):
 
         self.env.settings["smart_quotes"] = False
         # Initialize the per-document filters
-        if not hasattr(self.env, 'spelling_document_filters'):
-            self.env.spelling_document_filters = collections.defaultdict(list)
+        if not hasattr(self.env, 'spelling_document_words'):
+            self.env.spelling_document_words = collections.defaultdict(list)
 
         # Initialize the global filters
         f = [
@@ -159,7 +159,17 @@ class SpellingBuilder(Builder):
     ])
 
     def write_doc(self, docname, doctree):
-        self.checker.push_filters(self.env.spelling_document_filters[docname])
+        # Build the document-specific word filter based on any good
+        # words listed in spelling directives. If we have no such
+        # words, we want to push an empty list of filters so that we
+        # can always safely pop the filter stack when we are done with
+        # this document.
+        doc_filters = []
+        good_words = self.env.spelling_document_words.get(docname)
+        if good_words:
+            logger.info('Extending local dictionary for %s', docname)
+            doc_filters.append(filters.IgnoreWordsFilterFactory(good_words))
+        self.checker.push_filters(doc_filters)
 
         for node in doctree.traverse(docutils.nodes.Text):
             if (node.tagname == '#text' and

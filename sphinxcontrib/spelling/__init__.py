@@ -2,6 +2,7 @@ import inspect
 
 from sphinx.util import logging
 
+from .asset import SpellingCollector
 from .builder import SpellingBuilder
 from .directive import SpellingDirective
 
@@ -17,6 +18,9 @@ def setup(app):
     # Register the 'spelling' directive for setting parameters within
     # a document
     app.add_directive('spelling', SpellingDirective)
+    # Register an environment collector to merge data gathered by the
+    # directive in parallel builds
+    app.add_env_collector(SpellingCollector)
     # Report guesses about correct spelling
     app.add_config_value('spelling_show_suggestions', False, 'env')
     # Report the whole line that has the error
@@ -43,4 +47,4 @@ def setup(app):
     app.add_config_value('spelling_ignore_importable_modules', True, 'env')
     # Add any user-defined filter classes
     app.add_config_value('spelling_filters', [], 'env')
-    return {"parallel_read_safe": False}
+    return {"parallel_read_safe": True}
