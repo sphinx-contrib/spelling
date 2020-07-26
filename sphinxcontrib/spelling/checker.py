@@ -5,8 +5,12 @@
 """Spelling checker extension for Sphinx.
 """
 
-import enchant
-from enchant.tokenize import get_tokenizer
+try:
+    import enchant
+    from enchant.tokenize import get_tokenizer
+    have_enchant = True
+except ImportError:
+    have_enchant = False
 
 
 class SpellingChecker(object):
@@ -18,6 +22,10 @@ class SpellingChecker(object):
 
     def __init__(self, lang, suggest, word_list_filename,
                  tokenizer_lang='en_US', filters=None, context_line=False):
+        if not have_enchant:
+            raise RuntimeError(
+                'Cannot instantiate SpellingChecker '
+                'without PyEnchant installed')
         if filters is None:
             filters = []
         self.dictionary = enchant.DictWithPWL(lang, word_list_filename)

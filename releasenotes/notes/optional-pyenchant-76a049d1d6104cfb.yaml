@@ -1,0 +1,8 @@
+---
+features:
+  - |
+    PyEnchant is an optional dependency. If it is not installer, the
+    spell checker will not work, but the extension can still be
+    initialized. This allows projects that use spell checking to
+    publish their documentation to ``readthedocs.org``, where it is
+    not possible to install PyEnchant.

@@ -16,7 +16,11 @@ from sphinx.builders import Builder
 from sphinx.util import logging
 from sphinx.util.console import darkgreen, red
 
-from enchant.tokenize import EmailFilter, WikiWordFilter
+try:
+    from enchant.tokenize import EmailFilter, WikiWordFilter
+    have_enchant = True
+except ImportError:
+    have_enchant = False
 
 from . import checker
 from . import filters
@@ -33,6 +37,10 @@ class SpellingBuilder(Builder):
     name = 'spelling'
 
     def init(self):
+        if not have_enchant:
+            raise RuntimeError(
+                'Cannot initialize spelling builder '
+                'without PyEnchant installed')
         self.docnames = []
         self.document_data = []
         self.misspelling_count = 0
