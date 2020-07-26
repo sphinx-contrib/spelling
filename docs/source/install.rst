@@ -17,6 +17,6 @@
 
 3. Then pass ``"spelling"`` as the builder argument to ``sphinx-build``.
 
-   .. code-block:: shell
+   .. code-block:: shell-session
 
       $ sphinx-build -b spelling docs/source docs/build
