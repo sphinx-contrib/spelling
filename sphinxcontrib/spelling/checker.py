@@ -8,9 +8,10 @@
 try:
     import enchant
     from enchant.tokenize import get_tokenizer
-    have_enchant = True
-except ImportError:
-    have_enchant = False
+except ImportError as imp_exc:
+    enchant_import_error = imp_exc
+else:
+    enchant_import_error = None
 
 
 class SpellingChecker(object):
@@ -22,10 +23,11 @@ class SpellingChecker(object):
 
     def __init__(self, lang, suggest, word_list_filename,
                  tokenizer_lang='en_US', filters=None, context_line=False):
-        if not have_enchant:
+        if enchant_import_error is not None:
             raise RuntimeError(
                 'Cannot instantiate SpellingChecker '
-                'without PyEnchant installed')
+                'without PyEnchant installed',
+            ) from enchant_import_error
         if filters is None:
             filters = []
         self.dictionary = enchant.DictWithPWL(lang, word_list_filename)
