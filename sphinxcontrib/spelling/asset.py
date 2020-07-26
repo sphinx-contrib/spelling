@@ -2,8 +2,7 @@
 #
 # Copyright (c) 2020 Doug Hellmann.  All rights reserved.
 #
-"""Asset collector for additional spelling terms
-"""
+"""Asset collector for additional spelling terms."""
 
 import collections
 
