@@ -1,6 +1,5 @@
-.. .. spelling::
+.. spelling::
 
-   wikis
    sphinxcontrib
 
 ==============
