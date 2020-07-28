@@ -1,0 +1,7 @@
+---
+features:
+  - |
+    Restore support for parallel builds. Words that do not appear in
+    any configured dictionary are written to a file named based on the
+    input file, with the ``.rst`` extension replaced with
+    ``.spelling``.

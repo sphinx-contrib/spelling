@@ -57,5 +57,6 @@ def setup(app):
     app.add_config_value('spelling_filters', [], 'env')
     return {
         "parallel_read_safe": True,
+        "parallel_write_safe": True,
         "version": version,
     }

@@ -15,6 +15,7 @@ import docutils.nodes
 from sphinx.builders import Builder
 from sphinx.util import logging
 from sphinx.util.console import darkgreen, red
+from sphinx.util.osutil import ensuredir
 
 try:
     from enchant.tokenize import EmailFilter, WikiWordFilter
@@ -87,9 +88,6 @@ class SpellingBuilder(Builder):
             filters=f,
             context_line=self.config.spelling_show_whole_line,
         )
-
-        self.output_filename = os.path.join(self.outdir, 'output.txt')
-        self.output = io.open(self.output_filename, 'w', encoding='UTF-8')
 
     def _load_filter_classes(self, filters):
         # Filters may be expressed in the configuration file using
@@ -168,6 +166,13 @@ class SpellingBuilder(Builder):
     ])
 
     def write_doc(self, docname, doctree):
+        output_filename = os.path.join(self.outdir, docname + '.spelling')
+        ensuredir(os.path.dirname(output_filename))
+        with io.open(output_filename, 'w', encoding='UTF-8') as output:
+            self._do_write(output, docname, doctree)
+
+    def _do_write(self, output, docname, doctree):
+
         # Build the document-specific word filter based on any good
         # words listed in spelling directives. If we have no such
         # words, we want to push an empty list of filters so that we
@@ -209,7 +214,7 @@ class SpellingBuilder(Builder):
                     msg_parts.append(context_line)
                     msg = ':'.join(msg_parts)
                     logger.info(msg)
-                    self.output.write(u"%s:%s: (%s) %s %s\n" % (
+                    output.write(u"%s:%s: (%s) %s %s\n" % (
                         self.env.doc2path(docname, None),
                         lineno, word,
                         self.format_suggestions(suggestions),
@@ -221,9 +226,6 @@ class SpellingBuilder(Builder):
         return
 
     def finish(self):
-        self.output.close()
-        logger.info('Spelling checker messages written to %s' %
-                    self.output_filename)
         if self.misspelling_count:
             logger.warning('Found %d misspelled words' %
                            self.misspelling_count)
