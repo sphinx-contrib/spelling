@@ -18,6 +18,10 @@ matrix:
     - env: BUILD=pkglint
       python: 3.8
 
+# Pull all of the history so we can use reno
+git:
+  depth: false
+
 # travis pre-installs some packages that may conflict with our test
 # dependencies, so remove them before we set ourselves up. Also
 # install pbr to avoid any setup_requires funkiness with
