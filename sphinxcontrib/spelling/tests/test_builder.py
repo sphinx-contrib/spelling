@@ -9,6 +9,7 @@ import pytest
 
 import codecs
 import io
+import os
 import textwrap
 
 from sphinx.application import Sphinx
@@ -29,7 +30,7 @@ def add_file(thedir, filename, content):
         f.write(textwrap.dedent(content))
 
 
-def get_sphinx_output(srcdir, outdir):
+def get_sphinx_output(srcdir, outdir, docname):
     stdout = io.StringIO()
     stderr = io.StringIO()
     app = Sphinx(
@@ -38,7 +39,8 @@ def get_sphinx_output(srcdir, outdir):
         freshenv=True,
     )
     app.build()
-    with codecs.open(app.builder.output_filename, 'r') as f:
+    path = os.path.join(outdir, docname + '.spelling')
+    with codecs.open(path, 'r') as f:
         output_text = f.read()
     return (stdout, stderr, output_text)
 
@@ -63,7 +65,7 @@ def test_title(sphinx_project):
     Welcome to Speeling Checker documentation!
     ==========================================
     ''')
-    stdout, stderr, output_text = get_sphinx_output(srcdir, outdir)
+    stdout, stderr, output_text = get_sphinx_output(srcdir, outdir, 'contents')
     assert '(Speeling)' in output_text
 
 
@@ -75,7 +77,7 @@ def test_body(sphinx_project):
 
     There are several mispelled words in this txt.
     ''')
-    stdout, stderr, output_text = get_sphinx_output(srcdir, outdir)
+    stdout, stderr, output_text = get_sphinx_output(srcdir, outdir, 'contents')
     assert '(mispelled)' in output_text
     assert '(txt)' in output_text
 
@@ -95,7 +97,7 @@ def test_ignore_literals(sphinx_project):
     Inline ``litterals`` are ignored, too.
 
     ''')
-    stdout, stderr, output_text = get_sphinx_output(srcdir, outdir)
+    stdout, stderr, output_text = get_sphinx_output(srcdir, outdir, 'contents')
     assert '(ignoreed)' not in output_text
     assert '(litterals)' not in output_text
 
@@ -121,7 +123,7 @@ def test_several_word_lists(sphinx_project):
     add_file(srcdir, 'test_wordlist2.txt', '''
     mispelled
     ''')
-    stdout, stderr, output_text = get_sphinx_output(srcdir, outdir)
+    stdout, stderr, output_text = get_sphinx_output(srcdir, outdir, 'contents')
     # Both of these should be fine now
     assert '(mispelled)' not in output_text
     assert '(txt)' not in output_text

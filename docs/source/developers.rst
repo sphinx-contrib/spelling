@@ -1,7 +1,7 @@
-.. .. spelling::
+.. spelling::
 
-..    sphinxcontrib
-..    reStructuredText
+   sphinxcontrib
+   reStructuredText
 
 ============
  Developers

@@ -2,6 +2,10 @@
  Release History
 =================
 
+.. spelling::
+
+   unmaintained
+
 .. release-notes::
 
 5.1.2

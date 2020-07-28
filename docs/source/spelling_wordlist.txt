@@ -1,5 +1,7 @@
 builtins
 hoc
+linter
+linters
 pypi
 reStructuredText
 sphinxcontrib

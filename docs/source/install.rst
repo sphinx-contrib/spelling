@@ -1,24 +1,22 @@
-.. .. spelling::
+.. spelling::
 
-   wikis
    sphinxcontrib
 
 ==============
  Installation
 ==============
 
-Installing sphinxcontrib.spelling
-=================================
+1. Install the extension with pip: ``pip install sphinxcontrib-spelling``
 
-Install the extension with pip: ``pip install sphinxcontrib-spelling``
+2. Add ``'sphinxcontrib.spelling'`` to the ``extensions`` list in
+   ``conf.py``.
 
-Configuration
-=============
+   .. code-block:: python
 
-1. Add ``'sphinxcontrib.spelling'`` to the ``extensions`` list in ``conf.py``.
+      extensions = [ 'sphinxcontrib.spelling' ]
 
-  ::
+3. Then pass ``"spelling"`` as the builder argument to ``sphinx-build``.
 
-    extensions = [ 'sphinxcontrib.spelling' ]
+   .. code-block:: shell-session
 
-.. _install-options:
+      $ sphinx-build -b spelling docs/source docs/build

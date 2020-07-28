@@ -15,8 +15,14 @@ import docutils.nodes
 from sphinx.builders import Builder
 from sphinx.util import logging
 from sphinx.util.console import darkgreen, red
+from sphinx.util.osutil import ensuredir
 
-from enchant.tokenize import EmailFilter, WikiWordFilter
+try:
+    from enchant.tokenize import EmailFilter, WikiWordFilter
+except ImportError as imp_exc:
+    enchant_import_error = imp_exc
+else:
+    enchant_import_error = None
 
 from . import checker
 from . import filters
@@ -33,14 +39,18 @@ class SpellingBuilder(Builder):
     name = 'spelling'
 
     def init(self):
+        if enchant_import_error is not None:
+            raise RuntimeError(
+                'Cannot initialize spelling builder '
+                'without PyEnchant installed') from enchant_import_error
         self.docnames = []
         self.document_data = []
         self.misspelling_count = 0
 
         self.env.settings["smart_quotes"] = False
         # Initialize the per-document filters
-        if not hasattr(self.env, 'spelling_document_filters'):
-            self.env.spelling_document_filters = collections.defaultdict(list)
+        if not hasattr(self.env, 'spelling_document_words'):
+            self.env.spelling_document_words = collections.defaultdict(list)
 
         # Initialize the global filters
         f = [
@@ -78,9 +88,6 @@ class SpellingBuilder(Builder):
             filters=f,
             context_line=self.config.spelling_show_whole_line,
         )
-
-        self.output_filename = os.path.join(self.outdir, 'output.txt')
-        self.output = io.open(self.output_filename, 'w', encoding='UTF-8')
 
     def _load_filter_classes(self, filters):
         # Filters may be expressed in the configuration file using
@@ -159,7 +166,24 @@ class SpellingBuilder(Builder):
     ])
 
     def write_doc(self, docname, doctree):
-        self.checker.push_filters(self.env.spelling_document_filters[docname])
+        output_filename = os.path.join(self.outdir, docname + '.spelling')
+        ensuredir(os.path.dirname(output_filename))
+        with io.open(output_filename, 'w', encoding='UTF-8') as output:
+            self._do_write(output, docname, doctree)
+
+    def _do_write(self, output, docname, doctree):
+
+        # Build the document-specific word filter based on any good
+        # words listed in spelling directives. If we have no such
+        # words, we want to push an empty list of filters so that we
+        # can always safely pop the filter stack when we are done with
+        # this document.
+        doc_filters = []
+        good_words = self.env.spelling_document_words.get(docname)
+        if good_words:
+            logger.info('Extending local dictionary for %s', docname)
+            doc_filters.append(filters.IgnoreWordsFilterFactory(good_words))
+        self.checker.push_filters(doc_filters)
 
         for node in doctree.traverse(docutils.nodes.Text):
             if (node.tagname == '#text' and
@@ -190,7 +214,7 @@ class SpellingBuilder(Builder):
                     msg_parts.append(context_line)
                     msg = ':'.join(msg_parts)
                     logger.info(msg)
-                    self.output.write(u"%s:%s: (%s) %s %s\n" % (
+                    output.write(u"%s:%s: (%s) %s %s\n" % (
                         self.env.doc2path(docname, None),
                         lineno, word,
                         self.format_suggestions(suggestions),
@@ -202,9 +226,6 @@ class SpellingBuilder(Builder):
         return
 
     def finish(self):
-        self.output.close()
-        logger.info('Spelling checker messages written to %s' %
-                    self.output_filename)
         if self.misspelling_count:
             logger.warning('Found %d misspelled words' %
                            self.misspelling_count)

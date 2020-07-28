@@ -1,7 +1,15 @@
 import inspect
 
+try:
+    # For python 3.8 and later
+    import importlib.metadata as importlib_metadata
+except ImportError:
+    # For everyone else
+    import importlib_metadata
+
 from sphinx.util import logging
 
+from .asset import SpellingCollector
 from .builder import SpellingBuilder
 from .directive import SpellingDirective
 
@@ -9,14 +17,18 @@ logger = logging.getLogger(__name__)
 
 
 def setup(app):
+    version = importlib_metadata.version('sphinxcontrib-spelling')
     # If we are running inside the test suite, "app" will be a module.
     if inspect.ismodule(app):
         return
-    logger.info('Initializing Spelling Checker')
+    logger.info('Initializing Spelling Checker %s', version)
     app.add_builder(SpellingBuilder)
     # Register the 'spelling' directive for setting parameters within
     # a document
     app.add_directive('spelling', SpellingDirective)
+    # Register an environment collector to merge data gathered by the
+    # directive in parallel builds
+    app.add_env_collector(SpellingCollector)
     # Report guesses about correct spelling
     app.add_config_value('spelling_show_suggestions', False, 'env')
     # Report the whole line that has the error
@@ -43,4 +55,8 @@ def setup(app):
     app.add_config_value('spelling_ignore_importable_modules', True, 'env')
     # Add any user-defined filter classes
     app.add_config_value('spelling_filters', [], 'env')
-    return {"parallel_read_safe": False}
+    return {
+        "parallel_read_safe": True,
+        "parallel_write_safe": True,
+        "version": version,
+    }
