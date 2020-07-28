@@ -28,7 +28,9 @@ import sys, os
 #
 # CANNOT ENABLE SPHINXCONTRIB.SPELLING because ReadTheDocs.org does not support
 # PyEnchant.
-extensions = []
+extensions = [
+    'reno.sphinxext',
+]
 if os.getenv('ENABLE_SPELLING'):
     extensions.append('sphinxcontrib.spelling')
 
