@@ -1,7 +1,11 @@
 builtins
+hoc
+pypi
 reStructuredText
 sphinxcontrib
 tokenizer
 txt
 wikis
+wordfiles
 wordlist
+wordlists

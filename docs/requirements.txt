@@ -1,0 +1,2 @@
+# This file is only needed for readthedocs.org
+.[docs]
