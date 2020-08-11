@@ -170,6 +170,7 @@ class SpellingBuilder(Builder):
         self.misspelling_count += len(lines)
         if lines:
             output_filename = os.path.join(self.outdir, docname + '.spelling')
+            logger.info('Writing %s', output_filename)
             ensuredir(os.path.dirname(output_filename))
             with io.open(output_filename, 'w', encoding='UTF-8') as output:
                 output.writelines(lines)
