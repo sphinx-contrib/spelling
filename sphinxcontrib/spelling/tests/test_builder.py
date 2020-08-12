@@ -40,8 +40,11 @@ def get_sphinx_output(srcdir, outdir, docname):
     )
     app.build()
     path = os.path.join(outdir, docname + '.spelling')
-    with codecs.open(path, 'r') as f:
-        output_text = f.read()
+    try:
+        with codecs.open(path, 'r') as f:
+            output_text = f.read()
+    except FileNotFoundError:
+        output_text = None
     return (stdout, stderr, output_text)
 
 
@@ -98,8 +101,9 @@ def test_ignore_literals(sphinx_project):
 
     ''')
     stdout, stderr, output_text = get_sphinx_output(srcdir, outdir, 'contents')
-    assert '(ignoreed)' not in output_text
-    assert '(litterals)' not in output_text
+    # The 'contents.spelling' output file should not have been
+    # created, because the errors are ignored.
+    assert output_text is None
 
 
 def test_several_word_lists(sphinx_project):

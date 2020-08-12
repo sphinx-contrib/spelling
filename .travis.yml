@@ -13,6 +13,8 @@ matrix:
   include:
     - env: BUILD=docs
       python: 3.7
+    - env: BUILD=spelling
+      python: 3.7
     - env: BUILD=linter
       python: 3.8
     - env: BUILD=pkglint
@@ -39,7 +41,7 @@ script:
   # Conditional builds (related to env passed)
   - |
     case ${BUILD} in
-        docs|pep8|cover|linter)
+        docs|pep8|cover|linter|spelling)
             tox -e ${BUILD}
             ;;
         *)

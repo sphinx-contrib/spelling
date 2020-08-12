@@ -166,12 +166,16 @@ class SpellingBuilder(Builder):
     ])
 
     def write_doc(self, docname, doctree):
-        output_filename = os.path.join(self.outdir, docname + '.spelling')
-        ensuredir(os.path.dirname(output_filename))
-        with io.open(output_filename, 'w', encoding='UTF-8') as output:
-            self._do_write(output, docname, doctree)
+        lines = list(self._find_misspellings(docname, doctree))
+        self.misspelling_count += len(lines)
+        if lines:
+            output_filename = os.path.join(self.outdir, docname + '.spelling')
+            logger.info('Writing %s', output_filename)
+            ensuredir(os.path.dirname(output_filename))
+            with io.open(output_filename, 'w', encoding='UTF-8') as output:
+                output.writelines(lines)
 
-    def _do_write(self, output, docname, doctree):
+    def _find_misspellings(self, docname, doctree):
 
         # Build the document-specific word filter based on any good
         # words listed in spelling directives. If we have no such
@@ -214,13 +218,12 @@ class SpellingBuilder(Builder):
                     msg_parts.append(context_line)
                     msg = ':'.join(msg_parts)
                     logger.info(msg)
-                    output.write(u"%s:%s: (%s) %s %s\n" % (
+                    yield u"%s:%s: (%s) %s %s\n" % (
                         self.env.doc2path(docname, None),
                         lineno, word,
                         self.format_suggestions(suggestions),
                         context_line,
-                    ))
-                    self.misspelling_count += 1
+                    )
 
         self.checker.pop_filters()
         return
