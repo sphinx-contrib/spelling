@@ -177,6 +177,8 @@ class SpellingBuilder(Builder):
 
     def _find_misspellings(self, docname, doctree):
 
+        if docname in self.config.spelling_ignore_filename:
+            return
         # Build the document-specific word filter based on any good
         # words listed in spelling directives. If we have no such
         # words, we want to push an empty list of filters so that we

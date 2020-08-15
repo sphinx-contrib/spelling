@@ -134,11 +134,12 @@ def test_several_word_lists(sphinx_project):
     # But not this one
     assert '(tihs)' in output_text
 
+
 def test_ignore_file(sphinx_project):
     srcdir, outdir = sphinx_project
     add_file(srcdir, 'conf.py', '''
     extensions = ['sphinxcontrib.spelling']
-    spelling_ignore_filename=['contents.rst']
+    spelling_ignore_filename=['contents']
     ''')
 
     add_file(srcdir, 'contents.rst', '''
