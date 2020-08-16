@@ -148,5 +148,6 @@ def test_ignore_file(sphinx_project):
     ''')
 
     stdout, stderr, output_text = get_sphinx_output(srcdir, outdir, 'contents')
-    # This should be fine now
-    assert '(Speeling)' not in output_text
+    # The 'contents.spelling' output file should not have been
+    # created, because the file is ignored.
+    assert output_text is None
