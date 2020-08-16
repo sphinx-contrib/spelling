@@ -26,7 +26,7 @@ Input Options
   multiple files.
 ``spelling_word_list_filename=['spelling_wordlist.txt','another_list.txt']``
   Same as above, but with several files of correctly spelled words.
-``spelling_ignore_filename=['ignored_file']``
+``spelling_ignore_filenames=['ignored_file']``
   List specifying a list of files that should not be checked for spelling.
   The file extension (e.g. ``.rst``) should not be used when naming a file
   to ignore.
