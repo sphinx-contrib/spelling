@@ -133,3 +133,21 @@ def test_several_word_lists(sphinx_project):
     assert '(txt)' not in output_text
     # But not this one
     assert '(tihs)' in output_text
+
+
+def test_ignore_file(sphinx_project):
+    srcdir, outdir = sphinx_project
+    add_file(srcdir, 'conf.py', '''
+    extensions = ['sphinxcontrib.spelling']
+    spelling_exclude_patterns=['con*']
+    ''')
+
+    add_file(srcdir, 'contents.rst', '''
+    Welcome to Speeling Checker documentation!
+    ==========================================
+    ''')
+
+    stdout, stderr, output_text = get_sphinx_output(srcdir, outdir, 'contents')
+    # The 'contents.spelling' output file should not have been
+    # created, because the file is ignored.
+    assert output_text is None

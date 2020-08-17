@@ -55,6 +55,10 @@ def setup(app):
     app.add_config_value('spelling_ignore_importable_modules', True, 'env')
     # Add any user-defined filter classes
     app.add_config_value('spelling_filters', [], 'env')
+    # Set a user-provided list of files to ignore
+    app.add_config_value('spelling_exclude_patterns',
+                         [],
+                         'env')
     return {
         "parallel_read_safe": True,
         "parallel_write_safe": True,

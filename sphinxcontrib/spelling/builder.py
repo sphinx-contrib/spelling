@@ -16,6 +16,7 @@ from sphinx.builders import Builder
 from sphinx.util import logging
 from sphinx.util.console import darkgreen, red
 from sphinx.util.osutil import ensuredir
+from sphinx.util.matching import Matcher
 
 try:
     from enchant.tokenize import EmailFilter, WikiWordFilter
@@ -177,6 +178,9 @@ class SpellingBuilder(Builder):
 
     def _find_misspellings(self, docname, doctree):
 
+        excluded = Matcher(self.config.spelling_exclude_patterns)
+        if excluded(self.env.doc2path(docname, None)):
+            return
         # Build the document-specific word filter based on any good
         # words listed in spelling directives. If we have no such
         # words, we want to push an empty list of filters so that we
