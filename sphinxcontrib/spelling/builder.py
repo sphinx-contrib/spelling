@@ -178,7 +178,7 @@ class SpellingBuilder(Builder):
 
     def _find_misspellings(self, docname, doctree):
 
-        excluded = Matcher(self.config.spelling_ignore_filenames)
+        excluded = Matcher(self.config.spelling_exclude_patterns)
         if excluded(self.env.doc2path(docname, None)):
             return
         # Build the document-specific word filter based on any good

@@ -56,7 +56,7 @@ def setup(app):
     # Add any user-defined filter classes
     app.add_config_value('spelling_filters', [], 'env')
     # Set a user-provided list of files to ignore
-    app.add_config_value('spelling_ignore_filenames',
+    app.add_config_value('spelling_exclude_patterns',
                          [],
                          'env')
     return {

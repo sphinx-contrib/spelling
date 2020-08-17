@@ -139,7 +139,7 @@ def test_ignore_file(sphinx_project):
     srcdir, outdir = sphinx_project
     add_file(srcdir, 'conf.py', '''
     extensions = ['sphinxcontrib.spelling']
-    spelling_ignore_filenames=['con*']
+    spelling_exclude_patterns=['con*']
     ''')
 
     add_file(srcdir, 'contents.rst', '''
