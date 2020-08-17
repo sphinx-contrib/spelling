@@ -26,12 +26,14 @@ Input Options
   multiple files.
 ``spelling_word_list_filename=['spelling_wordlist.txt','another_list.txt']``
   Same as above, but with several files of correctly spelled words.
-``spelling_ignore_filenames=['ignored_file']``
-  List specifying a list of files that should not be checked for spelling.
-  The file extension (e.g. ``.rst``) should not be used when naming a file
-  to ignore.
+``spelling_ignore_filenames=['ignored_file.rst']``
+  A list of glob-style patterns that should be ignored when checking spelling.
+  They are matched against the source file names relative to the source
+  directory, using slashes as directory separators on all platforms. See Sphinx's
+  `exclude_patterns`_ option for more details on glob-style patterns.
 
 .. _PyEnchant tutorial: https://github.com/rfk/pyenchant/blob/master/website/content/tutorial.rst
+.. _exclude_patterns : https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-exclude_patterns
 
 Output Options
 ==============
