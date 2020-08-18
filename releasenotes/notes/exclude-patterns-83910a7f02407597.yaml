@@ -1,0 +1,8 @@
+---
+features:
+  - |
+   Add a configuration option ``spelling_exclude_patterns`` to manage
+   skipping spell checking for some input files. The option uses a
+   list of glob-style patterns that are matched against the source
+   file names relative to the source directory. See :doc:`/customize`
+   for more details. Contributed by sdelliot.
