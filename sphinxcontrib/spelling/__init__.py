@@ -53,6 +53,8 @@ def setup(app):
     # Assume words that look like the names of importable modules are
     # spelled properly
     app.add_config_value('spelling_ignore_importable_modules', True, 'env')
+    # Treat contributor names from git history as spelled correctly
+    app.add_config_value('spelling_ignore_contributor_names', True, 'env')
     # Add any user-defined filter classes
     app.add_config_value('spelling_filters', [], 'env')
     # Set a user-provided list of files to ignore

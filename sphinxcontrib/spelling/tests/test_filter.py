@@ -34,3 +34,38 @@ def test_acronym_unicode():
     f = filters.AcronymFilter(t)
     words = [w[0] for w in f(text)]
     assert u'DBM' not in words, 'Failed to filter out acronym'
+
+
+def test_contributors():
+    f = filters.ContributorFilter(None)
+    names = [
+        "Alex",
+        "Atlakson",
+        "Avram",
+        "Baumgold",
+        "Berman",
+        "Daniele",
+        "Doug",
+        "Finucane",
+        "Gaynor",
+        "Gonsiorowski",
+        "Hong",
+        "Hong",
+        "Huon",
+        "Kampik",
+        "Kolosov",
+        "Lubkin",
+        "Marti",
+        "Minhee",
+        "Olausson",
+        "Raggam",
+        "Raudsepp",
+        "sdelliot",
+        "Sergey",
+        "Sevilla",
+        "Timotheus",
+        "Tobias",
+        "Tricoli",
+    ]
+    for name in names:
+        assert f._skip(name)
