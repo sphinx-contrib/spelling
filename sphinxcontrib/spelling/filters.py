@@ -5,13 +5,19 @@
 """Spelling checker extension for Sphinx.
 """
 
+# TODO - Words with multiple uppercase letters treated as classes and ignored
+
 import builtins
 import imp
+import subprocess
 import xmlrpc.client as xmlrpc_client
 
-from enchant.tokenize import Filter, tokenize, unit_tokenize
+from enchant.tokenize import Filter, get_tokenizer, tokenize, unit_tokenize
 
-# TODO - Words with multiple uppercase letters treated as classes and ignored
+from sphinx.util import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 class AcronymFilter(Filter):
@@ -193,3 +199,35 @@ class ImportableModuleFilter(Filter):
                 self.found_modules.add(word)
                 return True
         return word in self.found_modules
+
+
+class ContributorFilter(IgnoreWordsFilter):
+    """Accept information about contributors as spelled correctly.
+
+    Look in the git history for authors and commiters and accept
+    tokens that are in the set.
+    """
+
+    _pretty_format = (
+        '%(trailers:key=Co-Authored-By,separator=%x0A)%x0A%an%x0A%cn'
+    )
+
+    def __init__(self, tokenizer):
+        contributors = self._get_contributors()
+        IgnoreWordsFilter.__init__(self, tokenizer, contributors)
+
+    def _get_contributors(self):
+        logger.info('Scanning contributors')
+        cmd = [
+            'git', 'log', '--quiet', '--no-color',
+            '--pretty=format:' + self._pretty_format,
+        ]
+        try:
+            p = subprocess.run(cmd, check=True, stdout=subprocess.PIPE)
+        except subprocess.CalledProcessError as err:
+            logger.warning('Called: {}'.format(' '.join(cmd)))
+            logger.warning('Failed to scan contributors: {}'.format(err))
+            return set()
+        output = p.stdout.decode('utf-8')
+        tokenizer = get_tokenizer('en_US', filters=[])
+        return set(word for word, pos in tokenizer(output))

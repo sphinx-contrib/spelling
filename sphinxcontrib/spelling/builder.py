@@ -73,6 +73,9 @@ class SpellingBuilder(Builder):
         if self.config.spelling_ignore_importable_modules:
             logger.info('Ignoring importable module names')
             f.append(filters.ImportableModuleFilter)
+        if self.config.spelling_ignore_contributor_names:
+            logger.info('Ignoring contributor names')
+            f.append(filters.ContributorFilter)
         f.extend(self._load_filter_classes(self.config.spelling_filters))
 
         if not os.path.isdir(self.outdir):

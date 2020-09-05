@@ -32,11 +32,11 @@ extensions = [
 
 spelling_word_list_filename = [
     'spelling_wordlist.txt',
-    'spelling_people.txt',
 ]
 
 spelling_show_suggestions = True
 spelling_ignore_pypi_package_names = True
+spelling_ignore_contributor_names = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
