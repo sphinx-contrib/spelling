@@ -74,6 +74,9 @@ returned by the tokenizer to be checked.
 ``spelling_ignore_importable_modules=True``
   Boolean controlling whether words that are names of modules found on
   ``sys.path`` are treated as spelled properly. Defaults to ``True``.
+``spelling_ignore_contributor_names=True``
+  Boolean controlling whether contributor names taken from the git
+  history for the repository are considered as spelled correctly.
 ``spelling_filters=[]``
   List of importable filter classes to be added to the tokenizer that
   produces words to be checked. For example,
