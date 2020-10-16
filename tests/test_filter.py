@@ -1,4 +1,3 @@
-# encoding: utf-8
 #
 # Copyright (c) 2010 Doug Hellmann.  All rights reserved.
 #
@@ -12,7 +11,7 @@ from sphinxcontrib.spelling import filters
 
 def test_builtin_unicode():
     f = filters.PythonBuiltinsFilter(None)
-    assert not f._skip(u'passé')
+    assert not f._skip('passé')
 
 
 def test_builtin_regular():
@@ -29,11 +28,11 @@ def test_acronym():
 
 
 def test_acronym_unicode():
-    text = u'a front-end for DBM-style databases'
+    text = 'a front-end for DBM-style databases'
     t = get_tokenizer('en_US', [])
     f = filters.AcronymFilter(t)
     words = [w[0] for w in f(text)]
-    assert u'DBM' not in words, 'Failed to filter out acronym'
+    assert 'DBM' not in words, 'Failed to filter out acronym'
 
 
 def test_contributors():
