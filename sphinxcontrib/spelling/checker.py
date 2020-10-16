@@ -31,7 +31,7 @@ class SpellingChecker(object):
         if filters is None:
             filters = []
         self.dictionary = enchant.DictWithPWL(lang, word_list_filename)
-        self.tokenizer = get_tokenizer(tokenizer_lang, filters)
+        self.tokenizer = get_tokenizer(tokenizer_lang, filters=filters)
         self.original_tokenizer = self.tokenizer
         self.suggest = suggest
         self.context_line = context_line
