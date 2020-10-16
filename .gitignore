@@ -21,3 +21,7 @@ ChangeLog
 /.coverage
 /.testrepository/
 /cover/
+
+# Created by reno
+RELEASENOTES.rst
+releasenotes/notes/reno.cache
