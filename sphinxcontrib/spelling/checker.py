@@ -1,4 +1,3 @@
-# encoding: utf-8
 #
 # Copyright (c) 2010 Doug Hellmann.  All rights reserved.
 #
@@ -14,7 +13,7 @@ else:
     enchant_import_error = None
 
 
-class SpellingChecker(object):
+class SpellingChecker:
     """Checks the spelling of blocks of text.
 
     Uses options defined in the sphinx configuration file to control

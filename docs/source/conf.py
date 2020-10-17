@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # sphinxcontrib.spelling documentation build configuration file, created by
 # sphinx-quickstart on Sun Apr 17 15:33:23 2011.
 #
@@ -51,8 +49,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'sphinxcontrib.spelling'
-copyright = u'2011, Doug Hellmann'
+project = 'sphinxcontrib.spelling'
+copyright = '2011, Doug Hellmann'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -189,8 +187,8 @@ htmlhelp_basename = 'sphinxcontribspellingdoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'sphinxcontribspelling.tex', u'sphinxcontrib.spelling Documentation',
-   u'Doug Hellmann', 'manual'),
+  ('index', 'sphinxcontribspelling.tex', 'sphinxcontrib.spelling Documentation',
+   'Doug Hellmann', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -222,6 +220,6 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'sphinxcontribspelling', u'sphinxcontrib.spelling Documentation',
-     [u'Doug Hellmann'], 1)
+    ('index', 'sphinxcontribspelling', 'sphinxcontrib.spelling Documentation',
+     ['Doug Hellmann'], 1)
 ]

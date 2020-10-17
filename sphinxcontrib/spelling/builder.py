@@ -1,4 +1,3 @@
-# encoding: utf-8
 #
 # Copyright (c) 2010 Doug Hellmann.  All rights reserved.
 #
@@ -7,7 +6,6 @@
 
 import collections
 import importlib
-import io
 import os
 import tempfile
 
@@ -128,21 +126,19 @@ class SpellingBuilder(Builder):
 
         word_list = self.config.spelling_word_list_filename
 
-        with io.open(combined_word_list,
-                     'w',
-                     encoding='UTF-8') as outfile:
+        with open(combined_word_list, 'w', encoding='UTF-8') as outfile:
             for word_file in word_list:
                 # Paths are relative
                 long_word_file = os.path.join(self.srcdir, word_file)
                 logger.info('Adding contents of {} to custom word list'.format(
                     long_word_file))
-                with io.open(long_word_file, 'r', encoding='UTF-8') as infile:
+                with open(long_word_file, encoding='UTF-8') as infile:
                     infile_contents = infile.readlines()
                 outfile.writelines(infile_contents)
 
                 # Check for newline, and add one if not present
                 if infile and not infile_contents[-1].endswith('\n'):
-                    outfile.write(u'\n')
+                    outfile.write('\n')
 
         return combined_word_list
 
@@ -157,17 +153,17 @@ class SpellingBuilder(Builder):
 
     def format_suggestions(self, suggestions):
         if not self.config.spelling_show_suggestions or not suggestions:
-            return u''
-        return u'[' + u', '.join(u'"%s"' % s for s in suggestions) + u']'
+            return ''
+        return '[' + ', '.join('"%s"' % s for s in suggestions) + ']'
 
-    TEXT_NODES = set([
+    TEXT_NODES = {
         'block_quote',
         'paragraph',
         'list_item',
         'term',
         'definition_list_item',
         'title',
-    ])
+    }
 
     def write_doc(self, docname, doctree):
         lines = list(self._find_misspellings(docname, doctree))
@@ -176,7 +172,7 @@ class SpellingBuilder(Builder):
             output_filename = os.path.join(self.outdir, docname + '.spelling')
             logger.info('Writing %s', output_filename)
             ensuredir(os.path.dirname(output_filename))
-            with io.open(output_filename, 'w', encoding='UTF-8') as output:
+            with open(output_filename, 'w', encoding='UTF-8') as output:
                 output.writelines(lines)
 
     def _find_misspellings(self, docname, doctree):
@@ -225,7 +221,7 @@ class SpellingBuilder(Builder):
                     msg_parts.append(context_line)
                     msg = ':'.join(msg_parts)
                     logger.info(msg)
-                    yield u"%s:%s: (%s) %s %s\n" % (
+                    yield "%s:%s: (%s) %s %s\n" % (
                         self.env.doc2path(docname, None),
                         lineno, word,
                         self.format_suggestions(suggestions),

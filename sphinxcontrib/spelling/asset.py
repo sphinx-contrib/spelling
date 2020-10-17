@@ -1,4 +1,3 @@
-# encoding: utf-8
 #
 # Copyright (c) 2020 Doug Hellmann.  All rights reserved.
 #

@@ -1,4 +1,3 @@
-# encoding: utf-8
 #
 # Copyright (c) 2010 Doug Hellmann.  All rights reserved.
 #
@@ -151,7 +150,7 @@ class IgnoreWordsFilter(Filter):
         return word in self.word_set
 
 
-class IgnoreWordsFilterFactory(object):
+class IgnoreWordsFilterFactory:
 
     def __init__(self, words):
         self.words = words
@@ -231,4 +230,4 @@ class ContributorFilter(IgnoreWordsFilter):
             return set()
         output = p.stdout.decode('utf-8')
         tokenizer = get_tokenizer('en_US', filters=[])
-        return set(word for word, pos in tokenizer(output))
+        return {word for word, pos in tokenizer(output)}
