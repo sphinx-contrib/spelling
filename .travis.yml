@@ -5,6 +5,7 @@ python:
   - "3.8"
   - "3.9-dev"
   - "nightly"
+  - "pypy3"
 
 # Test the nightly build of cpython, but ignore any failures.
 # Add separate test environments for the docs and flake8 linter.
