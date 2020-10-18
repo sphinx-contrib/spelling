@@ -3,14 +3,12 @@
 #
 """Tests for SpellingBuilder
 """
-
-import pytest
-
 import codecs
 import io
 import os
 import textwrap
 
+import pytest
 from sphinx.application import Sphinx
 
 
