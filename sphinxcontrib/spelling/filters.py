@@ -171,10 +171,7 @@ class PythonBuiltinsFilter(Filter):
     """Ignore names of built-in Python symbols.
     """
     def _skip(self, word):
-        try:
-            return hasattr(builtins, word)
-        except UnicodeEncodeError:
-            return False
+        return hasattr(builtins, word)
 
 
 class ImportableModuleFilter(Filter):
