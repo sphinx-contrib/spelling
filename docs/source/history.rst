@@ -17,7 +17,7 @@ New Features
 ------------
 
 - Add packaging metadata declaring the project stable.
-- Add packaging metadata declaring support for python 3 only.
+- Add packaging metadata declaring support for Python 3 only.
 - Add packaging metadata indicating that this is a sphinx extension.
 
 Bug Fixes
@@ -113,8 +113,8 @@ New Features
 - Logging: use warning() instead of its deprecated alias (contributed
   by Sergey Kolosov)
 - Support additional contractions (contributed by David Baumgold)
-- require sphinx >= 2.0.0
-- declare support for python 3.6
+- require Sphinx >= 2.0.0
+- declare support for Python 3.6
 
 4.2.1
 =====
@@ -156,7 +156,7 @@ New Features
   Gaynor)
 - be more verbose about configuration options
 - switch to testrepository for running tests
-- update python 3.3 to 3.5
+- update Python 3.3 to 3.5
 
 2.3.0
 =====
@@ -176,7 +176,7 @@ New Features
 2.1.2
 =====
 
-- Fixed issue with six under python 3.4
+- Fixed issue with six under Python 3.4
 
 2.1.1
 =====
@@ -197,7 +197,7 @@ New Features
 2.0
 ===
 
-- Add python 3.3 support.
+- Add Python 3.3 support.
 - Add PyPy support.
 - Use pbr for packaging.
 - Update tox config to work with forked version of PyEnchant until

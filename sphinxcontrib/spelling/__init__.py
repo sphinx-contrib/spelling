@@ -1,7 +1,7 @@
 import inspect
 
 try:
-    # For python 3.8 and later
+    # For Python 3.8 and later
     import importlib.metadata as importlib_metadata
 except ImportError:
     # For everyone else
