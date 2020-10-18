@@ -6,6 +6,29 @@
 
    unmaintained
 
+*Next release*
+==============
+
+With this release, sphinxcontrib-spelling moves from beta to
+stable. It also updates the use of Python 3, including packaging
+metadata, code style, and test configuration.
+
+New Features
+------------
+
+- Add packaging metadata declaring the project stable.
+- Add packaging metadata declaring support for python 3 only.
+- Add packaging metadata indicating that this is a sphinx extension.
+
+Bug Fixes
+---------
+
+- Replace use of deprecated `imp` module with `importlib`.
+- Update use of `pyenchant.get_tokenizer()` to pass filters argument
+  as a keyword and avoid a runtime warning message.
+- Remove unused test dependency on `fixtures`.
+- Use `pyupgrade` to modernize the source code.
+
 5.4.0
 =====
 
