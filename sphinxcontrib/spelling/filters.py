@@ -34,7 +34,7 @@ class AcronymFilter(Filter):
 class list_tokenize(tokenize):
 
     def __init__(self, words):
-        tokenize.__init__(self, '')
+        super().__init__('')
         self._words = words
 
     def next(self):
@@ -144,7 +144,7 @@ class IgnoreWordsFilter(Filter):
 
     def __init__(self, tokenizer, word_set):
         self.word_set = set(word_set)
-        Filter.__init__(self, tokenizer)
+        super().__init__(tokenizer)
 
     def _skip(self, word):
         return word in self.word_set
@@ -164,7 +164,7 @@ class PyPIFilterFactory(IgnoreWordsFilterFactory):
     """
     def __init__(self):
         client = xmlrpc_client.ServerProxy('https://pypi.python.org/pypi')
-        IgnoreWordsFilterFactory.__init__(self, client.list_packages())
+        super().__init__(client.list_packages())
 
 
 class PythonBuiltinsFilter(Filter):
@@ -181,7 +181,7 @@ class ImportableModuleFilter(Filter):
     """Ignore names of modules that we could import.
     """
     def __init__(self, tokenizer):
-        Filter.__init__(self, tokenizer)
+        super().__init__(tokenizer)
         self.found_modules = set()
         self.sought_modules = set()
 
@@ -214,7 +214,7 @@ class ContributorFilter(IgnoreWordsFilter):
 
     def __init__(self, tokenizer):
         contributors = self._get_contributors()
-        IgnoreWordsFilter.__init__(self, tokenizer, contributors)
+        super().__init__(tokenizer, contributors)
 
     def _get_contributors(self):
         logger.info('Scanning contributors')
