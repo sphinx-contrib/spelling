@@ -13,8 +13,8 @@ import docutils.nodes
 from sphinx.builders import Builder
 from sphinx.util import logging
 from sphinx.util.console import darkgreen, red
-from sphinx.util.osutil import ensuredir
 from sphinx.util.matching import Matcher
+from sphinx.util.osutil import ensuredir
 
 try:
     from enchant.tokenize import EmailFilter, WikiWordFilter
@@ -23,8 +23,7 @@ except ImportError as imp_exc:
 else:
     enchant_import_error = None
 
-from . import checker
-from . import filters
+from . import checker, filters
 
 logger = logging.getLogger(__name__)
 

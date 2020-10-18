@@ -21,6 +21,16 @@ To run the tests, you need ``tox`` installed, then just run
 ``tox``. This should run the unit tests, the source code linter, and
 try to build the current documentation.
 
+Coding style
+============
+
+Python imports are formatted and sorted using `isort
+<https://pycqa.github.io/isort/>`__. To format all files, run:
+
+.. code-block:: console
+
+   $ tox -e style
+
 Building Documentation
 ======================
 

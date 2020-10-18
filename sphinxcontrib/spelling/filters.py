@@ -9,12 +9,10 @@
 import builtins
 import importlib
 import subprocess
-import xmlrpc.client as xmlrpc_client
+from xmlrpc import client as xmlrpc_client
 
 from enchant.tokenize import Filter, get_tokenizer, tokenize, unit_tokenize
-
 from sphinx.util import logging
-
 
 logger = logging.getLogger(__name__)
 
