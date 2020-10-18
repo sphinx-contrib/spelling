@@ -1,5 +1,3 @@
-import inspect
-
 try:
     # For Python 3.8 and later
     import importlib.metadata as importlib_metadata
@@ -18,9 +16,6 @@ logger = logging.getLogger(__name__)
 
 def setup(app):
     version = importlib_metadata.version('sphinxcontrib-spelling')
-    # If we are running inside the test suite, "app" will be a module.
-    if inspect.ismodule(app):
-        return
     logger.info('Initializing Spelling Checker %s', version)
     app.add_builder(SpellingBuilder)
     # Register the 'spelling' directive for setting parameters within
