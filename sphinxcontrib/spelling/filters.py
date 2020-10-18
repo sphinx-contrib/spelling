@@ -204,7 +204,7 @@ class ImportableModuleFilter(Filter):
 class ContributorFilter(IgnoreWordsFilter):
     """Accept information about contributors as spelled correctly.
 
-    Look in the git history for authors and commiters and accept
+    Look in the git history for authors and committers and accept
     tokens that are in the set.
     """
 
