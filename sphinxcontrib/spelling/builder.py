@@ -80,7 +80,7 @@ class SpellingBuilder(Builder):
             os.mkdir(self.outdir)
 
         word_list = self.get_wordlist_filename()
-        logger.info('Looking for custom word list in {}'.format(word_list))
+        logger.info(f'Looking for custom word list in {word_list}')
 
         self.checker = checker.SpellingChecker(
             lang=self.config.spelling_lang,

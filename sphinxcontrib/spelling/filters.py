@@ -226,7 +226,7 @@ class ContributorFilter(IgnoreWordsFilter):
             p = subprocess.run(cmd, check=True, stdout=subprocess.PIPE)
         except subprocess.CalledProcessError as err:
             logger.warning('Called: {}'.format(' '.join(cmd)))
-            logger.warning('Failed to scan contributors: {}'.format(err))
+            logger.warning(f'Failed to scan contributors: {err}')
             return set()
         output = p.stdout.decode('utf-8')
         tokenizer = get_tokenizer('en_US', filters=[])
