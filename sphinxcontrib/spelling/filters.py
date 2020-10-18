@@ -7,9 +7,10 @@
 # TODO - Words with multiple uppercase letters treated as classes and ignored
 
 import builtins
-import importlib
+import importlib.util
 import subprocess
-from xmlrpc import client as xmlrpc_client
+import xmlrpc.client as xmlrpc_client
+from typing import Iterable, List, Set, Tuple, cast
 
 from enchant.tokenize import Filter, get_tokenizer, tokenize, unit_tokenize
 from sphinx.util import logging
@@ -21,7 +22,7 @@ class AcronymFilter(Filter):
     """If a word looks like an acronym (all upper case letters),
     ignore it.
     """
-    def _skip(self, word):
+    def _skip(self, word: str) -> bool:
         return (
             word.isupper() or  # all caps
             # pluralized acronym ("URLs")
@@ -31,11 +32,11 @@ class AcronymFilter(Filter):
 
 class list_tokenize(tokenize):
 
-    def __init__(self, words):
+    def __init__(self, words: List[str]):
         super().__init__('')
         self._words = words
 
-    def next(self):
+    def next(self) -> Tuple[str, int]:
         if not self._words:
             raise StopIteration()
         word = self._words.pop(0)
@@ -120,7 +121,7 @@ class ContractionFilter(Filter):
         "you've": ["you", "have"],
     }
 
-    def _split(self, word):
+    def _split(self, word: str) -> tokenize:
         # Fixed responses
         if word.lower() in self.splits:
             return list_tokenize(self.splits[word.lower()])
@@ -140,47 +141,48 @@ class IgnoreWordsFilter(Filter):
     """Given a set of words, ignore them all.
     """
 
-    def __init__(self, tokenizer, word_set):
+    def __init__(self, tokenizer: tokenize, word_set: Iterable[str]):
         self.word_set = set(word_set)
         super().__init__(tokenizer)
 
-    def _skip(self, word):
+    def _skip(self, word: str) -> bool:
         return word in self.word_set
 
 
 class IgnoreWordsFilterFactory:
 
-    def __init__(self, words):
+    def __init__(self, words: List[str]):
         self.words = words
 
-    def __call__(self, tokenizer):
+    def __call__(self, tokenizer: tokenize) -> IgnoreWordsFilter:
         return IgnoreWordsFilter(tokenizer, self.words)
 
 
 class PyPIFilterFactory(IgnoreWordsFilterFactory):
     """Build an IgnoreWordsFilter for all of the names of packages on PyPI.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         client = xmlrpc_client.ServerProxy('https://pypi.python.org/pypi')
-        super().__init__(client.list_packages())
+        packages = cast(List[str], client.list_packages())
+        super().__init__(packages)
 
 
 class PythonBuiltinsFilter(Filter):
     """Ignore names of built-in Python symbols.
     """
-    def _skip(self, word):
+    def _skip(self, word: str) -> bool:
         return hasattr(builtins, word)
 
 
 class ImportableModuleFilter(Filter):
     """Ignore names of modules that we could import.
     """
-    def __init__(self, tokenizer):
+    def __init__(self, tokenizer: tokenize):
         super().__init__(tokenizer)
-        self.found_modules = set()
-        self.sought_modules = set()
+        self.found_modules: Set[str] = set()
+        self.sought_modules: Set[str] = set()
 
-    def _skip(self, word):
+    def _skip(self, word: str) -> bool:
         if word not in self.sought_modules:
             self.sought_modules.add(word)
             try:
@@ -207,11 +209,11 @@ class ContributorFilter(IgnoreWordsFilter):
         '%(trailers:key=Co-Authored-By,separator=%x0A)%x0A%an%x0A%cn'
     )
 
-    def __init__(self, tokenizer):
+    def __init__(self, tokenizer: tokenize):
         contributors = self._get_contributors()
         super().__init__(tokenizer, contributors)
 
-    def _get_contributors(self):
+    def _get_contributors(self) -> Set[str]:
         logger.info('Scanning contributors')
         cmd = [
             'git', 'log', '--quiet', '--no-color',

@@ -8,6 +8,7 @@ import collections
 import importlib
 import os
 import tempfile
+from typing import Iterator, List, Optional, Set, Type, Union
 
 import docutils.nodes
 from sphinx.builders import Builder
@@ -17,9 +18,9 @@ from sphinx.util.matching import Matcher
 from sphinx.util.osutil import ensuredir
 
 try:
-    from enchant.tokenize import EmailFilter, WikiWordFilter
+    from enchant.tokenize import EmailFilter, Filter, WikiWordFilter
 except ImportError as imp_exc:
-    enchant_import_error = imp_exc
+    enchant_import_error: Optional[ImportError] = imp_exc
 else:
     enchant_import_error = None
 
@@ -36,7 +37,7 @@ class SpellingBuilder(Builder):
     """
     name = 'spelling'
 
-    def init(self):
+    def init(self) -> None:
         if enchant_import_error is not None:
             raise RuntimeError(
                 'Cannot initialize spelling builder '
@@ -88,7 +89,10 @@ class SpellingBuilder(Builder):
             context_line=self.config.spelling_show_whole_line,
         )
 
-    def _load_filter_classes(self, filters):
+    def _load_filter_classes(
+        self,
+        filters: List[Union[Type[Filter], str]]
+    ) -> Iterator[Type[Filter]]:
         # Filters may be expressed in the configuration file using
         # names, so look through them and import the referenced class
         # and use that in the checker.
@@ -100,12 +104,12 @@ class SpellingBuilder(Builder):
             mod = importlib.import_module(module_name)
             yield getattr(mod, class_name)
 
-    def get_wordlist_filename(self):
+    def get_wordlist_filename(self) -> str:
         word_list = self.config.spelling_word_list_filename
         if word_list is None:
             word_list = 'spelling_wordlist.txt'
 
-        if not isinstance(word_list, list):
+        if isinstance(word_list, str):
             filename = os.path.join(self.srcdir, word_list)
             return filename
 
@@ -113,7 +117,7 @@ class SpellingBuilder(Builder):
         # into one large list that we pass on to the checker.
         return self._build_combined_wordlist()
 
-    def _build_combined_wordlist(self):
+    def _build_combined_wordlist(self) -> str:
         # If we have a list, the combined list is the first list plus all words
         # from the other lists. Otherwise, word_list is assumed to just be a
         # string.
@@ -139,16 +143,16 @@ class SpellingBuilder(Builder):
 
         return combined_word_list
 
-    def get_outdated_docs(self):
+    def get_outdated_docs(self) -> str:
         return 'all documents'
 
-    def prepare_writing(self, docnames):
-        return
+    def prepare_writing(self, docnames: Set[str]) -> None:
+        pass
 
-    def get_target_uri(self, docname, typ=None):
+    def get_target_uri(self, docname: str, typ: Optional[str] = None) -> str:
         return ''
 
-    def format_suggestions(self, suggestions):
+    def format_suggestions(self, suggestions: List[str]) -> str:
         if not self.config.spelling_show_suggestions or not suggestions:
             return ''
         return '[' + ', '.join('"%s"' % s for s in suggestions) + ']'
@@ -162,7 +166,11 @@ class SpellingBuilder(Builder):
         'title',
     }
 
-    def write_doc(self, docname, doctree):
+    def write_doc(
+        self,
+        docname: str,
+        doctree: docutils.nodes.document
+    ) -> None:
         lines = list(self._find_misspellings(docname, doctree))
         self.misspelling_count += len(lines)
         if lines:
@@ -172,8 +180,11 @@ class SpellingBuilder(Builder):
             with open(output_filename, 'w', encoding='UTF-8') as output:
                 output.writelines(lines)
 
-    def _find_misspellings(self, docname, doctree):
-
+    def _find_misspellings(
+            self,
+            docname: str,
+            doctree: docutils.nodes.document
+    ) -> Iterator[str]:
         excluded = Matcher(self.config.spelling_exclude_patterns)
         if excluded(self.env.doc2path(docname, None)):
             return
@@ -226,10 +237,8 @@ class SpellingBuilder(Builder):
                     )
 
         self.checker.pop_filters()
-        return
 
-    def finish(self):
+    def finish(self) -> None:
         if self.misspelling_count:
             logger.warning('Found %d misspelled words' %
                            self.misspelling_count)
-        return

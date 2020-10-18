@@ -3,12 +3,13 @@
 #
 """Spelling checker extension for Sphinx.
 """
+from typing import Iterator, List, Optional, Tuple
 
 try:
     import enchant
-    from enchant.tokenize import get_tokenizer
+    from enchant.tokenize import Filter, get_tokenizer
 except ImportError as imp_exc:
-    enchant_import_error = imp_exc
+    enchant_import_error: Optional[ImportError] = imp_exc
 else:
     enchant_import_error = None
 
@@ -20,8 +21,15 @@ class SpellingChecker:
     the checking and filtering behavior.
     """
 
-    def __init__(self, lang, suggest, word_list_filename,
-                 tokenizer_lang='en_US', filters=None, context_line=False):
+    def __init__(
+        self,
+        lang: str,
+        suggest: bool,
+        word_list_filename: Optional[str],
+        tokenizer_lang: str = 'en_US',
+        filters: Optional[List[str]] = None,
+        context_line: bool = False
+    ):
         if enchant_import_error is not None:
             raise RuntimeError(
                 'Cannot instantiate SpellingChecker '
@@ -35,7 +43,7 @@ class SpellingChecker:
         self.suggest = suggest
         self.context_line = context_line
 
-    def push_filters(self, new_filters):
+    def push_filters(self, new_filters: List[Filter]) -> None:
         """Add a filter to the tokenizer chain.
         """
         t = self.tokenizer
@@ -43,12 +51,12 @@ class SpellingChecker:
             t = f(t)
         self.tokenizer = t
 
-    def pop_filters(self):
+    def pop_filters(self) -> None:
         """Remove the filters pushed during the last call to push_filters().
         """
         self.tokenizer = self.original_tokenizer
 
-    def check(self, text):
+    def check(self, text: str) -> Iterator[Tuple[str, List[str], str]]:
         """Yields bad words and suggested alternate spellings.
         """
         for word, pos in self.tokenizer(text):
@@ -60,10 +68,9 @@ class SpellingChecker:
             line = line_of_index(text, pos) if self.context_line else ""
 
             yield word, suggestions, line
-        return
 
 
-def line_of_index(text, index):
+def line_of_index(text: str, index: int) -> str:
     try:
         line_start = text.rindex("\n", 0, index) + 1
     except ValueError:

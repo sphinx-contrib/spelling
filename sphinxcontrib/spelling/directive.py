@@ -5,7 +5,9 @@
 """
 
 import collections
+from typing import List
 
+import docutils.nodes
 from docutils.parsers import rst
 from sphinx.util import logging
 
@@ -24,7 +26,7 @@ class SpellingDirective(rst.Directive):
 
     has_content = True
 
-    def run(self):
+    def run(self) -> List[docutils.nodes.Node]:
         env = self.state.document.settings.env
 
         # Initialize the per-document good words list

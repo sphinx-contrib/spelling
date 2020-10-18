@@ -3,8 +3,11 @@ try:
     import importlib.metadata as importlib_metadata
 except ImportError:
     # For everyone else
-    import importlib_metadata
+    import importlib_metadata  # type: ignore
 
+from typing import Any, Dict
+
+from sphinx.application import Sphinx
 from sphinx.util import logging
 
 from .asset import SpellingCollector
@@ -14,8 +17,10 @@ from .directive import SpellingDirective
 logger = logging.getLogger(__name__)
 
 
-def setup(app):
-    version = importlib_metadata.version('sphinxcontrib-spelling')
+def setup(app: Sphinx) -> Dict[str, Any]:
+    version = importlib_metadata.version(  # type: ignore
+        'sphinxcontrib-spelling'
+    )
     logger.info('Initializing Spelling Checker %s', version)
     app.add_builder(SpellingBuilder)
     # Register the 'spelling' directive for setting parameters within
