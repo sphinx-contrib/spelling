@@ -6,8 +6,8 @@
 
    unmaintained
 
-*Next release*
-==============
+6.0.0
+=====
 
 With this release, sphinxcontrib-spelling moves from beta to
 stable. It also updates the use of Python 3, including packaging
