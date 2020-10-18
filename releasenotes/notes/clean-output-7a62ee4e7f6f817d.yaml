@@ -1,5 +1,0 @@
----
-fixes:
-  - |
-    Updated to only create ``.spelling`` output files for inputs that
-    generate spelling warnings. Fixes #63.
