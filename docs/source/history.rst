@@ -6,7 +6,62 @@
 
    unmaintained
 
-.. release-notes::
+5.4.0
+=====
+
+New Features
+------------
+
+- Added a new filter
+  (``sphinxcontrib.spelling.filters.ContributorFilter``) that treats
+  contributor names extracted from the git history as spelled
+  correctly, making it easier to refer to the names in
+  acknowledgments . Includes a new configuration option,
+  ``spelling_ignore_contributor_names`` to enable it.
+
+5.3.0
+=====
+
+New Features
+------------
+
+- Add a configuration option ``spelling_exclude_patterns`` to manage
+  skipping spell checking for some input files. The option uses a
+  list of glob-style patterns that are matched against the source
+  file names relative to the source directory. See :doc:`/customize`
+  for more details. Contributed by sdelliot.
+
+5.2.2
+=====
+
+Bug Fixes
+---------
+
+- Updated to only create ``.spelling`` output files for inputs that
+  generate spelling warnings. Fixes #63.
+
+5.2.0
+=====
+
+New Features
+------------
+
+- The builder is now registered using an entry point, so that if the
+  ``spelling`` directive is not used in a project
+  ``sphinxcontrib.spelling`` does not need to be included explicitly
+  in the ``extensions`` list in ``conf.py`` in order to use it with
+  the project on the command line.
+
+- PyEnchant is an optional dependency. If it is not installed, the
+  spell checker will not work, but the extension can still be
+  initialized. This allows projects that use spell checking to
+  publish their documentation to ``readthedocs.org``, where it is
+  not possible to install PyEnchant.
+
+- Restore support for parallel builds. Words that do not appear in
+  any configured dictionary are written to a file named based on the
+  input file, with the ``.rst`` extension replaced with
+  ``.spelling``.
 
 5.1.2
 =====

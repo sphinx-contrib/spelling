@@ -1,8 +1,0 @@
----
-features:
-  - |
-    The builder is now registered using an entry point, so that if the
-    ``spelling`` directive is not used in a project
-    ``sphinxcontrib.spelling`` does not need to be included explicitly
-    in the ``extensions`` list in ``conf.py`` in order to use it with
-    the project on the command line.

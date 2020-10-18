@@ -1,8 +1,0 @@
-features:
-  - |
-    Added a new filter
-    (``sphinxcontrib.spelling.filters.ContributorFilter``) that treats
-    contributor names extracted from the git history as spelled
-    correctly, making it easier to refer to the names in
-    acknowledgments . Includes a new configuration option,
-    ``spelling_ignore_contributor_names`` to enable it.
