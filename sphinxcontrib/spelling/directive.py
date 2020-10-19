@@ -22,7 +22,6 @@ class SpellingDirective(rst.Directive):
 
     """
 
-    option_spec = {}
     has_content = True
 
     def run(self):
