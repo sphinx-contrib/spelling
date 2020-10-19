@@ -187,7 +187,7 @@ class ImportableModuleFilter(Filter):
             self.sought_modules.add(word)
             try:
                 spec = importlib.util.find_spec(word)
-            except (AttributeError, ImportError):
+            except (AttributeError, ImportError, ValueError):
                 # Raises ModuleNotFoundError (subclass of ImportError) instead
                 # of AttributeError in Python 3.7+.
                 return False
