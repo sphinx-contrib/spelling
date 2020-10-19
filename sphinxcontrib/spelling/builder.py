@@ -42,8 +42,6 @@ class SpellingBuilder(Builder):
             raise RuntimeError(
                 'Cannot initialize spelling builder '
                 'without PyEnchant installed') from enchant_import_error
-        self.docnames = []
-        self.document_data = []
         self.misspelling_count = 0
 
         self.env.settings["smart_quotes"] = False
