@@ -22,7 +22,7 @@ matrix:
     - env: BUILD=pkglint
       python: 3.8
 
-# Pull all of the history so we can use reno
+# Pull all of the history to test ContributorFilter.
 git:
   depth: false
 

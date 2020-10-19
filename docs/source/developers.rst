@@ -51,14 +51,4 @@ changes using ``Fixes #NUM``, replacing ``NUM`` with the issue number.
 Release Notes
 =============
 
-Please use reno_ to add a release note for each pull request.
-
-.. code-block:: console
-
-   $ tox -e docs
-   $ .tox/docs/bin/reno new slug
-   # edit file created by reno
-
-Refer to the reno_ documentation for more details.
-
-.. _reno: https://docs.openstack.org/reno/latest/
+Please add a release note for each pull request to ``docs/history.rst``.
