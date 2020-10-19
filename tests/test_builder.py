@@ -38,7 +38,7 @@ def get_sphinx_output(srcdir, outdir, docname):
     app.build()
     path = os.path.join(outdir, docname + '.spelling')
     try:
-        with codecs.open(path, 'r') as f:
+        with open(path, 'r') as f:
             output_text = f.read()
     except FileNotFoundError:
         output_text = None
