@@ -13,6 +13,15 @@ This major release drops support for Python 3.5. This version `is not
 maintained anymore
 <https://devguide.python.org/devcycle/#end-of-life-branches>`__.
 
+Bug Fixes
+---------
+
+- Fixes an issue with ellipsis incorrectly being interpreted as
+  relative imports and triggering a `ValueError` in the
+  `ImportableModuleFilter`. See `#96
+  <https://github.com/sphinx-contrib/spelling/issues/96>`__ for
+  details.
+
 6.0.0
 =====
 
