@@ -9,8 +9,9 @@
 *Next release*
 ==============
 
-- Drop support for Python 3.5. This version `is not maintained anymore
-  <https://devguide.python.org/devcycle/#end-of-life-branches>`__.
+This major release drops support for Python 3.5. This version `is not
+maintained anymore
+<https://devguide.python.org/devcycle/#end-of-life-branches>`__.
 
 6.0.0
 =====
