@@ -36,9 +36,9 @@ def test_acronym_unicode():
     assert 'DBM' not in words, 'Failed to filter out acronym'
 
 
-def test_contributors():
-    f = filters.ContributorFilter(None)
-    names = [
+@pytest.mark.parametrize(
+    "name",
+    [
         "Alex",
         "Atlakson",
         "Avram",
@@ -67,8 +67,10 @@ def test_contributors():
         "Tobias",
         "Tricoli",
     ]
-    for name in names:
-        assert f._skip(name)
+)
+def test_contributors(name):
+    f = filters.ContributorFilter(None)
+    assert f._skip(name)
 
 
 @pytest.mark.parametrize(
