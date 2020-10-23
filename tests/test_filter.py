@@ -4,6 +4,7 @@
 """Tests for filters.
 """
 
+import pytest
 from enchant.tokenize import get_tokenizer
 
 from sphinxcontrib.spelling import filters
@@ -68,3 +69,16 @@ def test_contributors():
     ]
     for name in names:
         assert f._skip(name)
+
+
+@pytest.mark.parametrize(
+    "word,expected",
+    [
+        ('os', True),
+        ('os.name', False),
+        ('__main__', False),
+    ]
+)
+def test_importable_module_skip(word, expected):
+    f = filters.ImportableModuleFilter(None)
+    assert f._skip(word) is expected
