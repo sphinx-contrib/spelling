@@ -21,6 +21,10 @@ matrix:
       python: 3.8
     - env: BUILD=pkglint
       python: 3.8
+    - name: "Django integration test"
+      python: "3.8"
+      script:
+        - python3 ./integration_tests/build_django.py
 
 # Pull all of the history to test ContributorFilter.
 git:
