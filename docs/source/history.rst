@@ -6,8 +6,8 @@
 
    unmaintained
 
-*Next release*
-==============
+7.0.0
+=====
 
 This major release drops support for Python 3.5. This version `is not
 maintained anymore
