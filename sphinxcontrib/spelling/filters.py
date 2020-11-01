@@ -7,7 +7,7 @@
 # TODO - Words with multiple uppercase letters treated as classes and ignored
 
 import builtins
-import importlib
+import imp
 import subprocess
 from xmlrpc import client as xmlrpc_client
 
@@ -184,12 +184,8 @@ class ImportableModuleFilter(Filter):
         if word not in self.sought_modules:
             self.sought_modules.add(word)
             try:
-                spec = importlib.util.find_spec(word)
-            except (AttributeError, ImportError, ValueError):
-                # Raises ModuleNotFoundError (subclass of ImportError) instead
-                # of AttributeError in Python 3.7+.
-                return False
-            if spec is None:
+                imp.find_module(word)
+            except ImportError:
                 return False
             self.found_modules.add(word)
             return True

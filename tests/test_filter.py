@@ -84,3 +84,11 @@ def test_contributors(name):
 def test_importable_module_skip(word, expected):
     f = filters.ImportableModuleFilter(None)
     assert f._skip(word) is expected
+
+
+def test_importable_module_with_side_effets(tmpdir):
+    with tmpdir.as_cwd():
+        path = tmpdir.join('setup.py')
+        path.write('raise SystemExit\n')
+        f = filters.ImportableModuleFilter(None)
+        assert f._skip('setup.cfg') is False
