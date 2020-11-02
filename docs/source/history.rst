@@ -6,6 +6,19 @@
 
    unmaintained
 
+7.0.1
+=====
+
+Bug Fixes
+---------
+
+- `#105 <https://github.com/sphinx-contrib/spelling/pull/105>`__
+  reverts a change that switched from `imp` to `importlib`. Using
+  `importlib.find_spec()
+  <https://docs.python.org/3/library/importlib.html#importlib.util.find_spec>`__
+  is not safe at runtime as it can import modules which will cause
+  side effects within environments.
+
 7.0.0
 =====
 
