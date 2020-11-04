@@ -9,6 +9,7 @@ on:
 jobs:
   build-n-publish:
     name: Build and publish Python distributions to PyPI and TestPyPI
+    if: ${{ github.repository_owner == 'sphinx-contrib' }}
 
     runs-on: ubuntu-latest
 
