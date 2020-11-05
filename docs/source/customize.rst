@@ -35,6 +35,8 @@ Input Options
 .. _PyEnchant tutorial: https://github.com/rfk/pyenchant/blob/master/website/content/tutorial.rst
 .. _exclude_patterns : https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-exclude_patterns
 
+.. _output-options:
+
 Output Options
 ==============
 
