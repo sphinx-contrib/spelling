@@ -1,0 +1,28 @@
+name: Integration Tests
+
+on:
+  - push
+  - pull_request
+
+jobs:
+  django:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: python3 -m pip install tox
+
+      - name: Build docs
+        run: python3 ./integration_tests/build_django.py
