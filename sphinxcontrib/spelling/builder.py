@@ -210,10 +210,11 @@ class SpellingBuilder(Builder):
                 # Check the text of the node.
                 misspellings = self.checker.check(node.astext())
                 for word, suggestions, context_line in misspellings:
-                    msg_parts = [red(word)]
-                    msg_parts.append(self.format_suggestions(suggestions))
+                    msg_parts = ['Spell check', red(word)]
+                    if self.format_suggestions(suggestions) != '':
+                        msg_parts.append(self.format_suggestions(suggestions))
                     msg_parts.append(context_line)
-                    msg = 'Spell check: ' + ':'.join(msg_parts)
+                    msg = ': '.join(msg_parts) + '.'
                     loc = (docname, lineno) if lineno else docname
                     if self.config.spelling_warning:
                         logger.warning(msg, location=loc)
