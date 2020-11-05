@@ -6,6 +6,20 @@
 
    unmaintained
 
+7.1.0
+=====
+
+New Features
+------------
+
+- `#116 <https://github.com/sphinx-contrib/spelling/pull/116>`__ adds
+  a config option `spelling_warning` that makes individual messages
+  about misspellings warnings. The same change also updates the
+  formatting of the message to make it easier for IDEs to parse,
+  allowing the editor to navigate to the location of the misspelled
+  word. See :ref:`output-options` for details.  Contributed by Robert
+  Cohn.
+
 7.0.1
 =====
 
