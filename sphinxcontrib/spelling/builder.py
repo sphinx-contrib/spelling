@@ -213,16 +213,12 @@ class SpellingBuilder(Builder):
                     msg_parts = [red(word)]
                     msg_parts.append(self.format_suggestions(suggestions))
                     msg_parts.append(context_line)
+                    msg = 'Spell check: ' + ':'.join(msg_parts)
+                    loc = (docname, lineno) if lineno else docname
                     if self.config.spelling_warning:
-                        loc = (docname, lineno) if lineno else docname
-                        msg = 'Spell check: ' + ':'.join(msg_parts)
                         logger.warning(msg, location=loc)
                     else:
-                        loc = [docname + '.rst']
-                        if lineno:
-                            loc.append(darkgreen(str(lineno)))
-                        msg = ':'.join(loc + msg_parts)
-                        logger.info(msg)
+                        logger.info(msg, location=loc)
                     yield "%s:%s: (%s) %s %s\n" % (
                         self.env.doc2path(docname, None),
                         lineno, word,
