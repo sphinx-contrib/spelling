@@ -12,7 +12,7 @@ import tempfile
 import docutils.nodes
 from sphinx.builders import Builder
 from sphinx.util import logging
-from sphinx.util.console import darkgreen, red
+from sphinx.util.console import red
 from sphinx.util.matching import Matcher
 from sphinx.util.osutil import ensuredir
 
@@ -210,14 +210,16 @@ class SpellingBuilder(Builder):
                 # Check the text of the node.
                 misspellings = self.checker.check(node.astext())
                 for word, suggestions, context_line in misspellings:
-                    msg_parts = [docname + '.rst']
-                    if lineno:
-                        msg_parts.append(darkgreen(str(lineno)))
-                    msg_parts.append(red(word))
-                    msg_parts.append(self.format_suggestions(suggestions))
+                    msg_parts = ['Spell check', red(word)]
+                    if self.format_suggestions(suggestions) != '':
+                        msg_parts.append(self.format_suggestions(suggestions))
                     msg_parts.append(context_line)
-                    msg = ':'.join(msg_parts)
-                    logger.info(msg)
+                    msg = ': '.join(msg_parts) + '.'
+                    loc = (docname, lineno) if lineno else docname
+                    if self.config.spelling_warning:
+                        logger.warning(msg, location=loc)
+                    else:
+                        logger.info(msg, location=loc)
                     yield "%s:%s: (%s) %s %s\n" % (
                         self.env.doc2path(docname, None),
                         lineno, word,
