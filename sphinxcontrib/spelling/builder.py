@@ -12,7 +12,7 @@ import tempfile
 import docutils.nodes
 from sphinx.builders import Builder
 from sphinx.util import logging
-from sphinx.util.console import darkgreen, red
+from sphinx.util.console import red
 from sphinx.util.matching import Matcher
 from sphinx.util.osutil import ensuredir
 
