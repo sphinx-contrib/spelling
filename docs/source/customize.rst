@@ -47,6 +47,11 @@ Output Options
   misspelled word is printed, for more context about the location of each
   word.  Defaults to True.
 
+``spelling_warning=False``
+
+  Boolean controlling whether a misspelling is emitted as a sphinx
+  warning or as an info message. Defaults to False.
+
 Word Filters
 ============
 
