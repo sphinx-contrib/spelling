@@ -54,6 +54,10 @@ Output Options
   Boolean controlling whether a misspelling is emitted as a sphinx
   warning or as an info message. Defaults to False.
 
+``spelling_verbose=True``
+
+  Choose whether or not the mispelled output should be displayed in the terminal. Defaults to True.
+
 Word Filters
 ============
 
