@@ -29,6 +29,7 @@ logger = logging.getLogger(__name__)
 
 # TODO - Words with multiple uppercase letters treated as classes and ignored
 
+
 class SpellingBuilder(Builder):
     """
     Spell checks a document
