@@ -54,7 +54,8 @@ def setup(app):
     app.add_config_value('spelling_filters', [], 'env')
     # Set a user-provided list of files to ignore
     app.add_config_value('spelling_exclude_patterns', [], 'env')
-    # Choose whether or not the misspelled output should be displayed in the terminal 
+    # Choose whether or not the misspelled output should be displayed
+    # in the terminal
     app.add_config_value('spelling_verbose', True, 'env')
     return {
         "parallel_read_safe": True,
