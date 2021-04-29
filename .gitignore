@@ -21,3 +21,4 @@ ChangeLog
 /.coverage
 /.testrepository/
 /cover/
+.eggs/

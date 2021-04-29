@@ -35,9 +35,7 @@ def setup(app):
     # Set the language for the tokenizer
     app.add_config_value('tokenizer_lang', 'en_US', 'env')
     # Set a user-provided list of words known to be spelled properly
-    app.add_config_value('spelling_word_list_filename',
-                         None,
-                         'env')
+    app.add_config_value('spelling_word_list_filename', None, 'env')
     # Assume anything that looks like a PyPI package name is spelled properly
     app.add_config_value('spelling_ignore_pypi_package_names', False, 'env')
     # Assume words that look like wiki page names are spelled properly
@@ -55,9 +53,9 @@ def setup(app):
     # Add any user-defined filter classes
     app.add_config_value('spelling_filters', [], 'env')
     # Set a user-provided list of files to ignore
-    app.add_config_value('spelling_exclude_patterns',
-                         [],
-                         'env')
+    app.add_config_value('spelling_exclude_patterns', [], 'env')
+    # Choose wether or not the misspel output should be displayed in the terminal 
+    app.add_config_value('spelling_verbose', True, 'env')
     return {
         "parallel_read_safe": True,
         "parallel_write_safe": True,
