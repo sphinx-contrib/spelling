@@ -218,7 +218,7 @@ class SpellingBuilder(Builder):
                     loc = (docname, lineno) if lineno else docname
                     if self.config.spelling_warning:
                         logger.warning(msg, location=loc)
-                    else:
+                    elif self.config.spelling_verbose:
                         logger.info(msg, location=loc)
                     yield "%s:%s: (%s) %s %s\n" % (
                         self.env.doc2path(docname, None),
