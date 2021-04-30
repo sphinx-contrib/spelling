@@ -6,6 +6,17 @@
 
    unmaintained
 
+7.2.0
+=====
+
+New Features
+------------
+
+- `#123 <https://github.com/sphinx-contrib/spelling/pull/123>`__ adds
+  the ``spelling_verbose`` configuration option for controlling
+  whether misspelled words are printed to the console as well as the
+  output log files. See :ref:`output-options` for details.
+
 7.1.0
 =====
 

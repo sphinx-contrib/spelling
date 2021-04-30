@@ -67,7 +67,8 @@ Output Options
 
 ``spelling_verbose=True``
 
-  Choose whether or not the misspelled output should be displayed in the terminal. Defaults to True.
+  Choose whether or not the misspelled words should be displayed in
+  the terminal. Defaults to True.
 
 Word Filters
 ============
