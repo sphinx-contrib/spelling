@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-n-publish:
-    name: Build and publish Python distributions to PyPI and TestPyPI
+    name: Build and publish Python distributions to PyPI
     if: ${{ github.repository_owner == 'sphinx-contrib' }}
 
     runs-on: ubuntu-latest
@@ -28,11 +28,11 @@ jobs:
     - name: Build sdist and wheel
       run: |
         python setup.py sdist bdist_wheel
-    - name: Publish distribution to Test PyPI
-      uses: pypa/gh-action-pypi-publish@master
-      with:
-        password: ${{ secrets.test_pypi_password }}
-        repository_url: https://test.pypi.org/legacy/
+    # - name: Publish distribution to Test PyPI
+    #   uses: pypa/gh-action-pypi-publish@master
+    #   with:
+    #     password: ${{ secrets.test_pypi_password }}
+    #     repository_url: https://test.pypi.org/legacy/
     - name: Publish distribution to PyPI
       if: startsWith(github.ref, 'refs/tags')
       uses: pypa/gh-action-pypi-publish@master
