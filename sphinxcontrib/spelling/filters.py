@@ -9,6 +9,7 @@
 import builtins
 import imp
 import subprocess
+import sys
 from xmlrpc import client as xmlrpc_client
 
 from enchant.tokenize import Filter, get_tokenizer, tokenize, unit_tokenize
@@ -177,18 +178,24 @@ class ImportableModuleFilter(Filter):
     """
     def __init__(self, tokenizer):
         super().__init__(tokenizer)
-        self.found_modules = set()
-        self.sought_modules = set()
+        self.found_modules = set(sys.builtin_module_names)
+        self.sought_modules = self.found_modules.copy()
 
     def _skip(self, word):
+        valid_module_name = all(n.isidentifier() for n in word.split('.'))
+        if not valid_module_name:
+            return False
+
         if word not in self.sought_modules:
             self.sought_modules.add(word)
             try:
-                imp.find_module(word)
+                module_file, _, _ = imp.find_module(word)
             except ImportError:
-                return False
-            self.found_modules.add(word)
-            return True
+                pass
+            else:
+                if module_file is not None:
+                    module_file.close()
+                self.found_modules.add(word)
         return word in self.found_modules
 
 
