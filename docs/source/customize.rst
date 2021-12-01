@@ -197,5 +197,5 @@ files. The Sphinx project's ``conf.py`` then needs two changes.
 .. seealso::
 
    * `Creating a Spelling Checker for reStructuredText Documents
-     <http://doughellmann.com/2011/05/creating-a-spelling-checker-for-restructuredtext-documents.html>`_
+     <https://doughellmann.com/posts/creating-a-spelling-checker-for-restructuredtext-documents/>`_
    * `PyEnchant tutorial`_
