@@ -1,0 +1,19 @@
+pull_request_rules:
+  - name: Automatic merge on approval
+    conditions:
+      - and:
+        - "check-success=build (docs)"
+        - "check-success=build (linter)"
+        - "check-success=build (spelling)"
+        - "check-success=django"
+        - "check-success=build (3.6)"
+        - "check-success=build (3.7)"
+        - "check-success=build (3.8)"
+        - "check-success=build (3.9)"
+        - "-draft"
+        - or:
+          - "approved-reviews-by=dhellmann"
+          - "author=dhellmann"
+    actions:
+      merge:
+        method: merge
