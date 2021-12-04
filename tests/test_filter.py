@@ -79,6 +79,7 @@ def test_contributors(name):
         ('os', True),
         ('os.name', False),
         ('__main__', False),
+        ("don't", False),
     ]
 )
 def test_importable_module_skip(word, expected):
