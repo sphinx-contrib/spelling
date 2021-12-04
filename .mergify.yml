@@ -1,0 +1,16 @@
+pull_request_rules:
+  - name: Automatic merge on approval
+    conditions:
+      - and:
+        - "#approved-reviews-by>=1"
+        - "check-success=Check / build (docs) (push)"
+        - "check-success=Check / build (linter) (push)"
+        - "check-success=Check / build (spelling) (push)"
+        - "check-success=Integration Tests / django (push)"
+        - "check-success=Test / build (3.6) (push)"
+        - "check-success=Test / build (3.7) (push)"
+        - "check-success=Test / build (3.8) (push)"
+        - "check-success=Test / build (3.9) (push)"
+    actions:
+      merge:
+        method: merge
