@@ -15,7 +15,7 @@ New Features
 - `#130 <https://github.com/sphinx-contrib/spelling/pull/130>`__ tested support
   for Python 3.10, and added the trove classifier.
 
-- `#129 <https://github.com/sphinx-contrib/spelling/pull/129>` improved the
+- `#129 <https://github.com/sphinx-contrib/spelling/pull/129>`__ improved the
   speed of the ``ImportableModuleFilter``.
 
 7.2.0
