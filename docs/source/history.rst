@@ -12,11 +12,17 @@
 New Features
 ------------
 
+- `#131 <https://github.com/sphinx-contrib/spelling/pull/131>`__
+  included a documentation update to fix a broken link.
+
 - `#130 <https://github.com/sphinx-contrib/spelling/pull/130>`__ tested support
   for Python 3.10, and added the trove classifier.
 
 - `#129 <https://github.com/sphinx-contrib/spelling/pull/129>`__ improved the
   speed of the ``ImportableModuleFilter``.
+
+- `#128 <https://github.com/sphinx-contrib/spelling/pull/128>`__ fixed
+  some issues with the packaging configuration.
 
 7.2.0
 =====
