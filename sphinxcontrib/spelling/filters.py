@@ -7,7 +7,7 @@
 # TODO - Words with multiple uppercase letters treated as classes and ignored
 
 import builtins
-import imp
+import importlib
 import subprocess
 import sys
 from xmlrpc import client as xmlrpc_client
@@ -189,13 +189,18 @@ class ImportableModuleFilter(Filter):
         if word not in self.sought_modules:
             self.sought_modules.add(word)
             try:
-                module_file, _, _ = imp.find_module(word)
-            except ImportError:
-                pass
+                mod = importlib.util.find_spec(word)
+            except Exception as err:
+                # This could be an ImportError, some more detailed
+                # error out of distutils, or something else triggered
+                # by failing to be able to import a parent package to
+                # use the metadata to search for a subpackage.
+                logger.debug(
+                    'find_spec({!r}) failed, invalid module name: {}'.format(
+                        word, err))
             else:
-                if module_file is not None:
-                    module_file.close()
-                self.found_modules.add(word)
+                if mod is not None:
+                    self.found_modules.add(word)
         return word in self.found_modules
 
 
