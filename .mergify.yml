@@ -11,8 +11,10 @@ pull_request_rules:
         - "check-success=build (3.8)"
         - "check-success=build (3.9)"
         - "check-success=build (3.10)"
-        - "check-success=history-update"
         - "-draft"
+        - or:
+          - "check-success=history-update"
+          - "label=ci"
         - or:
           - "approved-reviews-by=dhellmann"
           - "author=dhellmann"
