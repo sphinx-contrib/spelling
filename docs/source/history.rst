@@ -6,6 +6,16 @@
 
    unmaintained
 
+7.3.1
+=====
+
+Bug Fixes
+---------
+
+- `#137 <https://github.com/sphinx-contrib/spelling/pull/137>`__
+  replace the use of deprecated ``imp`` in ``ImportableModuleFilter``
+  with ``importlib``
+
 7.3.0
 =====
 
