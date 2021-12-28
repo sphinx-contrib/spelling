@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+set -x
+
+git remote -v
+
+git branch -a
+
 # We only look at the files that have changed in the current PR, to
 # avoid problems when the template is changed in a way that is
 # incompatible with existing documents.
