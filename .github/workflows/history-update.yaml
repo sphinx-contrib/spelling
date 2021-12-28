@@ -1,0 +1,20 @@
+name: History Update
+
+on:
+  - push
+  - pull_request
+
+jobs:
+  history-update:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+
+    steps:
+      - uses: actions/checkout@v2
+        # Get all of the git history. https://github.com/actions/checkout
+        fetch-depth: 0
+
+      - name: Check for history.rst update
+        run: ./tools/history-update.sh
