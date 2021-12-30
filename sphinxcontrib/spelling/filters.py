@@ -188,6 +188,19 @@ class ImportableModuleFilter(Filter):
         self.sought_modules.add('__main__')
 
     def _skip(self, word):
+        # If the word looks like a python module filename, strip the
+        # extension to avoid the side-effect of actually importing the
+        # module. This prevents, for example, 'setup.py' triggering an
+        # import of the setup module during a doc build, which makes
+        # it look like Sphinx is complaining about a commandline
+        # argument. See
+        # https://github.com/sphinx-contrib/spelling/issues/142
+        if word.endswith('.py'):
+            logger.debug(
+                'removing .py extension from %r before searching for module',
+                word)
+            word = word[:-3]
+
         valid_module_name = all(n.isidentifier() for n in word.split('.'))
         if not valid_module_name:
             return False
@@ -207,6 +220,7 @@ class ImportableModuleFilter(Filter):
             else:
                 if mod is not None:
                     self.found_modules.add(word)
+
         return word in self.found_modules
 
 
