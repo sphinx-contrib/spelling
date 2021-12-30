@@ -6,6 +6,18 @@
 
    unmaintained
 
+7.3.2
+=====
+
+Bug Fixes
+---------
+
+- `#141 <https://github.com/sphinx-contrib/spelling/pull/141>`__ Treat
+  `__main__` as a special module name that cannot be imported. If the
+  test suite is invoked by running `python -m pytest` instead of
+  `pytest` then there will be no `__main__` and find_spec() will fail,
+  so this change makes the tests work in both modes.
+
 7.3.1
 =====
 

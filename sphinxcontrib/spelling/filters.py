@@ -180,6 +180,12 @@ class ImportableModuleFilter(Filter):
         super().__init__(tokenizer)
         self.found_modules = set(sys.builtin_module_names)
         self.sought_modules = self.found_modules.copy()
+        # By adding __main__ to the list of sought modules but not
+        # found modules we ensure that it is never recognized as a
+        # valid module, which is consistent with the behavior before
+        # version 7.3.1.  See
+        # https://github.com/sphinx-contrib/spelling/issues/141
+        self.sought_modules.add('__main__')
 
     def _skip(self, word):
         valid_module_name = all(n.isidentifier() for n in word.split('.'))
