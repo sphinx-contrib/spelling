@@ -12,11 +12,18 @@
 Bug Fixes
 ---------
 
-- `#141 <https://github.com/sphinx-contrib/spelling/pull/141>`__ Treat
-  `__main__` as a special module name that cannot be imported. If the
-  test suite is invoked by running `python -m pytest` instead of
-  `pytest` then there will be no `__main__` and find_spec() will fail,
-  so this change makes the tests work in both modes.
+- `#143 <https://github.com/sphinx-contrib/spelling/pull/143>`__ Treat
+  ``__main__`` as a special module name that cannot be imported. If
+  the test suite is invoked by running ``python -m pytest`` instead of
+  ``pytest`` then there will be no ``__main__`` and find_spec() will
+  fail, so this change makes the tests work in both modes.
+- `#144 <https://github.com/sphinx-contrib/spelling/pull/144>`__ Fix
+  python filename handling in ``ImportableModuleFilter``.  If the word
+  looks like a python module filename, strip the extension to avoid
+  the side-effect of actually importing the module. This prevents, for
+  example, ``'setup.py'`` triggering an import of the ``setup`` module
+  during a doc build, which makes it look like Sphinx is complaining
+  about a commandline argument.
 
 7.3.1
 =====
