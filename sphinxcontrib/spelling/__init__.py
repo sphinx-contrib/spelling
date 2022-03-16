@@ -55,7 +55,7 @@ def setup(app):
     # Set a user-provided list of files to ignore
     app.add_config_value('spelling_exclude_patterns', [], 'env')
     # Set valid word characters
-    app.add_config_value('spelling_valid_word_characters', ("'","-",), 'env')
+    app.add_config_value('spelling_valid_word_characters', ("'", "-",), 'env')
     # Choose whether or not the misspelled output should be displayed
     # in the terminal
     app.add_config_value('spelling_verbose', True, 'env')
