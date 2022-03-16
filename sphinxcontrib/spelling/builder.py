@@ -86,6 +86,7 @@ class SpellingBuilder(Builder):
             word_list_filename=word_list,
             filters=f,
             context_line=self.config.spelling_show_whole_line,
+            valid_word_chars=self.config.spelling_valid_word_characters,
         )
 
     def _load_filter_classes(self, filters):

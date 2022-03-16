@@ -21,7 +21,8 @@ class SpellingChecker:
     """
 
     def __init__(self, lang, suggest, word_list_filename,
-                 tokenizer_lang='en_US', filters=None, context_line=False):
+                 tokenizer_lang='en_US', filters=None, context_line=False,
+                 valid_word_chars=None):
         if enchant_import_error is not None:
             raise RuntimeError(
                 'Cannot instantiate SpellingChecker '

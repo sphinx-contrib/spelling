@@ -6,6 +6,7 @@ pypi
 reStructuredText
 sphinxcontrib
 tokenizer
+tokenizing
 txt
 wikis
 wordfiles
