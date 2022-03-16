@@ -6,6 +6,27 @@
 
    unmaintained
 
+Unreleased
+==========
+
+Bug Fixes
+---------
+
+None.
+
+New Features
+------------
+
+- `#147 <https://github.com/sphinx-contrib/spelling/pull/147>`__
+  Adds the ability to pass in valid word characters as the
+  configuration option ``spelling_valid_word_characters``, where its
+  value is a tuple of strings. For example,
+  ``spelling_valid_word_characters = ("'","-",)``. By default
+  PyEnchant considers only ``'`` as a valid word character. This pull
+  request also adds the hyphen ``-`` as a valid word character to
+  prevent PyEnchant from tokenizing hyphenated words into two words
+  and marking them as misspellings.
+
 7.3.2
 =====
 
