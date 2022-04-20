@@ -214,9 +214,8 @@ class ImportableModuleFilter(Filter):
                 # error out of distutils, or something else triggered
                 # by failing to be able to import a parent package to
                 # use the metadata to search for a subpackage.
-                logger.debug(
-                    'find_spec({!r}) failed, invalid module name: {}'.format(
-                        word, err))
+                logger.debug('find_spec(%r) failed, invalid module name: %s',
+                             word, err)
             else:
                 if mod is not None:
                     self.found_modules.add(word)
@@ -241,15 +240,14 @@ class ContributorFilter(IgnoreWordsFilter):
 
     def _get_contributors(self):
         logger.info('Scanning contributors')
-        cmd = [
-            'git', 'log', '--quiet', '--no-color',
-            '--pretty=format:' + self._pretty_format,
-        ]
+        cmd = ['git', 'log', '--quiet', '--no-color',
+               f'--pretty=format:{self._pretty_format}']
+
         try:
             p = subprocess.run(cmd, check=True, stdout=subprocess.PIPE)
         except subprocess.CalledProcessError as err:
-            logger.warning('Called: {}'.format(' '.join(cmd)))
-            logger.warning(f'Failed to scan contributors: {err}')
+            logger.warning('Called: %s', ' '.join(cmd))
+            logger.warning('Failed to scan contributors: %s', err)
             return set()
         output = p.stdout.decode('utf-8')
         tokenizer = get_tokenizer('en_US', filters=[])

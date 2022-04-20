@@ -60,7 +60,6 @@ class SpellingChecker:
             line = line_of_index(text, pos) if self.context_line else ""
 
             yield word, suggestions, line
-        return
 
 
 def line_of_index(text, index):
