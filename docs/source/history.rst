@@ -15,6 +15,8 @@ Bug Fixes
 - `#149 <https://github.com/sphinx-contrib/spelling/pull/149>` __ Fixes
   to support testing when building RPMs. Switch to PEP 420 native
   namespace and skip contributors test when not in a git repo.
+- `#150 <https://github.com/sphinx-contrib/spelling/pull/150>` __ Minor
+  code cleanup primarily around string interpolation.
 
 7.3.2
 =====
