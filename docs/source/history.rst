@@ -6,6 +6,16 @@
 
    unmaintained
 
+7.3.3
+=====
+
+Bug Fixes
+---------
+
+- `#149 <https://github.com/sphinx-contrib/spelling/pull/149>` __ Fixes
+  to support testing when building RPMs. Switch to PEP 420 native
+  namespace and skip contributors test when not in a git repo.
+
 7.3.2
 =====
 

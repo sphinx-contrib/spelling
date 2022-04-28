@@ -4,6 +4,9 @@
 """Tests for filters.
 """
 
+import os
+from pathlib import Path
+
 import pytest
 from enchant.tokenize import get_tokenizer
 
@@ -36,6 +39,7 @@ def test_acronym_unicode():
     assert 'DBM' not in words, 'Failed to filter out acronym'
 
 
+@pytest.mark.skipif(not (Path(os.getcwd()) / '.git').is_dir(), reason='Not a git repo')
 @pytest.mark.parametrize(
     "name",
     [
