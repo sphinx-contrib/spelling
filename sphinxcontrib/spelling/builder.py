@@ -77,7 +77,7 @@ class SpellingBuilder(Builder):
             os.mkdir(self.outdir)
 
         word_list = self.get_wordlist_filename()
-        logger.info(f'Looking for custom word list in {word_list}')
+        logger.info('Looking for custom word list in %s', word_list)
 
         self.checker = checker.SpellingChecker(
             lang=self.config.spelling_lang,
@@ -92,11 +92,11 @@ class SpellingBuilder(Builder):
         # Filters may be expressed in the configuration file using
         # names, so look through them and import the referenced class
         # and use that in the checker.
-        for filter in filters:
-            if not isinstance(filter, str):
-                yield filter
+        for filter_ in filters:
+            if not isinstance(filter_, str):
+                yield filter_
                 continue
-            module_name, _, class_name = filter.rpartition('.')
+            module_name, _, class_name = filter_.rpartition('.')
             mod = importlib.import_module(module_name)
             yield getattr(mod, class_name)
 
@@ -106,8 +106,7 @@ class SpellingBuilder(Builder):
             word_list = 'spelling_wordlist.txt'
 
         if not isinstance(word_list, list):
-            filename = os.path.join(self.srcdir, word_list)
-            return filename
+            return os.path.join(self.srcdir, word_list)
 
         # In case the user has multiple word lists, we combine them
         # into one large list that we pass on to the checker.
@@ -127,8 +126,8 @@ class SpellingBuilder(Builder):
             for word_file in word_list:
                 # Paths are relative
                 long_word_file = os.path.join(self.srcdir, word_file)
-                logger.info('Adding contents of {} to custom word list'.format(
-                    long_word_file))
+                logger.info('Adding contents of %s to custom word list',
+                            long_word_file)
                 with open(long_word_file, encoding='UTF-8') as infile:
                     infile_contents = infile.readlines()
                 outfile.writelines(infile_contents)
@@ -166,7 +165,7 @@ class SpellingBuilder(Builder):
         lines = list(self._find_misspellings(docname, doctree))
         self.misspelling_count += len(lines)
         if lines:
-            output_filename = os.path.join(self.outdir, docname + '.spelling')
+            output_filename = os.path.join(self.outdir, f'{docname}.spelling')
             logger.info('Writing %s', output_filename)
             ensuredir(os.path.dirname(output_filename))
             with open(output_filename, 'w', encoding='UTF-8') as output:
@@ -232,6 +231,5 @@ class SpellingBuilder(Builder):
 
     def finish(self):
         if self.misspelling_count:
-            logger.warning('Found %d misspelled words' %
+            logger.warning('Found %d misspelled words',
                            self.misspelling_count)
-        return

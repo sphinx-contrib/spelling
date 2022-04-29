@@ -3,7 +3,6 @@
 #
 """Tests for SpellingBuilder
 """
-import codecs
 import io
 import os
 import textwrap
@@ -36,7 +35,7 @@ def get_sphinx_output(srcdir, outdir, docname):
         freshenv=True,
     )
     app.build()
-    path = os.path.join(outdir, docname + '.spelling')
+    path = os.path.join(outdir, f'{docname}.spelling')
     try:
         with open(path, 'r') as f:
             output_text = f.read()
