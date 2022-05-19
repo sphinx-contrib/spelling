@@ -6,6 +6,14 @@
 
    unmaintained
 
+Next
+====
+
+- Fix a problem that occurred when the extra word list is empty and an
+  IndexError is thrown. Prevent the error by checking the contents of
+  the file before using the list.
+
+
 7.3.3
 =====
 
