@@ -12,6 +12,9 @@ Next
 - Fix a problem that occurred when the extra word list is empty and an
   IndexError is thrown. Prevent the error by checking the contents of
   the file before using the list.
+- `#153 <https://github.com/sphinx-contrib/spelling/issues/153>`__
+  Ensure the correct filename is reported as the location of a
+  misspelled word when the word is in an included file.
 
 
 7.3.3
@@ -20,10 +23,10 @@ Next
 Bug Fixes
 ---------
 
-- `#149 <https://github.com/sphinx-contrib/spelling/pull/149>` __ Fixes
+- `#149 <https://github.com/sphinx-contrib/spelling/pull/149>`__ Fixes
   to support testing when building RPMs. Switch to PEP 420 native
   namespace and skip contributors test when not in a git repo.
-- `#150 <https://github.com/sphinx-contrib/spelling/pull/150>` __ Minor
+- `#150 <https://github.com/sphinx-contrib/spelling/pull/150>`__ Minor
   code cleanup primarily around string interpolation.
 
 7.3.2
