@@ -10,6 +10,7 @@ import os
 import tempfile
 
 import docutils.nodes
+import docutils.utils
 from sphinx.builders import Builder
 from sphinx.util import logging
 from sphinx.util.console import red
@@ -193,18 +194,13 @@ class SpellingBuilder(Builder):
                     node.parent and
                     node.parent.tagname in self.TEXT_NODES):
 
-                # Figure out the line number for this node by climbing the
-                # tree until we find a node that has a line number.
-                lineno = None
-                parent = node
-                seen = set()
-                while lineno is None:
-                    # logger.info('looking for line number on %r' % node)
-                    seen.add(parent)
-                    parent = node.parent
-                    if parent is None or parent in seen:
-                        break
-                    lineno = parent.line
+                # Get the location of the text being checked so we can
+                # report it in the output file. Nodes from text that
+                # comes in via an 'include' directive does not include
+                # the full path, so convert from relative to full path
+                # for consistency.
+                source, lineno = docutils.utils.get_source_line(node)
+                source = os.path.abspath(source)
 
                 # Check the text of the node.
                 misspellings = self.checker.check(node.astext())
@@ -214,14 +210,12 @@ class SpellingBuilder(Builder):
                         msg_parts.append(self.format_suggestions(suggestions))
                     msg_parts.append(context_line)
                     msg = ': '.join(msg_parts) + '.'
-                    loc = (docname, lineno) if lineno else docname
                     if self.config.spelling_warning:
-                        logger.warning(msg, location=loc)
+                        logger.warning(msg, location=node)
                     elif self.config.spelling_verbose:
-                        logger.info(msg, location=loc)
+                        logger.info(msg, location=node)
                     yield "%s:%s: (%s) %s %s\n" % (
-                        self.env.doc2path(docname, None),
-                        lineno, word,
+                        source, lineno, word,
                         self.format_suggestions(suggestions),
                         context_line,
                     )
