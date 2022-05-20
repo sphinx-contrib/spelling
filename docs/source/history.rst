@@ -17,7 +17,9 @@ Next
   the file before using the list.
 - `#153 <https://github.com/sphinx-contrib/spelling/issues/153>`__
   Ensure the correct relative filename is reported as the location of
-  a misspelled word when the word is in an included file.
+  a misspelled word when the word is in an included file. Log the
+  location ourselves instead of letting the logging system compute it
+  for consistency.
 - Change default env list for local tox runs to only include the
   "current" python version.
 - Tell tox to pass `PYENCHANT_LIBRARY_PATH` through to commands. On
