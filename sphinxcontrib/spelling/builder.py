@@ -12,7 +12,7 @@ import tempfile
 import docutils.nodes
 import docutils.utils
 from sphinx.builders import Builder
-from sphinx.util import logging
+from sphinx.util import logging, osutil
 from sphinx.util.console import red
 from sphinx.util.matching import Matcher
 from sphinx.util.osutil import ensuredir
@@ -197,23 +197,27 @@ class SpellingBuilder(Builder):
                 # Get the location of the text being checked so we can
                 # report it in the output file. Nodes from text that
                 # comes in via an 'include' directive does not include
-                # the full path, so convert from relative to full path
+                # the full path, so convert all to relative path
                 # for consistency.
                 source, lineno = docutils.utils.get_source_line(node)
-                source = os.path.abspath(source)
+                source = osutil.relpath(source)
 
                 # Check the text of the node.
                 misspellings = self.checker.check(node.astext())
                 for word, suggestions, context_line in misspellings:
-                    msg_parts = ['Spell check', red(word)]
+                    msg_parts = [
+                        f'{source}:{lineno}: ',
+                        'Spell check',
+                        red(word),
+                    ]
                     if self.format_suggestions(suggestions) != '':
                         msg_parts.append(self.format_suggestions(suggestions))
                     msg_parts.append(context_line)
                     msg = ': '.join(msg_parts) + '.'
                     if self.config.spelling_warning:
-                        logger.warning(msg, location=node)
+                        logger.warning(msg)
                     elif self.config.spelling_verbose:
-                        logger.info(msg, location=node)
+                        logger.info(msg)
                     yield "%s:%s: (%s) %s %s\n" % (
                         source, lineno, word,
                         self.format_suggestions(suggestions),
