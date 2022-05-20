@@ -4,6 +4,9 @@
 
 .. spelling::
 
+   Homebrew
+   libenchant
+   macOS
    unmaintained
 
 Next
@@ -17,6 +20,13 @@ Next
   misspelled word when the word is in an included file.
 - Change default env list for local tox runs to only include the
   "current" python version.
+- Tell tox to pass `PYENCHANT_LIBRARY_PATH` through to commands. On
+  macOS it can be a little tricky to set up libenchant if your default
+  python does not match the one used by Homebrew for the
+  library. Setting the variable to point to the library fixes that,
+  but we don't want to set it in this file for everyone so use
+  `passenv` to tell tox to pass the setting through when running the
+  commands for each env.
 
 
 7.3.3
