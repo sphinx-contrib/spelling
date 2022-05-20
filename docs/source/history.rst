@@ -15,6 +15,8 @@ Next
 - `#153 <https://github.com/sphinx-contrib/spelling/issues/153>`__
   Ensure the correct filename is reported as the location of a
   misspelled word when the word is in an included file.
+- Change default env list for local tox runs to only include the
+  "current" python version.
 
 
 7.3.3
