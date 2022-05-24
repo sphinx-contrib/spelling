@@ -204,9 +204,9 @@ class SpellingBuilder(Builder):
 
                 # Check the text of the node.
                 misspellings = self.checker.check(node.astext())
-                for word, suggestions, context_line, line_offs in misspellings:
+                for word, suggestions, context_line, line_offset in misspellings:
                     msg_parts = [
-                        f'{source}:{lineno+line_offs}: ',
+                        f'{source}:{lineno+line_offset}: ',
                         'Spell check',
                         red(word),
                     ]
