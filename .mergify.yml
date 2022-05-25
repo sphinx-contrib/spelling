@@ -1,4 +1,15 @@
 pull_request_rules:
+
+  - name: Add CI label
+    conditions:
+      - or:
+          - "title~=^CI:"
+          - "title~=^ci:"
+    actions:
+      label:
+        add:
+          - ci
+
   - name: Automatic merge on approval
     conditions:
       - and:
