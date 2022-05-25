@@ -9,8 +9,8 @@
    macOS
    unmaintained
 
-Next
-====
+7.4.0
+=====
 
 - Fix a problem that occurred when the extra word list is empty and an
   IndexError is thrown. Prevent the error by checking the contents of
@@ -19,9 +19,11 @@ Next
   Ensure the correct relative filename is reported as the location of
   a misspelled word when the word is in an included file. Log the
   location ourselves instead of letting the logging system compute it
-  for consistency.
+  for consistency until `the fix
+  <https://github.com/sphinx-doc/sphinx/pull/10460>`__ is merged into
+  Sphinx.
 - Change default env list for local tox runs to only include the
-  "current" python version.
+  current python version, as defined by the installation of tox.
 - Tell tox to pass `PYENCHANT_LIBRARY_PATH` through to commands. On
   macOS it can be a little tricky to set up libenchant if your default
   python does not match the one used by Homebrew for the
