@@ -39,4 +39,4 @@ Details
 
 .. _PyEnchant: https://github.com/rfk/pyenchant
 
-.. _Sphinx: http://sphinx.pocoo.org/
+.. _Sphinx: https://www.sphinx-doc.org/
