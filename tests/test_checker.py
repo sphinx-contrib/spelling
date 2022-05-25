@@ -14,10 +14,11 @@ def test_errors_only():
                               suggest=False,
                               word_list_filename=None,
                               )
-    for word, suggestions, line in checker.check('This txt is wrong'):
+    for word, suggestions, line, offset in checker.check('This txt is wrong'):
         assert not suggestions, 'Suggesting'
         assert word == 'txt'
         assert line == ""
+        assert offset == 0
 
 
 def test_with_suggestions():
@@ -25,11 +26,11 @@ def test_with_suggestions():
                               suggest=True,
                               word_list_filename=None,
                               )
-    for word, suggestions, line in checker.check('This txt is wrong'):
+    for word, suggestions, line, offset in checker.check('This txt is wrong'):
         assert suggestions, 'Not suggesting'
         assert word == 'txt'
         assert line == ""
-
+        assert offset == 0
 
 def test_with_wordlist():
     checker = SpellingChecker(
@@ -38,7 +39,7 @@ def test_with_wordlist():
         word_list_filename=os.path.join(os.path.dirname(__file__),
                                         'test_wordlist.txt')
     )
-    words = [w for w, s, l in checker.check('This txt is wrong')]
+    words = [w for w, s, l, o in checker.check('This txt is wrong')]
     assert not words, 'Did not use personal word list file'
 
 
@@ -50,10 +51,11 @@ def test_with_context_line():
                               )
 
     text = 'Line one\nThis txt is wrong\nLine two'
-    for word, suggestions, line in checker.check(text):
+    for word, suggestions, line, offset in checker.check(text):
         assert not suggestions, 'Suggesting'
         assert word == 'txt'
         assert line == "This txt is wrong"
+        assert offset == 1
 
 
 def test_line_of_index_one_line():

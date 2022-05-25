@@ -29,7 +29,9 @@ Next
   but we don't want to set it in this file for everyone so use
   `passenv` to tell tox to pass the setting through when running the
   commands for each env.
-
+- `#159 <https://github.com/sphinx-contrib/spelling/issues/159>`__
+  Report using the line number of the misspelled word instead of
+  using the first line of the node.
 
 7.3.3
 =====

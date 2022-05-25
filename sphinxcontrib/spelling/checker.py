@@ -58,8 +58,9 @@ class SpellingChecker:
 
             suggestions = self.dictionary.suggest(word) if self.suggest else []
             line = line_of_index(text, pos) if self.context_line else ""
+            line_offset = text.count("\n", 0, pos)
 
-            yield word, suggestions, line
+            yield word, suggestions, line, line_offset
 
 
 def line_of_index(text, index):
