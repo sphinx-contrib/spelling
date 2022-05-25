@@ -3,8 +3,9 @@ pull_request_rules:
   - name: Add CI label
     conditions:
       - or:
-          - "title~=^CI:"
+          - "title~=^tox:"
           - "title~=^ci:"
+          - "files~=tox.ini"
     actions:
       label:
         add:
