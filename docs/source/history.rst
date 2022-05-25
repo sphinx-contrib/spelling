@@ -30,8 +30,9 @@ Next
   `passenv` to tell tox to pass the setting through when running the
   commands for each env.
 - `#159 <https://github.com/sphinx-contrib/spelling/issues/159>`__
-  Report using the line number of the misspelled word instead of
-  using the first line of the node.
+  Report using the line number of the misspelled word instead of using
+  the first line of the node, in both the log and `.spelling` output
+  file.
 
 7.3.3
 =====
