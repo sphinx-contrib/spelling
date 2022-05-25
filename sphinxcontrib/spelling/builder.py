@@ -224,7 +224,7 @@ class SpellingBuilder(Builder):
                     elif self.config.spelling_verbose:
                         logger.info(msg)
                     yield "%s:%s: (%s) %s %s\n" % (
-                        source, lineno, word,
+                        source, lineno + line_offset, word,
                         self.format_suggestions(suggestions),
                         context_line,
                     )
