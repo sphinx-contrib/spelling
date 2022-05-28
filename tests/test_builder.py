@@ -3,8 +3,10 @@
 #
 """Tests for SpellingBuilder
 """
+import contextlib
 import io
 import os
+import sys
 import textwrap
 
 import pytest
@@ -19,6 +21,28 @@ def sphinx_project(tmpdir):
     extensions = [ 'sphinxcontrib.spelling' ]
     ''')
     yield (srcdir, outdir)
+
+
+@contextlib.contextmanager
+def working_dir(targetdir):
+    "Temporarily change the working directory of the process."
+    before = os.getcwd()
+    os.chdir(targetdir)
+    try:
+        yield os.getcwd()
+    finally:
+        os.chdir(before)
+
+
+@contextlib.contextmanager
+def import_path(new_path):
+    "Temporarily change sys.path for imports."
+    before = sys.path
+    try:
+        sys.path = new_path
+        yield
+    finally:
+        sys.path = before
 
 
 def add_file(thedir, filename, content):
@@ -147,3 +171,48 @@ def test_ignore_file(sphinx_project):
     # The 'contents.spelling' output file should not have been
     # created, because the file is ignored.
     assert output_text is None
+
+
+def test_docstrings(sphinx_project):
+    srcdir, outdir = sphinx_project
+
+    add_file(srcdir, 'conf.py', '''
+    extensions = ['sphinxcontrib.spelling', 'sphinx.ext.autodoc']
+    ''')
+
+    add_file(srcdir / '..', 'the_source.py', '''
+    #!/usr/bin/env python3
+
+    def public_function(arg_name):
+        """Does something useful.
+
+        :param arg_name: Pass a vaule
+        """
+        return 1
+    ''')
+
+    add_file(srcdir, 'contents.rst', '''
+    The Module
+    ==========
+
+    .. automodule:: the_source
+       :members:
+
+    ''')
+
+    with working_dir(srcdir / '..'):
+        with import_path(['.'] + sys.path):
+            stdout, stderr, output_text = get_sphinx_output(
+                srcdir,
+                outdir,
+                'contents',
+            )
+
+    # Expected string is too long for one line
+    expected = (
+        'the_source.py:'
+        'docstring of the_source.public_function:'
+        'None:'
+        ' (vaule)'
+    )
+    assert expected in output_text
