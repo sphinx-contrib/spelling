@@ -13,14 +13,18 @@ import pytest
 from sphinx.application import Sphinx
 
 
-@pytest.fixture
-def sphinx_project(tmpdir):
+def _make_sphinx_project(tmpdir):
     srcdir = tmpdir.mkdir('src')
     outdir = tmpdir.mkdir('out')
     add_file(srcdir, 'conf.py', '''
     extensions = [ 'sphinxcontrib.spelling' ]
     ''')
-    yield (srcdir, outdir)
+    return (srcdir, outdir)
+
+
+@pytest.fixture
+def sphinx_project(tmpdir):
+    yield _make_sphinx_project(tmpdir)
 
 
 @contextlib.contextmanager
@@ -158,6 +162,75 @@ def test_several_word_lists(sphinx_project):
     assert '(txt)' not in output_text
     # But not this one
     assert '(tihs)' in output_text
+
+
+def _wordlist_sphinx_project(tmpdir, conf_contents):
+    srcdir, outdir = _make_sphinx_project(tmpdir)
+    add_file(srcdir, 'conf.py', conf_contents)
+    add_file(srcdir, 'test_wordlist.txt', '''
+    txt
+    ''')
+    add_file(srcdir, 'test_wordlist2.txt', '''
+    mispelled
+    ''')
+    stdout, stderr, app = get_sphinx_app(srcdir, outdir, 'contents')
+    return (srcdir, outdir, stdout, stderr, app)
+
+
+def test_word_list_default(tmpdir):
+    srcdir, outdir, stdout, stderr, app = _wordlist_sphinx_project(
+        tmpdir,
+        '''
+        extensions = ['sphinxcontrib.spelling']
+        ''',
+    )
+    results = app.builder.get_configured_wordlist_filenames()
+    assert len(results) == 1
+    assert os.path.basename(results[0]) == 'spelling_wordlist.txt'
+
+
+def test_one_word_list_str(tmpdir):
+    srcdir, outdir, stdout, stderr, app = _wordlist_sphinx_project(
+        tmpdir,
+        '''
+        extensions = ['sphinxcontrib.spelling']
+        spelling_word_list_filename='test_wordlist.txt'
+        ''',
+    )
+    results = app.builder.get_configured_wordlist_filenames()
+    assert len(results) == 1
+    assert os.path.basename(results[0]) == 'test_wordlist.txt'
+
+
+def test_multiple_word_list_str(tmpdir):
+    # We don't expect anyone to set up their conf.py this way but it
+    # simulates passing the configuration option from the command line
+    # using -D.
+    srcdir, outdir, stdout, stderr, app = _wordlist_sphinx_project(
+        tmpdir,
+        '''
+        extensions = ['sphinxcontrib.spelling']
+        spelling_word_list_filename='test_wordlist.txt,test_wordlist2.txt'
+        ''',
+    )
+    results = app.builder.get_configured_wordlist_filenames()
+    assert len(results) == 2
+    assert os.path.basename(results[0]) == 'test_wordlist.txt'
+    assert os.path.basename(results[1]) == 'test_wordlist2.txt'
+
+
+def test_multiple_word_list_list(tmpdir):
+    srcdir, outdir, stdout, stderr, app = _wordlist_sphinx_project(
+        tmpdir,
+        '''
+        extensions = ['sphinxcontrib.spelling']
+        spelling_word_list_filename=['test_wordlist.txt', 'test_wordlist2.txt']
+        ''',
+    )
+    results = app.builder.get_configured_wordlist_filenames()
+    assert len(results) == 2
+    assert os.path.basename(results[0]) == 'test_wordlist.txt'
+    assert os.path.basename(results[1]) == 'test_wordlist2.txt'
 
 
 def test_ignore_file(sphinx_project):

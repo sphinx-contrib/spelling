@@ -101,19 +101,27 @@ class SpellingBuilder(Builder):
             mod = importlib.import_module(module_name)
             yield getattr(mod, class_name)
 
-    def get_wordlist_filename(self):
+    def get_configured_wordlist_filenames(self):
+        "Returns the configured wordlist filenames."
         word_list = self.config.spelling_word_list_filename
         if word_list is None:
-            word_list = 'spelling_wordlist.txt'
+            word_list = ['spelling_wordlist.txt']
 
-        if isinstance(word_list, str) and word_list.find(',') > 0:
-            # Wordlist is a list, formatted as a str.
-            # Split it back into a list
+        if isinstance(word_list, str):
+            # Wordlist is a string. Split on comma in case it came
+            # from the command line, via -D, and has multiple values.
             word_list = word_list.split(',')
 
-        if not isinstance(word_list, list):
-            return os.path.join(self.srcdir, word_list)
+        return [
+            os.path.join(self.srcdir, p)
+            for p in word_list
+        ]
 
+    def get_wordlist_filename(self):
+        "Returns the filename of the wordlist to use when checking content."
+        filenames = self.get_configured_wordlist_filenames()
+        if len(filenames) == 1:
+            return filenames[0]
         # In case the user has multiple word lists, we combine them
         # into one large list that we pass on to the checker.
         return self._build_combined_wordlist()
@@ -126,10 +134,8 @@ class SpellingBuilder(Builder):
         combined_word_list = os.path.join(temp_dir,
                                           'spelling_wordlist.txt')
 
-        word_list = self.config.spelling_word_list_filename
-
         with open(combined_word_list, 'w', encoding='UTF-8') as outfile:
-            for word_file in word_list:
+            for word_file in self.get_configured_wordlist_filenames():
                 # Paths are relative
                 long_word_file = os.path.join(self.srcdir, word_file)
                 logger.info('Adding contents of %s to custom word list',
