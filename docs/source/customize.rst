@@ -52,7 +52,13 @@ Output Options
 ``spelling_show_suggestions=False``
 
   Boolean controlling whether suggestions for misspelled words are
-  printed.  Defaults to False.
+  printed.  Defaults to ``False``.
+
+``spelling_suggestion_limit=0``
+
+  Integer number of suggestions to emit when
+  ``spelling_show_suggestions`` is ``True``. Defaults to ``0``,
+  meaning no limit. Any positive value truncates the suggestion limit.
 
 ``spelling_show_whole_line=True``
 

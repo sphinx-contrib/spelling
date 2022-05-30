@@ -26,6 +26,8 @@ def setup(app):
     app.add_env_collector(SpellingCollector)
     # Report guesses about correct spelling
     app.add_config_value('spelling_show_suggestions', False, 'env')
+    # Limit the number of suggestions output
+    app.add_config_value('spelling_suggestion_limit', 0, 'env')
     # Report the whole line that has the error
     app.add_config_value('spelling_show_whole_line', True, 'env')
     # Emit misspelling as a sphinx warning instead of info message
