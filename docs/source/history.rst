@@ -12,7 +12,7 @@
 Unreleased
 ==========
 
-- `#161 <https://github.com/sphinx-contrib/spelling/issues/161>`__
+- `#169 <https://github.com/sphinx-contrib/spelling/issues/169>`__
   Adds the ability to pass in mulitple wordlists via the sphinx
   command line as ``-D spelling_word_list_filename=file1,file2``.
 
