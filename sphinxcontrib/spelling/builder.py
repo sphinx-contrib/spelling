@@ -153,10 +153,23 @@ class SpellingBuilder(Builder):
     def get_target_uri(self, docname, typ=None):
         return ''
 
-    def format_suggestions(self, suggestions):
+    def get_suggestions_to_show(self, suggestions):
         if not self.config.spelling_show_suggestions or not suggestions:
+            return []
+        to_show = suggestions
+        try:
+            n_to_show = int(self.config.spelling_suggestion_limit)
+        except ValueError:
+            n_to_show = 0
+        if n_to_show > 0:
+            to_show = suggestions[:n_to_show]
+        return to_show
+
+    def format_suggestions(self, suggestions):
+        to_show = self.get_suggestions_to_show(suggestions)
+        if not to_show:
             return ''
-        return '[' + ', '.join('"%s"' % s for s in suggestions) + ']'
+        return '[' + ', '.join('"%s"' % s for s in to_show) + ']'
 
     TEXT_NODES = {
         'block_quote',
