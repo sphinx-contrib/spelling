@@ -27,12 +27,19 @@ Input Options
   String specifying a file containing a list of words known to be
   spelled correctly but that do not appear in the language dictionary
   selected by ``spelling_lang``.  The file should contain one word per
-  line. Refer to the `PyEnchant tutorial`_ for details. Use a list to add
-  multiple files.
+  line. Refer to the `PyEnchant tutorial`_ for details. To add multiple
+  files use a list, or a comma separated string. This is useful when
+  calling sphinx with ``-D spelling_word_list_filename=...`` which will
+  not accept a list and will only accept a string parameter.
 
 ``spelling_word_list_filename=['spelling_wordlist.txt','another_list.txt']``
 
   Same as above, but with several files of correctly spelled words.
+
+``spelling_word_list_filename='spelling_wordlist.txt,another_list.txt'``
+
+  Same as above, but with several files of correctly spelled words, and
+  passing the setting as a single string. 
 
 ``spelling_exclude_patterns=['ignored_*']``
 

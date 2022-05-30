@@ -9,6 +9,7 @@
    macOS
    unmaintained
 
+
 Next
 ====
 
@@ -19,6 +20,10 @@ Features
   Added configuration option to limit the number of suggestions
   output. See :doc:`/customize` for more details. Idea contributed by
   Trevor Gross.
+
+- `#169 <https://github.com/sphinx-contrib/spelling/issues/169>`__
+  Adds the ability to pass in multiple wordlists via the sphinx
+  command line as ``-D spelling_word_list_filename=file1,file2``.
 
 Bug Fixes
 ---------

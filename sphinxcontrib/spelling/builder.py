@@ -106,6 +106,11 @@ class SpellingBuilder(Builder):
         if word_list is None:
             word_list = 'spelling_wordlist.txt'
 
+        if isinstance(word_list, str) and word_list.find(',') > 0:
+            # Wordlist is a list, formatted as a str.
+            # Split it back into a list
+            word_list = word_list.split(',')
+
         if not isinstance(word_list, list):
             return os.path.join(self.srcdir, word_list)
 
