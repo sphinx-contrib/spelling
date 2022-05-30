@@ -204,7 +204,7 @@ class SpellingBuilder(Builder):
                 # comes in via an 'include' directive does not include
                 # the full path, so convert all to relative path
                 # for consistency.
-                source, lineno = docutils.utils.get_source_line(node)
+                source, node_lineno = docutils.utils.get_source_line(node)
                 source = osutil.relpath(source)
 
                 # Check the text of the node.
@@ -215,8 +215,15 @@ class SpellingBuilder(Builder):
                     context_line,
                     line_offset
                 ) in misspellings:
+
+                    # Avoid TypeError on nodes lacking a line number
+                    # This happens for some node originating from docstrings
+                    lineno = node_lineno
+                    if lineno is not None:
+                        lineno += line_offset
+
                     msg_parts = [
-                        f'{source}:{lineno+line_offset}: ',
+                        f'{source}:{lineno}: ',
                         'Spell check',
                         red(word),
                     ]
@@ -229,7 +236,7 @@ class SpellingBuilder(Builder):
                     elif self.config.spelling_verbose:
                         logger.info(msg)
                     yield "%s:%s: (%s) %s %s\n" % (
-                        source, lineno + line_offset, word,
+                        source, lineno, word,
                         self.format_suggestions(suggestions),
                         context_line,
                     )

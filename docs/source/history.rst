@@ -9,6 +9,13 @@
    macOS
    unmaintained
 
+7.4.1
+=====
+
+- `#160 <https://github.com/sphinx-contrib/spelling/issues/160>`__
+  Fixed issue with the builder crashing when reporting a misspelled word
+  in a python docstring.
+
 7.4.0
 =====
 
