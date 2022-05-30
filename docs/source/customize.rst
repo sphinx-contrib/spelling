@@ -34,6 +34,13 @@ Input Options
 
   Same as above, but with several files of correctly spelled words.
 
+``spelling_word_list_filename='spelling_wordlist.txt,another_list.txt'``
+
+  Same as above, but with several files of correctly spelled words, and
+  passing the setting as a single string. This is useful when calling
+  sphinx with ``-D spelling_word_list_filename=...`` which will only
+  accept a string parameter.
+
 ``spelling_exclude_patterns=['ignored_*']``
 
   A list of glob-style patterns that should be ignored when checking spelling.
