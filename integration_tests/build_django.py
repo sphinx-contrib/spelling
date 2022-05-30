@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 """Try to build the Django documentation.
 """
@@ -21,24 +21,29 @@ def doit(*cmd, description='', cwd=None):
 
 def try_build(workdir, srcdir, django_repo):
     print(f'working in {workdir}')
-    doit('git', 'clone', '--depth', '1', django_repo, 'django',
+    doit(
+        'git', 'clone', '--depth', '1', django_repo, 'django',
         description='clone django',
         cwd=workdir,
     )
     djangodir = workdir + '/django'
-    doit('tox', '-e', 'docs', '--notest',
+    doit(
+        'tox', '-e', 'docs', '--notest',
         description='build django docs virtualenv',
         cwd=djangodir,
     )
-    doit('.tox/docs/bin/pip', 'uninstall', '-y', 'sphinxcontrib-spelling',
+    doit(
+        '.tox/docs/bin/pip', 'uninstall', '-y', 'sphinxcontrib-spelling',
         description='uninstall packaged sphinxcontrib-spelling',
         cwd=djangodir,
     )
-    doit('.tox/docs/bin/pip', 'install', srcdir,
+    doit(
+        '.tox/docs/bin/pip', 'install', srcdir,
         description='install sphinxcontrib-spelling from source',
         cwd=djangodir,
     )
-    doit('tox', '-e', 'docs',
+    doit(
+        'tox', '-e', 'docs',
         description='build django docs',
         cwd=djangodir,
     )
@@ -49,12 +54,15 @@ def main(args=sys.argv[1:]):
     parser.add_argument('--debug', action='store_true', default=False,
                         help='show full tracebacks')
     parser.add_argument('--src', help='source directory')
-    parser.add_argument('--django-repo', default='https://github.com/django/django.git')
+    parser.add_argument('--django-repo',
+                        default='https://github.com/django/django.git')
     parsed = parser.parse_args(args)
 
     srcdir = parsed.src
     if not srcdir:
-        srcdir = os.path.realpath(os.path.dirname(os.path.dirname(sys.argv[0])))
+        srcdir = os.path.realpath(
+            os.path.dirname(os.path.dirname(sys.argv[0]))
+        )
 
     try:
         with tempfile.TemporaryDirectory() as dirname:
