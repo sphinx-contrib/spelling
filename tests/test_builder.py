@@ -257,3 +257,24 @@ def test_get_suggestions_to_show_disabled(sphinx_project):
     stdout, stderr, app = get_sphinx_app(srcdir, outdir, 'contents')
     results = app.builder.get_suggestions_to_show(['a', 'b', 'c'])
     assert len(results) == 0
+
+
+def test_captions(sphinx_project):
+    srcdir, outdir = sphinx_project
+
+    add_file(srcdir, 'contents.rst', '''
+    The Module
+    ==========
+
+    .. figure:: blah.gif
+
+       Teh caption
+
+    ''')
+
+    stdout, stderr, output_text = get_sphinx_output(
+        srcdir,
+        outdir,
+        'contents',
+    )
+    assert '(Teh)' in output_text
