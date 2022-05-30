@@ -9,6 +9,13 @@
    macOS
    unmaintained
 
+Unreleased
+==========
+
+- `#161 <https://github.com/sphinx-contrib/spelling/issues/161>`__
+  Adds the ability to pass in mulitple wordlists via the sphinx
+  command line as ``-D spelling_word_list_filename=file1,file2``.
+
 7.4.1
 =====
 
