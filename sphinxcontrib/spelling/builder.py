@@ -168,6 +168,7 @@ class SpellingBuilder(Builder):
 
     TEXT_NODES = {
         'block_quote',
+        'caption',
         'paragraph',
         'list_item',
         'term',

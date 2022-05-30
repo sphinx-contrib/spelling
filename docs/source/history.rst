@@ -20,6 +20,13 @@ Features
   output. See :doc:`/customize` for more details. Idea contributed by
   Trevor Gross.
 
+Bug Fixes
+---------
+
+- `#36 <https://github.com/sphinx-contrib/spelling/issues/36>`__
+  Include captions of figures in the set of nodes for which the text
+  is checked.
+
 7.4.1
 =====
 
