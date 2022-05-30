@@ -9,6 +9,17 @@
    macOS
    unmaintained
 
+Next
+====
+
+Features
+--------
+
+- `#151 <https://github.com/sphinx-contrib/spelling/issues/151>`__
+  Added configuration option to limit the number of suggestions
+  output. See :doc:`/customize` for more details. Idea contributed by
+  Trevor Gross.
+
 7.4.1
 =====
 

@@ -50,7 +50,7 @@ def add_file(thedir, filename, content):
         f.write(textwrap.dedent(content))
 
 
-def get_sphinx_output(srcdir, outdir, docname):
+def get_sphinx_app(srcdir, outdir, docname):
     stdout = io.StringIO()
     stderr = io.StringIO()
     app = Sphinx(
@@ -58,6 +58,11 @@ def get_sphinx_output(srcdir, outdir, docname):
         status=stdout, warning=stderr,
         freshenv=True,
     )
+    return (stdout, stderr, app)
+
+
+def get_sphinx_output(srcdir, outdir, docname):
+    stdout, stderr, app = get_sphinx_app(srcdir, outdir, docname)
     app.build()
     path = os.path.join(outdir, f'{docname}.spelling')
     try:
@@ -216,3 +221,39 @@ def test_docstrings(sphinx_project):
         ' (vaule)'
     )
     assert expected in output_text
+
+
+def test_get_suggestions_to_show_all(sphinx_project):
+    srcdir, outdir = sphinx_project
+    add_file(srcdir, 'conf.py', '''
+    extensions = ['sphinxcontrib.spelling']
+    spelling_show_suggestions = True
+    spelling_suggestion_limit = 0
+    ''')
+    stdout, stderr, app = get_sphinx_app(srcdir, outdir, 'contents')
+    results = app.builder.get_suggestions_to_show(['a', 'b', 'c'])
+    assert len(results) == 3
+
+
+def test_get_suggestions_to_show_limit(sphinx_project):
+    srcdir, outdir = sphinx_project
+    add_file(srcdir, 'conf.py', '''
+    extensions = ['sphinxcontrib.spelling']
+    spelling_show_suggestions = True
+    spelling_suggestion_limit = 1
+    ''')
+    stdout, stderr, app = get_sphinx_app(srcdir, outdir, 'contents')
+    results = app.builder.get_suggestions_to_show(['a', 'b', 'c'])
+    assert len(results) == 1
+
+
+def test_get_suggestions_to_show_disabled(sphinx_project):
+    srcdir, outdir = sphinx_project
+    add_file(srcdir, 'conf.py', '''
+    extensions = ['sphinxcontrib.spelling']
+    spelling_show_suggestions = False
+    spelling_suggestion_limit = 0
+    ''')
+    stdout, stderr, app = get_sphinx_app(srcdir, outdir, 'contents')
+    results = app.builder.get_suggestions_to_show(['a', 'b', 'c'])
+    assert len(results) == 0
