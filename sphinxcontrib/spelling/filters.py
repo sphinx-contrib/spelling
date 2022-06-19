@@ -209,8 +209,8 @@ class ImportableModuleFilter(Filter):
             self.sought_modules.add(word)
             try:
                 mod = importlib.util.find_spec(word)
-            except Exception as err:
-                # This could be an ImportError, some more detailed
+            except BaseException as err:
+                # This could be an ImportError, SystemExit, some more detailed
                 # error out of distutils, or something else triggered
                 # by failing to be able to import a parent package to
                 # use the metadata to search for a subpackage.

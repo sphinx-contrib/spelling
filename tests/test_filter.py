@@ -4,13 +4,20 @@
 """Tests for filters.
 """
 
+import contextlib
+import logging
 import os
+import sys
 from pathlib import Path
 
 import pytest
 from enchant.tokenize import get_tokenizer
 
-from sphinxcontrib.spelling import filters
+from sphinxcontrib.spelling import filters # isort:skip
+
+# Replace the sphinx logger with a normal one so pytest can collect
+# the output.
+filters.logger = logging.getLogger('test.filters')
 
 
 def test_builtin_unicode():
@@ -91,9 +98,54 @@ def test_importable_module_skip(word, expected):
     assert f._skip(word) is expected
 
 
+@contextlib.contextmanager
+def import_path(new_path):
+    "Temporarily change sys.path for imports."
+    before = sys.path
+    try:
+        sys.path = new_path
+        yield
+    finally:
+        sys.path = before
+
+
 def test_importable_module_with_side_effets(tmpdir):
-    with tmpdir.as_cwd():
-        path = tmpdir.join('setup.py')
-        path.write('raise SystemExit\n')
+    logging.debug('tmpdir %r', tmpdir)
+    logging.debug('cwd %r', os.getcwd())
+
+    parentdir = tmpdir.join('parent')
+    parentdir.mkdir()
+
+    parentdir.join('__init__.py').write(
+        'raise SystemExit("exit as side-effect")\n'
+    )
+    parentdir.join('child.py').write('')
+
+    with import_path([str(tmpdir)] + sys.path):
         f = filters.ImportableModuleFilter(None)
-        assert f._skip('setup.cfg') is False
+        skip_parent = f._skip('parent')
+        skip_both = f._skip('parent.child')
+
+    # The parent module name is valid because it is not imported, only
+    # discovered.
+    assert skip_parent is True
+    assert 'parent' in f.found_modules
+
+    # The child module name is not valid because the parent is
+    # imported to find the child and that triggers the side-effect.
+    assert skip_both is False
+    assert 'parent.child' not in f.found_modules
+
+
+def test_importable_module_with_system_exit(tmpdir):
+    path = tmpdir.join('mytestmodule.py')
+    path.write('raise SystemExit("exit as side-effect")\n')
+
+    with import_path([str(tmpdir)] + sys.path):
+        f = filters.ImportableModuleFilter(None)
+        skip = f._skip('mytestmodule')
+
+    # The filter does not actually import the module in this case, so
+    # it shows up as a valid word.
+    assert skip is True
+    assert 'mytestmodule' in f.found_modules
