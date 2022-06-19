@@ -13,6 +13,14 @@
 Next
 ====
 
+Bug Fixes
+---------
+
+- `#180 <https://github.com/sphinx-contrib/spelling/issues/180>`__
+  Suppress `SystemExit` errors in `ImportableModuleFilter` caused by
+  importing modules that run code on import and exit when that code
+  sees an error. Bug report and reproducer provided by Trevor Gross.
+
 Features
 --------
 
