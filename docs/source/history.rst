@@ -10,8 +10,8 @@
    unmaintained
 
 
-Next
-====
+7.5.1
+=====
 
 Bug Fixes
 ---------
@@ -20,6 +20,9 @@ Bug Fixes
   Suppress `SystemExit` errors in `ImportableModuleFilter` caused by
   importing modules that run code on import and exit when that code
   sees an error. Bug report and reproducer provided by Trevor Gross.
+
+7.5.0
+=====
 
 Features
 --------
