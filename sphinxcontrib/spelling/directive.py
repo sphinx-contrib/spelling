@@ -12,6 +12,16 @@ from sphinx.util import logging
 logger = logging.getLogger(__name__)
 
 
+def add_good_words_to_document(env, docname, good_words):
+    # Initialize the per-document good words list
+    if not hasattr(env, 'spelling_document_words'):
+        env.spelling_document_words = collections.defaultdict(list)
+    logger.info('Extending local dictionary for %s with %s',
+                env.docname, good_words)
+    print(env.docname, good_words)
+    env.spelling_document_words[env.docname].extend(good_words)
+
+
 class SpellingDirective(rst.Directive):
     """Custom directive for passing instructions to the spelling checker.
 
@@ -27,19 +37,13 @@ class SpellingDirective(rst.Directive):
     def run(self):
         env = self.state.document.settings.env
 
-        # Initialize the per-document good words list
-        if not hasattr(env, 'spelling_document_words'):
-            env.spelling_document_words = collections.defaultdict(list)
-
         good_words = []
         for entry in self.content:
             if not entry:
                 continue
             good_words.extend(entry.split())
         if good_words:
-            logger.debug('Extending local dictionary for %s with %s',
-                         env.docname, good_words)
-            env.spelling_document_words[env.docname].extend(good_words)
+            add_good_words_to_document(env, env.docname, good_words)
 
         return []
 
