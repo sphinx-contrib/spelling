@@ -397,3 +397,41 @@ def test_domain_directive(sphinx_project):
         'contents',
     )
     assert output_text is None
+
+
+def test_domain_role(sphinx_project):
+    srcdir, outdir = sphinx_project
+
+    add_file(srcdir, 'contents.rst', '''
+    The Module
+    ==========
+
+    :spelling:word:`teh` is OK
+
+    ''')
+
+    stdout, stderr, output_text = get_sphinx_output(
+        srcdir,
+        outdir,
+        'contents',
+    )
+    assert output_text is None
+
+
+def test_domain_role_multiple_words(sphinx_project):
+    srcdir, outdir = sphinx_project
+
+    add_file(srcdir, 'contents.rst', '''
+    The Module
+    ==========
+
+    :spelling:word:`teh is KO`
+
+    ''')
+
+    stdout, stderr, output_text = get_sphinx_output(
+        srcdir,
+        outdir,
+        'contents',
+    )
+    assert output_text is None

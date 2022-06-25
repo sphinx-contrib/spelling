@@ -1,6 +1,7 @@
+from docutils import nodes
 from sphinx.domains import Domain
 
-from . import directive
+from . import directive, role
 
 
 class SpellingDomain(Domain):
@@ -9,6 +10,9 @@ class SpellingDomain(Domain):
     label = 'Spelling Checker'
     directives = {
         'word-list': directive.SpellingDirective,
+    }
+    roles = {
+        'word': role.WordRole('spelling:word', nodes.Text),
     }
 
     def get_objects(self):
