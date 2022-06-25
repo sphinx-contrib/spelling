@@ -7,9 +7,7 @@ except ImportError:
 
 from sphinx.util import logging
 
-from .asset import SpellingCollector
-from .builder import SpellingBuilder
-from .directive import SpellingDirective
+from . import asset, builder, directive
 
 logger = logging.getLogger(__name__)
 
@@ -17,13 +15,13 @@ logger = logging.getLogger(__name__)
 def setup(app):
     version = importlib_metadata.version('sphinxcontrib-spelling')
     logger.info('Initializing Spelling Checker %s', version)
-    app.add_builder(SpellingBuilder)
+    app.add_builder(builder.SpellingBuilder)
     # Register the 'spelling' directive for setting parameters within
     # a document
-    app.add_directive('spelling', SpellingDirective)
+    app.add_directive('spelling', directive.LegacySpellingDirective)
     # Register an environment collector to merge data gathered by the
     # directive in parallel builds
-    app.add_env_collector(SpellingCollector)
+    app.add_env_collector(asset.SpellingCollector)
     # Report guesses about correct spelling
     app.add_config_value('spelling_show_suggestions', False, 'env')
     # Limit the number of suggestions output
