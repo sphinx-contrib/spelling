@@ -10,6 +10,15 @@
    unmaintained
 
 
+Unreleased
+==========
+
+Features
+--------
+
+- Convert to use Sphinx domains. Add ``spelling:word-list``
+  directive. Have ``spelling`` directive report that it is deprecated.
+
 7.5.1
 =====
 

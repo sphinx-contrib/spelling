@@ -42,3 +42,11 @@ class SpellingDirective(rst.Directive):
             env.spelling_document_words[env.docname].extend(good_words)
 
         return []
+
+
+class LegacySpellingDirective(SpellingDirective):
+
+    def run(self):
+        logger.info('direct use of the spelling directive is deprecated, '
+                    'replace ".. spelling::" with ".. spelling:word-list::"')
+        return super().run()

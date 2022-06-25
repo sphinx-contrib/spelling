@@ -7,7 +7,7 @@ except ImportError:
 
 from sphinx.util import logging
 
-from . import asset, builder, directive
+from . import asset, builder, directive, domain
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +19,7 @@ def setup(app):
     # Register the 'spelling' directive for setting parameters within
     # a document
     app.add_directive('spelling', directive.LegacySpellingDirective)
+    app.add_domain(domain.SpellingDomain)
     # Register an environment collector to merge data gathered by the
     # directive in parallel builds
     app.add_env_collector(asset.SpellingCollector)

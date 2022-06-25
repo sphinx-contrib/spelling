@@ -351,3 +351,49 @@ def test_captions(sphinx_project):
         'contents',
     )
     assert '(Teh)' in output_text
+
+
+def test_legacy_directive(sphinx_project):
+    srcdir, outdir = sphinx_project
+
+    add_file(srcdir, 'contents.rst', '''
+    The Module
+    ==========
+
+    .. spelling::
+
+       teh
+
+    teh is OK
+
+    ''')
+
+    stdout, stderr, output_text = get_sphinx_output(
+        srcdir,
+        outdir,
+        'contents',
+    )
+    assert output_text is None
+
+
+def test_domain_directive(sphinx_project):
+    srcdir, outdir = sphinx_project
+
+    add_file(srcdir, 'contents.rst', '''
+    The Module
+    ==========
+
+    .. spelling:word-list::
+
+       teh
+
+    teh is OK
+
+    ''')
+
+    stdout, stderr, output_text = get_sphinx_output(
+        srcdir,
+        outdir,
+        'contents',
+    )
+    assert output_text is None
