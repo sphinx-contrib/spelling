@@ -1,7 +1,3 @@
-.. spelling::
-
-   wikis
-
 =======================
  Configuration Options
 =======================
@@ -102,7 +98,7 @@ returned by the tokenizer to be checked.
 ``spelling_ignore_wiki_words=True``
 
   Boolean controlling whether words that follow the CamelCase
-  conventions used for page names in wikis should be treated as
+  conventions used for page names in :spelling:word:`wikis` should be treated as
   spelled properly. Defaults to ``True``.
 
 ``spelling_ignore_acronyms=True``

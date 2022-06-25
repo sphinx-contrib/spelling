@@ -2,13 +2,24 @@
  Release History
 =================
 
-.. spelling::
+.. spelling:word-list::
 
    Homebrew
    libenchant
    macOS
    unmaintained
 
+
+Unreleased
+==========
+
+Features
+--------
+
+- Convert to use Sphinx domains. Add ``spelling:word-list``
+  directive. Have ``spelling`` directive report that it is deprecated.
+- Add ``spelling:word`` role for marking inline text as spelled
+  correctly.
 
 7.5.1
 =====
