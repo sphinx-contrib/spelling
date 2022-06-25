@@ -134,7 +134,7 @@ returned by the tokenizer to be checked.
 Private Dictionaries
 ====================
 
-There are two ways to provide a list of known good words. The
+There are three ways to provide a list of known good words. The
 ``spelling_word_list_filename`` option (described above) specifies the
 name of a plain text file containing one word per line. All of the
 words in the file are assumed to be spelled correctly and may appear
@@ -148,10 +148,10 @@ For example::
 
   spelling_word_list_filename = ['spelling_wordlist.txt', 'my_wordlist.txt']
 
-The ``spelling`` directive can be used to create a list of words known
-to be spelled correctly within a single file.  For example, if a
-document refers to a person or project by name, the name can be added
-to the list of known words for just that document.
+The ``spelling:word-list`` directive can be used to create a list of
+words known to be spelled correctly within a single file.  For
+example, if a document refers to a person or project by name, the name
+can be added to the list of known words for just that document.
 
 ::
 
@@ -160,6 +160,13 @@ to the list of known words for just that document.
      Docutils
      Goodger
 
+The ``spelling:word`` role can be used to annotate individual words as
+being spelled correctly.
+
+
+::
+
+  This text refers to :spelling:word:`Goodger`.
 
 .. _PyEnchant: https://github.com/rfk/pyenchant
 
