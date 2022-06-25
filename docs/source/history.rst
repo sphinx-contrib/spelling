@@ -2,7 +2,7 @@
  Release History
 =================
 
-.. spelling::
+.. spelling:word-list::
 
    Homebrew
    libenchant
