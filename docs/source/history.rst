@@ -179,17 +179,15 @@ Bug Fixes
 
 - `#105 <https://github.com/sphinx-contrib/spelling/pull/105>`__
   reverts a change that switched from `imp` to `importlib`. Using
-  `importlib.find_spec()
-  <https://docs.python.org/3/library/importlib.html#importlib.util.find_spec>`__
+  `importlib.find_spec()`
   is not safe at runtime as it can import modules which will cause
   side effects within environments.
 
 7.0.0
 =====
 
-This major release drops support for Python 3.5. This version `is not
-maintained anymore
-<https://devguide.python.org/devcycle/#end-of-life-branches>`__.
+This major release drops support for Python 3.5. This version is not
+maintained anymore.
 
 Bug Fixes
 ---------
