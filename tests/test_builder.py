@@ -12,6 +12,8 @@ import textwrap
 import pytest
 from sphinx.application import Sphinx
 
+from tests import helpers # isort:skip
+
 
 def _make_sphinx_project(tmpdir):
     srcdir = tmpdir.mkdir('src')
@@ -251,6 +253,7 @@ def test_ignore_file(sphinx_project):
     assert output_text is None
 
 
+@helpers.require_git_repo
 def test_docstrings(sphinx_project):
     srcdir, outdir = sphinx_project
 
