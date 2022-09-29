@@ -10,7 +10,10 @@ import sys
 import textwrap
 
 import pytest
+import sphinx
 from sphinx.application import Sphinx
+
+from tests import helpers # isort:skip
 
 
 def _make_sphinx_project(tmpdir):
@@ -251,6 +254,7 @@ def test_ignore_file(sphinx_project):
     assert output_text is None
 
 
+@helpers.require_git_repo
 def test_docstrings(sphinx_project):
     srcdir, outdir = sphinx_project
 
@@ -286,11 +290,17 @@ def test_docstrings(sphinx_project):
                 'contents',
             )
 
+    # Sphinx 5.1.0 and later reports line numbers for docstring
+    # content.
+    line_num = 'None:'
+    if sphinx.version_info[:3] >= (5, 1, 0):
+        line_num = '1:'
+
     # Expected string is too long for one line
     expected = (
         'the_source.py:'
         'docstring of the_source.public_function:'
-        'None:'
+    ) + line_num + (
         ' (vaule)'
     )
     assert expected in output_text

@@ -25,6 +25,7 @@ pull_request_rules:
     conditions:
       - and:
         - "check-success=build (docs)"
+        - "check-success=build (isolated)"
         - "check-success=build (linter)"
         - "check-success=build (spelling)"
         - "check-success=django"

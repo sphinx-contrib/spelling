@@ -8,12 +8,12 @@ import contextlib
 import logging
 import os
 import sys
-from pathlib import Path
 
 import pytest
 from enchant.tokenize import get_tokenizer
 
 from sphinxcontrib.spelling import filters # isort:skip
+from tests import helpers # isort:skip
 
 # Replace the sphinx logger with a normal one so pytest can collect
 # the output.
@@ -46,7 +46,7 @@ def test_acronym_unicode():
     assert 'DBM' not in words, 'Failed to filter out acronym'
 
 
-@pytest.mark.skipif(not (Path(os.getcwd()) / '.git').is_dir(), reason='Not a git repo')
+@helpers.require_git_repo
 @pytest.mark.parametrize(
     "name",
     [
