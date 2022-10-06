@@ -9,6 +9,15 @@
    macOS
    unmaintained
 
+Unreleased
+==========
+
+Bug Fixes
+---------
+
+- `#188 <https://github.com/sphinx-contrib/spelling/issues/188>`__
+  Fix `:spelling:word:` directives from being printed verbatim in
+  output files.
 
 7.6.0
 =====
