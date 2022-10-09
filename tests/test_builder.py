@@ -57,19 +57,19 @@ def add_file(thedir, filename, content):
         f.write(textwrap.dedent(content))
 
 
-def get_sphinx_app(srcdir, outdir, docname):
+def get_sphinx_app(srcdir, outdir, docname, builder='spelling'):
     stdout = io.StringIO()
     stderr = io.StringIO()
     app = Sphinx(
-        srcdir, srcdir, outdir, outdir, 'spelling',
+        srcdir, srcdir, outdir, outdir, builder,
         status=stdout, warning=stderr,
         freshenv=True,
     )
     return (stdout, stderr, app)
 
 
-def get_sphinx_output(srcdir, outdir, docname):
-    stdout, stderr, app = get_sphinx_app(srcdir, outdir, docname)
+def get_sphinx_output(srcdir, outdir, docname, builder='spelling'):
+    stdout, stderr, app = get_sphinx_app(srcdir, outdir, docname, builder)
     app.build()
     path = os.path.join(outdir, f'{docname}.spelling')
     try:
@@ -445,3 +445,30 @@ def test_domain_role_multiple_words(sphinx_project):
         'contents',
     )
     assert output_text is None
+
+def test_domain_role_output(sphinx_project):
+    srcdir, outdir = sphinx_project
+
+    add_file(srcdir, 'contents.rst', '''
+    The Module
+    ==========
+
+    :spelling:word:`teh` is OK
+
+    ''')
+
+    stdout, stderr, output_text = get_sphinx_output(
+        srcdir,
+        outdir,
+        'contents',
+        'text',
+    )
+
+    path = os.path.join(outdir, 'contents.txt')
+    try:
+        with open(path, 'r') as f:
+            output_text = f.read()
+    except FileNotFoundError:
+        output_text = None
+
+    assert output_text == "The Module\n**********\n\nteh is OK\n"
