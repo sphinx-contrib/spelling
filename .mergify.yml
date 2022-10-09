@@ -6,6 +6,7 @@ pull_request_rules:
           - "title~=^tox:"
           - "title~=^ci:"
           - "files~=tox.ini"
+          - "files~=.github/"
     actions:
       label:
         add:
