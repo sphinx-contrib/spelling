@@ -9,8 +9,8 @@
    macOS
    unmaintained
 
-Unreleased
-==========
+7.6.1
+=====
 
 Bug Fixes
 ---------
