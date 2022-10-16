@@ -9,6 +9,15 @@
    macOS
    unmaintained
 
+Next
+====
+
+Bug Fixes
+---------
+
+- `#193 <https://github.com/sphinx-contrib/spelling/issues/193>`__
+  Remove excessive debug printing in `:spelling:word:` implementation.
+
 7.6.1
 =====
 
