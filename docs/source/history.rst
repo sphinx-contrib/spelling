@@ -9,8 +9,8 @@
    macOS
    unmaintained
 
-Next
-====
+7.6.2
+=====
 
 Bug Fixes
 ---------
