@@ -16,7 +16,8 @@ Bug Fixes
 ---------
 
 - `#193 <https://github.com/sphinx-contrib/spelling/issues/193>`__
-  Remove excessive debug printing in `:spelling:word:` implementation.
+  Remove excessive debug printing in `:spelling:word:` and `spelling` builder
+  implementations.
 
 7.6.1
 =====
