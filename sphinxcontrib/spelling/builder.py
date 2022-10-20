@@ -210,7 +210,7 @@ class SpellingBuilder(Builder):
         doc_filters = []
         good_words = self.env.spelling_document_words.get(docname)
         if good_words:
-            logger.info('Extending local dictionary for %s', docname)
+            logger.debug('Extending local dictionary for %s', docname)
             doc_filters.append(filters.IgnoreWordsFilterFactory(good_words))
         self.checker.push_filters(doc_filters)
 
