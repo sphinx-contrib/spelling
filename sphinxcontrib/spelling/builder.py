@@ -217,7 +217,8 @@ class SpellingBuilder(Builder):
         for node in doctree.traverse(docutils.nodes.Text):
             if (node.tagname == '#text' and
                     node.parent and
-                    node.parent.tagname in self.TEXT_NODES):
+                    node.parent.tagname in self.TEXT_NODES and
+                    not hasattr(node, "spellingIgnore")):
 
                 # Get the location of the text being checked so we can
                 # report it in the output file. Nodes from text that
