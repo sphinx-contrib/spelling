@@ -22,7 +22,7 @@ New Features
 
 - `#199 <https://github.com/sphinx-contrib/spelling/pull/199>`__
 - Add ``spelling:ignore`` role for marking inline text to not be
-  checked.  Allow single instances of mispelt words to be ignored,
+  checked.  Allow single instances of mispelled words to be ignored,
   but still flag any other instances as misspellings.
 
 7.6.2

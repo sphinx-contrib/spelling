@@ -13,6 +13,7 @@ def spelling_word(role, rawtext, text, lineno, inliner,
     node = nodes.Text(text)
     return [node], []
 
+
 def spelling_ignore(role, rawtext, text, lineno, inliner,
                     options={}, content=[]):
     """Let the user indicate that inline text is to not be spellchecked."""
