@@ -131,8 +131,8 @@ returned by the tokenizer to be checked.
   derived from ``enchant.tokenize.Filter``. Refer to the `PyEnchant
   tutorial`_ for examples.
 
-Private Dictionaries
-====================
+Managing Lists of Correctly Spelled Words and Ignoring Words
+============================================================
 
 There are three ways to provide a list of known good words. The
 ``spelling_word_list_filename`` option (described above) specifies the
@@ -161,12 +161,19 @@ can be added to the list of known words for just that document.
      Goodger
 
 The ``spelling:word`` role can be used to annotate individual words as
-being spelled correctly.
+being spelled correctly throughout a single document.
 
 
 ::
 
   This text refers to :spelling:word:`Goodger`.
+
+The ``spelling:ignore`` role can be used to ignore a single instance
+of a word.
+
+::
+
+  This text refers to :spelling:ignore:`docutils`.
 
 .. _PyEnchant: https://github.com/rfk/pyenchant
 
@@ -184,7 +191,7 @@ this :class:`AcronymFilter` skips words that are all uppercase letters
 or all uppercase with a trailing lowercase "s".
 
 ::
-    
+
     class AcronymFilter(Filter):
         """If a word looks like an acronym (all upper case letters),
         ignore it.
