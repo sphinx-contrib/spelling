@@ -12,6 +12,7 @@ class SpellingDomain(Domain):
     }
     roles = {
         'word': role.spelling_word,
+        'ignore': role.spelling_ignore
     }
 
     def get_objects(self):

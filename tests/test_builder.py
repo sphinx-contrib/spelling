@@ -472,3 +472,72 @@ def test_domain_role_output(sphinx_project):
         output_text = None
 
     assert output_text == "The Module\n**********\n\nteh is OK\n"
+
+def test_domain_ignore(sphinx_project):
+    srcdir, outdir = sphinx_project
+
+    add_file(srcdir, 'contents.rst', '''
+    The Module
+    ==========
+
+    :spelling:ignore:`baddddd` is OK
+
+    ''')
+
+    stdout, stderr, output_text = get_sphinx_output(
+        srcdir,
+        outdir,
+        'contents',
+    )
+    assert output_text is None
+
+
+def test_domain_ignore_multiple_words(sphinx_project):
+    srcdir, outdir = sphinx_project
+
+    add_file(srcdir, 'contents.rst', '''
+    The Module
+    ==========
+
+    :spelling:ignore:`baddddd` is OK here.
+
+    But, baddddd is not OK here.
+    Nor, here baddddd.
+
+    ''')
+
+    stdout, stderr, output_text = get_sphinx_output(
+        srcdir,
+        outdir,
+        'contents',
+    )
+    assert '(baddddd)' in output_text
+    assert output_text.count('\n') == 2 # Only expect 2 errors, not 3.
+
+
+def test_domain_ignore_output(sphinx_project):
+    srcdir, outdir = sphinx_project
+
+    add_file(srcdir, 'contents.rst', '''
+    The Module
+    ==========
+
+    :spelling:ignore:`teh` is OK
+
+    ''')
+
+    stdout, stderr, output_text = get_sphinx_output(
+        srcdir,
+        outdir,
+        'contents',
+        'text',
+    )
+
+    path = os.path.join(outdir, 'contents.txt')
+    try:
+        with open(path, 'r') as f:
+            output_text = f.read()
+    except FileNotFoundError:
+        output_text = None
+
+    assert output_text == "The Module\n**********\n\nteh is OK\n"

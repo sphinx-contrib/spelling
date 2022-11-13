@@ -9,6 +9,22 @@
    macOS
    unmaintained
 
+Unreleased
+==========
+
+Bug Fixes
+---------
+
+None.
+
+New Features
+------------
+
+- `#199 <https://github.com/sphinx-contrib/spelling/pull/199>`__
+- Add ``spelling:ignore`` role for marking inline text to not be
+  checked.  Allow single instances of misspelled words to be ignored,
+  but still flag any other instances as misspellings.
+
 7.6.2
 =====
 
