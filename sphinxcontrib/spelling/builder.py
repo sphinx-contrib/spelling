@@ -214,53 +214,60 @@ class SpellingBuilder(Builder):
             doc_filters.append(filters.IgnoreWordsFilterFactory(good_words))
         self.checker.push_filters(doc_filters)
 
-        for node in doctree.traverse(docutils.nodes.Text):
-            if (node.tagname == '#text' and
-                    node.parent and
-                    node.parent.tagname in self.TEXT_NODES and
-                    not hasattr(node, "spellingIgnore")):
+        # Set up a filter for the types of nodes to ignore during
+        # traversal.
+        def filter(n):
+            if n.tagname != '#text':
+                return False
+            if (n.parent and n.parent.tagname not in self.TEXT_NODES):
+                return False
+            # Nodes marked by the spelling:ignore role
+            if hasattr(n, "spellingIgnore"):
+                return False
+            return True
 
-                # Get the location of the text being checked so we can
-                # report it in the output file. Nodes from text that
-                # comes in via an 'include' directive does not include
-                # the full path, so convert all to relative path
-                # for consistency.
-                source, node_lineno = docutils.utils.get_source_line(node)
-                source = osutil.relpath(source)
+        for node in doctree.traverse(filter):
+            # Get the location of the text being checked so we can
+            # report it in the output file. Nodes from text that
+            # comes in via an 'include' directive does not include
+            # the full path, so convert all to relative path
+            # for consistency.
+            source, node_lineno = docutils.utils.get_source_line(node)
+            source = osutil.relpath(source)
 
-                # Check the text of the node.
-                misspellings = self.checker.check(node.astext())
-                for (
-                    word,
-                    suggestions,
+            # Check the text of the node.
+            misspellings = self.checker.check(node.astext())
+            for (
+                word,
+                suggestions,
+                context_line,
+                line_offset
+            ) in misspellings:
+
+                # Avoid TypeError on nodes lacking a line number
+                # This happens for some node originating from docstrings
+                lineno = node_lineno
+                if lineno is not None:
+                    lineno += line_offset
+
+                msg_parts = [
+                    f'{source}:{lineno}: ',
+                    'Spell check',
+                    red(word),
+                ]
+                if self.format_suggestions(suggestions) != '':
+                    msg_parts.append(self.format_suggestions(suggestions))
+                msg_parts.append(context_line)
+                msg = ': '.join(msg_parts) + '.'
+                if self.config.spelling_warning:
+                    logger.warning(msg)
+                elif self.config.spelling_verbose:
+                    logger.info(msg)
+                yield "%s:%s: (%s) %s %s\n" % (
+                    source, lineno, word,
+                    self.format_suggestions(suggestions),
                     context_line,
-                    line_offset
-                ) in misspellings:
-
-                    # Avoid TypeError on nodes lacking a line number
-                    # This happens for some node originating from docstrings
-                    lineno = node_lineno
-                    if lineno is not None:
-                        lineno += line_offset
-
-                    msg_parts = [
-                        f'{source}:{lineno}: ',
-                        'Spell check',
-                        red(word),
-                    ]
-                    if self.format_suggestions(suggestions) != '':
-                        msg_parts.append(self.format_suggestions(suggestions))
-                    msg_parts.append(context_line)
-                    msg = ': '.join(msg_parts) + '.'
-                    if self.config.spelling_warning:
-                        logger.warning(msg)
-                    elif self.config.spelling_verbose:
-                        logger.info(msg)
-                    yield "%s:%s: (%s) %s %s\n" % (
-                        source, lineno, word,
-                        self.format_suggestions(suggestions),
-                        context_line,
-                    )
+                )
 
         self.checker.pop_filters()
         return
