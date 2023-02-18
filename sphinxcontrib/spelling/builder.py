@@ -226,7 +226,7 @@ class SpellingBuilder(Builder):
                 return False
             return True
 
-        for node in doctree.traverse(filter):
+        for node in doctree.findall(filter):
             # Get the location of the text being checked so we can
             # report it in the output file. Nodes from text that
             # comes in via an 'include' directive does not include
