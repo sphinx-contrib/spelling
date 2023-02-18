@@ -13,7 +13,7 @@ import pytest
 import sphinx
 from sphinx.application import Sphinx
 
-from tests import helpers # isort:skip
+from tests import helpers  # isort:skip
 
 
 def _make_sphinx_project(tmpdir):
@@ -446,6 +446,7 @@ def test_domain_role_multiple_words(sphinx_project):
     )
     assert output_text is None
 
+
 def test_domain_role_output(sphinx_project):
     srcdir, outdir = sphinx_project
 
@@ -472,6 +473,7 @@ def test_domain_role_output(sphinx_project):
         output_text = None
 
     assert output_text == "The Module\n**********\n\nteh is OK\n"
+
 
 def test_domain_ignore(sphinx_project):
     srcdir, outdir = sphinx_project
@@ -512,7 +514,7 @@ def test_domain_ignore_multiple_words(sphinx_project):
         'contents',
     )
     assert '(baddddd)' in output_text
-    assert output_text.count('\n') == 2 # Only expect 2 errors, not 3.
+    assert output_text.count('\n') == 2  # Only expect 2 errors, not 3.
 
 
 def test_domain_ignore_output(sphinx_project):
