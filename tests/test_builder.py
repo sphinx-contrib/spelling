@@ -543,3 +543,28 @@ def test_domain_ignore_output(sphinx_project):
         output_text = None
 
     assert output_text == "The Module\n**********\n\nteh is OK\n"
+
+
+def test_only_directive(sphinx_project):
+    # How to skip checking nested blocks of content
+    # https://github.com/sphinx-contrib/spelling/issues/204
+    srcdir, outdir = sphinx_project
+
+    add_file(srcdir, 'contents.rst', '''
+    The Module
+    ==========
+
+    .. only:: html
+
+       teh is ok
+
+    whaat is not ok
+    ''')
+
+    stdout, stderr, output_text = get_sphinx_output(
+        srcdir,
+        outdir,
+        'contents',
+    )
+    assert '(whaat)' in output_text
+    assert '(teh)' not in output_text
