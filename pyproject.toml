@@ -1,0 +1,66 @@
+[build-system]
+requires = ["setuptools", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sphinxcontrib-spelling"
+readme = "README"
+authors = [
+  {name = "Doug Hellmann", email = "doug@doughellmann.com"},
+]
+description = "Sphinx spelling extension"
+dynamic = ["version"]
+
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Environment :: Web Environment",
+    "Framework :: Sphinx :: Extension",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Topic :: Documentation",
+    "Topic :: Utilities",
+]
+
+requires-python = ">=3.7"
+
+dependencies = [
+    "PyEnchant>=3.1.1",
+    "Sphinx>=3.0.0",
+    "importlib_metadata>=1.7.0;python_version<'3.8'",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "pytest-cov",
+    "coverage!=4.4,>=4.0",
+]
+
+[project.entry-points."sphinx.builders"]
+spelling = "sphinxcontrib.spelling"
+
+[project.urls]
+homepage = "https://sphinxcontrib-spelling.readthedocs.io/en/latest/"
+repository = "https://github.com/sphinx-contrib/spelling"
+
+# https://github.com/pypa/setuptools_scm/
+[tool.setuptools_scm]
+write_to = "sphinxcontrib/spelling/version.py"
+
+[tool.setuptools]
+# Be explicit to avoid an error because build finds cover,
+# sphinxcontrib, and integration_tests as potential packages.
+packages = [
+    "sphinxcontrib.spelling",
+]

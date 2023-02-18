@@ -7,7 +7,15 @@
    Homebrew
    libenchant
    macOS
+   scm
+   setuptools
    unmaintained
+
+Next
+====
+
+- Modernize packaging using setuptools, build, and setuptools_scm
+  instead of pbr.
 
 7.7.0
 =====
