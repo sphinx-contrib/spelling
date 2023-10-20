@@ -155,7 +155,7 @@ can be added to the list of known words for just that document.
 
 ::
 
-  .. spelling::
+  .. spelling:word-list::
 
      Docutils
      Goodger
