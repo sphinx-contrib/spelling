@@ -1,0 +1,3 @@
+# -*- shell-script -*-
+
+unset PYENCHANT_LIBRARY_PATH

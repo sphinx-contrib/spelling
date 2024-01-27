@@ -1,0 +1,6 @@
+# -*- shell-script -*-
+
+#export PYENCHANT_LIBRARY_PATH=/opt/homebrew/Cellar/enchant/2.6.4/lib/libenchant-2.2.dylib
+if [ $(uname) = Darwin ]; then
+    export PYENCHANT_LIBRARY_PATH=$(brew list enchant | grep 'libenchant-.*\.dylib' | head -n 1)
+fi
