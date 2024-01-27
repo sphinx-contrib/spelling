@@ -2,6 +2,7 @@ builtins
 hoc
 linter
 linters
+macOS
 pypi
 reStructuredText
 sphinxcontrib
