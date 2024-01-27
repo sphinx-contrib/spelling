@@ -21,6 +21,22 @@ To run the tests, you need ``tox`` installed, then just run
 ``tox``. This should run the unit tests, the source code linter, and
 try to build the current documentation.
 
+Enchant C Library
+-----------------
+
+You also need the C library from Enchant installed. On macOS, use
+`brew` to install the `enchant` package, then set
+`PYENCHANT_LIBRARY_PATH` to point to the `dylib` file included in the
+output of `brew list enchant`.
+
+.. code-block:: console
+
+   $ brew list enchant | grep dylib
+   /opt/homebrew/Cellar/enchant/2.6.4/lib/libenchant-2.dylib
+   /opt/homebrew/Cellar/enchant/2.6.4/lib/libenchant-2.2.dylib
+
+   $ export PYENCHANT_LIBRARY_PATH=/opt/homebrew/Cellar/enchant/2.6.4/lib/libenchant-2.2.dylib
+
 Coding style
 ============
 
