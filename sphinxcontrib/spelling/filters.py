@@ -245,7 +245,7 @@ class ContributorFilter(IgnoreWordsFilter):
 
         try:
             p = subprocess.run(cmd, check=True, stdout=subprocess.PIPE)
-        except subprocess.CalledProcessError as err:
+        except (subprocess.CalledProcessError, FileNotFoundError) as err:
             logger.warning('Called: %s', ' '.join(cmd))
             logger.warning('Failed to scan contributors: %s', err)
             return set()
