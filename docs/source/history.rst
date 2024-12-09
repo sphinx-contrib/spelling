@@ -30,6 +30,12 @@ Next
 - Modernize packaging using setuptools, build, and setuptools_scm
   instead of pbr.
 
+Bug Fixes
+---------
+
+- `#229 <https://github.com/sphinx-contrib/spelling/pull/229>`__ Gracefully
+  handle if git is not installed
+
 7.7.0
 =====
 
