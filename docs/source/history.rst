@@ -35,6 +35,8 @@ Bug Fixes
 
 - `#229 <https://github.com/sphinx-contrib/spelling/pull/229>`__ Gracefully
   handle if git is not installed
+- `#227 <https://github.com/sphinx-contrib/spelling/pull/229>`__ Use pypi.org's
+  JSON API instead of XML-RPC.
 
 7.7.0
 =====

@@ -1,8 +1,7 @@
 #
 # Copyright (c) 2010 Doug Hellmann.  All rights reserved.
 #
-"""Spelling checker extension for Sphinx.
-"""
+"""Spelling checker extension for Sphinx."""
 
 # TODO - Words with multiple uppercase letters treated as classes and ignored
 
@@ -10,8 +9,8 @@ import builtins
 import importlib
 import subprocess
 import sys
-from xmlrpc import client as xmlrpc_client
 
+import requests
 from enchant.tokenize import Filter, get_tokenizer, tokenize, unit_tokenize
 from sphinx.util import logging
 
@@ -22,18 +21,19 @@ class AcronymFilter(Filter):
     """If a word looks like an acronym (all upper case letters),
     ignore it.
     """
+
     def _skip(self, word):
         return (
-            word.isupper() or  # all caps
+            word.isupper()  # all caps
+            or
             # pluralized acronym ("URLs")
-            (word[-1].lower() == 's' and word[:-1].isupper())
+            (word[-1].lower() == "s" and word[:-1].isupper())
         )
 
 
 class list_tokenize(tokenize):
-
     def __init__(self, words):
-        super().__init__('')
+        super().__init__("")
         self._words = words
 
     def next(self):
@@ -44,8 +44,8 @@ class list_tokenize(tokenize):
 
 
 class ContractionFilter(Filter):
-    """Strip common contractions from words.
-    """
+    """Strip common contractions from words."""
+
     splits = {
         "aren't": ["are", "not"],
         "can't": ["can", "not"],
@@ -138,8 +138,7 @@ class ContractionFilter(Filter):
 
 
 class IgnoreWordsFilter(Filter):
-    """Given a set of words, ignore them all.
-    """
+    """Given a set of words, ignore them all."""
 
     def __init__(self, tokenizer, word_set):
         self.word_set = set(word_set)
@@ -150,7 +149,6 @@ class IgnoreWordsFilter(Filter):
 
 
 class IgnoreWordsFilterFactory:
-
     def __init__(self, words):
         self.words = words
 
@@ -159,23 +157,31 @@ class IgnoreWordsFilterFactory:
 
 
 class PyPIFilterFactory(IgnoreWordsFilterFactory):
-    """Build an IgnoreWordsFilter for all of the names of packages on PyPI.
-    """
+    """Build an IgnoreWordsFilter for all of the names of packages on PyPI."""
+
     def __init__(self):
-        client = xmlrpc_client.ServerProxy('https://pypi.python.org/pypi')
-        super().__init__(client.list_packages())
+        r = requests.get(
+            "https://pypi.org/simple/",
+            headers={
+                "user-agent": "sphinxcontrib.spelling",
+                "accept": "application/vnd.pypi.simple.v1+json",
+            },
+        )
+        names = [i["name"] for i in r.json()["projects"]]
+        logger.debug("retrieved %d project names from pypi.org", len(names))
+        super().__init__(names)
 
 
 class PythonBuiltinsFilter(Filter):
-    """Ignore names of built-in Python symbols.
-    """
+    """Ignore names of built-in Python symbols."""
+
     def _skip(self, word):
         return hasattr(builtins, word)
 
 
 class ImportableModuleFilter(Filter):
-    """Ignore names of modules that we could import.
-    """
+    """Ignore names of modules that we could import."""
+
     def __init__(self, tokenizer):
         super().__init__(tokenizer)
         self.found_modules = set(sys.builtin_module_names)
@@ -185,7 +191,7 @@ class ImportableModuleFilter(Filter):
         # valid module, which is consistent with the behavior before
         # version 7.3.1.  See
         # https://github.com/sphinx-contrib/spelling/issues/141
-        self.sought_modules.add('__main__')
+        self.sought_modules.add("__main__")
 
     def _skip(self, word):
         # If the word looks like a python module filename, strip the
@@ -195,13 +201,13 @@ class ImportableModuleFilter(Filter):
         # it look like Sphinx is complaining about a commandline
         # argument. See
         # https://github.com/sphinx-contrib/spelling/issues/142
-        if word.endswith('.py'):
+        if word.endswith(".py"):
             logger.debug(
-                'removing .py extension from %r before searching for module',
-                word)
+                "removing .py extension from %r before searching for module", word
+            )
             word = word[:-3]
 
-        valid_module_name = all(n.isidentifier() for n in word.split('.'))
+        valid_module_name = all(n.isidentifier() for n in word.split("."))
         if not valid_module_name:
             return False
 
@@ -214,8 +220,7 @@ class ImportableModuleFilter(Filter):
                 # error out of distutils, or something else triggered
                 # by failing to be able to import a parent package to
                 # use the metadata to search for a subpackage.
-                logger.debug('find_spec(%r) failed, invalid module name: %s',
-                             word, err)
+                logger.debug("find_spec(%r) failed, invalid module name: %s", word, err)
             else:
                 if mod is not None:
                     self.found_modules.add(word)
@@ -230,25 +235,28 @@ class ContributorFilter(IgnoreWordsFilter):
     tokens that are in the set.
     """
 
-    _pretty_format = (
-        '%(trailers:key=Co-Authored-By,separator=%x0A)%x0A%an%x0A%cn'
-    )
+    _pretty_format = "%(trailers:key=Co-Authored-By,separator=%x0A)%x0A%an%x0A%cn"
 
     def __init__(self, tokenizer):
         contributors = self._get_contributors()
         super().__init__(tokenizer, contributors)
 
     def _get_contributors(self):
-        logger.info('Scanning contributors')
-        cmd = ['git', 'log', '--quiet', '--no-color',
-               f'--pretty=format:{self._pretty_format}']
+        logger.info("Scanning contributors")
+        cmd = [
+            "git",
+            "log",
+            "--quiet",
+            "--no-color",
+            f"--pretty=format:{self._pretty_format}",
+        ]
 
         try:
             p = subprocess.run(cmd, check=True, stdout=subprocess.PIPE)
         except (subprocess.CalledProcessError, FileNotFoundError) as err:
-            logger.warning('Called: %s', ' '.join(cmd))
-            logger.warning('Failed to scan contributors: %s', err)
+            logger.warning("Called: %s", " ".join(cmd))
+            logger.warning("Failed to scan contributors: %s", err)
             return set()
-        output = p.stdout.decode('utf-8')
-        tokenizer = get_tokenizer('en_US', filters=[])
+        output = p.stdout.decode("utf-8")
+        tokenizer = get_tokenizer("en_US", filters=[])
         return {word for word, pos in tokenizer(output)}
