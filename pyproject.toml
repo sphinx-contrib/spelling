@@ -5,9 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "sphinxcontrib-spelling"
 readme = "README"
-authors = [
-  {name = "Doug Hellmann", email = "doug@doughellmann.com"},
-]
+authors = [{ name = "Doug Hellmann", email = "doug@doughellmann.com" }]
 description = "Sphinx spelling extension"
 dynamic = ["version"]
 
@@ -22,30 +20,20 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: Implementation :: CPython",
     "Topic :: Documentation",
     "Topic :: Utilities",
 ]
 
-requires-python = ">=3.7"
+requires-python = ">=3.10"
 
-dependencies = [
-    "PyEnchant>=3.1.1",
-    "Sphinx>=3.0.0",
-    "importlib_metadata>=1.7.0;python_version<'3.8'",
-]
+dependencies = ["PyEnchant>=3.1.1", "Sphinx>=3.0.0"]
 
 [project.optional-dependencies]
-test = [
-    "pytest",
-    "pytest-cov",
-    "coverage!=4.4,>=4.0",
-]
+test = ["pytest", "pytest-cov", "coverage!=4.4,>=4.0"]
 
 [project.entry-points."sphinx.builders"]
 spelling = "sphinxcontrib.spelling"
@@ -61,6 +49,4 @@ write_to = "sphinxcontrib/spelling/version.py"
 [tool.setuptools]
 # Be explicit to avoid an error because build finds cover,
 # sphinxcontrib, and integration_tests as potential packages.
-packages = [
-    "sphinxcontrib.spelling",
-]
+packages = ["sphinxcontrib.spelling"]

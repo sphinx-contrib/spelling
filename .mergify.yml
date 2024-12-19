@@ -1,5 +1,4 @@
 pull_request_rules:
-
   - name: Add CI label
     conditions:
       - or:
@@ -25,23 +24,21 @@ pull_request_rules:
   - name: Automatic merge on approval
     conditions:
       - and:
-        - "check-success=build (docs)"
-        - "check-success=build (isolated)"
-        - "check-success=build (linter)"
-        - "check-success=build (spelling)"
-        - "check-success=django"
-        - "check-success=build (3.7)"
-        - "check-success=build (3.8)"
-        - "check-success=build (3.9)"
-        - "check-success=build (3.10)"
-        - "check-success=build (3.11)"
-        - "-draft"
-        - or:
-          - "check-success=history-update"
-          - "label=ci"
-        - or:
-          - "approved-reviews-by=dhellmann"
-          - "author=dhellmann"
+          - "check-success=build (docs)"
+          - "check-success=build (isolated)"
+          - "check-success=build (linter)"
+          - "check-success=build (spelling)"
+          - "check-success=django"
+          - "check-success=build (3.10)"
+          - "check-success=build (3.11)"
+          - "check-success=build (3.12)"
+          - "-draft"
+          - or:
+              - "check-success=history-update"
+              - "label=ci"
+          - or:
+              - "approved-reviews-by=dhellmann"
+              - "author=dhellmann"
     actions:
       merge:
         method: merge
