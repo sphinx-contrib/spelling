@@ -359,18 +359,7 @@ def test_docstrings(sphinx_project):
                 "contents",
             )
 
-    # Sphinx 5.1.0 and later reports line numbers for docstring
-    # content.
-    line_num = "None:"
-    if sphinx.version_info[:3] >= (5, 1, 0):
-        line_num = "1:"
-
-    # Expected string is too long for one line
-    expected = (
-        ("the_source.py:" "docstring of the_source.public_function:")
-        + line_num
-        + (" (vaule)")
-    )
+    expected = "src/contents.rst:3: (vaule)  Pass a vaule\n"
     assert expected in output_text
 
 
