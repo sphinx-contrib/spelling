@@ -14,13 +14,10 @@
    libenchant
    macOS
    namespace
-   pbr
-   pyenchant
    repo
    scm
    setuptools
    testrepository
-   tox
    unicode
    unmaintained
 
