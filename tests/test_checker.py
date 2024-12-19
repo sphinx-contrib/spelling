@@ -1,8 +1,7 @@
 #
 # Copyright (c) 2010 Doug Hellmann.  All rights reserved.
 #
-"""Tests for SpellingChecker.
-"""
+"""Tests for SpellingChecker."""
 
 import os
 
@@ -10,50 +9,55 @@ from sphinxcontrib.spelling.checker import SpellingChecker, line_of_index
 
 
 def test_errors_only():
-    checker = SpellingChecker(lang='en_US',
-                              suggest=False,
-                              word_list_filename=None,
-                              )
-    for word, suggestions, line, offset in checker.check('This txt is wrong'):
-        assert not suggestions, 'Suggesting'
-        assert word == 'txt'
+    checker = SpellingChecker(
+        lang="en_US",
+        suggest=False,
+        word_list_filename=None,
+    )
+    for word, suggestions, line, offset in checker.check("This txt is wrong"):
+        assert not suggestions, "Suggesting"
+        assert word == "txt"
         assert line == ""
         assert offset == 0
 
 
 def test_with_suggestions():
-    checker = SpellingChecker(lang='en_US',
-                              suggest=True,
-                              word_list_filename=None,
-                              )
-    for word, suggestions, line, offset in checker.check('This txt is wrong'):
-        assert suggestions, 'Not suggesting'
-        assert word == 'txt'
+    checker = SpellingChecker(
+        lang="en_US",
+        suggest=True,
+        word_list_filename=None,
+    )
+    for word, suggestions, line, offset in checker.check("This txt is wrong"):
+        assert suggestions, "Not suggesting"
+        assert word == "txt"
         assert line == ""
         assert offset == 0
 
+
 def test_with_wordlist():
     checker = SpellingChecker(
-        lang='en_US',
+        lang="en_US",
         suggest=False,
-        word_list_filename=os.path.join(os.path.dirname(__file__),
-                                        'test_wordlist.txt')
+        word_list_filename=os.path.join(os.path.dirname(__file__), "test_wordlist.txt"),
     )
-    words = [w for w, s, l, o in checker.check('This txt is wrong')]
-    assert not words, 'Did not use personal word list file'
+    words = [
+        word for word, suggestions, line, offset in checker.check("This txt is wrong")
+    ]
+    assert not words, "Did not use personal word list file"
 
 
 def test_with_context_line():
-    checker = SpellingChecker(lang='en_US',
-                              suggest=False,
-                              word_list_filename=None,
-                              context_line=True,
-                              )
+    checker = SpellingChecker(
+        lang="en_US",
+        suggest=False,
+        word_list_filename=None,
+        context_line=True,
+    )
 
-    text = 'Line one\nThis txt is wrong\nLine two'
+    text = "Line one\nThis txt is wrong\nLine two"
     for word, suggestions, line, offset in checker.check(text):
-        assert not suggestions, 'Suggesting'
-        assert word == 'txt'
+        assert not suggestions, "Suggesting"
+        assert word == "txt"
         assert line == "This txt is wrong"
         assert offset == 1
 
