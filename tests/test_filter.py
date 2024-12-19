@@ -151,3 +151,4 @@ def test_importable_module_with_system_exit(tmpdir):
 def test_pypi_filter_factory():
     f = filters.PyPIFilterFactory()
     assert "sphinxcontrib-spelling" in f.words
+    assert "setuptools" in f.words
