@@ -4,11 +4,24 @@
 
 .. spelling:word-list::
 
+   arg
+   commandline
+   config
+   docstring
+   emacs
+   env
    Homebrew
    libenchant
    macOS
+   namespace
+   pbr
+   pyenchant
+   repo
    scm
    setuptools
+   testrepository
+   tox
+   unicode
    unmaintained
 
 Next
