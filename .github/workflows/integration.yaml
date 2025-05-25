@@ -23,7 +23,7 @@ jobs:
           python-version: '3.x'
 
       - name: Install dependencies
-        run: python3 -m pip install tox
+        run: python3 -m pip install hatch
 
-      - name: Build docs
-        run: python3 ./integration_tests/build_django.py
+      - name: Test
+        run: hatch run integration:django

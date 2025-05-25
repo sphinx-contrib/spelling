@@ -80,3 +80,8 @@ pkglint = [
     "twine check dist/*.tar.gz dist/*.whl",
     "check-python-versions --only pyproject.toml,.github/workflows/test.yml",
 ]
+
+[tool.hatch.envs.integration]
+dependencies = ["tox"]
+[tool.hatch.envs.integration.scripts]
+django = "./integration_tests/build_django.py"
