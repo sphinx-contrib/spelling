@@ -24,8 +24,7 @@
 Next
 ====
 
-- Modernize packaging using setuptools, build, and setuptools_scm
-  instead of pbr.
+- Modernize packaging using hatch and hatchling.
 
 Bug Fixes
 ---------

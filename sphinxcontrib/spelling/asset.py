@@ -13,7 +13,6 @@ logger = logging.getLogger(__name__)
 
 
 class SpellingCollector(EnvironmentCollector):
-
     def clear_doc(self, app, env, docname) -> None:
         with contextlib.suppress(AttributeError, KeyError):
             del env.spelling_document_words[docname]
@@ -24,7 +23,7 @@ class SpellingCollector(EnvironmentCollector):
         except AttributeError:
             other_words = {}
 
-        if not hasattr(env, 'spelling_document_words'):
+        if not hasattr(env, "spelling_document_words"):
             env.spelling_document_words = collections.defaultdict(list)
         env.spelling_document_words.update(other_words)
 

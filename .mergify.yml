@@ -24,10 +24,9 @@ pull_request_rules:
   - name: Automatic merge on approval
     conditions:
       - and:
-          - "check-success=build (docs)"
-          - "check-success=build (isolated)"
-          - "check-success=build (linter)"
-          - "check-success=build (spelling)"
+          - "check-success=build (docs:build)"
+          - "check-success=build (test:linter)"
+          - "check-success=build (docs:spelling)"
           - "check-success=django"
           - "check-success=build (3.10)"
           - "check-success=build (3.11)"

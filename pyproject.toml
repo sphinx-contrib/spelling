@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools", "setuptools_scm[toml]>=6.2"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
 
 [project]
 name = "sphinxcontrib-spelling"
-readme = "README"
+readme = "README.rst"
 authors = [{ name = "Doug Hellmann", email = "doug@doughellmann.com" }]
 description = "Sphinx spelling extension"
 dynamic = ["version"]
@@ -42,11 +42,55 @@ spelling = "sphinxcontrib.spelling"
 homepage = "https://sphinxcontrib-spelling.readthedocs.io/en/latest/"
 repository = "https://github.com/sphinx-contrib/spelling"
 
-# https://github.com/pypa/setuptools_scm/
-[tool.setuptools_scm]
-write_to = "sphinxcontrib/spelling/version.py"
+[tool.hatch.version]
+source = "vcs"
 
-[tool.setuptools]
-# Be explicit to avoid an error because build finds cover,
-# sphinxcontrib, and integration_tests as potential packages.
-packages = ["sphinxcontrib.spelling"]
+[tool.hatch.build.hooks.vcs]
+version-file = "sphinxcontrib/spelling/version.py"
+
+[tool.hatch.build.targets.sdist]
+exclude = [".github", "cover", ".mergify.yml", ".gitignore"]
+[tool.hatch.build.targets.wheel]
+only-include = ["sphinxcontrib"]
+
+[tool.hatch.envs.docs]
+dependencies = ["sphinx"]
+[tool.hatch.envs.docs.env]
+ENABLE_SPELLING = "1"
+[tool.hatch.envs.docs.scripts]
+build = [
+    "sphinx-build -W -j auto -b html -d docs/build/doctrees docs/source docs/build/html",
+    "sphinx-build -W -j auto -b linkcheck -d docs/build/doctrees docs/source docs/build/linkcheck",
+    "sphinx-build -W -j auto -b spelling -d docs/build/doctrees docs/source docs/build/spelling",
+]
+check = "sphinx-build -W -j auto -b spelling -d docs/build/doctrees docs/source docs/build/spelling"
+
+[tool.hatch.envs.test]
+dependencies = [
+    "pytest",
+    "pytest-cov",
+    "coverage!=4.4,>=4.0",
+    "ruff",
+    "twine",
+    "check-python-versions",
+]
+[tool.hatch.envs.test.scripts]
+test = "python -m pytest --cov=sphinxcontrib.spelling --cov-report term-missing --log-level DEBUG tests"
+lint = [
+    "ruff check sphinxcontrib integration_tests tests",
+    "ruff format --check sphinxcontrib integration_tests tests",
+]
+lint-fix = ["ruff format sphinxcontrib integration_tests tests"]
+pkglint = [
+    "hatch build",
+    "twine check dist/*.tar.gz dist/*.whl",
+    "check-python-versions --only pyproject.toml,.github/workflows/test.yml",
+]
+
+[tool.hatch.envs.integration]
+dependencies = ["tox"]
+[tool.hatch.envs.integration.scripts]
+django = "./integration_tests/build_django.py"
+
+[tool.ruff]
+exclude = ["sphinxcontrib/spelling/version.py"]
