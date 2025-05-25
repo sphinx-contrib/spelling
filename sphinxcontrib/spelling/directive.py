@@ -1,8 +1,7 @@
 #
 # Copyright (c) 2010 Doug Hellmann.  All rights reserved.
 #
-"""Spelling checker extension for Sphinx.
-"""
+"""Spelling checker extension for Sphinx."""
 
 import collections
 
@@ -14,10 +13,9 @@ logger = logging.getLogger(__name__)
 
 def add_good_words_to_document(env, docname, good_words):
     # Initialize the per-document good words list
-    if not hasattr(env, 'spelling_document_words'):
+    if not hasattr(env, "spelling_document_words"):
         env.spelling_document_words = collections.defaultdict(list)
-    logger.debug('Extending local dictionary for %s with %s',
-                 env.docname, good_words)
+    logger.debug("Extending local dictionary for %s with %s", env.docname, good_words)
     env.spelling_document_words[env.docname].extend(good_words)
 
 
@@ -48,8 +46,9 @@ class SpellingDirective(rst.Directive):
 
 
 class LegacySpellingDirective(SpellingDirective):
-
     def run(self):
-        logger.info('direct use of the spelling directive is deprecated, '
-                    'replace ".. spelling::" with ".. spelling:word-list::"')
+        logger.info(
+            "direct use of the spelling directive is deprecated, "
+            'replace ".. spelling::" with ".. spelling:word-list::"'
+        )
         return super().run()

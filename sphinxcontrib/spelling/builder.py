@@ -1,8 +1,7 @@
 #
 # Copyright (c) 2010 Doug Hellmann.  All rights reserved.
 #
-"""Spelling checker extension for Sphinx.
-"""
+"""Spelling checker extension for Sphinx."""
 
 import collections
 import importlib
@@ -35,18 +34,19 @@ class SpellingBuilder(Builder):
     """
     Spell checks a document
     """
-    name = 'spelling'
+
+    name = "spelling"
 
     def init(self):
         if enchant_import_error is not None:
             raise RuntimeError(
-                'Cannot initialize spelling builder '
-                'without PyEnchant installed') from enchant_import_error
+                "Cannot initialize spelling builder without PyEnchant installed"
+            ) from enchant_import_error
         self.misspelling_count = 0
 
         self.env.settings["smart_quotes"] = False
         # Initialize the per-document filters
-        if not hasattr(self.env, 'spelling_document_words'):
+        if not hasattr(self.env, "spelling_document_words"):
             self.env.spelling_document_words = collections.defaultdict(list)
 
         # Initialize the global filters
@@ -55,22 +55,22 @@ class SpellingBuilder(Builder):
             EmailFilter,
         ]
         if self.config.spelling_ignore_wiki_words:
-            logger.info('Ignoring wiki words')
+            logger.info("Ignoring wiki words")
             f.append(WikiWordFilter)
         if self.config.spelling_ignore_acronyms:
-            logger.info('Ignoring acronyms')
+            logger.info("Ignoring acronyms")
             f.append(filters.AcronymFilter)
         if self.config.spelling_ignore_pypi_package_names:
-            logger.info('Adding package names from PyPI to local dictionary…')
+            logger.info("Adding package names from PyPI to local dictionary…")
             f.append(filters.PyPIFilterFactory())
         if self.config.spelling_ignore_python_builtins:
-            logger.info('Ignoring Python builtins')
+            logger.info("Ignoring Python builtins")
             f.append(filters.PythonBuiltinsFilter)
         if self.config.spelling_ignore_importable_modules:
-            logger.info('Ignoring importable module names')
+            logger.info("Ignoring importable module names")
             f.append(filters.ImportableModuleFilter)
         if self.config.spelling_ignore_contributor_names:
-            logger.info('Ignoring contributor names')
+            logger.info("Ignoring contributor names")
             f.append(filters.ContributorFilter)
         f.extend(self._load_filter_classes(self.config.spelling_filters))
 
@@ -78,7 +78,7 @@ class SpellingBuilder(Builder):
             os.mkdir(self.outdir)
 
         word_list = self.get_wordlist_filename()
-        logger.info('Looking for custom word list in %s', word_list)
+        logger.info("Looking for custom word list in %s", word_list)
 
         self.checker = checker.SpellingChecker(
             lang=self.config.spelling_lang,
@@ -97,7 +97,7 @@ class SpellingBuilder(Builder):
             if not isinstance(filter_, str):
                 yield filter_
                 continue
-            module_name, _, class_name = filter_.rpartition('.')
+            module_name, _, class_name = filter_.rpartition(".")
             mod = importlib.import_module(module_name)
             yield getattr(mod, class_name)
 
@@ -105,17 +105,14 @@ class SpellingBuilder(Builder):
         "Returns the configured wordlist filenames."
         word_list = self.config.spelling_word_list_filename
         if word_list is None:
-            word_list = ['spelling_wordlist.txt']
+            word_list = ["spelling_wordlist.txt"]
 
         if isinstance(word_list, str):
             # Wordlist is a string. Split on comma in case it came
             # from the command line, via -D, and has multiple values.
-            word_list = word_list.split(',')
+            word_list = word_list.split(",")
 
-        return [
-            os.path.join(self.srcdir, p)
-            for p in word_list
-        ]
+        return [os.path.join(self.srcdir, p) for p in word_list]
 
     def get_wordlist_filename(self):
         "Returns the filename of the wordlist to use when checking content."
@@ -131,33 +128,31 @@ class SpellingBuilder(Builder):
         # from the other lists. Otherwise, word_list is assumed to just be a
         # string.
         temp_dir = tempfile.mkdtemp()
-        combined_word_list = os.path.join(temp_dir,
-                                          'spelling_wordlist.txt')
+        combined_word_list = os.path.join(temp_dir, "spelling_wordlist.txt")
 
-        with open(combined_word_list, 'w', encoding='UTF-8') as outfile:
+        with open(combined_word_list, "w", encoding="UTF-8") as outfile:
             for word_file in self.get_configured_wordlist_filenames():
                 # Paths are relative
                 long_word_file = os.path.join(self.srcdir, word_file)
-                logger.info('Adding contents of %s to custom word list',
-                            long_word_file)
-                with open(long_word_file, encoding='UTF-8') as infile:
+                logger.info("Adding contents of %s to custom word list", long_word_file)
+                with open(long_word_file, encoding="UTF-8") as infile:
                     infile_contents = infile.readlines()
                 outfile.writelines(infile_contents)
 
                 # Check for newline, and add one if not present
-                if infile_contents and not infile_contents[-1].endswith('\n'):
-                    outfile.write('\n')
+                if infile_contents and not infile_contents[-1].endswith("\n"):
+                    outfile.write("\n")
 
         return combined_word_list
 
     def get_outdated_docs(self):
-        return 'all documents'
+        return "all documents"
 
     def prepare_writing(self, docnames):
         return
 
     def get_target_uri(self, docname, typ=None):
-        return ''
+        return ""
 
     def get_suggestions_to_show(self, suggestions):
         if not self.config.spelling_show_suggestions or not suggestions:
@@ -174,31 +169,30 @@ class SpellingBuilder(Builder):
     def format_suggestions(self, suggestions):
         to_show = self.get_suggestions_to_show(suggestions)
         if not to_show:
-            return ''
-        return '[' + ', '.join('"%s"' % s for s in to_show) + ']'
+            return ""
+        return "[" + ", ".join('"%s"' % s for s in to_show) + "]"
 
     TEXT_NODES = {
-        'block_quote',
-        'caption',
-        'paragraph',
-        'list_item',
-        'term',
-        'definition_list_item',
-        'title',
+        "block_quote",
+        "caption",
+        "paragraph",
+        "list_item",
+        "term",
+        "definition_list_item",
+        "title",
     }
 
     def write_doc(self, docname, doctree):
         lines = list(self._find_misspellings(docname, doctree))
         self.misspelling_count += len(lines)
         if lines:
-            output_filename = os.path.join(self.outdir, f'{docname}.spelling')
-            logger.info('Writing %s', output_filename)
+            output_filename = os.path.join(self.outdir, f"{docname}.spelling")
+            logger.info("Writing %s", output_filename)
             ensuredir(os.path.dirname(output_filename))
-            with open(output_filename, 'w', encoding='UTF-8') as output:
+            with open(output_filename, "w", encoding="UTF-8") as output:
                 output.writelines(lines)
 
     def _find_misspellings(self, docname, doctree):
-
         excluded = Matcher(self.config.spelling_exclude_patterns)
         if excluded(self.env.doc2path(docname, None)):
             return
@@ -210,16 +204,16 @@ class SpellingBuilder(Builder):
         doc_filters = []
         good_words = self.env.spelling_document_words.get(docname)
         if good_words:
-            logger.debug('Extending local dictionary for %s', docname)
+            logger.debug("Extending local dictionary for %s", docname)
             doc_filters.append(filters.IgnoreWordsFilterFactory(good_words))
         self.checker.push_filters(doc_filters)
 
         # Set up a filter for the types of nodes to ignore during
         # traversal.
         def filter(n):
-            if n.tagname != '#text':
+            if n.tagname != "#text":
                 return False
-            if (n.parent and n.parent.tagname not in self.TEXT_NODES):
+            if n.parent and n.parent.tagname not in self.TEXT_NODES:
                 return False
             # Nodes marked by the spelling:ignore role
             if hasattr(n, "spellingIgnore"):
@@ -237,13 +231,7 @@ class SpellingBuilder(Builder):
 
             # Check the text of the node.
             misspellings = self.checker.check(node.astext())
-            for (
-                word,
-                suggestions,
-                context_line,
-                line_offset
-            ) in misspellings:
-
+            for word, suggestions, context_line, line_offset in misspellings:
                 # Avoid TypeError on nodes lacking a line number
                 # This happens for some node originating from docstrings
                 lineno = node_lineno
@@ -251,20 +239,22 @@ class SpellingBuilder(Builder):
                     lineno += line_offset
 
                 msg_parts = [
-                    f'{source}:{lineno}: ',
-                    'Spell check',
+                    f"{source}:{lineno}: ",
+                    "Spell check",
                     red(word),
                 ]
-                if self.format_suggestions(suggestions) != '':
+                if self.format_suggestions(suggestions) != "":
                     msg_parts.append(self.format_suggestions(suggestions))
                 msg_parts.append(context_line)
-                msg = ': '.join(msg_parts) + '.'
+                msg = ": ".join(msg_parts) + "."
                 if self.config.spelling_warning:
                     logger.warning(msg)
                 elif self.config.spelling_verbose:
                     logger.info(msg)
                 yield "%s:%s: (%s) %s %s\n" % (
-                    source, lineno, word,
+                    source,
+                    lineno,
+                    word,
                     self.format_suggestions(suggestions),
                     context_line,
                 )
@@ -274,5 +264,4 @@ class SpellingBuilder(Builder):
 
     def finish(self):
         if self.misspelling_count:
-            logger.warning('Found %d misspelled words',
-                           self.misspelling_count)
+            logger.warning("Found %d misspelled words", self.misspelling_count)

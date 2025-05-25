@@ -1,8 +1,7 @@
 #
 # Copyright (c) 2010 Doug Hellmann.  All rights reserved.
 #
-"""Spelling checker extension for Sphinx.
-"""
+"""Spelling checker extension for Sphinx."""
 
 try:
     import enchant
@@ -20,12 +19,18 @@ class SpellingChecker:
     the checking and filtering behavior.
     """
 
-    def __init__(self, lang, suggest, word_list_filename,
-                 tokenizer_lang='en_US', filters=None, context_line=False):
+    def __init__(
+        self,
+        lang,
+        suggest,
+        word_list_filename,
+        tokenizer_lang="en_US",
+        filters=None,
+        context_line=False,
+    ):
         if enchant_import_error is not None:
             raise RuntimeError(
-                'Cannot instantiate SpellingChecker '
-                'without PyEnchant installed',
+                "Cannot instantiate SpellingChecker without PyEnchant installed",
             ) from enchant_import_error
         if filters is None:
             filters = []
@@ -36,21 +41,18 @@ class SpellingChecker:
         self.context_line = context_line
 
     def push_filters(self, new_filters):
-        """Add a filter to the tokenizer chain.
-        """
+        """Add a filter to the tokenizer chain."""
         t = self.tokenizer
         for f in new_filters:
             t = f(t)
         self.tokenizer = t
 
     def pop_filters(self):
-        """Remove the filters pushed during the last call to push_filters().
-        """
+        """Remove the filters pushed during the last call to push_filters()."""
         self.tokenizer = self.original_tokenizer
 
     def check(self, text):
-        """Yields bad words and suggested alternate spellings.
-        """
+        """Yields bad words and suggested alternate spellings."""
         for word, pos in self.tokenizer(text):
             correct = self.dictionary.check(word)
             if correct:

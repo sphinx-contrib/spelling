@@ -8,5 +8,5 @@ import pytest
 
 def require_git_repo(f):
     return pytest.mark.skipif(
-        not (pathlib.Path(os.getcwd()) / '.git').is_dir(),
-        reason='Not a git repo')(f)
+        not (pathlib.Path(os.getcwd()) / ".git").is_dir(), reason="Not a git repo"
+    )(f)

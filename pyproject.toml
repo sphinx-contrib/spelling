@@ -76,7 +76,11 @@ dependencies = [
 ]
 [tool.hatch.envs.test.scripts]
 test = "python -m pytest --cov=sphinxcontrib.spelling --cov-report term-missing --log-level DEBUG tests"
-lint = "ruff check sphinxcontrib integration_tests tests"
+lint = [
+    "ruff check sphinxcontrib integration_tests tests",
+    "ruff format --check sphinxcontrib integration_tests tests",
+]
+lint-fix = ["ruff format sphinxcontrib integration_tests tests"]
 pkglint = [
     "hatch build",
     "twine check dist/*.tar.gz dist/*.whl",
@@ -87,3 +91,6 @@ pkglint = [
 dependencies = ["tox"]
 [tool.hatch.envs.integration.scripts]
 django = "./integration_tests/build_django.py"
+
+[tool.ruff]
+exclude = ["sphinxcontrib/spelling/version.py"]
