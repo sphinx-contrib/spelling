@@ -1,6 +1,6 @@
 [build-system]
-requires = ["setuptools", "setuptools_scm[toml]>=6.2"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
 
 [project]
 name = "sphinxcontrib-spelling"
@@ -42,11 +42,9 @@ spelling = "sphinxcontrib.spelling"
 homepage = "https://sphinxcontrib-spelling.readthedocs.io/en/latest/"
 repository = "https://github.com/sphinx-contrib/spelling"
 
-# https://github.com/pypa/setuptools_scm/
-[tool.setuptools_scm]
-write_to = "sphinxcontrib/spelling/version.py"
+[tool.hatch.version]
+source = "vcs"
+path = "sphinxcontrib/spelling/version.py"
 
-[tool.setuptools]
-# Be explicit to avoid an error because build finds cover,
-# sphinxcontrib, and integration_tests as potential packages.
+[tool.hatch.build]
 packages = ["sphinxcontrib.spelling"]
