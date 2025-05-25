@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "sphinxcontrib-spelling"
-readme = "README"
+readme = "README.rst"
 authors = [{ name = "Doug Hellmann", email = "doug@doughellmann.com" }]
 description = "Sphinx spelling extension"
 dynamic = ["version"]
