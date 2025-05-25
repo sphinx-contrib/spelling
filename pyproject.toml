@@ -44,7 +44,9 @@ repository = "https://github.com/sphinx-contrib/spelling"
 
 [tool.hatch.version]
 source = "vcs"
-path = "sphinxcontrib/spelling/version.py"
+
+[tool.hatch.build.hooks.vcs]
+version-file = "sphinxcontrib/spelling/version.py"
 
 [tool.hatch.build.targets.sdist]
 exclude = [".github", "cover", ".mergify.yml", ".gitignore"]
