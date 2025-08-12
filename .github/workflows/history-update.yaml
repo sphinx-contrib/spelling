@@ -13,7 +13,7 @@ jobs:
       fail-fast: false
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         # Get all of the git history. https://github.com/actions/checkout
         with:
           fetch-depth: 0
