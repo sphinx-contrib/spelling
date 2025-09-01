@@ -25,6 +25,7 @@ Next
 ====
 
 - Modernize packaging using hatch and hatchling.
+- List Python 3.13 as supported.
 
 Bug Fixes
 ---------
