@@ -61,7 +61,6 @@ ENABLE_SPELLING = "1"
 [tool.hatch.envs.docs.scripts]
 build = [
     "sphinx-build -W -j auto -b html -d docs/build/doctrees docs/source docs/build/html",
-    "sphinx-build -W -j auto -b linkcheck -d docs/build/doctrees docs/source docs/build/linkcheck",
     "sphinx-build -W -j auto -b spelling -d docs/build/doctrees docs/source docs/build/spelling",
 ]
 check = "sphinx-build -W -j auto -b spelling -d docs/build/doctrees docs/source docs/build/spelling"

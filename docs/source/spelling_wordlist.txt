@@ -12,3 +12,4 @@ wikis
 wordfiles
 wordlist
 wordlists
+domaindata

@@ -15,6 +15,7 @@ class SpellingDomain(Domain):
         return []
 
     def resolve_xref(self, env, fromdocname, builder, typ, target, node, contnode):
+        """resolve cross reference"""
         return None
 
     def resolve_any_xref(self, env, fromdocname, builder, target, node, contnode):
