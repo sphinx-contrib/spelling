@@ -26,6 +26,7 @@ Next
 
 - Modernize packaging using hatch and hatchling.
 - List Python 3.13 as supported.
+- Add automatically generated documentation for key modules.
 
 Bug Fixes
 ---------

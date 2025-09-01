@@ -34,6 +34,7 @@ Details
    customize
    run
    developers
+   code
    history
 
 

@@ -183,6 +183,7 @@ class SpellingBuilder(Builder):
     }
 
     def write_doc(self, docname, doctree):
+        """write the document"""
         lines = list(self._find_misspellings(docname, doctree))
         self.misspelling_count += len(lines)
         if lines:
